@@ -18,8 +18,6 @@ export function SidebarDrawerProvider({ children }: SidebarDrawerProviderProps){
         disclosure.onClose();
     }, [router.pathname]);
 
-    console.log(disclosure);
-
     return(
         <SidebarDrawerContext.Provider value={disclosure}>
             {children}

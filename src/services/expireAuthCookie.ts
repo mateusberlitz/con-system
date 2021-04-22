@@ -29,8 +29,6 @@ export function getAuthTimeCookie(){
 export function checkAuthTimeCookie(){
     const cookie = getAuthTimeCookie();
 
-    console.log(cookie);
-
     if(cookie === ""){
         return false;
     }else{
@@ -39,7 +37,6 @@ export function checkAuthTimeCookie(){
 }
 
 export function deleteAuthTimeCookie(){
-    console.log();
     if(decodeURIComponent(document.cookie) === "expireAuth"){
         const date = new Date();
         date.setTime(date.getTime() - 1000);
