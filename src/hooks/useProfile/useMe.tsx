@@ -36,7 +36,7 @@ export async function getMe(): Promise<Profile>{
 
 export function useMe(){
     const { data, isLoading, isFetching, error} = useQuery('Me', () => getMe(), {
-        staleTime: 1000 * 60, //fresh
+        staleTime: 1000 * 60 * 5, //fresh
     });
 
     const profile = data;

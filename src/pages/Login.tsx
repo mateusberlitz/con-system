@@ -19,6 +19,7 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useToast } from "@chakra-ui/react";
 import { Alert } from "../components/Alert";
+import { useProfile } from "../hooks/useProfile";
 
 interface SignInFormData{
     email: string;
@@ -33,6 +34,7 @@ const signInFormSchema = yup.object().shape({
 });
 
 export default function Login(){
+    const { loadProfile } = useProfile();
     const toastSignin = useToast();
 
     const { register, watch, handleSubmit, formState} = useForm<SignInFormData>({
@@ -43,13 +45,14 @@ export default function Login(){
         try{
             const response = await api.post('/auth/login', signInData);
 
-            console.log(response.data);
-
             login(response.data.access_token, response.data.expires_in);
 
+            loadProfile();
+            
             return (
                 <Redirect to={{ pathname: '/home' }}/>
             );
+            
         }catch(error) {
             if(error.response){
                 toastError(error.response.data.error);
@@ -69,11 +72,11 @@ export default function Login(){
         });
     }
 
-    if(isAuthenticated()){
-        return (
-            <Redirect to={{ pathname: '/home' }}/>
-        );
-    }
+    // if(isAuthenticated()){
+    //     return (
+    //         <Redirect to={{ pathname: '/home' }}/>
+    //     );
+    // }
 
     
 
