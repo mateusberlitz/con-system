@@ -4,7 +4,6 @@ import Routes from './routes';
 import { BrowserRouter } from 'react-router-dom';
 import { SidebarDrawerProvider } from './components/_Contexts/SidebarDrawerContext';
 import { ProfileProvider } from './hooks/useProfile';
-import { RedirectedToastsProvider } from './hooks/useRedirectedToasts';
 import { isAuthenticated } from './services/auth';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
@@ -16,7 +15,6 @@ function App() {
       <QueryClientProvider client={queryClient}>
           <SidebarDrawerProvider>
             <ChakraProvider theme={theme}>
-                <RedirectedToastsProvider>
 
                       {isAuthenticated() ? 
                         <ProfileProvider>
@@ -26,7 +24,6 @@ function App() {
                         <Routes />
                       }
 
-                </RedirectedToastsProvider>
             </ChakraProvider>
           </SidebarDrawerProvider>
       </QueryClientProvider>

@@ -1,7 +1,3 @@
-interface setCookieProps{
-    expires_in: number;
-}
-
 export function setAuthTimeCookie(expires_in: number){
     const date = new Date();
     date.setTime(date.getTime() + (expires_in*1000));

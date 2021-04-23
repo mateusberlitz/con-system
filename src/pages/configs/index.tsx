@@ -7,10 +7,13 @@ import { ReactComponent as CommentIcon } from '../../assets/icons/Comment.svg';
 
 import Logo from '../../assets/icons/Logo.svg';
 import { Profile } from "../../components/Profile";
+import { Alert } from "../../components/Alert";
 
 export default function ConfigHome(){
     return(
         <Flex direction="column" h="100vh">
+            <Alert/>
+            
             <Flex w="100%" my="14" maxWidth={1280} mx="auto" px="6" direction="column">
                 <Flex w="100%" mb="12">
                     <Img src={Logo}/>

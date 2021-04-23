@@ -17,7 +17,8 @@ import { api } from "../services/api";
 import { useForm } from "react-hook-form";
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useToast } from "@chakra-ui/toast";
+import { useToast } from "@chakra-ui/react";
+import { Alert } from "../components/Alert";
 
 interface SignInFormData{
     email: string;
@@ -74,11 +75,14 @@ export default function Login(){
         );
     }
 
+    
 
     //HTML  
     return(
         <Flex w="100vw" h="100vh" align="center" justify="center" flexDir="column">
             <Img src={Logo}/>
+
+            <Alert/>
 
             <Stack mt="50" as="form" spacing="24px" w="100%" p="9" maxW={400} bg="white" borderRadius="24" boxShadow="lg" flexDir="column" onSubmit={handleSubmit(handleSignIn)}>
                 <Heading>Login</Heading>

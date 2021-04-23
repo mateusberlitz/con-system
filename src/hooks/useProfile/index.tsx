@@ -1,7 +1,9 @@
 import { useQuery } from "react-query";
 import { createContext, ReactNode, useContext, useState } from "react";
-import { api } from "../services/api";
-import { getToken } from "../services/auth";
+import { api } from "../../services/api";
+import { getToken } from "../../services/auth";
+import { useMe } from "./useMe";
+import { usePermissions } from "./usePermissions";
 
 interface ProfileProviderProps{
     children: ReactNode;
@@ -44,32 +46,13 @@ const ProfileContext = createContext<ProfileContextData>({} as ProfileContextDat
 export function ProfileProvider({ children } : ProfileProviderProps){
     const token = getToken();
 
-    const [profile, setProfile] = useState<Profile>();
-
-    useQuery('profile', async () => {
-        const { data } = await api.get("/me", {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-
-        setProfile(data);
-    },{staleTime: 60*1000});
-
-    const [permissions, setPermissions] = useState<Permission[]>([]);
-
+    //const [profile, setProfile] = useState<Profile>();
+    //const [permissions, setPermissions] = useState<Permission[]>([]);
     
-    useQuery('permission', async () => {
-        if(profile){
-            const { data } = await api.get(`/roles/${profile.role}/permissions`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-    
-            setPermissions(data);
-        }
-    },{staleTime: 2*60*1000});
+    const { profile, isLoading, isFetching, error} = useMe();
+    const { permissions } = usePermissions((profile ? profile.role.id : 0));
+
+    console.log(profile, permissions);
 
     return(
         <ProfileContext.Provider value={{profile, permissions}}>
@@ -78,8 +61,7 @@ export function ProfileProvider({ children } : ProfileProviderProps){
     )
 }
 
-export function HasPermission(neededPermission : string){
-    const { permissions } = useProfile();
+export function HasPermission(permissions: Permission[] | undefined, neededPermission : string,){
 
     if(permissions){
         permissions.map(permission => permission.name === neededPermission);
