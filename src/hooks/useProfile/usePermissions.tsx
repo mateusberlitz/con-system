@@ -12,7 +12,6 @@ interface Permission{
 export async function getPermissions(roleId: number): Promise<Permission[]>{
     const token = getToken();
     let permissions: Permission[] = [];
-    let data;
 
     if(isAuthenticated()){
         const data = await api.get(`/roles/${roleId}/permissions`, {

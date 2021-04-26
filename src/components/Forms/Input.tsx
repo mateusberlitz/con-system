@@ -1,13 +1,28 @@
 import { InputGroup, InputLeftElement, FormControl, InputProps, Icon, Input as ChakraInput } from "@chakra-ui/react";
+import { ChangeEvent, useState } from "react";
+import { RegisterOptions, UseFormRegister } from "react-hook-form";
+import { mask as applyMask, unMask } from "../../utils/ReMask";
 
 interface FormInputProps extends InputProps{
     name: string;
     type: string;
     variant?: string;
     icon?: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
+    //register?: UseFormRegister<any>;
+    mask?: "phone" | "cpf" | "cnpj" | "money" | "";
 }
 
-export function Input({ name, type, icon, variant = "", ...rest }: FormInputProps){
+export function Input({ name, type, icon, variant = "", mask = "", ...rest }: FormInputProps){
+    const [maskedValue, setMaskedValue] = useState("");
+
+    const handleChangeMask = (event: any) => {
+        const maskPattern = (mask == "phone" ? "(99) 9 9999-9999"
+                            : (mask == "cpf" ? "999.999.999-99"
+                            :                  "99.999.999/9999-99"));
+
+        setMaskedValue(applyMask(event.target.value, maskPattern));
+    }
+
     return icon ? (
         <FormControl pos="relative">
             <InputGroup>
@@ -24,3 +39,5 @@ export function Input({ name, type, icon, variant = "", ...rest }: FormInputProp
         </FormControl>
     );
 }
+
+//value={mask ? maskedValue : ''} onChange={mask ? handleChangeMask : () => {}} 

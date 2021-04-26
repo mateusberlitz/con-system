@@ -3,6 +3,7 @@ import { SolidButton } from "../Buttons/SolidButton";
 
 import { logout } from "../../services/auth";
 import { useState } from "react";
+import { useHistory } from "react-router";
 
 interface LogoutModalProps{
     isOpen: boolean;
@@ -12,10 +13,16 @@ interface LogoutModalProps{
 export function LogoutModal( { isOpen, onRequestClose } : LogoutModalProps){
     //const {isOpen, onClose} = useDisclosure();
     const [logoutState, setLogoutState] = useState("");
+    const history = useHistory();
 
     function handleLogout(){
         setLogoutState("logging off");
-        logout();
+        
+        if(logout()){
+            setLogoutState("logged off");
+            
+            history.push("/");
+        }
     }
 
     return(
@@ -30,7 +37,7 @@ export function LogoutModal( { isOpen, onRequestClose } : LogoutModalProps){
                 </ModalBody>
 
                 <ModalFooter p="10">
-                    <SolidButton onClick={handleLogout} mr="6" color="white" bg="blue.400" fontSize="sm" _hover={{filter: "brightness(90%)"}} isLoading={logoutState == "logging off"}>
+                    <SolidButton onClick={handleLogout} mr="6" color="white" bg="blue.400" fontSize="sm" _hover={{filter: "brightness(90%)"}} isLoading={logoutState === "logging off"}>
                         Desconectar
                     </SolidButton>
                     <Link onClick={onRequestClose} color="gray.700" fontSize="14px">Cancelar</Link>

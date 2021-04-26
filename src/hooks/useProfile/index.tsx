@@ -1,8 +1,8 @@
 import { createContext, ReactNode, useContext, useEffect, useRef, useState } from "react";
 import { isAuthenticated } from "../../services/auth";
 import { encodePermissions, simplifyPermissions, decodePermissions } from "../../services/permissionsSecurity";
-import { getMe, useMe } from "./useMe";
-import { getPermissions, usePermissions } from "./usePermissions";
+import { getMe } from "./useMe";
+import { getPermissions } from "./usePermissions";
 
 interface ProfileProviderProps{
     children: ReactNode;
@@ -28,12 +28,12 @@ interface Profile{
     updated_at: Date;
 }
 
-interface Permission{
-    id: number;
-    name: string;
-    created_at: Date;
-    updated_at: Date;
-}
+// interface Permission{
+//     id: number;
+//     name: string;
+//     created_at: Date;
+//     updated_at: Date;
+// }
 
 interface SimplePermission{
     name: string;
@@ -117,11 +117,11 @@ export function ProfileProvider({ children } : ProfileProviderProps){
 
         setProfile(requestedProfile);
 
-        loadPermissions();
+        loadPermissions(requestedProfile.role.id);
     }
 
-    const loadPermissions = async () => {
-        const requestedPermissions = await getPermissions(profile.role.id);
+    const loadPermissions = async (roleId = profile.role.id) => {
+        const requestedPermissions = await getPermissions(roleId);
         const simplifiedPermissions = simplifyPermissions(requestedPermissions);
 
         setPermissions(simplifiedPermissions);
@@ -132,7 +132,7 @@ export function ProfileProvider({ children } : ProfileProviderProps){
             loadProfile();
         }
 
-        if(permissions.length == 0){
+        if(permissions.length === 0){
             loadPermissions();
         }
     }
@@ -149,11 +149,11 @@ export function ProfileProvider({ children } : ProfileProviderProps){
 export function HasPermission(permissions: SimplePermission[] | undefined, neededPermission : string,){
 
     if(permissions){
-        if(neededPermission == ""){
+        if(neededPermission === ""){
             return true;
         }
 
-        if(permissions.find(permission => permission.name == neededPermission)){
+        if(permissions.find(permission => permission.name === neededPermission)){
             return true;
         }
     }

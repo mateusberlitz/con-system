@@ -5,7 +5,6 @@ import { BrowserRouter } from 'react-router-dom';
 import { SidebarDrawerProvider } from './components/_Contexts/SidebarDrawerContext';
 import { ProfileProvider } from './hooks/useProfile';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { isAuthenticated } from './services/auth';
 
 const queryClient = new QueryClient();
 

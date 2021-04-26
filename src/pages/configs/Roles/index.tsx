@@ -1,9 +1,9 @@
-import { SolidButton } from "../../components/Buttons/SolidButton";
-import { MainBoard } from "../../components/MainBoard";
+import { SolidButton } from "../../../components/Buttons/SolidButton";
+import { MainBoard } from "../../../components/MainBoard";
 
-import { ReactComponent as PlusIcon } from '../../assets/icons/Plus.svg';
+import { ReactComponent as PlusIcon } from '../../../assets/icons/Plus.svg';
 import { Flex, FormControl, HStack, Radio, RadioGroup, Select, Stack, Text } from "@chakra-ui/react";
-import { Board } from "../../components/Board";
+import { Board } from "../../../components/Board";
 
 export default function Roles(){
     return(

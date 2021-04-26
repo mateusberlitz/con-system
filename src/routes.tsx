@@ -36,9 +36,9 @@ const Routes = (): JSX.Element => {
       <Switch>
         <Route path="/" exact component={Login} />
         <PrivateRoute path="/home" exact component={ConfigsHome} />
-        <PrivateRoute path="/empresas" neededPermission="Empresas" exact component={Companys} />
+        <PrivateRoute path="/empresas" neededPermission="Configurações" exact component={Companys} />
         <PrivateRoute path="/usuarios" neededPermission="Usuários" exact component={Users} />
-        <PrivateRoute path="/permissoes" neededPermission="Permissões" exact component={Roles} />
+        <PrivateRoute path="/permissoes" neededPermission="Configurações" exact component={Roles} />
 
         {/* <PrivateRoute path="/empresas" component={Roles} /> */}
       </Switch>
