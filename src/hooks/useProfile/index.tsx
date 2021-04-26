@@ -1,4 +1,6 @@
 import { createContext, ReactNode, useContext, useEffect, useRef, useState } from "react";
+import { isAuthenticated } from "../../services/auth";
+import { encodePermissions, simplifyPermissions, decodePermissions } from "../../services/permissionsSecurity";
 import { getMe, useMe } from "./useMe";
 import { getPermissions, usePermissions } from "./usePermissions";
 
@@ -33,15 +35,34 @@ interface Permission{
     updated_at: Date;
 }
 
+interface SimplePermission{
+    name: string;
+}
+
 interface ProfileContextData{
     profile?: Profile;
-    permissions?: Permission[] | undefined;
+    permissions?: SimplePermission[];
     loadProfile: () => void;
 }
 
 const ProfileContext = createContext<ProfileContextData>({} as ProfileContextData);
 
 export function ProfileProvider({ children } : ProfileProviderProps){
+    const [permissions, setPermissions] = useState<SimplePermission[]>(():SimplePermission[]|any => {
+        const storagedPermissions = localStorage.getItem('@lance/permissions');
+    
+        if (storagedPermissions) {
+            const parsedPermissions = JSON.parse(storagedPermissions);
+            
+            if(parsedPermissions){
+                return decodePermissions(parsedPermissions);
+            }
+        }
+    
+        return [];
+    });
+
+
     const [profile, setProfile] = useState<Profile>(() => {
         const storagedProfile = localStorage.getItem('@lance/profile');
     
@@ -52,31 +73,71 @@ export function ProfileProvider({ children } : ProfileProviderProps){
         return {};
     });
 
-    const previousProfileRef = useRef<Profile>();
+
+
+    //PREFER STATE OF PROFILE
+        const previousProfileRef = useRef<Profile>();
+
+        useEffect(() => {
+            previousProfileRef.current = profile;
+        });
+
+        const profilePreviousValue = previousProfileRef.current ?? profile;
+
+        useEffect(() => {
+            if(profilePreviousValue !== profile){
+                localStorage.setItem('@lance/profile', JSON.stringify(profile));
+            }
+        }, [profile, profilePreviousValue]);
+
+
+    //PREFER STATE OF PERMISSIONS
+    const previousPermissionsRef = useRef<SimplePermission[]>();
 
     useEffect(() => {
-        previousProfileRef.current = profile;
+        previousPermissionsRef.current = permissions;
     });
 
-    const profilePreviousValue = previousProfileRef.current ?? profile;
+    const permissionsPreviousValue = previousPermissionsRef.current ?? permissions;
 
     useEffect(() => {
-        if(profilePreviousValue !== profile){
-            localStorage.setItem('@lance/profile', JSON.stringify(profile));
+        if(permissionsPreviousValue !== permissions){
+            if(permissions){
+                const toStoragePermissions = encodePermissions(permissions);
+                localStorage.setItem('@lance/permissions', JSON.stringify(toStoragePermissions));
+            }
         }
-    }, [profile, profilePreviousValue]);
+    }, [permissions, permissionsPreviousValue]);
 
+
+
+    //LOADERS
     const loadProfile = async () => {
         const requestedProfile = await getMe();
 
         setProfile(requestedProfile);
+
+        loadPermissions();
     }
 
-    if(!profile.name){
-        loadProfile();
+    const loadPermissions = async () => {
+        const requestedPermissions = await getPermissions(profile.role.id);
+        const simplifiedPermissions = simplifyPermissions(requestedPermissions);
+
+        setPermissions(simplifiedPermissions);
     }
 
-    const { permissions } = usePermissions(profile.role.id);
+    if(isAuthenticated()){
+        if(!profile.name){
+            loadProfile();
+        }
+
+        if(permissions.length == 0){
+            loadPermissions();
+        }
+    }
+
+    //const { permissions } = usePermissions(profile.role ? profile.role.id : 0);
 
     return(
         <ProfileContext.Provider value={{profile, permissions, loadProfile}}>
@@ -85,10 +146,16 @@ export function ProfileProvider({ children } : ProfileProviderProps){
     )
 }
 
-export function HasPermission(permissions: Permission[] | undefined, neededPermission : string,){
+export function HasPermission(permissions: SimplePermission[] | undefined, neededPermission : string,){
 
     if(permissions){
-        permissions.map(permission => permission.name === neededPermission);
+        if(neededPermission == ""){
+            return true;
+        }
+
+        if(permissions.find(permission => permission.name == neededPermission)){
+            return true;
+        }
     }
 
     return false;

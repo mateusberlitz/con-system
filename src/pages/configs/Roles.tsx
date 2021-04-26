@@ -14,7 +14,7 @@ export default function Roles(){
 
             <HStack as="form" spacing="24px" w="100%" mb="10">
                 <FormControl pos="relative">
-                    <Select h="45px" name="role" w="100%" maxW="200px" fontSize="sm" focusBorderColor="purple.600" borderColor="gray.500" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeHolder="Cargo" color="gray.600">
+                    <Select h="45px" name="role" w="100%" maxW="200px" fontSize="sm" focusBorderColor="purple.600" borderColor="gray.500" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Cargo" color="gray.600">
                         <option value="1">Diretor</option>
                         <option value="2">Financeiro</option>
                         <option value="3">Gerente</option>

@@ -72,11 +72,11 @@ export default function Login(){
         });
     }
 
-    // if(isAuthenticated()){
-    //     return (
-    //         <Redirect to={{ pathname: '/home' }}/>
-    //     );
-    // }
+    if(isAuthenticated()){
+        return (
+            <Redirect to={{ pathname: '/home' }}/>
+        );
+    }
 
     
 

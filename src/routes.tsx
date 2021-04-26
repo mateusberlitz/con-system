@@ -13,20 +13,19 @@ interface PrivateRouteProps extends RouteProps{
   neededPermission?: string;
 }
 
-const PrivateRoute = ({component: Component, neededPermission, ...rest} : PrivateRouteProps) => {
-  const { permissions, profile } = useProfile();
-  console.log(profile, permissions);
+const PrivateRoute = ({component: Component, neededPermission = "", ...rest} : PrivateRouteProps) => {
+  const { permissions } = useProfile();
 
   return <Route {...rest} render={props => (
                 !isAuthenticated() ? (
                     <Redirect to={{ pathname: '/' , state: "Por favor, acesse sua conta."}}/>
                     
-                ) : neededPermission && !HasPermission(permissions, neededPermission) ? (
+                ) : ( !HasPermission(permissions, neededPermission) ? (
                     <Redirect to={{ pathname: '/home' , state: "Você não tem permissão para essa página"}}/>
                 )
                 : (
                     <Component {...props} />
-                )
+                ))
               )
             } 
           />
@@ -37,9 +36,9 @@ const Routes = (): JSX.Element => {
       <Switch>
         <Route path="/" exact component={Login} />
         <PrivateRoute path="/home" exact component={ConfigsHome} />
-        <PrivateRoute path="/empresas" neededPermission="" exact component={Companys} />
-        <PrivateRoute path="/usuarios" neededPermission="" exact component={Users} />
-        <PrivateRoute path="/permissoes" neededPermission="" exact component={Roles} />
+        <PrivateRoute path="/empresas" neededPermission="Empresas" exact component={Companys} />
+        <PrivateRoute path="/usuarios" neededPermission="Usuários" exact component={Users} />
+        <PrivateRoute path="/permissoes" neededPermission="Permissões" exact component={Roles} />
 
         {/* <PrivateRoute path="/empresas" component={Roles} /> */}
       </Switch>

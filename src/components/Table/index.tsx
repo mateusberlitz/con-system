@@ -19,7 +19,7 @@ export function Table({ header, children } : TableProps){
                     {
                         header.map(th => {
                             return(
-                                <Th fontSize="14" textTransform="capitalize" border="none" fontWeight="500" color="gray.900">
+                                <Th key={th.text} fontSize="14" textTransform="capitalize" border="none" fontWeight="500" color="gray.900">
                                     { th.icon && <Icon as={th.icon} stroke="#14142B" fill="none" h="30px" w="18px" mr="4"/> }
                                     { th.text }
                                 </Th>

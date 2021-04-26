@@ -13,8 +13,6 @@ export function NavLink({icon, children, href, ...rest} : NavLinkProps){
 
     let isActive = false;
 
-    console.log(href, pathname);
-
     if(pathname.startsWith(String(href)) || pathname.startsWith(String(rest.as))){
         isActive = true;
     }

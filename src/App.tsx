@@ -5,25 +5,49 @@ import { BrowserRouter } from 'react-router-dom';
 import { SidebarDrawerProvider } from './components/_Contexts/SidebarDrawerContext';
 import { ProfileProvider } from './hooks/useProfile';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { isAuthenticated } from './services/auth';
 
 const queryClient = new QueryClient();
 
 function App() {
+  // return (
+    
+  //     <BrowserRouter>
+  //       <QueryClientProvider client={queryClient}>
+  //           <SidebarDrawerProvider>
+  //             <ChakraProvider theme={theme}>
+  //                   {
+  //                     isAuthenticated() ? (
+  //                       <ProfileProvider>
+  //                         <Routes />
+  //                       </ProfileProvider>
+  //                     )
+  //                     :(
+  //                       <Routes />
+  //                     )
+  //                   }
+  //             </ChakraProvider>
+  //           </SidebarDrawerProvider>
+  //       </QueryClientProvider>
+  //     </BrowserRouter>
+    
+  // );
+
   return (
     
-      <BrowserRouter>
-        <QueryClientProvider client={queryClient}>
-            <SidebarDrawerProvider>
-              <ChakraProvider theme={theme}>
-                    <ProfileProvider>
-                      <Routes />
-                    </ProfileProvider>
-              </ChakraProvider>
-            </SidebarDrawerProvider>
-        </QueryClientProvider>
-      </BrowserRouter>
-    
-  );
+    <BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+          <SidebarDrawerProvider>
+            <ChakraProvider theme={theme}>
+                      <ProfileProvider>
+                        <Routes />
+                      </ProfileProvider>
+            </ChakraProvider>
+          </SidebarDrawerProvider>
+      </QueryClientProvider>
+    </BrowserRouter>
+  
+);
 }
 
 export default App;

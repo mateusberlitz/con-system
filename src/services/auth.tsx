@@ -1,3 +1,4 @@
+import { Redirect } from "react-router";
 import { checkAuthTimeCookie, deleteAuthTimeCookie, getAuthTimeCookie, setAuthTimeCookie } from "./expireAuthCookie";
 
 export const isAuthenticated = () => {
@@ -22,4 +23,9 @@ export const login = (token : string, expires_in : number) => {
 export const logout = () => {
   deleteAuthTimeCookie();
   localStorage.removeItem('@lance/access_token');
+  localStorage.removeItem('@lance/profile');
+
+  return (
+    <Redirect to={{ pathname: '/' }}/>
+  )
 };
