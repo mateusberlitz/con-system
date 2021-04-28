@@ -15,16 +15,41 @@ import { ReactComponent as HomeIcon } from '../../../assets/icons/Home.svg';
 import { ReactComponent as PasteIcon } from '../../../assets/icons/Paste.svg';
 import { ReactComponent as ProfileIcon } from '../../../assets/icons/Profile.svg';
 
+import { useForm } from "react-hook-form";
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+
+
+
+interface SearchUserData{
+    search: string;
+}
+
+const CreateNewCompanyFormSchema = yup.object().shape({
+    name: yup.string().required('Nome da Empresa Obrigatório'),
+    address: yup.string().required('Endereço Obrigatório'),
+    phone: yup.string().min(9),//51991090700
+    cnpj: yup.string().min(12, "Não parece ser um CNPJ correto"),//02.999.999/0001-00
+});
+
 export default function Users(){
+    const { register, handleSubmit, formState} = useForm<SearchUserData>({
+        resolver: yupResolver(CreateNewCompanyFormSchema),
+    });
+
+    const handleSearchUser = async (search : SearchUserData) => {
+        console.log(search);
+    }
+
     return(
         <MainBoard sidebar="configs">
             <SolidButton mb="12" color="white" bg="purple.300" icon={PlusIcon} colorScheme="purple">
                 Adicionar Usuário
             </SolidButton>
 
-            <HStack as="form" spacing="24px" w="100%">
+            <HStack as="form" spacing="24px" w="100%" onSubmit={handleSubmit(handleSearchUser)}>
 
-                <Input name="search" type="text" icon={SearchIcon}/>
+                <Input register={register} name="search" type="text" icon={SearchIcon} error={formState.errors.search}/>
 
                 <Select name="role">
                         <option value="0">Cargo</option>

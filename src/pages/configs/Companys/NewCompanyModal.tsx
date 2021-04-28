@@ -2,9 +2,12 @@ import { HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFo
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { Input } from "../../../components/Forms/Input";
 
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { api } from "../../../services/api";
+import { useHistory } from "react-router";
+import { useErrors } from "../../../hooks/useErrors";
 
 interface NewCompanyModalProps{
     isOpen: boolean;
@@ -21,27 +24,45 @@ interface CreateNewCompanyFormData{
 const CreateNewCompanyFormSchema = yup.object().shape({
     name: yup.string().required('Nome da Empresa Obrigatório'),
     address: yup.string().required('Endereço Obrigatório'),
-    phone: yup.string().min(9),//51991090700
-    cnpj: yup.string().min(9),//51991090700
+    phone: yup.string().min(9, "Existe Telefone com menos de 9 dígitos?"),//51991090700
+    cnpj: yup.string().min(12, "Não parece ser um CNPJ correto"),//02.999.999/0001-00
 });
 
 export function NewCompanyModal( { isOpen, onRequestClose } : NewCompanyModalProps){
+    const history = useHistory();
     const toast = useToast();
+    const { showErrors } = useErrors();
 
-    const { register, control, watch, handleSubmit, formState} = useForm<CreateNewCompanyFormData>({
+    const { register, handleSubmit, formState} = useForm<CreateNewCompanyFormData>({
         resolver: yupResolver(CreateNewCompanyFormSchema),
     });
 
-    function handleCreateNewCompany(){
+    const handleCreateNewCompany = async (companyData : CreateNewCompanyFormData) => {
+        try{
+            await api.post('/companies/store', companyData);
 
+            toast({
+                title: "Sucesso",
+                description: "A nova empresa foi cadastrada",
+                status: "success",
+                duration: 12000,
+                isClosable: true,
+            });
+
+            onRequestClose();
+        }catch(error) {
+            showErrors(error, toast);
+
+            if(error.response.data.access){
+                history.push('/');
+            }
+        }
     }
-
-    console.log(register);
 
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
             <ModalOverlay />
-            <ModalContent borderRadius="24px" as="form" onSubmit={handleSubmit(handleCreateNewCompany)}>
+            <ModalContent as="form" borderRadius="24px" onSubmit={handleSubmit(handleCreateNewCompany)}>
                 <ModalHeader p="10" fontWeight="700" fontSize="2xl">Cadastrar Empresa</ModalHeader>
 
                 <ModalCloseButton top="10" right="5"/>
@@ -50,21 +71,22 @@ export function NewCompanyModal( { isOpen, onRequestClose } : NewCompanyModalPro
                     <Stack spacing="6">
 
                         {/* Name */}
-                        <Controller name="name" control={control} defaultValue="" render={({ field: { ref, ...field } }) => 
+                        {/* <Controller name="name" control={control} defaultValue="" render={({ field: { ref, ...field } }) => 
                             <Input type="text" placeholder="Nome da empresa" variant="outline" {...field}/>
-                        }/>
+                        }/> */}
                         
-                        <Input name="name" type="text" placeholder="Nome da empresa" variant="outline"/>
-                        {/* <HStack spacing="4">
-                            <Input {...register("cnpj")} type="text" placeholder="CNPJ da empresa" variant="outline"/>
-                            <Input {...register("phone")} type="text" placeholder="Telefone" variant="outline"/>
+                        <Input register={register} name="name" type="text" placeholder="Nome da empresa" variant="outline" error={formState.errors.name}/>
+                        <HStack spacing="4" align="baseline">
+                            <Input register={register} name="cnpj" type="text" placeholder="CNPJ da empresa" variant="outline" mask="cnpj" error={formState.errors.cnpj}/>
+                            <Input register={register} name="phone" type="text" placeholder="Telefone" variant="outline" mask="phone" error={formState.errors.phone}/>
                         </HStack>
-                        <Input name="address" type="text" placeholder="Endereço" variant="outline"/> */}
+                        <Input register={register} name="address" type="text" placeholder="Endereço" variant="outline" error={formState.errors.address}/>
+
                     </Stack>
                 </ModalBody>
 
                 <ModalFooter p="10">
-                    <SolidButton mr="6" color="white" bg="purple.300" colorScheme="purple" type="submit">
+                    <SolidButton mr="6" color="white" bg="purple.300" colorScheme="purple" type="submit" isLoading={formState.isSubmitting}>
                         Cadastrar
                     </SolidButton>
 

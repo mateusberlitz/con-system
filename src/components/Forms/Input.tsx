@@ -1,43 +1,69 @@
-import { InputGroup, InputLeftElement, FormControl, InputProps, Icon, Input as ChakraInput } from "@chakra-ui/react";
-import { ChangeEvent, useState } from "react";
-import { RegisterOptions, UseFormRegister } from "react-hook-form";
-import { mask as applyMask, unMask } from "../../utils/ReMask";
+import { InputGroup, InputLeftElement, FormControl, InputProps, Icon, Input as ChakraInput, FormErrorMessage } from "@chakra-ui/react";
+import { useEffect, useRef, useState } from "react";
+import { FieldError, UseFormRegister } from "react-hook-form";
+import { mask as applyMask } from "../../utils/ReMask";
 
 interface FormInputProps extends InputProps{
     name: string;
     type: string;
+    value?: string;
     variant?: string;
     icon?: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
-    //register?: UseFormRegister<any>;
+    register: UseFormRegister<any>;
     mask?: "phone" | "cpf" | "cnpj" | "money" | "";
+    error?: FieldError;
 }
 
-export function Input({ name, type, icon, variant = "", mask = "", ...rest }: FormInputProps){
-    const [maskedValue, setMaskedValue] = useState("");
+export function Input({ name, type, icon, variant = "", value = "", mask = "", register, error, ...rest }: FormInputProps){
+    const { ref } = register(name);
+    const [controlledValue, setControlledValue] = useState("");
 
-    const handleChangeMask = (event: any) => {
-        const maskPattern = (mask == "phone" ? "(99) 9 9999-9999"
-                            : (mask == "cpf" ? "999.999.999-99"
+    const handleChangeInputValue = (value: string = "") => {
+        if(mask){
+            const maskPattern = (mask === "phone" ? "(99) 99999-9999"
+                            : (mask === "cpf" ? "999.999.999-99"
                             :                  "99.999.999/9999-99"));
 
-        setMaskedValue(applyMask(event.target.value, maskPattern));
+            setControlledValue(applyMask(value, maskPattern));
+        }else{
+            setControlledValue(value);
+        }
+
+        return value;
     }
 
+    console.log(register(name));
+
+    useEffect(()=> {
+        const maskedValue = handleChangeInputValue(value);
+        //ref.bind(value);
+    }, [value]);
+
     return icon ? (
-        <FormControl pos="relative">
+        <FormControl pos="relative" isInvalid={!!error}>
             <InputGroup>
                 <InputLeftElement w="70px" h="45" pointerEvents="none" children={<Icon as={icon} stroke="#6E7191" fill="none" width="16" strokeWidth="3"/>} />
 
-                <ChakraInput name={name} h="45px" pl="60px" type={type} fontSize="sm" focusBorderColor="purple.600" borderColor={variant === 'outline' ? "gray.500" : "transparent"} bgColor={variant === 'outline' ? "gray.100" : "gray.400"} variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" _placeholder={{color: "gray.600"}} {...rest}/>
+                <ChakraInput {...register(name)} value={controlledValue} onChange={(event) => handleChangeInputValue(event.target.value)} name={name} h="45px" pl="60px" type={type} fontSize="sm" focusBorderColor="purple.600" borderColor={variant === 'outline' ? "gray.500" : "transparent"} bgColor={variant === 'outline' ? "gray.100" : "gray.400"} variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" _placeholder={{color: "gray.600"}} {...rest}/>
             </InputGroup>
+
+            { !!error && (
+                <FormErrorMessage>
+                    {error.message}
+                </FormErrorMessage>
+            )}
         </FormControl>
     ) 
     : 
     (
-        <FormControl pos="relative">
-            <ChakraInput name={name} h="45px" pl="6" type={type} fontSize="sm" focusBorderColor="purple.600" borderColor={variant === 'outline' ? "gray.500" : "transparent"} bgColor={variant === 'outline' ? "gray.100" : "gray.400"} variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" _placeholder={{color: "gray.600"}} {...rest}/>
+        <FormControl pos="relative" isInvalid={!!error}>
+            <ChakraInput {...register(name)} value={controlledValue} onChange={(event) => handleChangeInputValue(event.target.value)} name={name} h="45px" pl="6" type={type} fontSize="sm" focusBorderColor="purple.600" borderColor={variant === 'outline' ? "gray.500" : "transparent"} bgColor={variant === 'outline' ? "gray.100" : "gray.400"} variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" _placeholder={{color: "gray.600"}} {...rest}/>
+        
+            { !!error && (
+                <FormErrorMessage>
+                    {error.message}
+                </FormErrorMessage>   
+            )}
         </FormControl>
     );
 }
-
-//value={mask ? maskedValue : ''} onChange={mask ? handleChangeMask : () => {}} 
