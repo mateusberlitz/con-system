@@ -1,29 +1,20 @@
 import { HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, useToast } from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
-import { Input } from "../../../components/Forms/Input";
+import { ControlledInput } from "../../../components/Forms/Inputs/ControlledInput";
 
-import { Controller, useForm } from "react-hook-form";
+import {  useForm } from "react-hook-form";
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { api } from "../../../services/api";
 import { useHistory } from "react-router";
 import { useErrors } from "../../../hooks/useErrors";
-
-interface Company{
-    id: number;
-    name: string;
-    address: string;
-    phone?: string;
-    cnpj?: string;
-    created_at?: Date;
-    updated_at?: Date;
-}
+import { Company } from "../../../types";
 
 interface EditCompanyModalProps{
     isOpen: boolean;
     toEditCompanyData: Company;
     onRequestClose: () => void;
-    afterRemove: () => void;
+    afterEdit: () => void;
 }
 
 interface EditNewCompanyFormData{
@@ -40,16 +31,17 @@ const EditNewCompanyFormSchema = yup.object().shape({
     cnpj: yup.string().min(12, "Não parece ser um CNPJ correto"),//02.999.999/0001-00
 });
 
-export function EditCompanyModal( { isOpen, toEditCompanyData, afterRemove, onRequestClose } : EditCompanyModalProps){
+export function EditCompanyModal( { isOpen, toEditCompanyData, afterEdit, onRequestClose } : EditCompanyModalProps){
     const history = useHistory();
     const toast = useToast();
     const { showErrors } = useErrors();
 
-    const { register, handleSubmit, formState, control} = useForm<EditNewCompanyFormData>({
+    const { handleSubmit, formState, control} = useForm<EditNewCompanyFormData>({
         resolver: yupResolver(EditNewCompanyFormSchema),
     });
 
     const handleEditCompany = async (companyData : EditNewCompanyFormData) => {
+        console.log(companyData);
         try{
             await api.put(`/companies/edit/${toEditCompanyData.id}`, companyData);
 
@@ -61,7 +53,7 @@ export function EditCompanyModal( { isOpen, toEditCompanyData, afterRemove, onRe
                 isClosable: true,
             });
 
-            afterRemove();
+            afterEdit();
         }catch(error) {
             showErrors(error, toast);
 
@@ -81,58 +73,14 @@ export function EditCompanyModal( { isOpen, toEditCompanyData, afterRemove, onRe
                 
                 <ModalBody pl="10" pr="10">
                     <Stack spacing="6">
-
-                        <Controller
-                            name="name"
-                            control={control}
-                            defaultValue={toEditCompanyData.name}
-                            rules={{ required: true }}
-                            render={({ field: {ref, ...field} }) => 
-                                <Input {...field} type="text" placeholder="Nome da empresa" variant="outline" value={toEditCompanyData.name} error={formState.errors.name}/>
-                            }
-                        />
-
-                        <HStack spacing="4" align="baseline">
-                            <Controller
-                                name="cnpj"
-                                control={control}
-                                defaultValue={toEditCompanyData.cnpj}
-                                rules={{ required: true }}
-                                render={({ field: {ref, ...field} }) => 
-                                    <Input name="cnpj" type="text" placeholder="CNPJ da empresa" variant="outline" mask="cnpj" value={toEditCompanyData.cnpj} error={formState.errors.cnpj}/>
-                                }
-                            />
-
-                            <Controller
-                                name="phone"
-                                control={control}
-                                defaultValue={toEditCompanyData.phone}
-                                rules={{ required: true }}
-                                render={({ field: {ref, ...field} }) => 
-                                    <Input name="phone" type="text" placeholder="Telefone" variant="outline" mask="phone" value={toEditCompanyData.phone} error={formState.errors.phone}/>
-                                }
-                            />
-                        </HStack>
-
-                        <Controller
-                            name="address"
-                            control={control}
-                            defaultValue={toEditCompanyData.address}
-                            rules={{ required: true }}
-                            render={({ field: {ref, ...field} }) => 
-                                <Input register={register} name="address" type="text" placeholder="Endereço" variant="outline" value={toEditCompanyData.address} error={formState.errors.address}/>
-                            }
-                        />
-
                         
-                        
-                        {/* <Input register={register} name="name" type="text" placeholder="Nome da empresa" variant="outline" value={toEditCompanyData.name} error={formState.errors.name}/>
+                        <ControlledInput control={control} name="name" type="text" placeholder="Nome da empresa" variant="outline" value={toEditCompanyData.name} error={formState.errors.name}/>
                         <HStack spacing="4" align="baseline">
-                            <Input register={register} name="cnpj" type="text" placeholder="CNPJ da empresa" variant="outline" mask="cnpj" value={toEditCompanyData.cnpj} error={formState.errors.cnpj}/>
-                            <Input register={register} name="phone" type="text" placeholder="Telefone" variant="outline" mask="phone" value={toEditCompanyData.phone} error={formState.errors.phone}/>
+                            <ControlledInput control={control} name="cnpj" mask="cnpj" type="text" placeholder="CNPJ" variant="outline" value={toEditCompanyData.cnpj} error={formState.errors.cnpj}/>
+                            <ControlledInput control={control} name="phone" mask="phone" type="text" placeholder="Telefone" variant="outline" value={toEditCompanyData.phone} error={formState.errors.phone}/>
                         </HStack>
-                        <Input register={register} name="address" type="text" placeholder="Endereço" variant="outline" value={toEditCompanyData.address} error={formState.errors.address}/> */}
-
+                        <ControlledInput control={control} name="address" type="text" placeholder="Endereço" variant="outline" value={toEditCompanyData.address} error={formState.errors.address}/>
+                        
                     </Stack>
                 </ModalBody>
 

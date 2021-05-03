@@ -13,16 +13,9 @@ import { useState } from "react";
 import { ConfirmCompanyRemoveModal } from "./ConfirmCompanyRemoveModal";
 import { useCompanies } from "../../../hooks/useCompanies";
 import { EditCompanyModal } from "./EditCompanyModal";
+import { Company } from "../../../types";
 
-interface Company{
-    id: number;
-    name: string;
-    address: string;
-    phone?: string;
-    cnpj?: string;
-    created_at?: Date;
-    updated_at?: Date;
-}
+
 
 export default function Companys(){
     const { data, isLoading, refetch, error} = useCompanies();
@@ -71,9 +64,9 @@ export default function Companys(){
 
     return (
         <>
-            <NewCompanyModal isOpen={isNewCompanyModalOpen} onRequestClose={CloseNewCompanyModal}/>
+            <NewCompanyModal afterCreate={refetch} isOpen={isNewCompanyModalOpen} onRequestClose={CloseNewCompanyModal}/>
             <ConfirmCompanyRemoveModal afterRemove={refetch} isOpen={isConfirmCompanyRemoveModalOpen} toRemoveCompanyId={removeCompanyId} onRequestClose={CloseConfirmCompanyRemoveModal}/>
-            <EditCompanyModal afterRemove={refetch} isOpen={isEditCompanyModalOpen} toEditCompanyData={editCompanyData} onRequestClose={CloseEditCompanyModal}/>
+            <EditCompanyModal afterEdit={refetch} isOpen={isEditCompanyModalOpen} toEditCompanyData={editCompanyData} onRequestClose={CloseEditCompanyModal}/>
 
             <MainBoard sidebar="configs">
                 <SolidButton onClick={OpenNewCompanyModal} mb="12" color="white" bg="purple.300" icon={PlusIcon} colorScheme="purple">
@@ -93,7 +86,7 @@ export default function Companys(){
                         </Flex>
                     ) : data.map((company:Company) => {
                         return(
-                                <Board key={company.id}>
+                                <Board key={company.id} mt="4" mb="4">
                                     <Flex mb="12">
                                         <Heading fontSize="2xl" fontWeight="500">{company.name}</Heading>
 

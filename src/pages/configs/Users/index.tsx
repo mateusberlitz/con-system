@@ -1,4 +1,4 @@
-import { Avatar, Flex, HStack, Td, Text, Tr } from "@chakra-ui/react";
+import { Avatar, Flex, HStack, Spinner, Td, Text, Tr } from "@chakra-ui/react";
 import { OutlineButton } from "../../../components/Buttons/OutlineButton";
 import { Board } from "../../../components/Board";
 import { RemoveButton } from "../../../components/Buttons/RemoveButton";
@@ -6,8 +6,8 @@ import { EditButton } from "../../../components/Buttons/EditButton";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { MainBoard } from "../../../components/MainBoard";
 import { Table as ProTable } from "../../../components/Table";
-import { Input } from "../../../components/Forms/Input";
-import { Select } from "../../../components/Forms/Select";
+import { Input } from "../../../components/Forms/Inputs/Input";
+import { Select } from "../../../components/Forms/Selects/Select";
 
 import { ReactComponent as PlusIcon } from '../../../assets/icons/Plus.svg';
 import { ReactComponent as SearchIcon } from "../../../assets/icons/Search.svg";
@@ -18,40 +18,129 @@ import { ReactComponent as ProfileIcon } from '../../../assets/icons/Profile.svg
 import { useForm } from "react-hook-form";
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { getUsers, UserFilterData, useUsers } from "../../../hooks/useUsers";
+
+import { Company, User } from "../../../types";
+import { useState } from "react";
+import { NewUserModal } from "./NewUserModal";
+import { EditUserModal } from "./EditUserModal";
+import { ConfirmUserRemoveModal } from "./ConfirmUserRemoveModal";
 
 
-
-interface SearchUserData{
-    search: string;
-}
-
-const CreateNewCompanyFormSchema = yup.object().shape({
+const CreateNewUserFormSchema = yup.object().shape({
     name: yup.string().required('Nome da Empresa Obrigatório'),
     address: yup.string().required('Endereço Obrigatório'),
     phone: yup.string().min(9),//51991090700
     cnpj: yup.string().min(12, "Não parece ser um CNPJ correto"),//02.999.999/0001-00
 });
 
+const SearchUserFormSchema = yup.object().shape({
+    search: yup.string(),
+    company: yup.string(),
+    role: yup.string(),
+});
+
+interface EditUserFormData{
+    name: string,
+    id: number;
+    phone: string;
+    email: string;
+    company: number;
+    role: number;
+}
+
+interface RemoveUserData{
+    id: number;
+    name: string;
+}
+
 export default function Users(){
-    const { register, handleSubmit, formState} = useForm<SearchUserData>({
-        resolver: yupResolver(CreateNewCompanyFormSchema),
+    const [filter, setFilter] = useState<UserFilterData>(() => {
+        const data: UserFilterData = {
+            search: ''
+        };
+        
+        return data;
+    })
+    const { data, isLoading, refetch, error} = useUsers(filter);
+    const [ editUserData, setEditUserData ] = useState<EditUserFormData>(() => {
+
+        const data: EditUserFormData = {
+            name: '',
+            id: 0,
+            email: '',
+            phone: '',
+            company: 0,
+            role: 0,
+        };
+        
+        return data;
     });
 
-    const handleSearchUser = async (search : SearchUserData) => {
+    const [removeUserData, setRemoveUserData] = useState<RemoveUserData>(() => {
+
+        const data: RemoveUserData = {
+            name: '',
+            id: 0,
+        };
+        
+        return data;
+    });
+
+    const [isNewUserModalOpen, setIsNewUserModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isConfirmUserRemoveModalOpen, setisConfirmUserRemoveModalOpen] = useState(false);
+
+    function OpenNewUserModal(){
+        setIsNewUserModalOpen(true);
+    }
+    function CloseNewUserModal(){
+        setIsNewUserModalOpen(false);
+    }
+
+
+    function OpenEditModal(user : EditUserFormData){
+        setEditUserData(user);
+        setIsEditModalOpen(true);
+    }
+    function CloseEditModal(){
+        setIsEditModalOpen(false);
+    }
+
+    function OpenConfirmUserRemoveModal(userIdAndName:RemoveUserData){
+        setRemoveUserData(userIdAndName);
+        setisConfirmUserRemoveModalOpen(true);
+    }
+    function CloseConfirmUserRemoveModal(){
+        setisConfirmUserRemoveModalOpen(false);
+    }
+
+
+
+    const { register, handleSubmit, formState} = useForm<UserFilterData>({
+        resolver: yupResolver(SearchUserFormSchema),
+    });
+
+    const handleSearchUser = async (search : UserFilterData) => {
         console.log(search);
+        setFilter(search);
     }
 
     return(
         <MainBoard sidebar="configs">
-            <SolidButton mb="12" color="white" bg="purple.300" icon={PlusIcon} colorScheme="purple">
+            <NewUserModal afterCreate={refetch} isOpen={isNewUserModalOpen} onRequestClose={CloseNewUserModal}/>
+            <EditUserModal afterEdit={refetch} toEditUserData={editUserData} isOpen={isEditModalOpen} onRequestClose={CloseEditModal}/>
+            <ConfirmUserRemoveModal afterRemove={refetch} toRemoveUserData={removeUserData} isOpen={isConfirmUserRemoveModalOpen} onRequestClose={CloseConfirmUserRemoveModal}/>
+            
+            <SolidButton onClick={OpenNewUserModal} mb="12" color="white" bg="purple.300" icon={PlusIcon} colorScheme="purple">
                 Adicionar Usuário
             </SolidButton>
 
             <HStack as="form" spacing="24px" w="100%" onSubmit={handleSubmit(handleSearchUser)}>
 
-                <Input register={register} name="search" type="text" icon={SearchIcon} error={formState.errors.search}/>
+                <Input register={register} name="search" type="text" icon={SearchIcon} error={formState.errors.search} placeholder="Procurar"/>
 
-                <Select name="role">
+                <Select register={register} name="role" error={formState.errors.search}>
                         <option value="0">Cargo</option>
                         <option value="1">Diretor</option>
                         <option value="2">Financeiro</option>
@@ -59,7 +148,7 @@ export default function Users(){
                         <option value="4">Vendedor</option>
                 </Select>
 
-                <Select name="company">
+                <Select register={register} name="company" error={formState.errors.search}>
                         <option value="0">Empresa</option>
                         <option value="1">Central</option>
                         <option value="2">Londrina</option>
@@ -94,39 +183,38 @@ export default function Users(){
                     ]
                 }>
                     {/* ITEMS */}
-                        <Tr>
-                            <Td alignItems="center" display="flex">
-                                <Flex mr="4" borderRadius="full" h="fit-content" w="fit-content" bgGradient="linear(to-r, purple.600, blue.300)" p="2px">
-                                    <Avatar borderColor="gray.600" border="2px" size="md" name="Mateus Berlitz" src="https://avatars.githubusercontent.com/u/32850300?v=4"/>
-                                </Flex>
-                                <Text display="flex" fontSize="sm" color="gray.700" fontWeight="600">Robson Seibel Gerente</Text>
-                            </Td>
-                            <Td fontSize="sm" color="gray.800">Central</Td>
-                            <Td fontSize="sm" color="gray.800">Gerente de Vendas</Td>
-                            <Td>
-                                <HStack spacing="4">
-                                    <RemoveButton />
-                                    <EditButton />
-                                </HStack>
-                            </Td>
-                        </Tr>
-                        <Tr>
-                            <Td alignItems="center" display="flex">
-                                <Flex mr="4" borderRadius="full" h="fit-content" w="fit-content" bgGradient="linear(to-r, purple.600, blue.300)" p="2px">
-                                    <Avatar borderColor="gray.600" border="2px" size="md" name="Mateus Berlitz" src="https://avatars.githubusercontent.com/u/32850300?v=4"/>
-                                </Flex>
-                                <Text display="flex" fontSize="sm" color="gray.700" fontWeight="600">Robson Seibel</Text>
-                            </Td>
-                            <Td fontSize="sm" color="gray.800">Central</Td>
-                            <Td fontSize="sm" color="gray.800">Gerente</Td>
-                            <Td>
-                                <HStack spacing="4">
-                                    <RemoveButton />
-                                    <EditButton />
-                                </HStack>
-                            </Td>
-                        </Tr>
+                    { (!isLoading &&!error) && data.map((user:User) => {
+                        return(
+                            <Tr key={user.id}>
+                                <Td alignItems="center" display="flex">
+                                    <Flex mr="4" borderRadius="full" h="fit-content" w="fit-content" bgGradient="linear(to-r, purple.600, blue.300)" p="2px">
+                                        <Avatar borderColor="gray.600" border="2px" size="md" name={`${user.name} ${user.last_name}`} src={user.image ? `${process.env.REACT_APP_API_STORAGE}${user.image}` : ""}/>
+                                    </Flex>
+                                    <Text display="flex" fontSize="sm" color="gray.700" fontWeight="600">{user.name} {user.last_name && user.last_name}</Text>
+                                </Td>
+                                <Td fontSize="sm" color="gray.800">{user.company.name}</Td>
+                                <Td fontSize="sm" color="gray.800">{user.role.name}</Td>
+                                <Td>
+                                    <HStack spacing="4">
+                                        <RemoveButton onClick={() => OpenConfirmUserRemoveModal({ id: user.id, name: user.name }) }/>
+                                        <EditButton onClick={() => OpenEditModal({id: user.id, name: user.name, phone: user.phone, email: user.email, company: user.company.id, role: user.role.id }) }/>
+                                    </HStack>
+                                </Td>
+                            </Tr>
+                        )
+                    })}
                 </ProTable>
+
+                { isLoading ? (
+                        <Flex justify="center">
+                            <Spinner/>
+                        </Flex>
+                    ) : error && (
+                        <Flex justify="center" mt="4" mb="4">
+                            <Text>Erro ao obter os dados dos usuários</Text>
+                        </Flex>
+                    )
+                }
             </Board>
 
         </MainBoard>

@@ -1,6 +1,6 @@
 import { HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, useToast } from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
-import { Input } from "../../../components/Forms/Input";
+
 
 import { useForm } from "react-hook-form";
 import * as yup from 'yup';
@@ -9,9 +9,12 @@ import { api } from "../../../services/api";
 import { useHistory } from "react-router";
 import { useErrors } from "../../../hooks/useErrors";
 
+import { Input } from "../../../components/Forms/Inputs/Input";
+
 interface NewCompanyModalProps{
     isOpen: boolean;
     onRequestClose: () => void;
+    afterCreate: () => void;
 }
 
 interface CreateNewCompanyFormData{
@@ -28,12 +31,12 @@ const CreateNewCompanyFormSchema = yup.object().shape({
     cnpj: yup.string().min(12, "Não parece ser um CNPJ correto"),//02.999.999/0001-00
 });
 
-export function NewCompanyModal( { isOpen, onRequestClose } : NewCompanyModalProps){
+export function NewCompanyModal( { isOpen, onRequestClose, afterCreate } : NewCompanyModalProps){
     const history = useHistory();
     const toast = useToast();
     const { showErrors } = useErrors();
 
-    const { register, handleSubmit, formState} = useForm<CreateNewCompanyFormData>({
+    const { register, handleSubmit, reset, formState} = useForm<CreateNewCompanyFormData>({
         resolver: yupResolver(CreateNewCompanyFormSchema),
     });
 
@@ -43,13 +46,15 @@ export function NewCompanyModal( { isOpen, onRequestClose } : NewCompanyModalPro
 
             toast({
                 title: "Sucesso",
-                description: "A nova empresa foi cadastrada",
+                description: `A nova empresa ${companyData.name} foi cadastrada`,
                 status: "success",
                 duration: 12000,
                 isClosable: true,
             });
 
             onRequestClose();
+            afterCreate();
+            reset();
         }catch(error) {
             showErrors(error, toast);
 
@@ -69,11 +74,6 @@ export function NewCompanyModal( { isOpen, onRequestClose } : NewCompanyModalPro
                 
                 <ModalBody pl="10" pr="10">
                     <Stack spacing="6">
-
-                        {/* Name */}
-                        {/* <Controller name="name" control={control} defaultValue="" render={({ field: { ref, ...field } }) => 
-                            <Input type="text" placeholder="Nome da empresa" variant="outline" {...field}/>
-                        }/> */}
                         
                         <Input register={register} name="name" type="text" placeholder="Nome da empresa" variant="outline" error={formState.errors.name}/>
                         <HStack spacing="4" align="baseline">
