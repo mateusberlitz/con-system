@@ -1,6 +1,7 @@
 import { Switch, Route, Redirect, RouteProps } from 'react-router-dom';
 
 import Login from './pages/Login';
+import Me from './pages/Me';
 import ConfigsHome from './pages/configs/';
 import Companys from './pages/configs/Companys';
 import Users from './pages/configs/Users';
@@ -35,6 +36,9 @@ const Routes = (): JSX.Element => {
     return (
       <Switch>
         <Route path="/" exact component={Login} />
+
+        <PrivateRoute path="/eu" neededPermission="Configurações" exact component={Me} />
+
         <PrivateRoute path="/home" exact component={ConfigsHome} />
         <PrivateRoute path="/empresas" neededPermission="Configurações" exact component={Companys} />
         <PrivateRoute path="/usuarios" neededPermission="Usuários" exact component={Users} />

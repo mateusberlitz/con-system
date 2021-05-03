@@ -20,11 +20,13 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { getUsers, UserFilterData, useUsers } from "../../../hooks/useUsers";
 
-import { Company, User } from "../../../types";
+import { Company, Role, User } from "../../../types";
 import { useState } from "react";
 import { NewUserModal } from "./NewUserModal";
 import { EditUserModal } from "./EditUserModal";
 import { ConfirmUserRemoveModal } from "./ConfirmUserRemoveModal";
+import { useCompanies } from "../../../hooks/useCompanies";
+import { useRoles } from "../../../hooks/useRoles";
 
 
 const CreateNewUserFormSchema = yup.object().shape({
@@ -55,6 +57,9 @@ interface RemoveUserData{
 }
 
 export default function Users(){
+    const companies = useCompanies();
+    const roles = useRoles();
+
     const [filter, setFilter] = useState<UserFilterData>(() => {
         const data: UserFilterData = {
             search: ''
@@ -142,17 +147,20 @@ export default function Users(){
 
                 <Select register={register} name="role" error={formState.errors.search}>
                         <option value="0">Cargo</option>
-                        <option value="1">Diretor</option>
-                        <option value="2">Financeiro</option>
-                        <option value="3">Gerente</option>
-                        <option value="4">Vendedor</option>
+                        {roles.data && roles.data.map((role:Role) => {
+                            return (
+                                <option key={role.id} value={role.id}>{role.name}</option>
+                            )
+                        })}
                 </Select>
 
                 <Select register={register} name="company" error={formState.errors.search}>
                         <option value="0">Empresa</option>
-                        <option value="1">Central</option>
-                        <option value="2">Londrina</option>
-                        <option value="3">Quero Carta</option>
+                        {companies.data && companies.data.map((company:Company) => {
+                            return (
+                                <option key={company.id} value={company.id}>{company.name}</option>
+                            )
+                        })}
                 </Select>
 
                 <OutlineButton type="submit" colorScheme="purple" h="45px" size="sm" borderRadius="full" variant="outline">

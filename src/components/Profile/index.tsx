@@ -2,9 +2,11 @@ import { Avatar, Box, Flex, Link, Text } from "@chakra-ui/react";
 import { useState } from "react";
 
 import { ReactComponent as ForwardArrowIcon } from '../../assets/icons/Forward Arrow.svg';
+import { useProfile } from "../../hooks/useProfile";
 import { LogoutModal } from "./LogoutModal";
 
 export function Profile(){
+    const { profile } = useProfile();
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
     function OpenLogoutModal(){
@@ -17,18 +19,18 @@ export function Profile(){
 
     return(
         <Flex ml="auto" title="Ver informações ou sair" cursor="pointer">
-            {/* { showProfileData && ( */}
-                <Box mr="4" mt="1" textAlign="right">
-                    <Text fontWeight="600" fontSize="sm" color="gray.700">Mateus Berlitz</Text>
+            { profile && (
+                <Link href="/eu" mr="4" mt="1" textAlign="right" _hover={{textDecoration: "none"}}>
+                    <Text fontWeight="600" fontSize="sm" color="gray.700">{profile.name} {profile.last_name}</Text>
                     <Text fontSize="small" color="gray.700">
-                        Programador Master
+                        {profile.role.name}
                     </Text>
-                </Box>
-            {/* )} */}
+                </Link>
+            )}
 
-            <Flex borderRadius="full" height="fit-content" bgGradient="linear(to-r, purple.600, blue.300)" p="2px">
-                <Avatar borderColor="gray.600" border="2px" size="md" name="Mateus Berlitz" src="https://avatars.githubusercontent.com/u/32850300?v=4"/>
-            </Flex>
+            <Link href="/eu" display="flex" borderRadius="full" height="fit-content" bgGradient="linear(to-r, purple.600, blue.300)" p="2px">
+                <Avatar borderColor="gray.600" border="2px" size="md" name="Mateus Berlitz" src={profile && profile.image ? `${process.env.REACT_APP_API_STORAGE}${profile.image}` : ""}/>
+            </Link>
 
             <Link mt="3" ml="6" title="Sair e fazer logout do sistema" onClick={OpenLogoutModal}>
                 <ForwardArrowIcon stroke="#6e7191" fill="none" width="20"/>
