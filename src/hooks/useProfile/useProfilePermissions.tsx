@@ -26,7 +26,7 @@ export async function getPermissions(roleId: number): Promise<Permission[]>{
     return permissions;
 }
 
-export function usePermissions(roleId: number){
+export function useProfilePermissions(roleId: number){
     const { data, isLoading, isFetching, error} = useQuery('Permissions', () => getPermissions(roleId), {
         staleTime: 1000 * 60 * 5,
         retry: 10, //fresh

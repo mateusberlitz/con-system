@@ -41,7 +41,6 @@ export function EditCompanyModal( { isOpen, toEditCompanyData, afterEdit, onRequ
     });
 
     const handleEditCompany = async (companyData : EditNewCompanyFormData) => {
-        console.log(companyData);
         try{
             await api.put(`/companies/edit/${toEditCompanyData.id}`, companyData);
 

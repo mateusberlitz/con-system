@@ -1,4 +1,4 @@
-import { Avatar, Box, Flex, Link, Text } from "@chakra-ui/react";
+import { Avatar, Flex, Link, Text } from "@chakra-ui/react";
 import { useState } from "react";
 
 import { ReactComponent as ForwardArrowIcon } from '../../assets/icons/Forward Arrow.svg';

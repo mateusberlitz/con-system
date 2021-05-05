@@ -18,7 +18,7 @@ import { ReactComponent as ProfileIcon } from '../../../assets/icons/Profile.svg
 import { useForm } from "react-hook-form";
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { getUsers, UserFilterData, useUsers } from "../../../hooks/useUsers";
+import { UserFilterData, useUsers } from "../../../hooks/useUsers";
 
 import { Company, Role, User } from "../../../types";
 import { useState } from "react";
@@ -28,13 +28,6 @@ import { ConfirmUserRemoveModal } from "./ConfirmUserRemoveModal";
 import { useCompanies } from "../../../hooks/useCompanies";
 import { useRoles } from "../../../hooks/useRoles";
 
-
-const CreateNewUserFormSchema = yup.object().shape({
-    name: yup.string().required('Nome da Empresa Obrigatório'),
-    address: yup.string().required('Endereço Obrigatório'),
-    phone: yup.string().min(9),//51991090700
-    cnpj: yup.string().min(12, "Não parece ser um CNPJ correto"),//02.999.999/0001-00
-});
 
 const SearchUserFormSchema = yup.object().shape({
     search: yup.string(),

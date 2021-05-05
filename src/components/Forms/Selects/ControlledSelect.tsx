@@ -1,4 +1,4 @@
-import { InputProps, SelectProps } from "@chakra-ui/react";
+import { SelectProps } from "@chakra-ui/react";
 import { ReactNode } from "react";
 import { Controller, FieldError, UseFormRegister } from "react-hook-form";
 import { Select } from "./Select";

@@ -30,3 +30,10 @@ export interface User{
     updated_at?: Date;
     company: Company;
 }
+
+export interface Permission{
+    id: number;
+    name: string;
+    created_at: Date;
+    updated_at: Date;
+}

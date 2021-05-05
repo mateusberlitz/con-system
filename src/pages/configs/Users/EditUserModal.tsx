@@ -1,4 +1,4 @@
-import { Flex, HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Spinner, Stack, Text, useToast } from "@chakra-ui/react";
+import { Flex, HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Spinner, Stack, useToast } from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { ControlledInput } from "../../../components/Forms/Inputs/ControlledInput";
 
@@ -8,8 +8,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { api } from "../../../services/api";
 import { useHistory } from "react-router";
 import { useErrors } from "../../../hooks/useErrors";
-import { Company, Role, User } from "../../../types";
-import { Select } from "../../../components/Forms/Selects/Select";
+import { Company, Role } from "../../../types";
 import { ControlledSelect } from "../../../components/Forms/Selects/ControlledSelect";
 import { useCompanies } from "../../../hooks/useCompanies";
 import { useRoles } from "../../../hooks/useRoles";
@@ -52,7 +51,7 @@ export function EditUserModal( { isOpen, toEditUserData, afterEdit, onRequestClo
     const toast = useToast();
     const { showErrors } = useErrors();
 
-    const { register, handleSubmit, formState, control} = useForm<EditUserFormData>({
+    const { handleSubmit, formState, control} = useForm<EditUserFormData>({
         resolver: yupResolver(EditUserFormSchema),
         defaultValues: {
             phone: toEditUserData.phone,

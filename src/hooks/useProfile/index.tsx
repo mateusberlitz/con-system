@@ -2,7 +2,7 @@ import { createContext, ReactNode, useContext, useEffect, useRef, useState } fro
 import { isAuthenticated } from "../../services/auth";
 import { encodePermissions, simplifyPermissions, decodePermissions } from "../../services/permissionsSecurity";
 import { getMe } from "./useMe";
-import { getPermissions } from "./usePermissions";
+import { getPermissions } from "./useProfilePermissions";
 
 interface ProfileProviderProps{
     children: ReactNode;
