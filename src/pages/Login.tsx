@@ -1,5 +1,5 @@
 import { isAuthenticated, login } from "../services/auth";
-import { Redirect } from "react-router";
+import { Redirect, useHistory } from "react-router";
 
 import { Button } from "@chakra-ui/button";
 import { Checkbox } from "@chakra-ui/checkbox";
@@ -34,6 +34,8 @@ const signInFormSchema = yup.object().shape({
 });
 
 export default function Login(){
+    const {profile} = useProfile();
+    const history = useHistory();
     const { loadProfile } = useProfile();
     const toastSignin = useToast();
 
@@ -48,10 +50,17 @@ export default function Login(){
             login(response.data.access_token, response.data.expires_in);
 
             loadProfile();
+
+            console.log(profile);
+            if(profile){
+                return (
+                    <Redirect to={{ pathname: '/home' }}/>
+                );
+            }
             
-            return (
-                <Redirect to={{ pathname: '/home' }}/>
-            );
+            // return (
+            //     <Redirect to={{ pathname: '/home' }}/>
+            // );
             
         }catch(error) {
             if(error.response){

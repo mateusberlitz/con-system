@@ -13,6 +13,9 @@ import { useForm } from "react-hook-form";
 import { showErrors } from "../../../hooks/useErrors";
 import { useHistory } from "react-router";
 import { api } from "../../../services/api";
+import { RemoveButton } from "../../../components/Buttons/RemoveButton";
+import { EditButton } from "../../../components/Buttons/EditButton";
+import { ConfirmRoleRemoveModal } from "./ConfirmRoleRemoveModal";
 
 interface SyncPermissions{
     [key: number]: string;
@@ -25,6 +28,9 @@ export default function Roles(){
     const roles = useRoles();
 
     const [isNewRoleModalOpen, setIsNewRoleModalOpen] = useState(false);
+    const [isConfirmRoleRemoveModalOpen, setIsConfirmRoleRemoveModalOpen] = useState(false);
+    const [isEditRoleModalOpen, setIsEditRoleModalOpen] = useState(false);
+
     const [selectedRoleId, setSelectedRoleId] = useState(0);
     const [permissions, setPermissions] = useState<Permission[]>([]);
 
@@ -35,6 +41,20 @@ export default function Roles(){
     }
     function CloseNewRoleModal(){
         setIsNewRoleModalOpen(false);
+    }
+
+    function OpenConfirmRoleRemoveModal(){
+        setIsConfirmRoleRemoveModalOpen(true);
+    }
+    function CloseConfirmRoleRemoveModal(){
+        setIsConfirmRoleRemoveModalOpen(false);
+    }
+
+    function OpenEditRoleModal(){
+        setIsEditRoleModalOpen(true);
+    }
+    function CloseEditRoleModal(){
+        setIsEditRoleModalOpen(false);
     }
 
     function handleChangeRole(event:any){
@@ -54,66 +74,68 @@ export default function Roles(){
     const { register, watch, handleSubmit, formState} = useForm();
 
     const handleSavePermissions = async (data:any) => {
-        const filteredPermissions = Object.keys(data).filter((permissionField) => {
-            console.log(permissionField.slice(0, 1), selectedRoleId);
-            return parseInt(permissionField.slice(0, 1)) === selectedRoleId;
+        //Retorna um array com a ID das permissões ativas
+        const filteredPermissions = Object.values(data).filter((permissionKey, permissionIndex, permissionArray) => {
+            return (parseInt(Object.keys(data)[permissionIndex].slice(0, 1)) == selectedRoleId && permissionKey !== false);
         });
 
-        console.log(filteredPermissions);
-
-        const syncedPermissions = Object.keys(data).reduce((syncPermissions, permissionField, permissionIndex) => {
-            syncPermissions[permissionIndex] = "on";
+        //transforma o Array de permissões em um objeto do tipo SyncPermissions
+        const syncedPermissions = filteredPermissions.reduce((syncPermissions:SyncPermissions, permissionField:any, permissionIndex) => {
+            syncPermissions[parseInt(permissionField)] = "on";
             return syncPermissions;
         }, {} as SyncPermissions)
 
-        //console.log(syncedPermissions);
+        try{
+            await api.post(`/roles/${selectedRoleId}/sync`, syncedPermissions);
 
-        // try{
-        //     await api.post(`/roles/${selectedRoleId}/sync`, syncedPermissions);
+            toast({
+                title: "Sucesso",
+                description: "Permissões sincronizadas.",
+                status: "success",
+                duration: 12000,
+                isClosable: true,
+            });
 
-        //     toast({
-        //         title: "Sucesso",
-        //         description: "Permissões sincronizadas.",
-        //         status: "success",
-        //         duration: 12000,
-        //         isClosable: true,
-        //     });
+        }catch(error) {
+            showErrors(error, toast);
 
-        // }catch(error) {
-        //     showErrors(error, toast);
-
-        //     if(error.response.data.access){
-        //         history.push('/');
-        //     }
-        // }
+            if(error.response.data.access){
+                history.push('/');
+            }
+        }
     }
 
     return(
         <MainBoard sidebar="configs">
             <NewRoleModal afterCreate={roles.refetch} isOpen={isNewRoleModalOpen} onRequestClose={CloseNewRoleModal}/>
+            {/* <EditRoleModal afterEdit={refetch} toEditUserData={editRoleData} isOpen={isEditModalOpen} onRequestClose={CloseEditModal}/> */}
+            <ConfirmRoleRemoveModal afterRemove={roles.refetch} toRemoveRoleId={selectedRoleId} isOpen={isConfirmRoleRemoveModalOpen} onRequestClose={CloseConfirmRoleRemoveModal}/>
 
             <SolidButton onClick={OpenNewRoleModal} mb="10" color="white" bg="purple.300" icon={PlusIcon} colorScheme="purple">
                 Adicionar Cargo
             </SolidButton>
 
-            { roles.isLoading ? (
-                <Flex justify="center">
-                    <Spinner/>
-                </Flex>
-            ) : (
-                    <HStack as="form" spacing="24px" w="100%" mb="10">
-                        <FormControl pos="relative">
-                            <Select onChange={handleChangeRole} h="45px" name="role" w="100%" maxW="200px" fontSize="sm" focusBorderColor="purple.600" borderColor="gray.500" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Cargo" color="gray.600">
-                            {roles.data && roles.data.map((role:Role) => {
-                                return (
-                                    <option key={role.id} value={role.id}>{role.name}</option>
-                                )
-                            })}
-                            </Select>
-                        </FormControl>
-                    </HStack>
-                )
-            }
+                { roles.isLoading ? (
+                    <Flex justify="center">
+                        <Spinner/>
+                    </Flex>
+                ) : (
+                        <HStack as="form" spacing="10" w="100%" mb="10">
+                            <FormControl pos="relative">
+                                <Select onChange={handleChangeRole} h="45px" name="role" w="100%" maxW="200px" fontSize="sm" focusBorderColor="purple.600" borderColor="gray.500" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Cargo" color="gray.600">
+                                {roles.data && roles.data.map((role:Role) => {
+                                    return (
+                                        <option key={role.id} value={role.id}>{role.name}</option>
+                                    )
+                                })}
+                                </Select>
+                            </FormControl>
+
+                            <RemoveButton onClick={OpenConfirmRoleRemoveModal}/>
+                            <EditButton/>
+                        </HStack>
+                    )
+                }
             
             <Board>
                 <Flex as="form" onSubmit={handleSubmit(handleSavePermissions)}>
@@ -145,42 +167,9 @@ export default function Roles(){
                                     <ChakraRadio value="3" colorScheme="purple">Acesso Limitado</ChakraRadio>
                                 </HStack>
                             </RadioGroup>
-                        </FormControl>
-
-                        <FormControl pos="relative">
-                            <Text mb="4" fontWeight="600">Cobrança</Text>
-
-                            <RadioGroup name="cobranca">
-                                <HStack spacing="6">
-                                    <ChakraRadio value="2" colorScheme="purple" color="purple.300" variant="check">Acesso Completo</ChakraRadio>
-                                    <ChakraRadio value="3" colorScheme="purple">Acesso Limitado</ChakraRadio>
-                                </HStack>
-                            </RadioGroup>
-                        </FormControl>
-
-                        <FormControl pos="relative">
-                            <Text mb="4" fontWeight="600">Finanças</Text>
-
-                            <RadioGroup name="cobranca">
-                                <HStack spacing="6">
-                                    <ChakraRadio value="2" colorScheme="purple" color="purple.300" variant="check">Acesso Completo</ChakraRadio>
-                                    <ChakraRadio value="3" colorScheme="purple">Acesso Limitado</ChakraRadio>
-                                </HStack>
-                            </RadioGroup>
-                        </FormControl>
-
-                        <FormControl pos="relative">
-                            <Text mb="4" fontWeight="600">Vendas</Text>
-
-                            <RadioGroup name="cobranca">
-                                <HStack spacing="6">
-                                    <ChakraRadio value="2" colorScheme="purple" color="purple.300" variant="check">Acesso Completo</ChakraRadio>
-                                    <ChakraRadio value="3" colorScheme="purple">Acesso Limitado</ChakraRadio>
-                                </HStack>
-                            </RadioGroup>
                         </FormControl> */}
 
-                        <SolidButton type="submit" mb="12" color="white" bg="purple.300" colorScheme="purple">
+                        <SolidButton type="submit" mb="12" color="white" bg="purple.300" colorScheme="purple" isLoading={formState.isSubmitting}>
                             Salvar
                         </SolidButton>
                     </Stack>
