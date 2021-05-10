@@ -30,7 +30,7 @@ export default function ConfigHome(){
                         <Text fontWeight="600" ml="2" color="purple.300" lineHeight="25px">Configurações</Text>
                     </Link>
 
-                    <Link color="blue.400" display="flex" direction="row">
+                    <Link href="/financeiro" color="blue.400" display="flex" direction="row">
                         <ChartBarIcon stroke="#0096B7" fill="none" width="20"/>
                         <Text fontWeight="600" ml="2" color="blue.400" lineHeight="25px">Finanças</Text>
                     </Link>

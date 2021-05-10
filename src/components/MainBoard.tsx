@@ -11,15 +11,15 @@ interface MainBoardProps{
     children: ReactNode;
 }
 
-export function MainBoard({ header = null, children } : MainBoardProps){
+export function MainBoard({ header = null, children, sidebar } : MainBoardProps){
     const isWideVersion = useBreakpointValue({
         base: false,
         lg: true,
-    })
+    });
 
     return(
         <Box w="100%">
-            <SideBar/>
+            <SideBar desk={sidebar}/>
 
             <Flex float="right" my="9" pl="3" pr="3" width={isWideVersion ? "calc(100% - 254px)" : "100%"}>
                 <OpenButton/>

@@ -16,6 +16,7 @@ import { api } from "../../../services/api";
 import { RemoveButton } from "../../../components/Buttons/RemoveButton";
 import { EditButton } from "../../../components/Buttons/EditButton";
 import { ConfirmRoleRemoveModal } from "./ConfirmRoleRemoveModal";
+import { EditRoleModal } from "./EditRoleModal";
 
 interface SyncPermissions{
     [key: number]: string;
@@ -32,8 +33,18 @@ export default function Roles(){
     const [isEditRoleModalOpen, setIsEditRoleModalOpen] = useState(false);
 
     const [selectedRoleId, setSelectedRoleId] = useState(0);
-    const [permissions, setPermissions] = useState<Permission[]>([]);
+    const [editRoleData, setEditRoleData] = useState<Role>(() => {
 
+        const data: Role = {
+            name: '',
+            id: 0,
+            desk_id: 0,
+        };
+        
+        return data;
+    });
+
+    const [permissions, setPermissions] = useState<Permission[]>([]);
     const rolesPermissions = usePermissions(selectedRoleId);
 
     function OpenNewRoleModal(){
@@ -58,7 +69,10 @@ export default function Roles(){
     }
 
     function handleChangeRole(event:any){
+        const selectedRoleData = roles.data.filter((role:Role) => role.id === parseInt(event?.target.value))[0];
+
         setSelectedRoleId(event?.target.value);
+        setEditRoleData(selectedRoleData);
     }
 
     const loadPermissions = async () => {
@@ -105,10 +119,21 @@ export default function Roles(){
         }
     }
 
+
+    useEffect(() => {
+        if(!roles.isLoading && !roles.error && selectedRoleId){
+            const selectedRoleData = roles.data.filter((role:Role) => role.id == selectedRoleId)[0];
+            
+            if(selectedRoleData){
+                setEditRoleData(roles.data.filter((role:Role) => role.id == selectedRoleId)[0]);
+            }
+        }
+    }, [roles.data, setEditRoleData])
+
     return(
         <MainBoard sidebar="configs">
             <NewRoleModal afterCreate={roles.refetch} isOpen={isNewRoleModalOpen} onRequestClose={CloseNewRoleModal}/>
-            {/* <EditRoleModal afterEdit={refetch} toEditUserData={editRoleData} isOpen={isEditModalOpen} onRequestClose={CloseEditModal}/> */}
+            <EditRoleModal afterEdit={roles.refetch} toEditRoleData={editRoleData} isOpen={isEditRoleModalOpen} onRequestClose={CloseEditRoleModal}/>
             <ConfirmRoleRemoveModal afterRemove={roles.refetch} toRemoveRoleId={selectedRoleId} isOpen={isConfirmRoleRemoveModalOpen} onRequestClose={CloseConfirmRoleRemoveModal}/>
 
             <SolidButton onClick={OpenNewRoleModal} mb="10" color="white" bg="purple.300" icon={PlusIcon} colorScheme="purple">
@@ -132,7 +157,7 @@ export default function Roles(){
                             </FormControl>
 
                             <RemoveButton onClick={OpenConfirmRoleRemoveModal}/>
-                            <EditButton/>
+                            <EditButton onClick={OpenEditRoleModal}/>
                         </HStack>
                     )
                 }

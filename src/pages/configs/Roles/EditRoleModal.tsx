@@ -37,13 +37,13 @@ const EditRoleFormSchema = yup.object().shape({
 });
 
 export function EditRoleModal( { isOpen, toEditRoleData, afterEdit, onRequestClose } : EditRoleModalProps){
-    const companies = useDesks();
+    const desks = useDesks();
 
     const history = useHistory();
     const toast = useToast();
     const { showErrors } = useErrors();
 
-    const { handleSubmit, formState, control} = useForm<EditRoleFormData>({
+    const { handleSubmit, reset, formState, control} = useForm<EditRoleFormData>({
         resolver: yupResolver(EditRoleFormSchema),
         defaultValues: {
             name: toEditRoleData.name,
@@ -51,13 +51,13 @@ export function EditRoleModal( { isOpen, toEditRoleData, afterEdit, onRequestClo
         }
     });
 
-    const handleEditRole = async (RoleData : EditRoleFormData) => {
+    const handleEditRole = async (roleData : EditRoleFormData) => {
         try{
-            await api.post(`/Roles/edit/${toEditRoleData.id}`, RoleData);
+            await api.put(`/roles/edit/${toEditRoleData.id}`, roleData);
 
             toast({
                 title: "Sucesso",
-                description: "Dados do usuário atualizados.",
+                description: `O cargo ${toEditRoleData.name} foi atualizado.`,
                 status: "success",
                 duration: 12000,
                 isClosable: true,
@@ -91,14 +91,14 @@ export function EditRoleModal( { isOpen, toEditRoleData, afterEdit, onRequestClo
 
 
                         <HStack spacing="4" align="baseline">
-                        { companies.isLoading ? (
+                        { desks.isLoading ? (
                             <Flex justify="center">
                                 <Spinner/>
                             </Flex>
                         ) : (
                                 <ControlledSelect control={control} name="desk_id" value={toEditRoleData.desk_id.toString()} variant="outline" error={formState.errors.desk_id}> 
                                         <option key="0" value="0">Empresa</option>
-                                        {companies.data && companies.data.map((desk:Company) => {
+                                        {desks.data && desks.data.map((desk:Company) => {
                                             return (
                                                 <option key={desk.id} value={desk.id}>{desk.name}</option>
                                             )

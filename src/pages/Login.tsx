@@ -43,6 +43,18 @@ export default function Login(){
         resolver: yupResolver(signInFormSchema),
     });
 
+    function redirect(){
+        if(profile){
+            console.log(profile);
+            if(profile.role.desk_id === 1){
+                history.push('/home');
+            }else{
+                history.push('/financeiro');
+            }
+            
+        }
+    }
+
     const handleSignIn = async (signInData : SignInFormData) => {
         try{
             const response = await api.post('/auth/login', signInData);
@@ -50,18 +62,8 @@ export default function Login(){
             login(response.data.access_token, response.data.expires_in);
 
             loadProfile();
-
-            console.log(profile);
-            if(profile){
-                return (
-                    <Redirect to={{ pathname: '/home' }}/>
-                );
-            }
             
-            // return (
-            //     <Redirect to={{ pathname: '/home' }}/>
-            // );
-            
+            redirect();
         }catch(error) {
             if(error.response){
                 toastError(error.response.data.error);
@@ -82,9 +84,7 @@ export default function Login(){
     }
 
     if(isAuthenticated()){
-        return (
-            <Redirect to={{ pathname: '/home' }}/>
-        );
+        redirect();
     }
 
     

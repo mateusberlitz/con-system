@@ -8,6 +8,7 @@ import Users from './pages/configs/Users';
 import Roles from './pages/configs/Roles';
 import { isAuthenticated } from './services/auth';
 import { HasPermission, useProfile } from './hooks/useProfile';
+import Financial from './pages/financial';
 
 interface PrivateRouteProps extends RouteProps{
   component: any;
@@ -43,6 +44,8 @@ const Routes = (): JSX.Element => {
         <PrivateRoute path="/empresas" neededPermission="Configurações" exact component={Companys} />
         <PrivateRoute path="/usuarios" neededPermission="Usuários" exact component={Users} />
         <PrivateRoute path="/permissoes" neededPermission="Configurações" exact component={Roles} />
+
+        <PrivateRoute path="/financeiro" neededPermission="Financeiro Limitado" exact component={Financial} />
 
         {/* <PrivateRoute path="/empresas" component={Roles} /> */}
       </Switch>

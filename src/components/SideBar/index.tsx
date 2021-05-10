@@ -2,7 +2,11 @@ import { Box, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerOverla
 import { useSideBarDrawer } from "../_Contexts/SidebarDrawerContext";
 import { SideBarNav } from "./SideBarNav";
 
-export function SideBar(){
+interface SideBarProps{
+    desk: string;
+}
+
+export function SideBar({ desk } : SideBarProps){
     const { isOpen, onClose } = useSideBarDrawer();
 
     const isDrawerSidebar = useBreakpointValue({
@@ -18,7 +22,7 @@ export function SideBar(){
                         <DrawerCloseButton mt="6" color="#fff" />
 
                         <DrawerBody p="0">
-                            <SideBarNav />
+                            <SideBarNav desk={desk}/>
                         </DrawerBody>
                     </DrawerContent>
                 </DrawerOverlay>
@@ -28,7 +32,7 @@ export function SideBar(){
 
     return(
         <Box as="aside" w="254px" float="left" position="fixed">
-            <SideBarNav/>
+            <SideBarNav desk={desk}/>
         </Box>
     )
 }
