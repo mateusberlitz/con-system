@@ -113,11 +113,11 @@ export function ProfileProvider({ children } : ProfileProviderProps){
 
     //LOADERS
     const loadProfile = async () => {
-        const requestedProfile = await getMe();
+        const loadedProfile = await getMe();
 
-        setProfile(requestedProfile);
+        loadPermissions(loadedProfile.role.id);
 
-        loadPermissions(requestedProfile.role.id);
+        setProfile(loadedProfile);
     }
 
     const loadPermissions = async (roleId = profile.role.id) => {
@@ -136,8 +136,6 @@ export function ProfileProvider({ children } : ProfileProviderProps){
             loadPermissions();
         }
     }
-
-    //const { permissions } = usePermissions(profile.role ? profile.role.id : 0);
 
     return(
         <ProfileContext.Provider value={{profile, permissions, loadProfile}}>

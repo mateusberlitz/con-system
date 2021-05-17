@@ -14,6 +14,8 @@ export function getAuthTimeCookie(){
     for(var i = 0; i < slicedCookie.length; i++){
         var cookiePart = slicedCookie[i];
 
+        cookiePart = cookiePart.replace(/\s/g, '');
+
         if(cookiePart === "expireAuth"){
             return cookiePart;
         }

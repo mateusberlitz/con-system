@@ -4,6 +4,7 @@ import Routes from './routes';
 import { BrowserRouter } from 'react-router-dom';
 import { SidebarDrawerProvider } from './components/_Contexts/SidebarDrawerContext';
 import { ProfileProvider } from './hooks/useProfile';
+import { SelectedCompanyProvider } from './hooks/useSelectedCompany';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
 const queryClient = new QueryClient();
@@ -39,7 +40,9 @@ function App() {
           <SidebarDrawerProvider>
             <ChakraProvider theme={theme}>
                       <ProfileProvider>
-                        <Routes />
+                          <SelectedCompanyProvider>
+                              <Routes />
+                          </SelectedCompanyProvider>
                       </ProfileProvider>
             </ChakraProvider>
           </SidebarDrawerProvider>

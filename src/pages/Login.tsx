@@ -20,6 +20,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useToast } from "@chakra-ui/react";
 import { Alert } from "../components/Alert";
 import { useProfile } from "../hooks/useProfile";
+import { useEffect, useState } from "react";
 
 interface SignInFormData{
     email: string;
@@ -34,7 +35,7 @@ const signInFormSchema = yup.object().shape({
 });
 
 export default function Login(){
-    const {profile} = useProfile();
+    const {permissions, profile} = useProfile();
     const history = useHistory();
     const { loadProfile } = useProfile();
     const toastSignin = useToast();
@@ -44,14 +45,14 @@ export default function Login(){
     });
 
     function redirect(){
-        if(profile){
-            console.log(profile);
-            if(profile.role.desk_id === 1){
-                history.push('/home');
-            }else{
-                history.push('/financeiro');
+        if(profile && permissions){
+            if(Object.keys(profile).length !== 0){
+                if(profile.role.desk_id === 1){
+                    history.push('/home');
+                }else{
+                    history.push('/financeiro');
+                }
             }
-            
         }
     }
 
@@ -62,8 +63,6 @@ export default function Login(){
             login(response.data.access_token, response.data.expires_in);
 
             loadProfile();
-            
-            redirect();
         }catch(error) {
             if(error.response){
                 toastError(error.response.data.error);
@@ -83,11 +82,17 @@ export default function Login(){
         });
     }
 
-    if(isAuthenticated()){
-        redirect();
-    }
+    useEffect(() => {
+        if(isAuthenticated()){
+            redirect();
+        }
+    }, [permissions]);
 
-    
+    // useEffect(() => {
+    //     if(isAuthenticated()){
+    //         redirect();
+    //     }
+    // }, []);
 
     //HTML  
     return(

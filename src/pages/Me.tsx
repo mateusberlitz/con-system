@@ -33,7 +33,7 @@ export default function Me(){
 
     const [profileImage, setProfileImage] = useState(() => {
         if(profile){
-            return `${process.env.REACT_APP_API_STORAGE}${profile.image}`;
+            return `${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_STORAGE : process.env.REACT_APP_API_LOCAL_STORAGE}${profile.image}`;
         }
 
         return "";

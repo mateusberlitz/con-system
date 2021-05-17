@@ -2,7 +2,7 @@ import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { MainBoard } from "../../../components/MainBoard";
 
 import { ReactComponent as PlusIcon } from '../../../assets/icons/Plus.svg';
-import { Flex, FormControl, Radio as ChakraRadio, HStack, RadioGroup, Select, Spinner, Stack, Text, Checkbox, useToast } from "@chakra-ui/react";
+import { Flex, FormControl, Radio as HStack, Select, Spinner, Stack, Text, Checkbox, useToast } from "@chakra-ui/react";
 import { Board } from "../../../components/Board";
 import { NewRoleModal } from "./NewRoleModal";
 import { useEffect, useState } from "react";

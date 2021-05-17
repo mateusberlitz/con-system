@@ -8,7 +8,8 @@ import Users from './pages/configs/Users';
 import Roles from './pages/configs/Roles';
 import { isAuthenticated } from './services/auth';
 import { HasPermission, useProfile } from './hooks/useProfile';
-import Financial from './pages/financial';
+import Financial from './pages/Financial';
+import Payments from './pages/Financial/Payments';
 
 interface PrivateRouteProps extends RouteProps{
   component: any;
@@ -22,7 +23,7 @@ const PrivateRoute = ({component: Component, neededPermission = "", ...rest} : P
                 !isAuthenticated() ? (
                     <Redirect to={{ pathname: '/' , state: "Por favor, acesse sua conta."}}/>
                     
-                ) : ( !HasPermission(permissions, neededPermission) ? (
+                ) : ( neededPermission !== "" && !HasPermission(permissions, neededPermission) ? (
                     <Redirect to={{ pathname: '/home' , state: "Você não tem permissão para essa página"}}/>
                 )
                 : (
@@ -38,7 +39,7 @@ const Routes = (): JSX.Element => {
       <Switch>
         <Route path="/" exact component={Login} />
 
-        <PrivateRoute path="/eu" neededPermission="Configurações" exact component={Me} />
+        <Route path="/eu" exact component={Me} />
 
         <PrivateRoute path="/home" exact component={ConfigsHome} />
         <PrivateRoute path="/empresas" neededPermission="Configurações" exact component={Companys} />
@@ -46,6 +47,7 @@ const Routes = (): JSX.Element => {
         <PrivateRoute path="/permissoes" neededPermission="Configurações" exact component={Roles} />
 
         <PrivateRoute path="/financeiro" neededPermission="Financeiro Limitado" exact component={Financial} />
+        <PrivateRoute path="/pagamentos" neededPermission="Financeiro Limitado" exact component={Payments} />
 
         {/* <PrivateRoute path="/empresas" component={Roles} /> */}
       </Switch>

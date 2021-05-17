@@ -189,7 +189,7 @@ export default function Users(){
                             <Tr key={user.id}>
                                 <Td alignItems="center" display="flex">
                                     <Flex mr="4" borderRadius="full" h="fit-content" w="fit-content" bgGradient="linear(to-r, purple.600, blue.300)" p="2px">
-                                        <Avatar borderColor="gray.600" border="2px" size="md" name={`${user.name} ${user.last_name}`} src={user.image ? `${process.env.REACT_APP_API_STORAGE}${user.image}` : ""}/>
+                                        <Avatar borderColor="gray.600" border="2px" size="md" name={`${user.name} ${user.last_name}`} src={user.image ? `${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_STORAGE : process.env.REACT_APP_API_LOCAL_STORAGE}${user.image}` : ""}/>
                                     </Flex>
                                     <Text display="flex" fontSize="sm" color="gray.700" fontWeight="600">{user.name} {user.last_name && user.last_name}</Text>
                                 </Td>
