@@ -1,15 +1,18 @@
+import { IconButton } from "@chakra-ui/button";
 import { Flex } from "@chakra-ui/layout";
 import { useState } from "react";
-import { SketchPicker } from "react-color";
+import { SketchPicker, BlockPicker } from "react-color";
+import { string } from "yup";
+import { ReactComponent as CloseIcon } from '../../assets/icons/Close.svg';
 
-export function ColorPicker(){
+interface ColorPickerProps{
+    color: string,
+    setNewColor: (color: string) => void,
+}
+
+export function ColorPicker({ color, setNewColor }: ColorPickerProps ){
     const [showColorPicker, setShowColorPicker] = useState(false);
-    const [color, setColor] = useState({
-        r: '241',
-        g: '112',
-        b: '19',
-        a: '1'
-    });
+    //const [color, setColor] = useState('#ffffff');
 
     const handleOpenColorPicker = () => {
         setShowColorPicker(true);
@@ -20,21 +23,22 @@ export function ColorPicker(){
     }
 
     const handleChangeColor = (color:any) => {
-        setColor(color.rgb);
+        setNewColor(color.hex);
     }
 
     return(
         <Flex pos="relative">
             <Flex 
                 onClick={showColorPicker ? handleCloseColorPicker : handleOpenColorPicker}
-                bg={`rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`} 
+                bg={color} 
                 w="20px" h="20px" borderRadius="full" border="2px" borderColor="gray.500" cursor="pointer">
             </Flex>
 
             {
                 showColorPicker && (
-                    <Flex pos="absolute" left="30px" zIndex="90" top="-120px">
-                        <SketchPicker onChange={handleChangeColor}/>
+                    <Flex pos="absolute" left="-75px" zIndex="90" top="40px">
+                        {/* <IconButton h="24px" w="23px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#dddddd" fill="none"/>} variant="outline"/> */}
+                        <BlockPicker color={color} onChange={handleChangeColor}/>
                     </Flex>
                 )
             }

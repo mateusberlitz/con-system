@@ -37,3 +37,11 @@ export interface Permission{
     created_at: Date;
     updated_at: Date;
 }
+
+export interface PaymentCategory{
+    id: number;
+    name: string;
+    color: string;
+    created_at: Date;
+    updated_at: Date;
+}
