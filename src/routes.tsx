@@ -10,6 +10,7 @@ import { isAuthenticated } from './services/auth';
 import { HasPermission, useProfile } from './hooks/useProfile';
 import Financial from './pages/Financial';
 import Payments from './pages/Financial/Payments';
+import PaymentCategories from './pages/Financial/PaymentCategories';
 
 interface PrivateRouteProps extends RouteProps{
   component: any;
@@ -48,6 +49,7 @@ const Routes = (): JSX.Element => {
 
         <PrivateRoute path="/financeiro" neededPermission="Financeiro Limitado" exact component={Financial} />
         <PrivateRoute path="/pagamentos" neededPermission="Financeiro Limitado" exact component={Payments} />
+        <PrivateRoute path="/categorias" neededPermission="Financeiro Limitado" exact component={PaymentCategories} />
 
         {/* <PrivateRoute path="/empresas" component={Roles} /> */}
       </Switch>

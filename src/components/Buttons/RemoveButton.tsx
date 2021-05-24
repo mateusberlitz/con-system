@@ -9,7 +9,7 @@ interface BoardProps extends ButtonProps{
 
 export function RemoveButton({children, size = "sm", ...rest } : BoardProps){
     return (
-        <Button {...rest} color="red.400" fontWeight="500" variant="unstyled" size={size} fontSize="12px">
+        <Button {...rest} color="red.400" fontWeight="500" variant="unstyled" size={size} fontSize="12px" borderRadius="full" pl="4" pr="4" height="7">
             <Icon as={DeleteIcon}  stroke="#C30052" fill="none" mr="2"/>
             Remover
             {children}

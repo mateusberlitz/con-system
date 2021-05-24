@@ -2,7 +2,7 @@ import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { MainBoard } from "../../../components/MainBoard";
 
 import { ReactComponent as PlusIcon } from '../../../assets/icons/Plus.svg';
-import { Flex, FormControl, Radio as HStack, Select, Spinner, Stack, Text, Checkbox, useToast } from "@chakra-ui/react";
+import { Flex, FormControl, HStack, Select, Spinner, Stack, Text, Checkbox, useToast } from "@chakra-ui/react";
 import { Board } from "../../../components/Board";
 import { NewRoleModal } from "./NewRoleModal";
 import { useEffect, useState } from "react";
@@ -145,7 +145,7 @@ export default function Roles(){
                         <Spinner/>
                     </Flex>
                 ) : (
-                        <HStack as="form" spacing="10" w="100%" mb="10">
+                        <HStack spacing="10" w="100%" mb="10">
                             <FormControl pos="relative">
                                 <Select onChange={handleChangeRole} h="45px" name="role" w="100%" maxW="200px" fontSize="sm" focusBorderColor="purple.600" borderColor="gray.500" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Cargo" color="gray.600">
                                 {roles.data && roles.data.map((role:Role) => {

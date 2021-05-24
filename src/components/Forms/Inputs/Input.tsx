@@ -17,7 +17,7 @@ interface FormInputProps extends InputProps{
     inputRef?: Ref<any>
 }
 
-export function Input({ name, type, icon, variant = "", value = "", mask = "", register = undefined, onChange, inputRef, control, error, ...rest }: FormInputProps){
+export function Input({ name, type, icon, variant = "", value = "", mask = "", register = undefined, onChange, inputRef, control, error, maxW, ...rest }: FormInputProps){
     const [controlledValue, setControlledValue] = useState("");
 
     const handleReturnMaskedInputValue = (value: string = "") => {
@@ -73,7 +73,7 @@ export function Input({ name, type, icon, variant = "", value = "", mask = "", r
     }
 
     return icon ? (
-        <FormControl pos="relative" isInvalid={!!error}>
+        <FormControl pos="relative" isInvalid={!!error} maxW={maxW}>
             <InputGroup>
                 <InputLeftElement w="70px" h="45" pointerEvents="none" children={<Icon as={icon} stroke="#6E7191" fill="none" width="16" strokeWidth="3"/>} />
 
@@ -89,7 +89,7 @@ export function Input({ name, type, icon, variant = "", value = "", mask = "", r
     ) 
     : 
     (
-        <FormControl pos="relative" isInvalid={!!error}>
+        <FormControl pos="relative" isInvalid={!!error} maxW={maxW}>
             <ChakraInput
 
                 {...getControlledInputAttributes()}
