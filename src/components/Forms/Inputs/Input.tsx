@@ -1,7 +1,7 @@
 import { InputGroup, InputLeftElement, FormControl, InputProps, Icon, Input as ChakraInput, FormErrorMessage } from "@chakra-ui/react";
 import { Ref, useEffect, useState } from "react";
 import { FieldError, UseFormRegister } from "react-hook-form";
-import { mask as applyMask } from "../../../utils/ReMask";
+import { mask as applyMask, maskMoney as applyMoney } from "../../../utils/ReMask";
 
 interface FormInputProps extends InputProps{
     name: string;
@@ -22,12 +22,17 @@ export function Input({ name, type, icon, variant = "", value = "", mask = "", r
 
     const handleReturnMaskedInputValue = (value: string = "") => {
         if(mask){
-            const maskPattern = (mask === "phone" ? "(99) 99999-9999"
+            if(mask == 'money'){
+                value = applyMoney(value);
+            }else{
+                const maskPattern = (mask === "phone" ? "(99) 99999-9999"
                             : (mask === "cpf" ? "999.999.999-99"
-                            :                  "99.999.999/9999-99"));
+                            : (mask === "cnpj" ? "99.999.999/9999-99"
+                            :  "")));
 
             
-            value = applyMask(value, maskPattern);
+                value = applyMask(value, maskPattern);
+            }
         }
 
         setControlledValue(value);

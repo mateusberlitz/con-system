@@ -28,6 +28,7 @@ import { api } from "../../../services/api";
 import { UserFilterData, useUsers } from "../../../hooks/useUsers";
 import { useProviders } from "../../../hooks/useProviders";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
+import { usePayments } from "../../../hooks/usePayments";
 
 
 interface FilterPaymentsFormData{
@@ -48,12 +49,22 @@ const FilterPaymentsFormSchema = yup.object().shape({
 
 export default function Payments(){
     const workingCompany = useWorkingCompany();
-    console.log(workingCompany);
     const history = useHistory();
+
+    const [filter, setFilter] = useState<UserFilterData>(() => {
+        const data: UserFilterData = {
+            search: ''
+        };
+        
+        return data;
+    })
+    const payments = usePayments(filter);
+
+    console.log(payments);
+
     const {profile} = useProfile();
     const companies = useCompanies();
     const providers = useProviders();
-    //const categoriesArray = usePaymentCategories();
     const { showErrors } = useErrors();
     const { data, isLoading, refetch, error} = useCompanies();
 
@@ -92,10 +103,10 @@ export default function Payments(){
         
     }, [])
 
-    const filter: UserFilterData = {
+    const usersFilter: UserFilterData = {
         search: ''
     };
-    const users = useUsers(filter);
+    const users = useUsers(usersFilter);
 
     return(
         <MainBoard sidebar="financial" header={ 

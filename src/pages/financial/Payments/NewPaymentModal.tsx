@@ -12,6 +12,9 @@ import { useErrors } from "../../../hooks/useErrors";
 import { Input } from "../../../components/Forms/Inputs/Input";
 import { Select } from "../../../components/Forms/Selects/Select";
 import { PaymentCategory, User, Provider } from "../../../types";
+import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
+import { formatDate } from "../../../utils/formatDate";
+import { unMask } from "../../../utils/ReMask";
 
 interface NewPaymentModalProps{
     isOpen: boolean;
@@ -27,15 +30,15 @@ interface CreateNewPaymentFormData{
     observation?: string;
     company: number;
     category: number;
-    provider: number;
-    status: boolean;
-    pay_to_user: number;
-    value: number;
+    provider?: number;
+    status?: boolean;
+    pay_to_user?: number;
+    value: string;
     expire: string;
-    contract: string;
-    group: string;
-    quote: string;
-    recurrence: number;
+    contract?: string;
+    group?: string;
+    quote?: string;
+    recurrence?: number;
     file: any;
 }
 
@@ -44,19 +47,20 @@ const CreateNewPaymentFormSchema = yup.object().shape({
     observation: yup.string(),
     company: yup.number(),
     category: yup.number(),
-    provider: yup.number(),
+    provider: yup.number().transform((v, o) => o === '' ? null : v).nullable(),
     status: yup.boolean(),
-    pay_to_user: yup.string(),
+    pay_to_user: yup.number().transform((v, o) => o === '' ? null : v).nullable(),
     value: yup.string().required("Informe o valor do pagamento"),
     expire: yup.date().required("Selecione a data de vencimento"),
     contract: yup.string(),
     group: yup.string(),
     quote: yup.string(),
-    recurrence: yup.string().nullable(),
+    recurrence: yup.number().transform((v, o) => o === '' ? null : v).nullable(),
     file: yup.array(),
 });
 
 export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categories, users, providers } : NewPaymentModalProps){
+    const workingCompany = useWorkingCompany();
     const history = useHistory();
     const toast = useToast();
     const { showErrors } = useErrors();
@@ -65,9 +69,54 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
         resolver: yupResolver(CreateNewPaymentFormSchema),
     });
 
+    function includeAndFormatData(paymentData: CreateNewPaymentFormData){
+        const removedValueCurrencyUnit = paymentData.value.substring(3);
+        const valueWithDoubleFormat = removedValueCurrencyUnit.replace('.', '').replace(',', '.');
+        //const floatValue = parseFloat(valueWithDoubleFormat);
+
+        paymentData.value = valueWithDoubleFormat;
+
+        if(paymentData.recurrence === null){
+            delete paymentData.recurrence;
+        }
+
+        if(paymentData.provider === null){
+            delete paymentData.provider;
+        }
+
+        if(paymentData.pay_to_user === null){
+            delete paymentData.pay_to_user;
+        }
+
+        paymentData.expire = formatDate(paymentData.expire);
+
+        if(!workingCompany.company){
+            return paymentData;
+        }
+
+        paymentData.company = workingCompany.company?.id;
+
+        return paymentData;
+    }
+
     const handleCreateNewPayment = async (paymentData : CreateNewPaymentFormData) => {
         try{
             console.log(paymentData);
+
+            if(!workingCompany.company){
+                toast({
+                    title: "Ué",
+                    description: `Seleciona uma empresa para trabalhar`,
+                    status: "warning",
+                    duration: 12000,
+                    isClosable: true,
+                });
+
+                return;
+            }
+
+            paymentData = includeAndFormatData(paymentData);
+
             await api.post('/payments/store', paymentData);
 
             toast({
