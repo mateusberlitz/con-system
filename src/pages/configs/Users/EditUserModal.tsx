@@ -96,8 +96,8 @@ export function EditUserModal( { isOpen, toEditUserData, afterEdit, onRequestClo
                     <Stack spacing="6">
 
                         <HStack spacing="4" align="baseline">
-                            <ControlledInput control={control} value={toEditUserData.email} name="email" type="text" placeholder="E-mail" variant="outline" error={formState.errors.email}/>
-                            <ControlledInput control={control} value={toEditUserData.phone} name="phone" type="text" placeholder="Telefone" variant="outline" mask="phone" error={formState.errors.phone}/>
+                            <ControlledInput control={control} value={toEditUserData.email} name="email" type="text" placeholder="E-mail" variant="outline" error={formState.errors.email} focusBorderColor="purple.600"/>
+                            <ControlledInput control={control} value={toEditUserData.phone} name="phone" type="text" placeholder="Telefone" variant="outline" mask="phone" error={formState.errors.phone} focusBorderColor="purple.600"/>
                         </HStack>
 
 
@@ -107,7 +107,7 @@ export function EditUserModal( { isOpen, toEditUserData, afterEdit, onRequestClo
                                 <Spinner/>
                             </Flex>
                         ) : (
-                                <ControlledSelect control={control} name="company" value={toEditUserData.company.toString()} variant="outline" error={formState.errors.email}> 
+                                <ControlledSelect control={control} name="company" value={toEditUserData.company.toString()} variant="outline" error={formState.errors.email} focusBorderColor="purple.600"> 
                                         <option key="0" value="0">Empresa</option>
                                         {companies.data && companies.data.map((company:Company) => {
                                             return (
@@ -123,7 +123,7 @@ export function EditUserModal( { isOpen, toEditUserData, afterEdit, onRequestClo
                                 <Spinner/>
                             </Flex>
                         ) : (
-                            <ControlledSelect control={control} name="role" value={toEditUserData.role.toString()} variant="outline" error={formState.errors.email}>
+                            <ControlledSelect control={control} name="role" value={toEditUserData.role.toString()} variant="outline" error={formState.errors.email} focusBorderColor="purple.600">
                                     <option key="0" value="0">Cargo</option>
                                     {roles.data && roles.data.map((role:Role) => {
                                         return (

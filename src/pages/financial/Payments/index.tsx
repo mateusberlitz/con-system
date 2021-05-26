@@ -4,7 +4,7 @@ import { MainBoard } from "../../../components/MainBoard";
 import { useCompanies } from "../../../hooks/useCompanies";
 import { useProfile } from "../../../hooks/useProfile";
 import { useSelectedCompany } from "../../../hooks/useSelectedCompany";
-import { Company } from "../../../types";
+import { Company, PaymentCategory } from "../../../types";
 
 import { useForm } from "react-hook-form";
 import * as yup from 'yup';
@@ -21,9 +21,13 @@ import { useErrors } from "../../../hooks/useErrors";
 import { OutlineButton } from "../../../components/Buttons/OutlineButton";
 import { EditButton } from "../../../components/Buttons/EditButton";
 import { RemoveButton } from "../../../components/Buttons/RemoveButton";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { NewPaymentModal } from "./NewPaymentModal";
 import { useHistory } from "react-router";
+import { api } from "../../../services/api";
+import { UserFilterData, useUsers } from "../../../hooks/useUsers";
+import { useProviders } from "../../../hooks/useProviders";
+import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 
 
 interface FilterPaymentsFormData{
@@ -43,9 +47,12 @@ const FilterPaymentsFormSchema = yup.object().shape({
 });
 
 export default function Payments(){
+    const workingCompany = useWorkingCompany();
+    console.log(workingCompany);
     const history = useHistory();
     const {profile} = useProfile();
     const companies = useCompanies();
+    const providers = useProviders();
     //const categoriesArray = usePaymentCategories();
     const { showErrors } = useErrors();
     const { data, isLoading, refetch, error} = useCompanies();
@@ -57,8 +64,9 @@ export default function Payments(){
     const { companyId, changeCompanyId } = useSelectedCompany();
 
     function handleChangeCompany(event:any){
-        const id = (event?.target.value ? event?.target.value : 1);
-        changeCompanyId(id);
+        const selectedCompanyId = (event?.target.value ? event?.target.value : 1);
+        const selectedCompanyData = companies.data.filter((company:Company) => company.id == selectedCompanyId)[0]
+        workingCompany.changeCompany(selectedCompanyData);
     }
 
     const [isNewPaymentModalOpen, setIsNewPaymentModalOpen] = useState(false);
@@ -69,6 +77,25 @@ export default function Payments(){
     function CloseNewPaymentModal(){
         setIsNewPaymentModalOpen(false);
     }
+
+
+    const [categories, setCategories] = useState<PaymentCategory[]>([]);
+
+    const loadCategories = async () => {
+        const { data } = await api.get('/payment_categories');
+
+        setCategories(data);
+    }
+
+    useEffect(() => {
+        loadCategories();
+        
+    }, [])
+
+    const filter: UserFilterData = {
+        search: ''
+    };
+    const users = useUsers(filter);
 
     return(
         <MainBoard sidebar="financial" header={ 
@@ -91,8 +118,7 @@ export default function Payments(){
                 ))
         }
         >
-            <NewPaymentModal afterCreate={refetch} isOpen={isNewPaymentModalOpen} onRequestClose={CloseNewPaymentModal}/>
-
+            <NewPaymentModal categories={categories} users={users.data} providers={providers.data} afterCreate={refetch} isOpen={isNewPaymentModalOpen} onRequestClose={CloseNewPaymentModal}/>
 
             <Flex justify="space-between" alignItems="center" mb="10">
                 <SolidButton onClick={OpenNewPaymentModal} color="white" bg="blue.400" icon={PlusIcon} colorScheme="blue">
@@ -106,6 +132,10 @@ export default function Payments(){
                 <OutlineButton onClick={() => {history.push('/categorias')}}>
                     Categorias
                 </OutlineButton>
+
+                <OutlineButton onClick={() => {history.push('/fornecedores')}}>
+                    Fornecedores
+                </OutlineButton>
             </Flex>
 
             <Flex as="form" mb="20">
@@ -117,13 +147,11 @@ export default function Payments(){
                         <Input register={register} name="initial_date" type="date" placeholder="Data inicial" variant="filled" error={formState.errors.name}/>
                         <Input register={register} name="final_date" type="date" placeholder="Data Final" variant="filled" error={formState.errors.name}/>
 
-                        <Select register={register} h="45px" name="category" w="100%" maxW="200px" fontSize="sm" focusBorderColor="purple.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Categoria">
+                        <Select register={register} h="45px" name="category" w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Categoria">
                             <option value="1">Comissões</option>
                             <option value="2">Materiais</option>
                             <option value="3">Escritório</option>
                         </Select>
-                            
-                        
 
                     </HStack>
 
@@ -133,7 +161,7 @@ export default function Payments(){
                         <Input register={register} name="quote" type="text" placeholder="Cota" variant="filled" error={formState.errors.cnpj}/>
                         <Input register={register} name="contract" type="text" placeholder="Contrato" variant="filled" error={formState.errors.phone}/>
                             
-                        <Select register={register} h="45px" name="pay_to_user" w="100%" maxW="200px" fontSize="sm" focusBorderColor="purple.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Pagar para">
+                        <Select register={register} h="45px" name="pay_to_user" w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Pagar para">
                             <option value="1">Comissões</option>
                             <option value="2">Materiais</option>
                             <option value="3">Escritório</option>

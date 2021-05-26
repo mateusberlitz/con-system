@@ -75,12 +75,12 @@ export function NewCompanyModal( { isOpen, onRequestClose, afterCreate } : NewCo
                 <ModalBody pl="10" pr="10">
                     <Stack spacing="6">
                         
-                        <Input register={register} name="name" type="text" placeholder="Nome da empresa" variant="outline" error={formState.errors.name}/>
+                        <Input register={register} name="name" type="text" placeholder="Nome da empresa" variant="outline" error={formState.errors.name} focusBorderColor="purple.600"/>
                         <HStack spacing="4" align="baseline">
-                            <Input register={register} name="cnpj" type="text" placeholder="CNPJ da empresa" variant="outline" mask="cnpj" error={formState.errors.cnpj}/>
-                            <Input register={register} name="phone" type="text" placeholder="Telefone" variant="outline" mask="phone" error={formState.errors.phone}/>
+                            <Input register={register} name="cnpj" type="text" placeholder="CNPJ da empresa" variant="outline" mask="cnpj" error={formState.errors.cnpj} focusBorderColor="purple.600"/>
+                            <Input register={register} name="phone" type="text" placeholder="Telefone" variant="outline" mask="phone" error={formState.errors.phone} focusBorderColor="purple.600"/>
                         </HStack>
-                        <Input register={register} name="address" type="text" placeholder="Endereço" variant="outline" error={formState.errors.address}/>
+                        <Input register={register} name="address" type="text" placeholder="Endereço" variant="outline" error={formState.errors.address} focusBorderColor="purple.600"/>
 
                     </Stack>
                 </ModalBody>

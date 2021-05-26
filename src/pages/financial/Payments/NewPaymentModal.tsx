@@ -11,11 +11,15 @@ import { useErrors } from "../../../hooks/useErrors";
 
 import { Input } from "../../../components/Forms/Inputs/Input";
 import { Select } from "../../../components/Forms/Selects/Select";
+import { PaymentCategory, User, Provider } from "../../../types";
 
 interface NewPaymentModalProps{
     isOpen: boolean;
     onRequestClose: () => void;
     afterCreate: () => void;
+    categories: PaymentCategory[];
+    providers: Provider[];
+    users: User[];
 }
 
 interface CreateNewPaymentFormData{
@@ -38,21 +42,21 @@ interface CreateNewPaymentFormData{
 const CreateNewPaymentFormSchema = yup.object().shape({
     title: yup.string().required('Título do pagamento obrigatório'),
     observation: yup.string(),
-    company: yup.number().required("Selecione uma Empresa"),
-    category: yup.number().required("Selecione uma categoria"),
+    company: yup.number(),
+    category: yup.number(),
     provider: yup.number(),
     status: yup.boolean(),
-    pay_to_user: yup.number(),
-    value: yup.number(),
+    pay_to_user: yup.string(),
+    value: yup.string().required("Informe o valor do pagamento"),
     expire: yup.date().required("Selecione a data de vencimento"),
     contract: yup.string(),
     group: yup.string(),
     quote: yup.string(),
-    recurrence: yup.number(),
+    recurrence: yup.string().nullable(),
     file: yup.array(),
 });
 
-export function NewPaymentModal( { isOpen, onRequestClose, afterCreate } : NewPaymentModalProps){
+export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categories, users, providers } : NewPaymentModalProps){
     const history = useHistory();
     const toast = useToast();
     const { showErrors } = useErrors();
@@ -61,10 +65,10 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate } : NewPa
         resolver: yupResolver(CreateNewPaymentFormSchema),
     });
 
-    const handleCreateNewUser = async (paymentData : CreateNewPaymentFormData) => {
+    const handleCreateNewPayment = async (paymentData : CreateNewPaymentFormData) => {
         try{
             console.log(paymentData);
-            await api.post('/users/store', paymentData);
+            await api.post('/payments/store', paymentData);
 
             toast({
                 title: "Sucesso",
@@ -89,7 +93,7 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate } : NewPa
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
             <ModalOverlay />
-            <ModalContent as="form" borderRadius="24px" onSubmit={handleSubmit(handleCreateNewUser)}>
+            <ModalContent as="form" borderRadius="24px" onSubmit={handleSubmit(handleCreateNewPayment)}>
                 <ModalHeader p="10" fontWeight="700" fontSize="2xl">Cadastrar Pagamento</ModalHeader>
 
                 <ModalCloseButton top="10" right="5"/>
@@ -100,38 +104,52 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate } : NewPa
                         <Input register={register} name="title" type="text" placeholder="Título" variant="outline" error={formState.errors.title}/>
 
                         <HStack spacing="4" align="baseline">
-                            <Input register={register} name="expire" type="date" placeholder="Data de Vencimento" variant="filled" error={formState.errors.expire}/>
+                            <Input register={register} name="expire" type="date" placeholder="Data de Vencimento" variant="outline" error={formState.errors.expire}/>
 
                             <Input register={register} name="value" type="text" placeholder="Valor" variant="outline" mask="money" error={formState.errors.value}/>
                         </HStack>
 
                         <HStack spacing="4" align="baseline">
-                            <Select register={register} h="45px" name="category" w="100%" maxW="200px" fontSize="sm" focusBorderColor="purple.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Categoria" error={formState.errors.category}>
-                                <option value="1">Comissões</option>
-                                <option value="2">Materiais</option>
-                                <option value="3">Escritório</option>
+                            <Select register={register} h="45px" value="0" name="category" w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Categoria" error={formState.errors.category}>
+                                {categories && categories.map((category:PaymentCategory) => {
+                                    return (
+                                        <option key={category.id} value={category.id}>{category.name}</option>
+                                    )
+                                })}
                             </Select>
 
-                            <Select register={register} h="45px" name="pay_to_user" w="100%" maxW="200px" fontSize="sm" focusBorderColor="purple.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Pagar para" error={formState.errors.pay_to_user}>
-                                <option value="1">Comissões</option>
-                                <option value="2">Materiais</option>
-                                <option value="3">Escritório</option>
+                            <Select register={register} h="45px" value="0" name="provider" w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Fornecedor" error={formState.errors.pay_to_user}>
+                                {providers && providers.map((provider:Provider) => {
+                                    return (
+                                        <option key={provider.id} value={provider.id}>{provider.name}</option>
+                                    )
+                                })}
                             </Select>
                         </HStack>
 
                         <HStack spacing="4" align="baseline">
-                            <Input register={register} name="contract" type="text" placeholder="Contrato" variant="filled" error={formState.errors.contract}/>
+                            <Input register={register} name="contract" type="text" placeholder="Contrato" variant="outline" error={formState.errors.contract}/>
 
-                            <Input register={register} name="recurrence" type="number" placeholder="Repetir Mensalmente" variant="filled" error={formState.errors.recurrence}/>
+                            <Select register={register} h="45px" name="pay_to_user" value="0" w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Pagar para" error={formState.errors.pay_to_user}>
+                                {users && users.map((user:User) => {
+                                    return (
+                                        <option key={user.id} value={user.id}>{user.name}</option>
+                                    )
+                                })}
+                            </Select>
                         </HStack>
 
-                        <Input register={register} name="observation" type="text" placeholder="Título" variant="outline" error={formState.errors.observation}/>
+                        <HStack spacing="4" align="baseline">
+                            <Input register={register} name="recurrence" type="number" placeholder="Repetir Mensalmente" variant="outline" error={formState.errors.recurrence}/>
+                        </HStack>
+
+                        <Input register={register} name="observation" type="text" placeholder="Observação" variant="outline" error={formState.errors.observation}/>
 
                     </Stack>
                 </ModalBody>
 
                 <ModalFooter p="10">
-                    <SolidButton mr="6" color="white" bg="purple.300" colorScheme="purple" type="submit" isLoading={formState.isSubmitting}>
+                    <SolidButton mr="6" color="white" bg="blue.400" colorScheme="blue" type="submit" isLoading={formState.isSubmitting}>
                         Cadastrar
                     </SolidButton>
 

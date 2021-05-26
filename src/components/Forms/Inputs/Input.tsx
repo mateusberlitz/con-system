@@ -77,7 +77,7 @@ export function Input({ name, type, icon, variant = "", value = "", mask = "", r
             <InputGroup>
                 <InputLeftElement w="70px" h="45" pointerEvents="none" children={<Icon as={icon} stroke="#6E7191" fill="none" width="16" strokeWidth="3"/>} />
 
-                <ChakraInput {...getControlledInputAttributes()} name={name} h="45px" pl="60px" type={type} fontSize="sm" focusBorderColor="purple.600" borderColor={variant === 'outline' ? "gray.500" : "transparent"} bgColor={variant === 'outline' ? "gray.100" : "gray.400"} variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" _placeholder={{color: "gray.600"}} {...rest}/>
+                <ChakraInput {...getControlledInputAttributes()} name={name} h="45px" pl="60px" type={type} fontSize="sm" borderColor={variant === 'outline' ? "gray.500" : "transparent"} bgColor={variant === 'outline' ? "gray.100" : (variant === 'filled' ? "gray.400" : "")} _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" _placeholder={{color: "gray.600"}} {...rest}/>
             </InputGroup>
 
             { !!error && (
@@ -94,7 +94,7 @@ export function Input({ name, type, icon, variant = "", value = "", mask = "", r
 
                 {...getControlledInputAttributes()}
                 
-                name={name} h="45px" pl="6" type={type} fontSize="sm" focusBorderColor="purple.600" borderColor={variant === 'outline' ? "gray.500" : "transparent"} bgColor={variant === 'outline' ? "gray.100" : "gray.400"} variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" _placeholder={{color: "gray.600"}} {...rest}
+                name={name} h="45px" pl="6" type={type} fontSize="sm" borderColor={variant === 'outline' ? "gray.500" : "transparent"} bgColor={variant === 'outline' ? "gray.100" : (variant === 'filled' ? "gray.400" : "")} _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" _placeholder={{color: "gray.600"}} {...rest}
             />
         
             { !!error && (

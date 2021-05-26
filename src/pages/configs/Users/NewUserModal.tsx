@@ -86,29 +86,29 @@ export function NewUserModal( { isOpen, onRequestClose, afterCreate } : NewUserM
                     <Stack spacing="6">
                         
                         <HStack spacing="4" align="baseline">
-                            <Input register={register} name="name" type="text" placeholder="Nome" variant="outline" error={formState.errors.name}/>
-                            <Input register={register} name="lastname" type="text" placeholder="Sobrenome" variant="outline" error={formState.errors.lastname}/>
+                            <Input register={register} name="name" type="text" placeholder="Nome" variant="outline" error={formState.errors.name} focusBorderColor="purple.600"/>
+                            <Input register={register} name="lastname" type="text" placeholder="Sobrenome" variant="outline" error={formState.errors.lastname} focusBorderColor="purple.600"/>
                         </HStack>
 
                         <HStack spacing="4" align="baseline">
-                            <Input register={register} name="cpf" type="text" placeholder="CPF" variant="outline" mask="cpf" error={formState.errors.cpf}/>
-                            <Input register={register} name="phone" type="text" placeholder="Telefone" variant="outline" mask="phone" error={formState.errors.phone}/>
+                            <Input register={register} name="cpf" type="text" placeholder="CPF" variant="outline" mask="cpf" error={formState.errors.cpf} focusBorderColor="purple.600"/>
+                            <Input register={register} name="phone" type="text" placeholder="Telefone" variant="outline" mask="phone" error={formState.errors.phone} focusBorderColor="purple.600"/>
                         </HStack>
 
                         <HStack spacing="4" align="baseline">
-                            <Input register={register} name="email" type="text" placeholder="E-mail" variant="outline" error={formState.errors.email}/>
-                            <Input register={register} name="password" type="password" placeholder="Senha" variant="outline" error={formState.errors.password}/>
+                            <Input register={register} name="email" type="text" placeholder="E-mail" variant="outline" error={formState.errors.email} focusBorderColor="purple.600"/>
+                            <Input register={register} name="password" type="password" placeholder="Senha" variant="outline" error={formState.errors.password} focusBorderColor="purple.600"/>
                         </HStack>
 
                         <HStack spacing="4" align="baseline">
-                            <Select register={register} name="company" variant="outline" error={formState.errors.email}> 
+                            <Select register={register} name="company" variant="outline" error={formState.errors.email} focusBorderColor="purple.600"> 
                                     <option value="0">Empresa</option>
                                     <option value="1">Central</option>
                                     <option value="2">Londrina</option>
                                     <option value="3">Quero Carta</option>
                             </Select>
 
-                            <Select register={register} name="role" variant="outline" error={formState.errors.email}>
+                            <Select register={register} name="role" variant="outline" error={formState.errors.email} focusBorderColor="purple.600">
                                     <option value="0">Cargo</option>
                                     <option value="1">Diretor</option>
                                     <option value="2">Financeiro</option>

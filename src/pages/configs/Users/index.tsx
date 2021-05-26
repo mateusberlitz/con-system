@@ -136,9 +136,9 @@ export default function Users(){
 
             <HStack as="form" spacing="24px" w="100%" onSubmit={handleSubmit(handleSearchUser)}>
 
-                <Input register={register} name="search" type="text" icon={SearchIcon} error={formState.errors.search} placeholder="Procurar"/>
+                <Input register={register} name="search" type="text" icon={SearchIcon} error={formState.errors.search} focusBorderColor="purple.600" placeholder="Procurar"/>
 
-                <Select register={register} name="role" error={formState.errors.search}>
+                <Select register={register} name="role" error={formState.errors.search} focusBorderColor="purple.600">
                         <option value="0">Cargo</option>
                         {roles.data && roles.data.map((role:Role) => {
                             return (
@@ -147,7 +147,7 @@ export default function Users(){
                         })}
                 </Select>
 
-                <Select register={register} name="company" error={formState.errors.search}>
+                <Select register={register} name="company" error={formState.errors.search} focusBorderColor="purple.600">
                         <option value="0">Empresa</option>
                         {companies.data && companies.data.map((company:Company) => {
                             return (

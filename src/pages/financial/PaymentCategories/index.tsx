@@ -7,7 +7,7 @@ import { ReactComponent as PlusIcon } from '../../../assets/icons/Plus.svg';
 import { ReactComponent as EllipseIcon } from '../../../assets/icons/Ellipse.svg';
 import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
 
-import { Flex, HStack, Stack, Text } from "@chakra-ui/layout";
+import { Box, Flex, Grid, HStack, SimpleGrid, Stack, Text } from "@chakra-ui/layout";
 import { IconButton } from "@chakra-ui/button";
 import { Input } from "../../../components/Forms/Inputs/Input";
 import { ColorPicker } from "../../../components/Forms/ColorPicker";
@@ -21,6 +21,8 @@ import { useToast } from "@chakra-ui/toast";
 import { useErrors } from "../../../hooks/useErrors";
 import { useHistory } from "react-router";
 import { Spinner } from "@chakra-ui/spinner";
+import { EditPaymentCategoryModal } from "./EditPaymentCategoryModal";
+import { ConfirmPaymentCategoryRemoveModal } from "./ConfirmPaymentCategoryRemoveModal";
 
 interface CreateNewPaymentCategoryFormData{
     name: string;
@@ -39,24 +41,80 @@ export default function PaymentCategories(){
     const history = useHistory();
     const { showErrors } = useErrors();
 
+    const [toEditcolor, setToEditColor] = useState('#ffffff');
+
+    function changeColor(color: string){
+        setToEditColor(color);
+    }
+
+    const [isEditPaymentCategoryModalOpen, setIsEditPaymentCategoryModalOpen] = useState(false);
+    const [editPaymentCategoryData, setEditPaymentCategoryData] = useState<PaymentCategory>(() => {
+
+        const data: PaymentCategory = {
+            name: '',
+            id: 0,
+            color: '#ffffff',
+        };
+        
+        return data;
+    });
+
+    function OpenEditPaymentCategoryModal(categoryId: number){
+        handleChangePaymentCategory(categoryId);
+        setIsEditPaymentCategoryModalOpen(true);
+    }
+    function CloseEditPaymentCategoryModal(){
+        setIsEditPaymentCategoryModalOpen(false);
+    }
+
+    const [paymentCategoryId, setPaymentCategoryId] = useState(0);
+    const [isConfirmPaymentCategoryRemoveModalOpen, setIsConfirmPaymentCategoryRemoveModalOpen] = useState(false);
+
+    function OpenConfirmPaymentCategoryRemoveModal(categoryId: number){
+        setPaymentCategoryId(categoryId);
+        setIsConfirmPaymentCategoryRemoveModalOpen(true);
+    }
+    function CloseConfirmPaymentCategoryRemoveModal(){
+        setIsConfirmPaymentCategoryRemoveModalOpen(false);
+    }
+
+
+    function handleChangePaymentCategory(categoryId:number){
+        const selectedPaymentData = categories.filter((category:PaymentCategory) => category.id === categoryId)[0];
+
+        changeColor(selectedPaymentData.color);
+        setEditPaymentCategoryData(selectedPaymentData);
+    }
 
     const { register, handleSubmit, reset, formState} = useForm<CreateNewPaymentCategoryFormData>({
         resolver: yupResolver(CreateNewPaymentCategoryFormSchema),
     });
 
+    const loadCategories = async () => {
+        const { data } = await api.get('/payment_categories');
+
+        setCategories(data);
+    }
+
     useEffect(() => {
-        const loadCategories = async () => {
-            const { data } = await api.get('/payment_categories');
-
-            setCategories(data);
-        }
-
         loadCategories();
         
     }, [])
 
     const handleCreateCategory = async (paymentCategoryData: CreateNewPaymentCategoryFormData) => {
         paymentCategoryData.color = color;
+
+        if(color === '#ffffff'){
+            toast({
+                title: "Ops",
+                description: `Selecione uma cor diferente`,
+                status: "warning",
+                duration: 12000,
+                isClosable: true,
+            });
+
+            return;
+        }
 
         try{
             await api.post('/payment_categories/store', paymentCategoryData);
@@ -70,6 +128,7 @@ export default function PaymentCategories(){
             });
 
             reset();
+            loadCategories();
         }catch(error) {
             showErrors(error, toast);
 
@@ -87,6 +146,10 @@ export default function PaymentCategories(){
                 </Text>
             )
         }>
+            <EditPaymentCategoryModal afterEdit={loadCategories} color={toEditcolor} changeColor={changeColor} toEditPaymentCategoryData={editPaymentCategoryData} isOpen={isEditPaymentCategoryModalOpen} onRequestClose={CloseEditPaymentCategoryModal}/>
+            <ConfirmPaymentCategoryRemoveModal afterRemove={loadCategories} toRemovePaymentCategoryId={paymentCategoryId} isOpen={isConfirmPaymentCategoryRemoveModalOpen} onRequestClose={CloseConfirmPaymentCategoryRemoveModal}/>
+
+
             <HStack as="form" spacing="4" mb="10" onSubmit={handleSubmit(handleCreateCategory)}>
                 <ColorPicker color={color} setNewColor={setColor}/>
                 <Input name="name" register={register} type="text" placeholder="Categoria" variant="outline" maxW="200px" error={formState.errors.name}/>
@@ -95,71 +158,26 @@ export default function PaymentCategories(){
                 </SolidButton>
             </HStack>
 
-            <Stack spacing="6">
-                {
-                    !categories ? (
-                        <Flex justify="center">
-                            <Spinner/>
-                        </Flex>
-                    ) : categories.map(category => {
-                        return (
-                            <Flex key={category.name} flexGrow={1} justify="space-between" fontWeight="500" alignItems="center" bg="white" borderRadius="full" shadow="xl" h="54px" px="8">
-                                <Flex alignItems="center">
-                                    <EllipseIcon stroke="none" fill={category.color ? category.color : "#dddddd"}/>
-                                    <Text mx="4" color={category.color ? category.color : "#dddddd"}>{category.name}</Text>
-                                </Flex>
-                                
-                                <IconButton h="24px" w="23px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
+            <SimpleGrid columns={3} minChildWidth="260px" gap={6}>
+            {
+                !categories ? (
+                    <Flex justify="center" flexWrap="wrap">
+                        <Spinner/>
+                    </Flex>
+                ) : categories.map(category => {
+                    return (
+                        <Flex key={category.name} w="100%" justify="space-between" fontWeight="500" alignItems="center" bg="white" borderRadius="full" shadow="xl" h="54px" px="8">
+                            <Flex alignItems="center" cursor="pointer" onClick={() => OpenEditPaymentCategoryModal(category.id)}>
+                                <EllipseIcon stroke="none" fill={category.color ? category.color : "#dddddd"}/>
+                                <Text mx="4" color={category.color ? category.color : "#dddddd"}>{category.name}</Text>
                             </Flex>
-                        )
-                    })
-                }
-                <HStack flexDirection="row" spacing="5" flexWrap="wrap">
-                    <Flex flexGrow={1} justify="space-between" fontWeight="500" alignItems="center" bg="white" borderRadius="full" shadow="xl" h="54px" px="8">
-                        <Flex alignItems="center">
-                            <EllipseIcon stroke="none" fill="#2097ed"/>
-                            <Text mx="4" color="#2097ed">Fatura da internet</Text>
+                            
+                            <IconButton onClick={() => OpenConfirmPaymentCategoryRemoveModal(category.id)} h="24px" w="23px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
                         </Flex>
-                        
-                        <IconButton h="24px" w="23px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
-                    </Flex>
-
-                    <Flex flexGrow={1} fontWeight="500" alignItems="center" bg="white" borderRadius="full" shadow="xl" h="54px" px="8">
-                        <EllipseIcon stroke="none" fill="#2097ed"/>
-                        <Text ml="2" color="#2097ed">Fatura da internet</Text>
-                    </Flex>
-
-                    <Flex flexGrow={1} fontWeight="500" alignItems="center" bg="white" borderRadius="full" shadow="xl" h="54px" px="8">
-                        <EllipseIcon stroke="none" fill="#2097ed"/>
-                        <Text ml="2" color="#2097ed">Fatura da internet</Text>
-                    </Flex>
-
-                </HStack>
-
-                    <HStack flexDirection="row" spacing="5" flexWrap="wrap">
-
-                    <Flex flexGrow={1} fontWeight="500" alignItems="center" bg="white" borderRadius="full" shadow="xl" h="54px" px="8">
-                        <EllipseIcon stroke="none" fill="#2097ed"/>
-                        <Text ml="2" color="#2097ed">Fatura da internet</Text>
-                    </Flex>
-
-                    <Flex flexGrow={1} fontWeight="500" alignItems="center" bg="white" borderRadius="full" shadow="xl" h="54px" px="8">
-                        <EllipseIcon stroke="none" fill="#2097ed"/>
-                        <Text ml="2" color="#2097ed">Fatura da internet</Text>
-                    </Flex>
-
-                    <Flex flexGrow={1} fontWeight="500" alignItems="center" bg="white" borderRadius="full" shadow="xl" h="54px" px="8">
-                        <EllipseIcon stroke="none" fill="#2097ed"/>
-                        <Text ml="2" color="#2097ed">Fatura da internet</Text>
-                    </Flex>
-
-                    <Flex flexGrow={1} fontWeight="500" alignItems="center" bg="white" borderRadius="full" shadow="xl" h="54px" px="8">
-                        <EllipseIcon stroke="none" fill="#2097ed"/>
-                        <Text ml="2" color="#2097ed">Fatura da internet</Text>
-                    </Flex>
-
-                    </HStack>
-            </Stack>
+                    )
+                })
+            }
+            </SimpleGrid>
         </MainBoard>
     );
 }

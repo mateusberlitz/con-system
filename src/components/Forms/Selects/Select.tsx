@@ -49,7 +49,7 @@ export function Select({ name, children, variant, selectRef, value = "", selecte
 
     return(
         <FormControl pos="relative" isInvalid={!!error}>
-            <ChakraSelect {...getRegister()} h="45px" name={name} fontSize="sm" focusBorderColor="purple.600" borderColor={variant === 'outline' ? "gray.500" : "transparent"} bgColor={variant === 'outline' ? "gray.100" : "gray.400"} _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" color="gray.700">
+            <ChakraSelect {...getRegister()} h="45px" name={name} fontSize="sm" borderColor={variant === 'outline' ? "gray.500" : "transparent"} bgColor={variant === 'outline' ? "gray.100" : "gray.400"} _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" color="gray.700" {...rest}>
                 {children}
             </ChakraSelect>
 

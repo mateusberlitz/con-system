@@ -34,14 +34,21 @@ export interface User{
 export interface Permission{
     id: number;
     name: string;
-    created_at: Date;
-    updated_at: Date;
+    created_at?: Date;
+    updated_at?: Date;
 }
 
 export interface PaymentCategory{
     id: number;
     name: string;
     color: string;
-    created_at: Date;
-    updated_at: Date;
+    created_at?: Date;
+    updated_at?: Date;
+}
+
+export interface Provider{
+    id: number;
+    name: string;
+    created_at?: Date;
+    updated_at?: Date;
 }

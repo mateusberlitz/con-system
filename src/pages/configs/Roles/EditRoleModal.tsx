@@ -86,7 +86,7 @@ export function EditRoleModal( { isOpen, toEditRoleData, afterEdit, onRequestClo
                     <Stack spacing="6">
 
                         <HStack spacing="4" align="baseline">
-                            <ControlledInput control={control} value={toEditRoleData.name} name="name" type="text" placeholder="Nome do cargo" variant="outline" error={formState.errors.name}/>
+                            <ControlledInput control={control} value={toEditRoleData.name} name="name" type="text" placeholder="Nome do cargo" variant="outline" error={formState.errors.name} focusBorderColor="purple.600"/>
                         </HStack>
 
 
@@ -96,7 +96,7 @@ export function EditRoleModal( { isOpen, toEditRoleData, afterEdit, onRequestClo
                                 <Spinner/>
                             </Flex>
                         ) : (
-                                <ControlledSelect control={control} name="desk_id" value={toEditRoleData.desk_id.toString()} variant="outline" error={formState.errors.desk_id}> 
+                                <ControlledSelect control={control} name="desk_id" value={toEditRoleData.desk_id.toString()} variant="outline" error={formState.errors.desk_id} focusBorderColor="purple.600"> 
                                         <option key="0" value="0">Empresa</option>
                                         {desks.data && desks.data.map((desk:Company) => {
                                             return (

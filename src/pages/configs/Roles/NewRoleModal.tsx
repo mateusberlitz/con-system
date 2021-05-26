@@ -77,7 +77,7 @@ export function NewRoleModal( { isOpen, onRequestClose, afterCreate } : NewRoleM
                 <ModalBody pl="10" pr="10">
                     <Stack spacing="6">
                         
-                        <Input register={register} name="name" type="text" placeholder="Título do cargo" variant="outline" error={formState.errors.name}/>
+                        <Input register={register} name="name" type="text" placeholder="Título do cargo" variant="outline" error={formState.errors.name} focusBorderColor="purple.600"/>
 
                         { desks.isLoading ? (
                                 <Flex justify="center">
@@ -88,7 +88,7 @@ export function NewRoleModal( { isOpen, onRequestClose, afterCreate } : NewRoleM
                                     <Text>Erro ao obter as permissões ativas</Text>
                                 </Flex>
                             ) :(
-                                <Select register={register} name="desk_id" error={formState.errors.desk_id} variant="outline">
+                                <Select register={register} name="desk_id" error={formState.errors.desk_id} variant="outline" focusBorderColor="purple.600">
                                     <option value="0">Área de trabalho</option>
                                     {desks.data && desks.data.map((desk:Role) => {
                                         return (

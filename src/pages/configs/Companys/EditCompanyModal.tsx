@@ -73,12 +73,12 @@ export function EditCompanyModal( { isOpen, toEditCompanyData, afterEdit, onRequ
                 <ModalBody pl="10" pr="10">
                     <Stack spacing="6">
                         
-                        <ControlledInput control={control} name="name" type="text" placeholder="Nome da empresa" variant="outline" value={toEditCompanyData.name} error={formState.errors.name}/>
+                        <ControlledInput control={control} name="name" type="text" placeholder="Nome da empresa" variant="outline" value={toEditCompanyData.name} error={formState.errors.name} focusBorderColor="purple.600"/>
                         <HStack spacing="4" align="baseline">
-                            <ControlledInput control={control} name="cnpj" mask="cnpj" type="text" placeholder="CNPJ" variant="outline" value={toEditCompanyData.cnpj} error={formState.errors.cnpj}/>
-                            <ControlledInput control={control} name="phone" mask="phone" type="text" placeholder="Telefone" variant="outline" value={toEditCompanyData.phone} error={formState.errors.phone}/>
+                            <ControlledInput control={control} name="cnpj" mask="cnpj" type="text" placeholder="CNPJ" variant="outline" value={toEditCompanyData.cnpj} error={formState.errors.cnpj} focusBorderColor="purple.600"/>
+                            <ControlledInput control={control} name="phone" mask="phone" type="text" placeholder="Telefone" variant="outline" value={toEditCompanyData.phone} error={formState.errors.phone} focusBorderColor="purple.600"/>
                         </HStack>
-                        <ControlledInput control={control} name="address" type="text" placeholder="Endereço" variant="outline" value={toEditCompanyData.address} error={formState.errors.address}/>
+                        <ControlledInput control={control} name="address" type="text" placeholder="Endereço" variant="outline" value={toEditCompanyData.address} error={formState.errors.address} focusBorderColor="purple.600"/>
                         
                     </Stack>
                 </ModalBody>
