@@ -4,7 +4,7 @@ import { MainBoard } from "../../../components/MainBoard";
 import { useCompanies } from "../../../hooks/useCompanies";
 import { useProfile } from "../../../hooks/useProfile";
 import { useSelectedCompany } from "../../../hooks/useSelectedCompany";
-import { Company, PaymentCategory } from "../../../types";
+import { Company, dayPayments, Payment, PaymentCategory } from "../../../types";
 
 import { useForm } from "react-hook-form";
 import * as yup from 'yup';
@@ -23,12 +23,20 @@ import { EditButton } from "../../../components/Buttons/EditButton";
 import { RemoveButton } from "../../../components/Buttons/RemoveButton";
 import { useEffect, useRef, useState } from "react";
 import { NewPaymentModal } from "./NewPaymentModal";
+import { ConfirmPaymentRemoveModal } from "./ConfirmPaymentRemoveModal";
 import { useHistory } from "react-router";
 import { api } from "../../../services/api";
 import { UserFilterData, useUsers } from "../../../hooks/useUsers";
 import { useProviders } from "../../../hooks/useProviders";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { usePayments } from "../../../hooks/usePayments";
+import { EditPaymentFormData, EditPaymentModal } from "./EditPaymentModal";
+import { formatDate } from "../../../utils/Date/formatDate";
+import { formatYmdDate } from "../../../utils/Date/formatYmdDate";
+import { formatBRDate } from "../../../utils/Date/formatBRDate";
+import { getDay } from "../../../utils/Date/getDay";
+import { PayPaymentFormData, PayPaymentModal } from "./PayPaymentModal";
+
 
 
 interface FilterPaymentsFormData{
@@ -37,6 +45,11 @@ interface FilterPaymentsFormData{
     address: string;
     phone?: string;
     cnpj?: string;
+}
+
+interface RemovePaymentData{
+    id: number;
+    title: string;
 }
 
 const FilterPaymentsFormSchema = yup.object().shape({
@@ -53,20 +66,18 @@ export default function Payments(){
 
     const [filter, setFilter] = useState<UserFilterData>(() => {
         const data: UserFilterData = {
-            search: ''
+
         };
         
         return data;
     })
     const payments = usePayments(filter);
 
-    console.log(payments);
-
     const {profile} = useProfile();
     const companies = useCompanies();
     const providers = useProviders();
     const { showErrors } = useErrors();
-    const { data, isLoading, refetch, error} = useCompanies();
+    //const { data, isLoading, refetch, error} = useCompanies();
 
     const { register, handleSubmit, reset, formState} = useForm<FilterPaymentsFormData>({
         resolver: yupResolver(FilterPaymentsFormSchema),
@@ -108,6 +119,80 @@ export default function Payments(){
     };
     const users = useUsers(usersFilter);
 
+
+    const [toEditPaymentData, setToEditPaymentData] = useState<EditPaymentFormData>(() => {
+
+        const data: EditPaymentFormData = {
+            id: 0,
+            title: '',
+            value: '',
+            company: 0,
+            category: 0,
+            provider: 0,
+            pay_to_user: 0,
+            status: false,
+            expire: '',
+            observation: '',
+            contract: '',
+            group: '',
+            quote: '',
+            recurrence: 0,
+            file: [],
+        };
+        
+        return data;
+    });
+
+    const [isEditPaymentModalOpen, setIsEditPaymentModalOpen] = useState(false);
+
+    function OpenEditPaymentModal(paymentData : EditPaymentFormData){
+        setToEditPaymentData(paymentData);
+        setIsEditPaymentModalOpen(true);
+    }
+    function CloseEditPaymentModal(){
+        setIsEditPaymentModalOpen(false);
+    }
+
+    const [isConfirmPaymentRemoveModalOpen, setisConfirmPaymentRemoveModalOpen] = useState(false);
+    const [removePaymentData, setRemovePaymentData] = useState<RemovePaymentData>(() => {
+
+        const data: RemovePaymentData = {
+            title: '',
+            id: 0,
+        };
+        
+        return data;
+    });
+
+    function OpenConfirmPaymentRemoveModal(paymentData: RemovePaymentData){
+        setRemovePaymentData(paymentData);
+        setisConfirmPaymentRemoveModalOpen(true);
+    }
+    function CloseConfirmPaymentRemoveModal(){
+        setisConfirmPaymentRemoveModalOpen(false);
+    }
+
+    const [isPayPaymentModalOpen, setIsPayPaymentModalOpen] = useState(false);
+    const [toPayPaymentData, setToPayPaymentData] = useState<PayPaymentFormData>(() => {
+
+        const data: PayPaymentFormData = {
+            id: 0,
+            value: '',
+            new_value: '',
+            title: ''
+        };
+        
+        return data;
+    });
+
+    function OpenPayPaymentModal(paymentIdAndName: PayPaymentFormData){
+        setToPayPaymentData(paymentIdAndName);
+        setIsPayPaymentModalOpen(true);
+    }
+    function ClosePayPaymentModal(){
+        setIsPayPaymentModalOpen(false);
+    }
+
     return(
         <MainBoard sidebar="financial" header={ 
             ( profile && profile.role.id == 1) && ( companies.isLoading ? (
@@ -129,7 +214,10 @@ export default function Payments(){
                 ))
         }
         >
-            <NewPaymentModal categories={categories} users={users.data} providers={providers.data} afterCreate={refetch} isOpen={isNewPaymentModalOpen} onRequestClose={CloseNewPaymentModal}/>
+            <NewPaymentModal categories={categories} users={users.data} providers={providers.data} afterCreate={payments.refetch} isOpen={isNewPaymentModalOpen} onRequestClose={CloseNewPaymentModal}/>
+            <PayPaymentModal afterCreate={payments.refetch} toPayPaymentData={toPayPaymentData} isOpen={isPayPaymentModalOpen} onRequestClose={ClosePayPaymentModal}/>
+            <EditPaymentModal categories={categories} toEditPaymentData={toEditPaymentData} users={users.data} providers={providers.data} afterEdit={payments.refetch} isOpen={isEditPaymentModalOpen} onRequestClose={CloseEditPaymentModal}/>
+            <ConfirmPaymentRemoveModal afterRemove={payments.refetch} toRemovePaymentData={removePaymentData} isOpen={isConfirmPaymentRemoveModalOpen} onRequestClose={CloseConfirmPaymentRemoveModal}/>
 
             <Flex justify="space-between" alignItems="center" mb="10">
                 <SolidButton onClick={OpenNewPaymentModal} color="white" bg="blue.400" icon={PlusIcon} colorScheme="blue">
@@ -187,323 +275,147 @@ export default function Payments(){
             </Flex>
 
             <Stack fontSize="13px" spacing="12">
-                <Accordion w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" spacing="0" allowMultiple>
-                    <HStack spacing="8" justify="space-between" paddingX="8" paddingY="3" bg="gray.200">
-                        <Text fontWeight="bold">Hoje 11/03/2021</Text>
-                        <Text fontWeight="bold">3 Pagamentos</Text>
-                        <SolidButton h="30px" size="sm" fontSize="11" color="white" bg="green.400" colorScheme="green">
-                            Pagar Tudo
-                        </SolidButton>
-                        <Text float="right"><strong>TOTAL: R$5.000,00</strong></Text>
-                    </HStack>
+                {   payments.isLoading ? (
+                        <Flex justify="center">
+                            <Spinner/>
+                        </Flex>
+                    ) : payments.isLoading && (
+                        <Flex justify="center" mt="4" mb="4">
+                            <Text>Erro listar as contas a pagar</Text>
+                        </Flex>
+                    )
+                }
 
-                    <AccordionItem display="flex" flexDir="column" paddingX="8" paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
-                        {({ isExpanded }) => (
-                            <>
-                                <HStack justify="space-between" mb="3">
-                                    <AccordionButton p="0" height="fit-content" w="auto">
-                                        <IconButton h="24px" w="23px" p="0" borderRadius="full" border="2px" borderColor="blue.400" colorScheme="blue" aria-label="Ampliar informações" 
-                                            icon={ 
-                                                !isExpanded ? <StrongPlusIcon stroke="#2097ed" fill="none" width="12px"/> :
-                                                <MinusIcon stroke="#2097ed" fill="none" width="12px"/>
-                                            } 
-                                            variant="outline"/>
-                                    </AccordionButton>
+                {
+                    (!payments.isLoading && !payments.error) && Object.keys(payments.data).map((day:string) => {
+                        const totalDayPayments = payments.data[day].length;
+                        const totalDayAmount = payments.data[day].reduce((sumAmount:number, payment:Payment) => {
+                            return sumAmount + payment.value;
+                        }, 0);
 
-                                    <Flex fontWeight="500" alignItems="center">
-                                        <EllipseIcon stroke="none" fill="#2097ed"/>
-                                        <Text ml="2" color="#2097ed">Fatura da internet</Text>
-                                    </Flex>
+                        const todayFormatedDate = formatDate(formatYmdDate(new Date().toDateString()));
+                        const dayPaymentsFormated = formatDate(day);
+                        const tomorrow = getDay(formatYmdDate(new Date().toDateString())) + 1;
+                        const paymentDay = getDay(day);
 
-                                    <Flex fontWeight="500" alignItems="center" color="gray.800">
-                                        <HomeIcon stroke="#4e4b66" fill="none" width="17px"/>
-                                        <Text ml="2">Lance Londrina</Text>
-                                    </Flex>
-                                    
-                                    <Flex fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
-                                        <AttachIcon stroke="#4e4b66" fill="none" width="16px"/>
-                                        <Text ml="2">Ver Anexo</Text>
-                                    </Flex>
-                                    
-                                    <OutlineButton h="30px" size="sm" color="green.400" borderColor="green.400" colorScheme="green" fontSize="11">
-                                        Pagar
-                                    </OutlineButton>
-                                    <Text float="right">R$5.000,00</Text>
+                        console.log(getDay(day), getDay(formatYmdDate(new Date().toDateString())));
+
+                        return (
+                            <Accordion key={day} w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" spacing="0" allowMultiple>
+                                <HStack spacing="8" justify="space-between" paddingX="8" paddingY="3" bg="gray.200">
+                                    <Text fontWeight="bold">{(todayFormatedDate === dayPaymentsFormated) ? 'Hoje' : (tomorrow == paymentDay) ? "Amanhã" : ""} {formatBRDate(day)}</Text>
+                                    <Text fontWeight="bold">{totalDayPayments} Pagamentos</Text>
+                                    <SolidButton h="30px" size="sm" fontSize="11" color="white" bg="green.400" colorScheme="green">
+                                        Pagar Tudo
+                                    </SolidButton>
+                                    <Text float="right"><strong>TOTAL: {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalDayAmount)}</strong></Text>
                                 </HStack>
 
-                                <AccordionPanel flexDir="column" borderTop="2px" borderColor="gray.500" px="0" py="5">
-                                    <HStack justifyContent="space-between" mb="4">
-                                            <Text>
-                                                <strong>Pagar para: </strong>
-                                                Robson Seibel
-                                            </Text>
+                                {
+                                    payments.data[day].map((payment:Payment) => {
+                                        const paymentToEditData:EditPaymentFormData = {
+                                            id: payment.id,
+                                            title: payment.title,
+                                            value: Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(payment.value),
+                                            company: payment.company?.id,
+                                            category: payment.category?.id,
+                                            provider: payment.provider?.id,
+                                            pay_to_user: payment.pay_to_user?.id,
+                                            status: payment.status,
+                                            expire: payment.expire,
+                                            observation: payment.observation,
+                                            contract: payment.contract,
+                                            group: payment.group,
+                                            quote: payment.quote,
+                                            recurrence: payment.recurrence,
+                                            file: payment.file,
+                                        }
 
-                                            <Text>
-                                                <strong>Contrato: </strong>
-                                                Não possui
-                                            </Text>
+                                        return (
+                                            <AccordionItem key={payment.id} display="flex" flexDir="column" paddingX="8" paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
+                                                {({ isExpanded }) => (
+                                                    <>
+                                                        <HStack justify="space-between" mb="3">
+                                                            <AccordionButton p="0" height="fit-content" w="auto">
+                                                                <IconButton h="24px" w="23px" p="0" borderRadius="full" border="2px" borderColor="blue.400" colorScheme="blue" aria-label="Ampliar informações" 
+                                                                    icon={ 
+                                                                        !isExpanded ? <StrongPlusIcon stroke="#2097ed" fill="none" width="12px"/> :
+                                                                        <MinusIcon stroke="#2097ed" fill="none" width="12px"/>
+                                                                    } 
+                                                                    variant="outline"/>
+                                                            </AccordionButton>
 
-                                            <Text>
-                                                <strong>Grupo: </strong>
-                                                Não possui
-                                            </Text>
+                                                            <Flex fontWeight="500" alignItems="center">
+                                                                <EllipseIcon stroke="none" fill="#2097ed"/>
+                                                                <Text ml="2" color="#2097ed">{payment.title}</Text>
+                                                            </Flex>
 
-                                            <Text>
-                                                <strong>Cota: </strong>
-                                                Não Possui
-                                            </Text>
-                                    </HStack>
+                                                            <Flex fontWeight="500" alignItems="center" color="gray.800">
+                                                                <HomeIcon stroke="#4e4b66" fill="none" width="17px"/>
+                                                                <Text ml="2">{payment.company.name}</Text>
+                                                            </Flex>
+                                                            
+                                                            <Flex fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
+                                                                <AttachIcon stroke="#4e4b66" fill="none" width="16px"/>
+                                                                <Text ml="2">Ver Anexo</Text>
+                                                            </Flex>
+                                                            
+                                                            <OutlineButton  onClick={() => OpenPayPaymentModal({ id: payment.id, title: payment.title , value: payment.value.toString(), new_value: ''}) }
+                                                                h="30px" size="sm" color="green.400" borderColor="green.400" colorScheme="green" fontSize="11">
+                                                                Pagar
+                                                            </OutlineButton>
+                                                            <Text float="right">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(payment.value)}</Text>
+                                                        </HStack>
 
-                                    <HStack justifyContent="space-between" alignItems="center">
-                                        <Flex alignItems="center">
-                                            <Text fontWeight="500">Observação: </Text>
-                                            <Text>Robson Seibel</Text>
-                                        </Flex>
+                                                        <AccordionPanel flexDir="column" borderTop="2px" borderColor="gray.500" px="0" py="5">
+                                                            <HStack justifyContent="space-between" mb="4">
+                                                                    <Text>
+                                                                        <strong>Pagar para: </strong>
+                                                                        {payment.pay_to_user?.name && `${payment.pay_to_user.name} ${payment.pay_to_user.last_name}`}
+                                                                    </Text>
 
-                                        <HStack spacing="5" alignItems="center">
-                                            <EditButton />
-                                            <RemoveButton />
-                                        </HStack>
-                                    </HStack>
+                                                                    <Text>
+                                                                        <strong>Contrato: </strong>
+                                                                        {payment.contract && payment.contract}
+                                                                    </Text>
 
-                                </AccordionPanel>
-                            </>
-                        )}
-                    </AccordionItem>
+                                                                    <Text>
+                                                                        <strong>Grupo: </strong>
+                                                                        {payment.group && payment.group}
+                                                                    </Text>
 
-                    <AccordionItem display="flex" flexDir="column" paddingX="8" paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
-                        {({ isExpanded }) => (
-                            <>
-                                <HStack justify="space-between" mb="3">
-                                    <AccordionButton p="0" height="fit-content" w="auto">
-                                        <IconButton h="24px" w="23px" p="0" borderRadius="full" border="2px" borderColor="blue.400" colorScheme="blue" aria-label="Ampliar informações" 
-                                            icon={ 
-                                                !isExpanded ? <StrongPlusIcon stroke="#2097ed" fill="none" width="12px"/> :
-                                                <MinusIcon stroke="#2097ed" fill="none" width="12px"/>
-                                            } 
-                                            variant="outline"/>
-                                    </AccordionButton>
+                                                                    <Text>
+                                                                        <strong>Cota: </strong>
+                                                                        {payment.quote && payment.quote}
+                                                                    </Text>
+                                                            </HStack>
 
-                                    <Flex fontWeight="500" alignItems="center">
-                                        <EllipseIcon stroke="none" fill="#2097ed"/>
-                                        <Text ml="2" color="#2097ed">Fatura da internet</Text>
-                                    </Flex>
+                                                            <HStack justifyContent="space-between" alignItems="center">
+                                                                <Flex alignItems="center">
+                                                                    <Text fontWeight="500">Observação: </Text>
+                                                                    <Text> {payment.observation && payment.observation}</Text>
+                                                                </Flex>
 
-                                    <Flex fontWeight="500" alignItems="center" color="gray.800">
-                                        <HomeIcon stroke="#4e4b66" fill="none" width="17px"/>
-                                        <Text ml="2">Lance Londrina</Text>
-                                    </Flex>
-                                    
-                                    <Flex fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
-                                        <AttachIcon stroke="#4e4b66" fill="none" width="16px"/>
-                                        <Text ml="2">Ver Anexo</Text>
-                                    </Flex>
-                                    
-                                    <OutlineButton h="30px" size="sm" color="green.400" borderColor="green.400" colorScheme="green" fontSize="11">
-                                        Pagar
-                                    </OutlineButton>
-                                    <Text float="right">R$5.000,00</Text>
-                                </HStack>
+                                                                <HStack spacing="5" alignItems="center">
+                                                                    <EditButton onClick={() => OpenEditPaymentModal(paymentToEditData)}/>
+                                                                    <RemoveButton onClick={() => OpenConfirmPaymentRemoveModal({ id: payment.id, title: payment.title }) }/>
+                                                                </HStack>
+                                                            </HStack>
 
-                                <AccordionPanel flexDir="column" borderTop="2px" borderColor="gray.500" px="0" py="5">
-                                    <HStack justifyContent="space-between" mb="4">
-                                            <Text>
-                                                <strong>Pagar para: </strong>
-                                                Robson Seibel
-                                            </Text>
+                                                        </AccordionPanel>
+                                                    </>
+                                                )}
+                                            </AccordionItem>
+                                        )
+                                    })
+                                }
 
-                                            <Text>
-                                                <strong>Contrato: </strong>
-                                                Não possui
-                                            </Text>
+                                
+                            </Accordion>
+                        )
+                    })
+                }
 
-                                            <Text>
-                                                <strong>Grupo: </strong>
-                                                Não possui
-                                            </Text>
-
-                                            <Text>
-                                                <strong>Cota: </strong>
-                                                Não Possui
-                                            </Text>
-                                    </HStack>
-
-                                    <HStack justifyContent="space-between" alignItems="center">
-                                        <Flex alignItems="center">
-                                            <Text fontWeight="500">Observação: </Text>
-                                            <Text>Robson Seibel</Text>
-                                        </Flex>
-
-                                        <HStack spacing="5" alignItems="center">
-                                            <EditButton />
-                                            <RemoveButton />
-                                        </HStack>
-                                    </HStack>
-
-                                </AccordionPanel>
-                            </>
-                        )}
-                    </AccordionItem>
-                </Accordion>
-
-                <Accordion w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" spacing="0" allowMultiple>
-                    <HStack spacing="8" justify="space-between" paddingX="8" paddingY="3" bg="gray.200">
-                        <Text fontWeight="bold">Hoje 11/03/2021</Text>
-                        <Text fontWeight="bold">3 Pagamentos</Text>
-                        <SolidButton h="30px" size="sm" fontSize="11" color="white" bg="green.400" colorScheme="green">
-                            Pagar Tudo
-                        </SolidButton>
-                        <Text float="right"><strong>TOTAL: R$5.000,00</strong></Text>
-                    </HStack>
-
-                    <AccordionItem display="flex" flexDir="column" paddingX="8" paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
-                        {({ isExpanded }) => (
-                            <>
-                                <HStack justify="space-between" mb="3">
-                                    <AccordionButton p="0" height="fit-content" w="auto">
-                                        <IconButton h="24px" w="23px" p="0" borderRadius="full" border="2px" borderColor="blue.400" colorScheme="blue" aria-label="Ampliar informações" 
-                                            icon={ 
-                                                !isExpanded ? <StrongPlusIcon stroke="#2097ed" fill="none" width="12px"/> :
-                                                <MinusIcon stroke="#2097ed" fill="none" width="12px"/>
-                                            } 
-                                            variant="outline"/>
-                                    </AccordionButton>
-
-                                    <Flex fontWeight="500" alignItems="center">
-                                        <EllipseIcon stroke="none" fill="#2097ed"/>
-                                        <Text ml="2" color="#2097ed">Fatura da internet</Text>
-                                    </Flex>
-
-                                    <Flex fontWeight="500" alignItems="center" color="gray.800">
-                                        <HomeIcon stroke="#4e4b66" fill="none" width="17px"/>
-                                        <Text ml="2">Lance Londrina</Text>
-                                    </Flex>
-                                    
-                                    <Flex fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
-                                        <AttachIcon stroke="#4e4b66" fill="none" width="16px"/>
-                                        <Text ml="2">Ver Anexo</Text>
-                                    </Flex>
-                                    
-                                    <OutlineButton h="30px" size="sm" color="green.400" borderColor="green.400" colorScheme="green" fontSize="11">
-                                        Pagar
-                                    </OutlineButton>
-                                    <Text float="right">R$5.000,00</Text>
-                                </HStack>
-
-                                <AccordionPanel flexDir="column" borderTop="2px" borderColor="gray.500" px="0" py="5">
-                                    <HStack justifyContent="space-between" mb="4">
-                                            <Text>
-                                                <strong>Pagar para: </strong>
-                                                Robson Seibel
-                                            </Text>
-
-                                            <Text>
-                                                <strong>Contrato: </strong>
-                                                Não possui
-                                            </Text>
-
-                                            <Text>
-                                                <strong>Grupo: </strong>
-                                                Não possui
-                                            </Text>
-
-                                            <Text>
-                                                <strong>Cota: </strong>
-                                                Não Possui
-                                            </Text>
-                                    </HStack>
-
-                                    <HStack justifyContent="space-between" alignItems="center">
-                                        <Flex alignItems="center">
-                                            <Text fontWeight="500">Observação: </Text>
-                                            <Text>Robson Seibel</Text>
-                                        </Flex>
-
-                                        <HStack spacing="5" alignItems="center">
-                                            <EditButton />
-                                            <RemoveButton />
-                                        </HStack>
-                                    </HStack>
-
-                                </AccordionPanel>
-                            </>
-                        )}
-                    </AccordionItem>
-
-                    <AccordionItem display="flex" flexDir="column" paddingX="8" paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
-                        {({ isExpanded }) => (
-                            <>
-                                <HStack justify="space-between" mb="3">
-                                    <AccordionButton p="0" height="fit-content" w="auto">
-                                        <IconButton h="24px" w="23px" p="0" borderRadius="full" border="2px" borderColor="blue.400" colorScheme="blue" aria-label="Ampliar informações" 
-                                            icon={ 
-                                                !isExpanded ? <StrongPlusIcon stroke="#2097ed" fill="none" width="12px"/> :
-                                                <MinusIcon stroke="#2097ed" fill="none" width="12px"/>
-                                            } 
-                                            variant="outline"/>
-                                    </AccordionButton>
-
-                                    <Flex fontWeight="500" alignItems="center">
-                                        <EllipseIcon stroke="none" fill="#2097ed"/>
-                                        <Text ml="2" color="#2097ed">Fatura da internet</Text>
-                                    </Flex>
-
-                                    <Flex fontWeight="500" alignItems="center" color="gray.800">
-                                        <HomeIcon stroke="#4e4b66" fill="none" width="17px"/>
-                                        <Text ml="2">Lance Londrina</Text>
-                                    </Flex>
-                                    
-                                    <Flex fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
-                                        <AttachIcon stroke="#4e4b66" fill="none" width="16px"/>
-                                        <Text ml="2">Ver Anexo</Text>
-                                    </Flex>
-                                    
-                                    <OutlineButton h="30px" size="sm" color="green.400" borderColor="green.400" colorScheme="green" fontSize="11">
-                                        Pagar
-                                    </OutlineButton>
-                                    <Text float="right">R$5.000,00</Text>
-                                </HStack>
-
-                                <AccordionPanel flexDir="column" borderTop="2px" borderColor="gray.500" px="0" py="5">
-                                    <HStack justifyContent="space-between" mb="4">
-                                            <Text>
-                                                <strong>Pagar para: </strong>
-                                                Robson Seibel
-                                            </Text>
-
-                                            <Text>
-                                                <strong>Contrato: </strong>
-                                                Não possui
-                                            </Text>
-
-                                            <Text>
-                                                <strong>Grupo: </strong>
-                                                Não possui
-                                            </Text>
-
-                                            <Text>
-                                                <strong>Cota: </strong>
-                                                Não Possui
-                                            </Text>
-                                    </HStack>
-
-                                    <HStack justifyContent="space-between" alignItems="center">
-                                        <Flex alignItems="center">
-                                            <Text fontWeight="500">Observação: </Text>
-                                            <Text>Robson Seibel</Text>
-                                        </Flex>
-
-                                        <HStack spacing="5" alignItems="center">
-                                            <EditButton />
-                                            <RemoveButton />
-                                        </HStack>
-                                    </HStack>
-
-                                </AccordionPanel>
-                            </>
-                        )}
-                    </AccordionItem>
-                </Accordion>
             </Stack>
             
         </MainBoard>

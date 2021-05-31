@@ -13,8 +13,9 @@ import { Input } from "../../../components/Forms/Inputs/Input";
 import { Select } from "../../../components/Forms/Selects/Select";
 import { PaymentCategory, User, Provider } from "../../../types";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
-import { formatDate } from "../../../utils/formatDate";
+import { formatDate } from "../../../utils/Date/formatDate";
 import { unMask } from "../../../utils/ReMask";
+import { formatInputDate } from "../../../utils/Date/formatInputDate";
 
 interface NewPaymentModalProps{
     isOpen: boolean;
@@ -88,7 +89,7 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
             delete paymentData.pay_to_user;
         }
 
-        paymentData.expire = formatDate(paymentData.expire);
+        paymentData.expire = formatInputDate(paymentData.expire);
 
         if(!workingCompany.company){
             return paymentData;
@@ -101,8 +102,6 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
 
     const handleCreateNewPayment = async (paymentData : CreateNewPaymentFormData) => {
         try{
-            console.log(paymentData);
-
             if(!workingCompany.company){
                 toast({
                     title: "Ué",
@@ -116,6 +115,8 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
             }
 
             paymentData = includeAndFormatData(paymentData);
+
+            console.log(paymentData);
 
             await api.post('/payments/store', paymentData);
 
@@ -159,7 +160,7 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
                         </HStack>
 
                         <HStack spacing="4" align="baseline">
-                            <Select register={register} h="45px" value="0" name="category" w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Categoria" error={formState.errors.category}>
+                            <Select register={register} h="45px" value="0" name="category" w="100%" fontSize="sm" focusBorderColor="blue.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Categoria" error={formState.errors.category}>
                                 {categories && categories.map((category:PaymentCategory) => {
                                     return (
                                         <option key={category.id} value={category.id}>{category.name}</option>
@@ -167,7 +168,7 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
                                 })}
                             </Select>
 
-                            <Select register={register} h="45px" value="0" name="provider" w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Fornecedor" error={formState.errors.pay_to_user}>
+                            <Select register={register} h="45px" value="0" name="provider" w="100%" fontSize="sm" focusBorderColor="blue.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Fornecedor" error={formState.errors.pay_to_user}>
                                 {providers && providers.map((provider:Provider) => {
                                     return (
                                         <option key={provider.id} value={provider.id}>{provider.name}</option>
@@ -179,7 +180,7 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
                         <HStack spacing="4" align="baseline">
                             <Input register={register} name="contract" type="text" placeholder="Contrato" variant="outline" error={formState.errors.contract}/>
 
-                            <Select register={register} h="45px" name="pay_to_user" value="0" w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Pagar para" error={formState.errors.pay_to_user}>
+                            <Select register={register} h="45px" name="pay_to_user" value="0" w="100%" fontSize="sm" focusBorderColor="blue.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Pagar para" error={formState.errors.pay_to_user}>
                                 {users && users.map((user:User) => {
                                     return (
                                         <option key={user.id} value={user.id}>{user.name}</option>

@@ -1,4 +1,4 @@
-export function formatDate(date: string) {
+export function formatYmdDate(date: string) {
     var d = new Date(date),
         month = '' + (d.getMonth() + 1),
         day = '' + d.getDate(),
@@ -9,5 +9,5 @@ export function formatDate(date: string) {
     if (day.length < 2) 
         day = '0' + day;
 
-    return [day, month, year].join('-');
+    return [year, month, day].join('-');
 }
