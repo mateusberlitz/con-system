@@ -9,9 +9,6 @@ import { api } from "../../../services/api";
 import { useHistory } from "react-router";
 import { useErrors } from "../../../hooks/useErrors";
 
-import { Input } from "../../../components/Forms/Inputs/Input";
-import { Select } from "../../../components/Forms/Selects/Select";
-import { PaymentCategory, User, Provider } from "../../../types";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { ControlledInput } from "../../../components/Forms/Inputs/ControlledInput";
 
@@ -35,7 +32,7 @@ const PayPaymentFormSchema = yup.object().shape({
     new_value: yup.string().nullable(),
 });
 
-export function PayPaymentModal ( { isOpen, onRequestClose, afterCreate, toPayPaymentData } : PayPaymentModalProps){
+export function PayAllPaymentsModal ( { isOpen, onRequestClose, afterCreate, toPayPaymentData } : PayPaymentModalProps){
     const workingCompany = useWorkingCompany();
     const history = useHistory();
     const toast = useToast();
