@@ -77,3 +77,36 @@ export interface Payment{
 export interface dayPayments{
     [day: string]: Payment[];
 }
+
+
+export interface BillCategory{
+    id: number;
+    name: string;
+    color: string;
+    created_at?: Date;
+    updated_at?: Date;
+}
+
+export interface Bill{
+    id: number;
+    title: string;
+    value: number;
+    expire: string;
+    category: PaymentCategory;
+    company: Company;
+    provider?: Provider;
+    pay_to_user?: User;
+    observation: string;
+    contract: string;
+    group: string;
+    quote: string;
+    recurrence?: number;
+    status?: boolean;
+    file: string;
+    created_at?: Date;
+    updated_at?: Date;
+}
+
+export interface dayBills{
+    [day: string]: Bill[];
+}

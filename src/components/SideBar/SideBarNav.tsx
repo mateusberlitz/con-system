@@ -7,7 +7,7 @@ import { ReactComponent as ConfigureIcon } from '../../assets/icons/Configure.sv
 import { ReactComponent as BackArrowIcon } from '../../assets/icons/Back Arrow.svg';
 import { ReactComponent as ChartPieIcon } from '../../assets/icons/Chart-pie.svg';
 import { ReactComponent as CardIcon } from '../../assets/icons/Card.svg';
-import { ReactComponent as ResizeIcon } from '../../assets/icons/Resize.svg';
+import { ReactComponent as TagIcon } from '../../assets/icons/Tag.svg';
 import { ReactComponent as ChartBarIcon } from '../../assets/icons/Chart-bar.svg';
 import { ReactComponent as SettingsIcon } from '../../assets/icons/Settings.svg';
 
@@ -40,7 +40,7 @@ export function SideBarNav({ desk }: SideBarNavProps){
 
             <NavLink href="/financeiro" icon={ChartPieIcon}>Dashboard</NavLink> 
             <NavLink href="/pagamentos" icon={CardIcon}>Pagamentos</NavLink>
-            <NavLink href="/movimentacoes" icon={ResizeIcon}>Movimentações</NavLink>
+            <NavLink href="/receber" icon={TagIcon}>Contas a Receber</NavLink>
             <NavLink href="/caixa" icon={ChartBarIcon}>Fluxo de Caixa</NavLink>
 
             {
