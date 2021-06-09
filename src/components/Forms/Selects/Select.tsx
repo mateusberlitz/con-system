@@ -30,7 +30,7 @@ export function Select({ name, children, variant, selectRef, value = "", selecte
         return {
             ref: (selectRef ? selectRef : undefined),
             value: controlledValue,
-            onChange: (event: any) => {
+            onChange: (event: any) => { //React.ChangeEvent<HTMLInputElement>
                     setControlledValue(event.target.value);
                     if(onChange){
                         onChange(event.target.value)

@@ -14,6 +14,8 @@ import PaymentCategories from './pages/Financial/PaymentCategories';
 import Providers from './pages/Financial/Providers';
 import CashFlow from './pages/Financial/CashFlow';
 import Bills from './pages/Financial/Bills';
+import BillCategories from './pages/Financial/BillCategories';
+import Sources from './pages/Financial/Sources';
 
 interface PrivateRouteProps extends RouteProps{
   component: any;
@@ -52,9 +54,11 @@ const Routes = (): JSX.Element => {
 
         <PrivateRoute path="/financeiro" neededPermission="Financeiro Limitado" exact component={Financial} />
         <PrivateRoute path="/pagamentos" neededPermission="Financeiro Limitado" exact component={Payments} />
-        <PrivateRoute path="/categorias" neededPermission="Financeiro Limitado" exact component={PaymentCategories} />
-        <PrivateRoute path="/fornecedores" neededPermission="Financeiro Limitado" exact component={Providers} />
+        <PrivateRoute path="/pagamentos/categorias" neededPermission="Financeiro Limitado" exact component={PaymentCategories} />
+        <PrivateRoute path="/pagamentos/fornecedores" neededPermission="Financeiro Limitado" exact component={Providers} />
         <PrivateRoute path="/receber" neededPermission="Financeiro Limitado" exact component={Bills} />
+        <PrivateRoute path="/receber/categorias" neededPermission="Financeiro Limitado" exact component={BillCategories} />
+        <PrivateRoute path="/receber/fontes" neededPermission="Financeiro Limitado" exact component={Sources} />
         <PrivateRoute path="/caixa" neededPermission="Financeiro Completo" exact component={CashFlow} />
 
         {/* <PrivateRoute path="/empresas" component={Roles} /> */}

@@ -11,75 +11,60 @@ import { useErrors } from "../../../hooks/useErrors";
 
 import { Input } from "../../../components/Forms/Inputs/Input";
 import { Select } from "../../../components/Forms/Selects/Select";
-import { PaymentCategory, User, Provider, Source } from "../../../types";
+import { PaymentCategory, User, Provider } from "../../../types";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { formatDate } from "../../../utils/Date/formatDate";
 import { unMask } from "../../../utils/ReMask";
 import { formatInputDate } from "../../../utils/Date/formatInputDate";
 
-interface NewBillModalProps{
+interface NewCashFlowModalProps{
     isOpen: boolean;
     onRequestClose: () => void;
     afterCreate: () => void;
     categories: PaymentCategory[];
-    sources: Source[];
-    users: User[];
 }
 
-interface CreateNewBillFormData{
+interface CreateNewCashFlowFormData{
     title: string;
-    observation?: string;
     company: number;
     category: number;
-    status?: boolean;
-    source?: number;
     value: string;
-    expire: string;
 }
 
-const CreateNewBillFormSchema = yup.object().shape({
-    title: yup.string().required('Título do pagamento obrigatório'),
-    observation: yup.string(),
+const CreateNewCashFlowFormSchema = yup.object().shape({
+    title: yup.string().required('Título da movimentação é obrigatório.'),
     company: yup.number(),
     category: yup.number(),
-    status: yup.boolean(),
-    source: yup.number().transform((v, o) => o === '' ? null : v).nullable(),
-    value: yup.string().required("Informe o valor a receber"),
-    expire: yup.date().required("Selecione a data de vencimento"),
+    value: yup.string().required("Informe o valor da movimentação."),
 });
 
-export function NewBillModal( { isOpen, onRequestClose, afterCreate, categories, sources } : NewBillModalProps){
+export function NewCashFlowModal( { isOpen, onRequestClose, afterCreate, categories, } : NewCashFlowModalProps){
     const workingCompany = useWorkingCompany();
     const history = useHistory();
     const toast = useToast();
     const { showErrors } = useErrors();
 
-    const { register, handleSubmit, reset, formState} = useForm<CreateNewBillFormData>({
-        resolver: yupResolver(CreateNewBillFormSchema),
+    const { register, handleSubmit, reset, formState} = useForm<CreateNewCashFlowFormData>({
+        resolver: yupResolver(CreateNewCashFlowFormSchema),
     });
 
-    function includeAndFormatData(billData: CreateNewBillFormData){
-        const removedValueCurrencyUnit = billData.value.substring(3);
-        const valueWithDoubleFormat = removedValueCurrencyUnit.replace('.', '').replace(',', '.');
+    function includeAndFormatData(cashFlowData: CreateNewCashFlowFormData){
+        //const removedValueCurrencyUnit = cashFlowData.value.substring(3);
+        const valueWithDoubleFormat = cashFlowData.value.replace('.', '').replace(',', '.');
+        //const floatValue = parseFloat(valueWithDoubleFormat);
 
-        billData.value = valueWithDoubleFormat;
-
-        billData.expire = formatInputDate(billData.expire);
-
-        if(billData.source === null || billData.source === 0){
-            delete billData.source;
-        }
+        cashFlowData.value = valueWithDoubleFormat;
 
         if(!workingCompany.company){
-            return billData;
+            return cashFlowData;
         }
 
-        billData.company = workingCompany.company?.id;
+        cashFlowData.company = workingCompany.company?.id;
 
-        return billData;
+        return cashFlowData;
     }
 
-    const handleCreateNewBill = async (billData : CreateNewBillFormData) => {
+    const handleCreateNewPayment = async (cashFlowData : CreateNewCashFlowFormData) => {
         try{
             if(!workingCompany.company){
                 toast({
@@ -93,15 +78,15 @@ export function NewBillModal( { isOpen, onRequestClose, afterCreate, categories,
                 return;
             }
 
-            billData = includeAndFormatData(billData);
+            cashFlowData = includeAndFormatData(cashFlowData);
 
-            console.log(billData);
+            console.log(cashFlowData);
 
-            await api.post('/bills/store', billData);
+            await api.post('/cashflows/store', cashFlowData);
 
             toast({
                 title: "Sucesso",
-                description: `A conta a receber ${billData.title} foi cadastrada.`,
+                description: `A movimentação ${cashFlowData.title} foi cadastrada.`,
                 status: "success",
                 duration: 12000,
                 isClosable: true,
@@ -122,8 +107,8 @@ export function NewBillModal( { isOpen, onRequestClose, afterCreate, categories,
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
             <ModalOverlay />
-            <ModalContent as="form" borderRadius="24px" onSubmit={handleSubmit(handleCreateNewBill)}>
-                <ModalHeader p="10" fontWeight="700" fontSize="2xl">Cadastrar Conta a Receber</ModalHeader>
+            <ModalContent as="form" borderRadius="24px" onSubmit={handleSubmit(handleCreateNewPayment)}>
+                <ModalHeader p="10" fontWeight="700" fontSize="2xl">Cadastrar Movimentação</ModalHeader>
 
                 <ModalCloseButton top="10" right="5"/>
                 
@@ -131,12 +116,6 @@ export function NewBillModal( { isOpen, onRequestClose, afterCreate, categories,
                     <Stack spacing="6">
                         
                         <Input register={register} name="title" type="text" placeholder="Título" variant="outline" error={formState.errors.title}/>
-
-                        <HStack spacing="4" align="baseline">
-                            <Input register={register} name="expire" type="date" placeholder="Data de Vencimento" variant="outline" error={formState.errors.expire}/>
-
-                            <Input register={register} name="value" type="text" placeholder="Valor" variant="outline" mask="money" error={formState.errors.value}/>
-                        </HStack>
 
                         <HStack spacing="4" align="baseline">
                             <Select register={register} h="45px" value="0" name="category" w="100%" fontSize="sm" focusBorderColor="blue.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Categoria" error={formState.errors.category}>
@@ -147,16 +126,8 @@ export function NewBillModal( { isOpen, onRequestClose, afterCreate, categories,
                                 })}
                             </Select>
 
-                            <Select register={register} h="45px" name="source" value="0" w="100%" fontSize="sm" focusBorderColor="blue.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Fonte" error={formState.errors.source}>
-                                {sources && sources.map((source:Source) => {
-                                    return (
-                                        <option key={source.id} value={source.id}>{source.name}</option>
-                                    )
-                                })}
-                            </Select>
+                            <Input register={register} name="value" type="text" placeholder="Valor" variant="outline" mask="money" error={formState.errors.value}/>
                         </HStack>
-
-                        <Input register={register} name="observation" type="text" placeholder="Observação" variant="outline" error={formState.errors.observation}/>
 
                     </Stack>
                 </ModalBody>

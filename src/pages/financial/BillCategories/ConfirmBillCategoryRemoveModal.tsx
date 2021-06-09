@@ -5,26 +5,23 @@ import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
 import { showErrors } from "../../../hooks/useErrors";
 import { api } from "../../../services/api";
 
-interface ConfirmBillRemoveModalProps{
+interface ConfirmBillCategoryRemoveModalProps{
     isOpen: boolean;
-    toRemoveBillData: {
-        title: string;
-        id: number;
-    };
+    toRemoveBillCategoryId: number;
     onRequestClose: () => void;
     afterRemove: () => void;
 }
 
-export function ConfirmBillRemoveModal( { isOpen, toRemoveBillData, afterRemove, onRequestClose } : ConfirmBillRemoveModalProps){
+export function ConfirmBillCategoryRemoveModal( { isOpen, toRemoveBillCategoryId, afterRemove, onRequestClose } : ConfirmBillCategoryRemoveModalProps){
     const toast = useToast();
 
-    const handleRemoveBill = async () => {
+    const handleBillPaymentCategory = async () => {
         try{
-            await api.delete(`/bills/destroy/${toRemoveBillData.id}`);
+            await api.delete(`/bill_categories/destroy/${toRemoveBillCategoryId}`);
 
             toast({
                 title: "Sucesso",
-                description: `A conta a receber ${toRemoveBillData.title} foi removida`,
+                description: `A categoria foi removida`,
                 status: "success",
                 duration: 12000,
                 isClosable: true,
@@ -41,12 +38,12 @@ export function ConfirmBillRemoveModal( { isOpen, toRemoveBillData, afterRemove,
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
             <ModalOverlay />
             <ModalContent borderRadius="24px">
-                <ModalHeader p="10" fontWeight="700" fontSize="2xl">Remover {toRemoveBillData.title}?</ModalHeader>
+                <ModalHeader p="10" fontWeight="700" fontSize="2xl">Remover a categoria selecionada?</ModalHeader>
 
                 <ModalCloseButton top="10" right="5"/>
                 
                 <ModalBody pl="10" pr="10">
-                    <SolidButton onClick={handleRemoveBill} mr="6" color="white" bg="red.400" _hover={{filter: "brightness(90%)"}} rightIcon={<CloseIcon stroke="#ffffff" fill="none" width="18px" strokeWidth="3px"/>}>
+                    <SolidButton onClick={handleBillPaymentCategory} mr="6" color="white" bg="red.400" _hover={{filter: "brightness(90%)"}} rightIcon={<CloseIcon stroke="#ffffff" fill="none" width="18px" strokeWidth="3px"/>}>
                         Confirmar e Remover
                     </SolidButton>
                 </ModalBody>

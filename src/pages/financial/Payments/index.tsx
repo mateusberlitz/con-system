@@ -1,10 +1,10 @@
-import { FormControl, Flex, HStack, Stack, Spinner, Text, IconButton, Select, Accordion, AccordionItem, AccordionButton, AccordionPanel, Link } from "@chakra-ui/react";
+import { FormControl, Flex, HStack, Stack, Spinner, Text, IconButton, Accordion, Select as ChakraSelect, AccordionItem, AccordionButton, AccordionPanel, Link } from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { MainBoard } from "../../../components/MainBoard";
 import { useCompanies } from "../../../hooks/useCompanies";
 import { useProfile } from "../../../hooks/useProfile";
 import { useSelectedCompany } from "../../../hooks/useSelectedCompany";
-import { Company, dayPayments, Payment, PaymentCategory } from "../../../types";
+import { Company, dayPayments, Payment, PaymentCategory, User } from "../../../types";
 
 import { useForm } from "react-hook-form";
 import * as yup from 'yup';
@@ -29,23 +29,14 @@ import { api } from "../../../services/api";
 import { UserFilterData, useUsers } from "../../../hooks/useUsers";
 import { useProviders } from "../../../hooks/useProviders";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
-import { usePayments } from "../../../hooks/usePayments";
+import { PaymentFilterData, usePayments } from "../../../hooks/usePayments";
 import { EditPaymentFormData, EditPaymentModal } from "./EditPaymentModal";
 import { formatDate } from "../../../utils/Date/formatDate";
 import { formatYmdDate } from "../../../utils/Date/formatYmdDate";
 import { formatBRDate } from "../../../utils/Date/formatBRDate";
 import { getDay } from "../../../utils/Date/getDay";
 import { PayPaymentFormData, PayPaymentModal } from "./PayPaymentModal";
-
-
-
-interface FilterPaymentsFormData{
-    search: string;
-    name: string;
-    address: string;
-    phone?: string;
-    cnpj?: string;
-}
+import { Select } from "../../../components/Forms/Selects/Select";
 
 interface RemovePaymentData{
     id: number;
@@ -54,19 +45,24 @@ interface RemovePaymentData{
 
 const FilterPaymentsFormSchema = yup.object().shape({
     search: yup.string(),
-    name: yup.string().required('Nome da Empresa Obrigatório'),
-    address: yup.string().required('Endereço Obrigatório'),
-    phone: yup.string().min(9, "Existe Telefone com menos de 9 dígitos?"),//51991090700
-    cnpj: yup.string().min(12, "Não parece ser um CNPJ correto"),//02.999.999/0001-00
+    start_date: yup.string(),
+    end_date: yup.string(),
+    category: yup.string(),
+    company: yup.string(),
+    contract: yup.string(),
+    group: yup.string(),
+    quote: yup.string(),
+    pay_to_user: yup.string(),
 });
 
 export default function Payments(){
     const workingCompany = useWorkingCompany();
     const history = useHistory();
 
-    const [filter, setFilter] = useState<UserFilterData>(() => {
-        const data: UserFilterData = {
-
+    const [filter, setFilter] = useState<PaymentFilterData>(() => {
+        const data: PaymentFilterData = {
+            search: '',
+            company: workingCompany.company?.id,
         };
         
         return data;
@@ -79,7 +75,7 @@ export default function Payments(){
     const { showErrors } = useErrors();
     //const { data, isLoading, refetch, error} = useCompanies();
 
-    const { register, handleSubmit, reset, formState} = useForm<FilterPaymentsFormData>({
+    const { register, handleSubmit, reset, formState} = useForm<PaymentFilterData>({
         resolver: yupResolver(FilterPaymentsFormSchema),
     });
 
@@ -89,6 +85,11 @@ export default function Payments(){
         const selectedCompanyId = (event?.target.value ? event?.target.value : 1);
         const selectedCompanyData = companies.data.filter((company:Company) => company.id == selectedCompanyId)[0]
         workingCompany.changeCompany(selectedCompanyData);
+
+        const updatedFilter = filter;
+        updatedFilter.company = selectedCompanyId;
+
+        setFilter(updatedFilter);
     }
 
     const [isNewPaymentModalOpen, setIsNewPaymentModalOpen] = useState(false);
@@ -179,7 +180,8 @@ export default function Payments(){
             id: 0,
             value: '',
             new_value: '',
-            title: ''
+            title: '',
+            company: workingCompany.company?.id,
         };
         
         return data;
@@ -193,6 +195,11 @@ export default function Payments(){
         setIsPayPaymentModalOpen(false);
     }
 
+    const handleSearchPayments = async (search : PaymentFilterData) => {
+        console.log(search);
+        setFilter(search);
+    }
+
     return(
         <MainBoard sidebar="financial" header={ 
             ( profile && profile.role.id == 1) && ( companies.isLoading ? (
@@ -202,13 +209,13 @@ export default function Payments(){
             ) : (
                     <HStack as="form" spacing="10" w="100%" mb="10">
                         <FormControl pos="relative">
-                            <Select onChange={handleChangeCompany} h="45px" name="selected_company" w="100%" maxW="200px" fontSize="sm" focusBorderColor="purple.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Empresa">
+                            <ChakraSelect onChange={handleChangeCompany} defaultValue={workingCompany.company?.id} h="45px" name="selected_company" w="100%" maxW="200px" fontSize="sm" focusBorderColor="purple.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Empresa">
                             {companies.data && companies.data.map((company:Company) => {
                                 return (
                                     <option key={company.id} value={company.id}>{company.name}</option>
                                 )
                             })}
-                            </Select>
+                            </ChakraSelect>
                         </FormControl>
                     </HStack>
                 ))
@@ -228,45 +235,49 @@ export default function Payments(){
                     <Text>Categorias</Text>
                 </Link> */}
 
-                <OutlineButton onClick={() => {history.push('/categorias')}}>
+                <OutlineButton onClick={() => {history.push('/pagamentos/categorias')}}>
                     Categorias
                 </OutlineButton>
 
-                <OutlineButton onClick={() => {history.push('/fornecedores')}}>
+                <OutlineButton onClick={() => {history.push('/pagamentos/fornecedores')}}>
                     Fornecedores
                 </OutlineButton>
             </Flex>
 
-            <Flex as="form" mb="20">
+            <Flex as="form" mb="20" onSubmit={handleSubmit(handleSearchPayments)}>
 
                 <Stack spacing="6" w="100%">
                     <HStack spacing="6">
                         <Input register={register} name="search" type="text" placeholder="Procurar" variant="filled" error={formState.errors.search}/>
 
-                        <Input register={register} name="initial_date" type="date" placeholder="Data inicial" variant="filled" error={formState.errors.name}/>
-                        <Input register={register} name="final_date" type="date" placeholder="Data Final" variant="filled" error={formState.errors.name}/>
+                        <Input register={register} name="start_date" type="date" placeholder="Data Inicial" variant="filled" error={formState.errors.start_date}/>
+                        <Input register={register} name="end_date" type="date" placeholder="Data Final" variant="filled" error={formState.errors.end_date}/>
 
-                        <Select register={register} h="45px" name="category" w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Categoria">
-                            <option value="1">Comissões</option>
-                            <option value="2">Materiais</option>
-                            <option value="3">Escritório</option>
+                        <Select register={register} h="45px" name="category" w="100%" maxW="200px" error={formState.errors.category} fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Categoria">
+                            {categories && categories.map((category:PaymentCategory) => {
+                                return (
+                                    <option key={category.id} value={category.id}>{category.name}</option>
+                                )
+                            })}
                         </Select>
 
                     </HStack>
 
                     <HStack spacing="6">
-                        <Input register={register} name="group" type="text" placeholder="Grupo" variant="filled" error={formState.errors.name}/>
+                        <Input register={register} name="group" type="text" placeholder="Grupo" variant="filled" error={formState.errors.group}/>
                             
-                        <Input register={register} name="quote" type="text" placeholder="Cota" variant="filled" error={formState.errors.cnpj}/>
-                        <Input register={register} name="contract" type="text" placeholder="Contrato" variant="filled" error={formState.errors.phone}/>
+                        <Input register={register} name="quote" type="text" placeholder="Cota" variant="filled" error={formState.errors.quote}/>
+                        <Input register={register} name="contract" type="text" placeholder="Contrato" variant="filled" error={formState.errors.contract}/>
                             
-                        <Select register={register} h="45px" name="pay_to_user" w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Pagar para">
-                            <option value="1">Comissões</option>
-                            <option value="2">Materiais</option>
-                            <option value="3">Escritório</option>
+                        <Select register={register} h="45px" name="pay_to_user" error={formState.errors.pay_to_user} w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Pagar para">
+                            {users.data && users.data.map((user:User) => {
+                                return (
+                                    <option key={user.id} value={user.id}>{user.name}</option>
+                                )
+                            })}
                         </Select>
 
-                        <OutlineButton mb="10" color="blue.400" borderColor="blue.400" colorScheme="blue">
+                        <OutlineButton type="submit" mb="10" color="blue.400" borderColor="blue.400" colorScheme="blue">
                             Filtrar
                         </OutlineButton>
                     </HStack>
@@ -279,11 +290,15 @@ export default function Payments(){
                         <Flex justify="center">
                             <Spinner/>
                         </Flex>
-                    ) : payments.isLoading && (
+                    ) : ( payments.isError ? (
                         <Flex justify="center" mt="4" mb="4">
                             <Text>Erro listar as contas a pagar</Text>
                         </Flex>
-                    )
+                    ) : (payments.data.length === 0) && (
+                        <Flex justify="center">
+                            <Text>Nenhuma pagamento encontrado.</Text>
+                        </Flex>
+                    ) ) 
                 }
 
                 {
@@ -297,8 +312,6 @@ export default function Payments(){
                         const dayPaymentsFormated = formatDate(day);
                         const tomorrow = getDay(formatYmdDate(new Date().toDateString())) + 1;
                         const paymentDay = getDay(day);
-
-                        console.log(getDay(day), getDay(formatYmdDate(new Date().toDateString())));
 
                         return (
                             <Accordion key={day} w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" spacing="0" allowMultiple>
@@ -346,8 +359,8 @@ export default function Payments(){
                                                             </AccordionButton>
 
                                                             <Flex fontWeight="500" alignItems="center">
-                                                                <EllipseIcon stroke="none" fill="#2097ed"/>
-                                                                <Text ml="2" color="#2097ed">{payment.title}</Text>
+                                                                <EllipseIcon stroke="none" fill={payment.category?.color}/>
+                                                                <Text ml="2" color={payment.category?.color}>{payment.title}</Text>
                                                             </Flex>
 
                                                             <Flex fontWeight="500" alignItems="center" color="gray.800">

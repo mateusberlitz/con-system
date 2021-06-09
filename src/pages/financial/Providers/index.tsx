@@ -4,14 +4,13 @@ import { MainBoard } from "../../../components/MainBoard";
 import { Provider } from "../../../types";
 
 import { ReactComponent as PlusIcon } from '../../../assets/icons/Plus.svg';
-import { ReactComponent as EllipseIcon } from '../../../assets/icons/Ellipse.svg';
+import { ReactComponent as BackArrow } from '../../../assets/icons/Back Arrow.svg';
 import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
 
-import { Flex, HStack, SimpleGrid, Text } from "@chakra-ui/layout";
+import { Flex, HStack, Link, SimpleGrid, Text } from "@chakra-ui/layout";
 import { IconButton } from "@chakra-ui/button";
 import { Input } from "../../../components/Forms/Inputs/Input";
-import { ColorPicker } from "../../../components/Forms/ColorPicker";
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import { api } from "../../../services/api";
 
 import { useForm } from "react-hook-form";
@@ -31,7 +30,7 @@ interface CreateNewProviderFormData{
 }
 
 const CreateNewProviderFormSchema = yup.object().shape({
-    name: yup.string().required('Insira um nome para a categoria.'),
+    name: yup.string().required('Insira um nome para o fornecedor.'),
     color: yup.string(),
 });
 
@@ -109,9 +108,12 @@ export default function Providers(){
     return (
         <MainBoard sidebar="financial" header={
             (
-                <Text color="gray.800" mt="4">
-                    Fornecedores
-                </Text>
+                <>
+                    <Link href="/receber"><BackArrow width="20px" stroke="#4e4b66" fill="none"/></Link>
+                    <Text color="gray.800" ml="4">
+                        / Fornecedores
+                    </Text>
+                </>
             )
         }>
             <EditProviderModal afterEdit={providers.refetch} toEditProviderData={editProviderData} isOpen={isEditProviderModalOpen} onRequestClose={CloseEditProviderModal}/>

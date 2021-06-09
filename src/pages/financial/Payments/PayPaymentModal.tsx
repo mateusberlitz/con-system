@@ -11,6 +11,7 @@ import { useErrors } from "../../../hooks/useErrors";
 
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { ControlledInput } from "../../../components/Forms/Inputs/ControlledInput";
+import moneyToBackend from "../../../utils/moneyToBackend";
 
 interface PayPaymentModalProps{
     isOpen: boolean;
@@ -23,12 +24,12 @@ export interface PayPaymentFormData{
     id: number,
     value: string,
     title: string,
-    new_value: string,
+    new_value?: string,
+    company?: number
 }
 
 const PayPaymentFormSchema = yup.object().shape({
-    id: yup.number().required('Selecione o pagamento para pagar.'),
-    value: yup.string().required('O pagamento deve possuir um valor.'),
+    value: yup.string(),
     new_value: yup.string().nullable(),
 });
 
@@ -42,7 +43,7 @@ export function PayPaymentModal ( { isOpen, onRequestClose, afterCreate, toPayPa
         resolver: yupResolver(PayPaymentFormSchema),
     });
 
-    const handleCreateNewPayment = async (paymentData : PayPaymentFormData) => {
+    const handlePayPayment = async (paymentData : PayPaymentFormData) => {
         try{
             if(!workingCompany.company){
                 toast({
@@ -56,7 +57,12 @@ export function PayPaymentModal ( { isOpen, onRequestClose, afterCreate, toPayPa
                 return;
             }
 
-            await api.post('/payments/store', paymentData);
+            paymentData.new_value = (paymentData.new_value ? moneyToBackend(paymentData.new_value) : '');
+
+            paymentData.company = workingCompany.company.id;
+            paymentData.value = toPayPaymentData.value;
+
+            await api.post(`/payments/pay/${toPayPaymentData.id}`, paymentData);
 
             toast({
                 title: "Sucesso",
@@ -78,10 +84,12 @@ export function PayPaymentModal ( { isOpen, onRequestClose, afterCreate, toPayPa
         }
     }
 
+    console.log(formState);
+
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
             <ModalOverlay />
-            <ModalContent as="form" borderRadius="24px" onSubmit={handleSubmit(handleCreateNewPayment)}>
+            <ModalContent as="form" borderRadius="24px" onSubmit={handleSubmit(handlePayPayment)}>
                 <ModalHeader p="10" fontWeight="700" fontSize="2xl">Pagar {toPayPaymentData.title}</ModalHeader>
 
                 <ModalCloseButton top="10" right="5"/>
@@ -89,7 +97,7 @@ export function PayPaymentModal ( { isOpen, onRequestClose, afterCreate, toPayPa
                 <ModalBody pl="10" pr="10">
                     <Stack spacing="6">
                         <HStack spacing="4" align="baseline">
-                            <ControlledInput control={control} value={Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(parseFloat(toPayPaymentData.value))} name="value" type="text" placeholder="Valor" variant="outline" error={formState.errors.value} mask="money" focusBorderColor="blue.400"/>
+                            <ControlledInput isDisabled={true} control={control} value={toPayPaymentData.value.replace('.', ',')} name="value" type="text" placeholder="Valor" variant="outline" error={formState.errors.value} mask="money" focusBorderColor="blue.400"/>
                             <ControlledInput control={control} value={toPayPaymentData.new_value} name="new_value" type="text" placeholder="Novo Valor" variant="outline" mask="money" error={formState.errors.new_value} focusBorderColor="blue.400"/>
                         </HStack>
 

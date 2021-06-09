@@ -92,21 +92,43 @@ export interface Bill{
     title: string;
     value: number;
     expire: string;
-    category: PaymentCategory;
+    category: BillCategory;
     company: Company;
-    provider?: Provider;
-    pay_to_user?: User;
+    source?: Source;
     observation: string;
-    contract: string;
-    group: string;
-    quote: string;
-    recurrence?: number;
     status?: boolean;
-    file: string;
     created_at?: Date;
     updated_at?: Date;
 }
 
 export interface dayBills{
     [day: string]: Bill[];
+}
+
+export interface Source{
+    id: number;
+    name: string;
+    phone: string;
+    email: string;
+    created_at?: Date;
+    updated_at?: Date;
+}
+
+export interface CashFlowCategory{
+    id: number;
+    name: string;
+    created_at?: Date;
+    updated_at?: Date;
+}
+
+export interface CashFlowInterface{
+    id: number;
+    title: string;
+    value: number;
+    category: CashFlowCategory;
+    company: Company;
+    payment: Payment;
+    bill: Bill;
+    created_at?: string;
+    updated_at?: Date;
 }

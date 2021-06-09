@@ -7,7 +7,7 @@ import { Select } from "../../../components/Forms/Selects/Select";
 import {  useForm } from "react-hook-form";
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Payment, PaymentCategory, Provider, User } from "../../../types";
+import { Payment, PaymentCategory, Provider, Source, User } from "../../../types";
 import { api } from "../../../services/api";
 import { useHistory } from "react-router";
 import { useErrors } from "../../../hooks/useErrors";
@@ -17,14 +17,14 @@ import { ControlledSelect } from "../../../components/Forms/Selects/ControlledSe
 import { formatDate } from "../../../utils/Date/formatDate";
 import { formatInputDate } from "../../../utils/Date/formatInputDate";
 
-interface EditPaymentModalProps{
+interface EditBillModalProps{
     isOpen: boolean;
     onRequestClose: () => void;
     afterEdit: () => void;
     categories: PaymentCategory[];
-    providers: Provider[];
+    sources: Source[];
     users: User[];
-    toEditPaymentData: EditBillFormData;
+    toEditBillData: EditBillFormData;
 }
 
 export interface EditBillFormData{
@@ -33,96 +33,65 @@ export interface EditBillFormData{
     observation?: string;
     company: number;
     category: number;
-    provider?: number;
     status?: boolean;
-    pay_to_user?: number;
+    source?: number;
     value: string;
     expire: string;
-    contract?: string;
-    group?: string;
-    quote?: string;
-    recurrence?: number;
-    file: any;
 }
 
-const EditPaymentFormSchema = yup.object().shape({
+const EditBillFormSchema = yup.object().shape({
     title: yup.string().required('Título do pagamento obrigatório'),
     observation: yup.string().nullable(),
     company: yup.number(),
     category: yup.number(),
-    provider: yup.number().transform((v, o) => o === '' ? null : v).nullable(),
     status: yup.boolean(),
-    pay_to_user: yup.number().transform((v, o) => o === '' ? null : v).nullable(),
+    source: yup.number().transform((v, o) => o === '' ? null : v).nullable(),
     value: yup.string().required("Informe o valor do pagamento"),
-    expire: yup.date().required("Selecione a data de vencimento"),
-    contract: yup.string().nullable(),
-    group: yup.string(),
-    quote: yup.string(),
-    recurrence: yup.number().transform((v, o) => o === '' ? null : v).nullable(),
-    file: yup.array(),
+    expire: yup.date().required("Selecione a data de vencimento")
 });
 
-export function EditBillModal( { isOpen, onRequestClose, afterEdit, toEditPaymentData, categories, users, providers } : EditPaymentModalProps){
+export function EditBillModal( { isOpen, onRequestClose, afterEdit, toEditBillData, categories, sources } : EditBillModalProps){
     const workingCompany = useWorkingCompany();
     const history = useHistory();
     const toast = useToast();
     const { showErrors } = useErrors();
 
     const { handleSubmit, formState, reset, control} = useForm<EditBillFormData>({
-        resolver: yupResolver(EditPaymentFormSchema),
+        resolver: yupResolver(EditBillFormSchema),
         defaultValues: {
-            title: toEditPaymentData.title,
-            value: toEditPaymentData.value,
-            company: toEditPaymentData.company,
-            category: toEditPaymentData.category,
-            provider: toEditPaymentData.provider,
-            pay_to_user: toEditPaymentData.pay_to_user,
-            status: toEditPaymentData.status,
-            expire: toEditPaymentData.expire,
-            observation: toEditPaymentData.observation,
-            contract: toEditPaymentData.contract,
-            group: toEditPaymentData.group,
-            quote: toEditPaymentData.quote,
-            recurrence: toEditPaymentData.recurrence,
-            file: toEditPaymentData.file,
+            title: toEditBillData.title,
+            value: toEditBillData.value,
+            company: toEditBillData.company,
+            category: toEditBillData.category,
+            source: toEditBillData.source,
+            status: toEditBillData.status,
+            expire: toEditBillData.expire,
+            observation: toEditBillData.observation,
         }
     });
 
-    function includeAndFormatData(paymentData: EditBillFormData){
-        const removedValueCurrencyUnit = paymentData.value.substring(3);
+    function includeAndFormatData(billData: EditBillFormData){
+        const removedValueCurrencyUnit = billData.value.substring(3);
         const valueWithDoubleFormat = removedValueCurrencyUnit.replace('.', '').replace(',', '.');
-        //const floatValue = parseFloat(valueWithDoubleFormat);
 
-        paymentData.value = valueWithDoubleFormat;
+        billData.value = valueWithDoubleFormat;
 
-        if(paymentData.recurrence === null){
-            delete paymentData.recurrence;
+        billData.expire = formatInputDate(billData.expire);
+
+        if(billData.source === null || billData.source === 0){
+            delete billData.source;
         }
-
-        if(paymentData.provider === null){
-            delete paymentData.provider;
-        }
-
-        if(paymentData.pay_to_user === null){
-            delete paymentData.pay_to_user;
-        }
-
-        if(paymentData.file === null || paymentData.file === "" || paymentData.file.length === 0){
-            delete paymentData.file;
-        }
-
-        paymentData.expire = formatInputDate(paymentData.expire);
 
         if(!workingCompany.company){
-            return paymentData;
+            return billData;
         }
 
-        paymentData.company = workingCompany.company?.id;
+        billData.company = workingCompany.company?.id;
 
-        return paymentData;
+        return billData;
     }
 
-    const handleEditPayment = async (paymentData : EditBillFormData) => {
+    const handleEditBill = async (billData : EditBillFormData) => {
         try{
             if(!workingCompany.company){
                 toast({
@@ -136,14 +105,14 @@ export function EditBillModal( { isOpen, onRequestClose, afterEdit, toEditPaymen
                 return;
             }
 
-            paymentData = includeAndFormatData(paymentData);
-            console.log(paymentData);
+            billData = includeAndFormatData(billData);
+            console.log(billData);
 
-            await api.post(`/payments/update/${toEditPaymentData.id}`, paymentData);
+            await api.post(`/bills/update/${toEditBillData.id}`, billData);
 
             toast({
                 title: "Sucesso",
-                description: `Dados do pagamento ${toEditPaymentData.title} atualizados.`,
+                description: `Dados do pagamento ${toEditBillData.title} atualizados.`,
                 status: "success",
                 duration: 12000,
                 isClosable: true,
@@ -163,23 +132,23 @@ export function EditBillModal( { isOpen, onRequestClose, afterEdit, toEditPaymen
     return (
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
             <ModalOverlay />
-            <ModalContent as="form" borderRadius="24px" onSubmit={handleSubmit(handleEditPayment)}>
-                <ModalHeader p="10" fontWeight="700" fontSize="2xl">Alterar {toEditPaymentData.title}</ModalHeader>
+            <ModalContent as="form" borderRadius="24px" onSubmit={handleSubmit(handleEditBill)}>
+                <ModalHeader p="10" fontWeight="700" fontSize="2xl">Alterar {toEditBillData.title}</ModalHeader>
 
                 <ModalCloseButton top="10" right="5"/>
                 
                 <ModalBody pl="10" pr="10">
                     <Stack spacing="6">
-                        <ControlledInput control={control} value={toEditPaymentData.title} name="title" type="text" placeholder="Título" variant="outline" error={formState.errors.title} focusBorderColor="blue.400"/>
+                        <ControlledInput control={control} value={toEditBillData.title} name="title" type="text" placeholder="Título" variant="outline" error={formState.errors.title} focusBorderColor="blue.400"/>
 
                         <HStack spacing="4" align="baseline">
-                            <ControlledInput control={control} value={toEditPaymentData.expire} name="expire" type="date" placeholder="Data de Vencimento" variant="outline" error={formState.errors.expire} focusBorderColor="blue.400"/>
-                            <ControlledInput control={control} value={toEditPaymentData.value} name="value" type="text" placeholder="Telefone" variant="outline" mask="money" error={formState.errors.value} focusBorderColor="blue.400"/>
+                            <ControlledInput control={control} value={toEditBillData.expire} name="expire" type="date" placeholder="Data de Vencimento" variant="outline" error={formState.errors.expire} focusBorderColor="blue.400"/>
+                            <ControlledInput control={control} value={toEditBillData.value} name="value" type="text" placeholder="Telefone" variant="outline" mask="money" error={formState.errors.value} focusBorderColor="blue.400"/>
                         </HStack>
 
 
                         <HStack spacing="4" align="baseline">
-                            <ControlledSelect control={control} name="category" value={toEditPaymentData.category.toString()} error={formState.errors.category} variant="outline" w="100%" maxW="200px" focusBorderColor="blue.400"> 
+                            <ControlledSelect control={control} name="category" value={toEditBillData.category.toString()} error={formState.errors.category} variant="outline" w="100%" maxW="200px" focusBorderColor="blue.400"> 
                                     <option key="0" value="0">Categoria</option>
                                     {categories && categories.map((category:PaymentCategory) => {
                                         return (
@@ -188,31 +157,17 @@ export function EditBillModal( { isOpen, onRequestClose, afterEdit, toEditPaymen
                                     })}
                             </ControlledSelect>
 
-                            <ControlledSelect control={control} name="provider" value={toEditPaymentData.provider?.toString()} error={formState.errors.provider} variant="outline" w="100%" maxW="200px" focusBorderColor="blue.400"> 
-                                    <option key="0" value="0">Fornecedor</option>
-                                    {providers && providers.map((provider:Provider) => {
+                            <ControlledSelect control={control} name="source" value={toEditBillData.source?.toString()} error={formState.errors.source} variant="outline" w="100%" maxW="200px" focusBorderColor="blue.400"> 
+                                    <option key="0" value="0">Fonte</option>
+                                    {sources && sources.map((source:Source) => {
                                         return (
-                                            <option key={provider.id} value={provider.id}>{provider.name}</option>
+                                            <option key={source.id} value={source.id}>{source.name}</option>
                                         )
                                     })}
                             </ControlledSelect>
                         </HStack>
 
-                        <HStack spacing="4" align="baseline">
-                            <ControlledInput control={control} value={toEditPaymentData.contract} name="contract" type="text" placeholder="Contrato" variant="outline" error={formState.errors.contract} focusBorderColor="blue.400"/>
-
-                            <ControlledSelect control={control} name="pay_to_user" value={toEditPaymentData.pay_to_user?.toString()} error={formState.errors.pay_to_user} variant="outline" w="100%" maxW="200px" focusBorderColor="blue.400"> 
-                                    <option key="0" value="0">Pagar para</option>
-                                    {users && users.map((user:User) => {
-                                        return (
-                                            <option key={user.id} value={user.id}>{user.name}</option>
-                                        )
-                                    })}
-                            </ControlledSelect>
-                        </HStack>
-
-                        <ControlledInput control={control} value={toEditPaymentData.recurrence?.toString()} name="recurrence" type="text" placeholder="Repetir Mensalmente" variant="outline" error={formState.errors.recurrence} focusBorderColor="blue.400"/>
-                        <ControlledInput control={control} value={toEditPaymentData.observation} name="observation" type="text" placeholder="Observação" variant="outline" error={formState.errors.observation} focusBorderColor="blue.400"/>
+                        <ControlledInput control={control} value={toEditBillData.observation} name="observation" type="text" placeholder="Observação" variant="outline" error={formState.errors.observation} focusBorderColor="blue.400"/>
 
                     </Stack>
                 </ModalBody>

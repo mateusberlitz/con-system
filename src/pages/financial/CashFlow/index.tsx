@@ -1,10 +1,10 @@
-import { FormControl, Flex, HStack, Stack, Spinner, Text, IconButton, Select, Accordion, AccordionItem, AccordionButton, AccordionPanel, Link } from "@chakra-ui/react";
+import { FormControl, Flex, HStack, Stack, Spinner, Text, IconButton, Select as ChakraSelect, Accordion, AccordionItem, AccordionButton, AccordionPanel, Link } from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { MainBoard } from "../../../components/MainBoard";
 import { useCompanies } from "../../../hooks/useCompanies";
 import { useProfile } from "../../../hooks/useProfile";
 import { useSelectedCompany } from "../../../hooks/useSelectedCompany";
-import { Company, dayPayments, Payment, PaymentCategory } from "../../../types";
+import { BillCategory, CashFlowCategory, CashFlowInterface, Company, dayPayments, Payment, PaymentCategory } from "../../../types";
 
 import { useForm } from "react-hook-form";
 import * as yup from 'yup';
@@ -13,70 +13,60 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { ReactComponent as PlusIcon } from '../../../assets/icons/Plus.svg';
 import { ReactComponent as MinusIcon } from '../../../assets/icons/Minus.svg';
 import { ReactComponent as StrongPlusIcon } from '../../../assets/icons/StrongPlus.svg';
-import { ReactComponent as EllipseIcon } from '../../../assets/icons/Ellipse.svg';
-import { ReactComponent as AttachIcon } from '../../../assets/icons/Attach.svg';
-import { ReactComponent as HomeIcon } from '../../../assets/icons/Home.svg';
+import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
+
 import { Input } from "../../../components/Forms/Inputs/Input";
 import { useErrors } from "../../../hooks/useErrors";
 import { OutlineButton } from "../../../components/Buttons/OutlineButton";
 import { EditButton } from "../../../components/Buttons/EditButton";
-import { RemoveButton } from "../../../components/Buttons/RemoveButton";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useHistory } from "react-router";
 import { api } from "../../../services/api";
-import { UserFilterData, useUsers } from "../../../hooks/useUsers";
-import { useProviders } from "../../../hooks/useProviders";
+import { UserFilterData } from "../../../hooks/useUsers";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
-import { usePayments } from "../../../hooks/usePayments";
 import { formatDate } from "../../../utils/Date/formatDate";
 import { formatYmdDate } from "../../../utils/Date/formatYmdDate";
 import { formatBRDate } from "../../../utils/Date/formatBRDate";
 import { getDay } from "../../../utils/Date/getDay";
+import { useCashFlows, CashFlowsFilterData } from "../../../hooks/useCashFlows";
+import { getHour } from "../../../utils/Date/getHour";
+import { NewCashFlowModal } from "./NewCashFlowModal";
+import { EditCashFlowFormData, EditCashFlowModal } from "./EditCashFlowModal";
+import { ConfirmCashFlowRemoveModal } from "./ConfirmCashFlowRemoveModal";
+import { Select } from "../../../components/Forms/Selects/Select";
 
-
-
-interface FilterPaymentsFormData{
-    search: string;
-    name: string;
-    address: string;
-    phone?: string;
-    cnpj?: string;
-}
-
-interface RemovePaymentData{
+interface RemoveCashFlowData{
     id: number;
     title: string;
 }
 
-const FilterPaymentsFormSchema = yup.object().shape({
+const FilterCashFlowFormSchema = yup.object().shape({
     search: yup.string(),
-    name: yup.string().required('Nome da Empresa Obrigatório'),
-    address: yup.string().required('Endereço Obrigatório'),
-    phone: yup.string().min(9, "Existe Telefone com menos de 9 dígitos?"),//51991090700
-    cnpj: yup.string().min(12, "Não parece ser um CNPJ correto"),//02.999.999/0001-00
+    start_date: yup.string(),
+    end_date: yup.string(),
+    category: yup.string(),
 });
 
 export default function CashFlow(){
     const workingCompany = useWorkingCompany();
     const history = useHistory();
 
-    const [filter, setFilter] = useState<UserFilterData>(() => {
-        const data: UserFilterData = {
-
+    const [filter, setFilter] = useState<CashFlowsFilterData>(() => {
+        const data: CashFlowsFilterData = {
+            search: '',
+            company: workingCompany.company?.id,
         };
         
         return data;
     })
-    const payments = usePayments(filter);
+    const cashFlows = useCashFlows(filter);
 
     const {profile} = useProfile();
     const companies = useCompanies();
-    const providers = useProviders();
     const { showErrors } = useErrors();
-    //const { data, isLoading, refetch, error} = useCompanies();
 
-    const { register, handleSubmit, reset, formState} = useForm<FilterPaymentsFormData>({
-        resolver: yupResolver(FilterPaymentsFormSchema),
+    const { register, handleSubmit, reset, formState} = useForm<CashFlowsFilterData>({
+        resolver: yupResolver(FilterCashFlowFormSchema),
     });
 
     const { companyId, changeCompanyId } = useSelectedCompany();
@@ -85,22 +75,69 @@ export default function CashFlow(){
         const selectedCompanyId = (event?.target.value ? event?.target.value : 1);
         const selectedCompanyData = companies.data.filter((company:Company) => company.id == selectedCompanyId)[0]
         workingCompany.changeCompany(selectedCompanyData);
+
+        const updatedFilter = filter;
+        updatedFilter.company = selectedCompanyId;
+
+        setFilter(updatedFilter);
     }
 
-    const [isNewPaymentModalOpen, setIsNewPaymentModalOpen] = useState(false);
+    const [isNewCashFlowModalOpen, setIsNewCashFlowModalOpen] = useState(false);
 
-    function OpenNewPaymentModal(){
-        setIsNewPaymentModalOpen(true);
+    function OpenNewCashFlowModal(){
+        setIsNewCashFlowModalOpen(true);
     }
-    function CloseNewPaymentModal(){
-        setIsNewPaymentModalOpen(false);
+    function CloseNewCashFlowModal(){
+        setIsNewCashFlowModalOpen(false);
+    }
+
+    const [toEditCashFlowData, setToEditCashFlowData] = useState<EditCashFlowFormData>(() => {
+
+        const data: EditCashFlowFormData = {
+            id: 0,
+            title: '',
+            value: '',
+            company: 0,
+            category: 0,
+        };
+        
+        return data;
+    });
+
+    const [isEditCashFlowModalOpen, setIsEditCashFlowModalOpen] = useState(false);
+
+    function OpenEditCashFlowModal(cashFlow : EditCashFlowFormData){
+        setToEditCashFlowData(cashFlow);
+        setIsEditCashFlowModalOpen(true);
+    }
+    function CloseEditCashFlowModal(){
+        setIsEditCashFlowModalOpen(false);
+    }
+
+    const [isConfirmCashFlowRemoveModalOpen, setisConfirmCashFlowRemoveModalOpen] = useState(false);
+    const [removeCashFlowData, setRemoveCashFlowData] = useState<RemoveCashFlowData>(() => {
+
+        const data: RemoveCashFlowData = {
+            title: '',
+            id: 0,
+        };
+        
+        return data;
+    });
+
+    function OpenConfirmCashFlowRemoveModal(paymentData: RemoveCashFlowData){
+        setRemoveCashFlowData(paymentData);
+        setisConfirmCashFlowRemoveModalOpen(true);
+    }
+    function CloseConfirmCashFlowRemoveModal(){
+        setisConfirmCashFlowRemoveModalOpen(false);
     }
 
 
-    const [categories, setCategories] = useState<PaymentCategory[]>([]);
+    const [categories, setCategories] = useState<BillCategory[]>([]);
 
     const loadCategories = async () => {
-        const { data } = await api.get('/payment_categories');
+        const { data } = await api.get('/cashflow_categories');
 
         setCategories(data);
     }
@@ -113,8 +150,11 @@ export default function CashFlow(){
     const usersFilter: UserFilterData = {
         search: ''
     };
-    const users = useUsers(usersFilter);
 
+    const handleSearchCashFlow = async (search : CashFlowsFilterData) => {
+        console.log(search);
+        setFilter(search);
+    }
 
     return(
         <MainBoard sidebar="financial" header={ 
@@ -125,21 +165,24 @@ export default function CashFlow(){
             ) : (
                     <HStack as="form" spacing="10" w="100%" mb="10">
                         <FormControl pos="relative">
-                            <Select onChange={handleChangeCompany} h="45px" name="selected_company" w="100%" maxW="200px" fontSize="sm" focusBorderColor="purple.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Empresa">
+                            <ChakraSelect onChange={handleChangeCompany} defaultValue={workingCompany.company?.id} h="45px" name="selected_company" w="100%" maxW="200px" fontSize="sm" focusBorderColor="purple.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Empresa">
                             {companies.data && companies.data.map((company:Company) => {
                                 return (
                                     <option key={company.id} value={company.id}>{company.name}</option>
                                 )
                             })}
-                            </Select>
+                            </ChakraSelect>
                         </FormControl>
                     </HStack>
                 ))
         }
         >
+            <NewCashFlowModal categories={categories} afterCreate={cashFlows.refetch} isOpen={isNewCashFlowModalOpen} onRequestClose={CloseNewCashFlowModal}/>
+            <EditCashFlowModal categories={categories} toEditCashFlowData={toEditCashFlowData} afterEdit={cashFlows.refetch} isOpen={isEditCashFlowModalOpen} onRequestClose={CloseEditCashFlowModal}/>
+            <ConfirmCashFlowRemoveModal afterRemove={cashFlows.refetch} toRemoveCashFlowData={removeCashFlowData} isOpen={isConfirmCashFlowRemoveModalOpen} onRequestClose={CloseConfirmCashFlowRemoveModal}/>
 
             <Flex justify="space-between" alignItems="center" mb="10">
-                <SolidButton onClick={OpenNewPaymentModal} color="white" bg="blue.400" icon={PlusIcon} colorScheme="blue">
+                <SolidButton onClick={OpenNewCashFlowModal} color="white" bg="blue.400" icon={PlusIcon} colorScheme="blue">
                     Adicionar Movimentação
                 </SolidButton>
 
@@ -148,22 +191,24 @@ export default function CashFlow(){
                 </Link> */}
             </Flex>
 
-            <Flex as="form" mb="20">
+            <Flex as="form" mb="20" onSubmit={handleSubmit(handleSearchCashFlow)}>
 
                 <Stack spacing="6" w="100%">
                     <Input register={register} name="search" type="text" placeholder="Procurar" variant="filled" error={formState.errors.search}/>
 
                     <HStack spacing="6">
-                        <Input register={register} name="initial_date" type="date" placeholder="Data inicial" variant="filled" error={formState.errors.name}/>
-                        <Input register={register} name="final_date" type="date" placeholder="Data Final" variant="filled" error={formState.errors.name}/>
+                        <Input register={register} name="start_date" type="date" placeholder="Data inicial" variant="filled" error={formState.errors.start_date}/>
+                        <Input register={register} name="end_date" type="date" placeholder="Data Final" variant="filled" error={formState.errors.end_date}/>
 
-                        <Select register={register} h="45px" name="category" w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Categoria">
-                            <option value="1">Comissões</option>
-                            <option value="2">Materiais</option>
-                            <option value="3">Escritório</option>
+                        <Select register={register} h="45px" name="category" w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Categoria" error={formState.errors.category}>
+                            {categories && categories.map((category:CashFlowCategory) => {
+                                return (
+                                    <option key={category.id} value={category.id}>{category.name}</option>
+                                )
+                            })}
                         </Select>
 
-                        <OutlineButton mb="10" color="blue.400" borderColor="blue.400" colorScheme="blue">
+                        <OutlineButton type="submit" mb="10" color="blue.400" borderColor="blue.400" colorScheme="blue">
                             Filtrar
                         </OutlineButton>
 
@@ -173,73 +218,93 @@ export default function CashFlow(){
             </Flex>
 
             <Stack fontSize="13px" spacing="12">
-                {   payments.isLoading ? (
+                {   cashFlows.isLoading ? (
                         <Flex justify="center">
                             <Spinner/>
                         </Flex>
-                    ) : payments.isLoading && (
+                    ) : ( cashFlows.isError ? (
                         <Flex justify="center" mt="4" mb="4">
                             <Text>Erro listar as contas a pagar</Text>
                         </Flex>
-                    )
+                    ) : (cashFlows.data.length === 0) && (
+                        <Flex justify="center">
+                            <Text>Nenhuma movimentação encontrada.</Text>
+                        </Flex>
+                    ) ) 
                 }
 
                 {
-                    (!payments.isLoading && !payments.error) && Object.keys(payments.data).map((day:string) => {
-                        const totalDayPayments = payments.data[day].length;
-                        const totalDayAmount = payments.data[day].reduce((sumAmount:number, payment:Payment) => {
-                            return sumAmount + payment.value;
+                    (!cashFlows.isLoading && !cashFlows.error) && Object.keys(cashFlows.data).map((day:string) => {
+                        const totalDayCashFlows = cashFlows.data[day].length;
+                        const totalDayAmount = cashFlows.data[day].reduce((sumAmount:number, cashFlow:CashFlowInterface) => {
+                            return sumAmount + cashFlow.value;
                         }, 0);
 
                         const todayFormatedDate = formatDate(formatYmdDate(new Date().toDateString()));
-                        const dayPaymentsFormated = formatDate(day);
+                        const dayCashFlowsFormated = formatDate(day);
                         const tomorrow = getDay(formatYmdDate(new Date().toDateString())) + 1;
-                        const paymentDay = getDay(day);
-
-                        console.log(getDay(day), getDay(formatYmdDate(new Date().toDateString())));
+                        const cashFlowDay = getDay(day);
 
                         return (
                             <Stack key={day} w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" spacing="0" allowMultiple>
                                 <HStack spacing="8" w="100%" justify="space-between" paddingX="8" paddingY="3" bg="gray.200">
-                                    <Text fontWeight="bold">{(todayFormatedDate === dayPaymentsFormated) ? 'Hoje' : (tomorrow == paymentDay) ? "Amanhã" : ""} {formatBRDate(day)}</Text>
+                                    <Text fontWeight="bold">{(todayFormatedDate === dayCashFlowsFormated) ? 'Hoje' : (tomorrow == cashFlowDay) ? "Amanhã" : ""} {formatBRDate(day)}</Text>
 
                                     <Flex alignItems="center" float="right" color={totalDayAmount > 0 ? 'green.400' : 'red.400'}>
-                                        {totalDayAmount > 0 
+                                        {/* {totalDayAmount > 0 
                                             ? <StrongPlusIcon stroke="#48bb78" fill="none" width="12px"/> 
                                             : <MinusIcon stroke="#c30052" fill="none" width="12px"/>
-                                        }
+                                        } */}
                                         <Text fontWeight="bold" ml="2">
                                             {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalDayAmount)}
                                         </Text>
                                     </Flex>
                                 </HStack>
 
-                                <HStack justifyContent="space-between" borderTop="2px" borderColor="gray.500" px="8" py="4">
-                                    <Flex>
-                                        <Text mr="6" fontSize="sm" color="gray.800">14:20</Text>
-                                        <Text color="gray.800">Materiais de limpeza e trabalho</Text>
-                                    </Flex>
+                                {
+                                    cashFlows.data[day].map((cashFlow:CashFlowInterface) => {
+                                        const cashFlowToEditData:EditCashFlowFormData = {
+                                            id: cashFlow.id,
+                                            title: cashFlow.title,
+                                            value: cashFlow.value.toString().replace('.', ','),
+                                            company: cashFlow.company?.id,
+                                            category: cashFlow.category?.id,
+                                        }
 
-                                    <Flex>
-                                        <Text fontWeight="bold" color="gray.800">Despesas</Text>
-                                    </Flex>
+                                        return (
+                                            <HStack justifyContent="space-between" borderTop="2px" borderColor="gray.500" px="8" py="4">
+                                                <Flex>
+                                                    <Text mr="6" fontSize="sm" color="gray.800">{cashFlow.created_at && getHour(cashFlow.created_at)}</Text>
+                                                    <Text color="gray.800">{cashFlow.title}</Text>
+                                                </Flex>
 
-                                    <Flex>
-                                        <Text fontWeight="bold">
-                                            <EditButton />
+                                                <Flex>
+                                                    <Text fontWeight="bold" color="gray.800">{cashFlow.category.name}</Text>
+                                                </Flex>
 
-                                            <Flex ml="3" alignItems="center" float="right" color={totalDayAmount > 0 ? 'green.400' : 'red.400'}>
-                                                {totalDayAmount > 0 
-                                                    ? <StrongPlusIcon stroke="#48bb78" fill="none" width="12px"/> 
-                                                    : <MinusIcon stroke="#c30052" fill="none" width="12px"/>
-                                                }
-                                                <Text fontWeight="bold" ml="2">
-                                                    {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalDayAmount)}
-                                                </Text>
-                                            </Flex>
-                                        </Text>
-                                    </Flex>
-                                </HStack>
+                                                <Flex>
+                                                    <HStack fontWeight="bold" spacing="7">
+                                                        <Flex alignItems="center" color={cashFlow.value > 0 ? 'green.400' : 'red.400'}>
+                                                            {/* {cashFlow.value > 0 
+                                                                ? <StrongPlusIcon stroke="#48bb78" fill="none" width="12px"/> 
+                                                                : <MinusIcon stroke="#c30052" fill="none" width="12px"/>
+                                                            } */}
+                                                            <Text fontWeight="bold" ml="2">
+                                                                {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(cashFlow.value)}
+                                                            </Text>
+                                                        </Flex>
+
+                                                        <EditButton onClick={() => OpenEditCashFlowModal(cashFlowToEditData)}/>
+
+                                                        <IconButton onClick={() => OpenConfirmCashFlowRemoveModal({ id: cashFlow.id, title: cashFlow.title })} h="24px" w="23px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
+                                                    </HStack>
+                                                </Flex>
+                                            </HStack>
+                                        )
+                                    })
+                                }
+
+                                
                             </Stack>
                         )
                     })

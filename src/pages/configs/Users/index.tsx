@@ -138,7 +138,7 @@ export default function Users(){
 
                 <Input register={register} name="search" type="text" icon={SearchIcon} error={formState.errors.search} focusBorderColor="purple.600" placeholder="Procurar"/>
 
-                <Select register={register} name="role" error={formState.errors.search} focusBorderColor="purple.600">
+                <Select register={register} name="role" error={formState.errors.role} focusBorderColor="purple.600">
                         <option value="0">Cargo</option>
                         {roles.data && roles.data.map((role:Role) => {
                             return (
@@ -147,7 +147,7 @@ export default function Users(){
                         })}
                 </Select>
 
-                <Select register={register} name="company" error={formState.errors.search} focusBorderColor="purple.600">
+                <Select register={register} name="company" error={formState.errors.company} focusBorderColor="purple.600">
                         <option value="0">Empresa</option>
                         {companies.data && companies.data.map((company:Company) => {
                             return (
