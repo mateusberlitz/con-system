@@ -1,9 +1,6 @@
 import { Text, Stack,Flex, Spinner, HStack } from "@chakra-ui/react";
-import { useState } from "react";
-import { Query, UseQueryResult } from "react-query";
+import { UseQueryResult } from "react-query";
 import { SolidButton } from "../../components/Buttons/SolidButton";
-import { PaymentFilterData, usePayments } from "../../hooks/usePayments";
-import { useWorkingCompany } from "../../hooks/useWorkingCompany";
 import { Payment } from "../../types";
 import { formatDate } from "../../utils/Date/formatDate";
 import { formatYmdDate } from "../../utils/Date/formatYmdDate";
@@ -25,19 +22,9 @@ interface PaymentsSummaryProps{
 }
 
 export function PaymentsSummary({payments, openPayPayment}: PaymentsSummaryProps){
-    const workingCompany = useWorkingCompany();
-
-    
-
-    
-
-    
-
     return (
-        <>
-        
                 <Stack w="55%" min-width="300px" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8">
-                    <Text fontSize="lg" mb="8" w="100%">Contas a Pagar</Text>
+                    <Text fontSize="xl" mb="8" w="100%" fontWeight="semibold">Contas a Pagar</Text>
 
                     {   payments.isLoading ? (
                             <Flex justify="left">
@@ -126,7 +113,6 @@ export function PaymentsSummary({payments, openPayPayment}: PaymentsSummaryProps
                         })
                     }
                 </Stack>
-        </>
 
         
     )

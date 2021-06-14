@@ -13,6 +13,7 @@ import { formatYmdDate } from "../../utils/Date/formatYmdDate";
 import { getDay } from "../../utils/Date/getDay";
 import { PayPaymentFormData, PayPaymentModal } from "./Payments/PayPaymentModal";
 import { PaymentsSummary } from "./PaymentsSummary";
+import { TasksSummary } from "./TasksSummary";
 
 import { ReactComponent as EllipseIcon } from '../../assets/icons/Ellipse.svg';
 import { IconButton } from "@chakra-ui/button";
@@ -67,14 +68,7 @@ export default function Financial(){
                             {/* PAGAMENTOS */}
                             <PaymentsSummary payments={payments} openPayPayment={OpenPayPaymentModal} />
 
-                            <Flex w="45%" min-width="300px" justify="space-between" fontWeight="500" alignItems="center" bg="white" borderRadius="full" shadow="xl" h="54px" px="8">
-                                <Flex alignItems="center" cursor="pointer" >
-                                    <EllipseIcon stroke="none" fill="#dddddd"/>
-                                    <Text mx="4">teste</Text>
-                                </Flex>
-                                
-                                <IconButton h="24px" w="23px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <EllipseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
-                            </Flex>
+                            <TasksSummary />
                 </HStack>
 
             </Stack>
