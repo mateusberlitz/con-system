@@ -247,7 +247,7 @@ export default function Bills(){
                         <Flex justify="center">
                             <Spinner/>
                         </Flex>
-                    ) : (bills.isLoading ? (
+                    ) : (bills.isError ? (
                         <Flex justify="center" mt="4" mb="4">
                             <Text>Erro listar as contas a receber</Text>
                         </Flex>
