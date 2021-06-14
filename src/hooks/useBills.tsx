@@ -10,10 +10,11 @@ export interface BillFilterData{
     source?: number;
 }
 
-export const getBills = async (filter?: BillFilterData) => {
+export const getBills = async (filter?: BillFilterData, page: number = 0) => {
     if(filter){
-        const { data } = await api.get('/bills', {
+        const { data, headers } = await api.get('/bills', {
             params: {
+                page: page,
                 search: filter.search,
                 category: filter.category,
                 company: filter.company,
@@ -23,16 +24,16 @@ export const getBills = async (filter?: BillFilterData) => {
             }
         });
 
-        return data;
+        return {data, total: Number(headers['x-total-count'])};
     }
 
-    const { data } = await api.get('/bills');
+    const { data, headers } = await api.get('/bills');
 
-    return data;
+    return {data, total: Number(headers['x-total-count'])};
 }
 
-export function useBills(filter: BillFilterData){
-    return useQuery(['bills', filter], () => getBills(filter), {
+export function useBills(filter: BillFilterData, page?: number){
+    return useQuery(['bills', [filter, page]], () => getBills(filter, page), {
         staleTime: 1000 * 5 * 60, //fresh
     });
 }

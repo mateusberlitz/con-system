@@ -1,10 +1,9 @@
-import { FormControl, Flex, HStack, Stack, Spinner, Text, IconButton, Accordion, Select as ChakraSelect, AccordionItem, AccordionButton, AccordionPanel, Link } from "@chakra-ui/react";
+import { FormControl, Flex, HStack, Stack, Spinner, Text, Accordion, Select as ChakraSelect, AccordionItem, AccordionButton, AccordionPanel } from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { MainBoard } from "../../../components/MainBoard";
 import { useCompanies } from "../../../hooks/useCompanies";
 import { useProfile } from "../../../hooks/useProfile";
-import { useSelectedCompany } from "../../../hooks/useSelectedCompany";
-import { Company, dayPayments, Payment, PaymentCategory, User } from "../../../types";
+import { Company, Payment, PaymentCategory, User } from "../../../types";
 
 import { useForm } from "react-hook-form";
 import * as yup from 'yup';
@@ -16,14 +15,15 @@ import { ReactComponent as StrongPlusIcon } from '../../../assets/icons/StrongPl
 import { ReactComponent as EllipseIcon } from '../../../assets/icons/Ellipse.svg';
 import { ReactComponent as AttachIcon } from '../../../assets/icons/Attach.svg';
 import { ReactComponent as HomeIcon } from '../../../assets/icons/Home.svg';
+import { ReactComponent as CheckIcon } from '../../../assets/icons/Check.svg';
 import { Input } from "../../../components/Forms/Inputs/Input";
-import { useErrors } from "../../../hooks/useErrors";
 import { OutlineButton } from "../../../components/Buttons/OutlineButton";
 import { EditButton } from "../../../components/Buttons/EditButton";
 import { RemoveButton } from "../../../components/Buttons/RemoveButton";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { NewPaymentModal } from "./NewPaymentModal";
 import { ConfirmPaymentRemoveModal } from "./ConfirmPaymentRemoveModal";
+import { CompanySelect } from "../../../components/CompanySelect";
 import { useHistory } from "react-router";
 import { api } from "../../../services/api";
 import { UserFilterData, useUsers } from "../../../hooks/useUsers";
@@ -37,6 +37,8 @@ import { formatBRDate } from "../../../utils/Date/formatBRDate";
 import { getDay } from "../../../utils/Date/getDay";
 import { PayPaymentFormData, PayPaymentModal } from "./PayPaymentModal";
 import { Select } from "../../../components/Forms/Selects/Select";
+import { PayAllPaymentsModal } from "./PayAllPaymentsModal";
+import { Pagination } from "../../../components/Pagination";
 
 interface RemovePaymentData{
     id: number;
@@ -67,19 +69,22 @@ export default function Payments(){
         
         return data;
     })
-    const payments = usePayments(filter);
+
+    function handleChangeFilter(newFilter: PaymentFilterData){
+        setFilter(newFilter);
+    }
+
+    const [page, setPage] = useState(1);
+
+    const payments = usePayments(filter, page);
 
     const {profile} = useProfile();
     const companies = useCompanies();
     const providers = useProviders();
-    const { showErrors } = useErrors();
-    //const { data, isLoading, refetch, error} = useCompanies();
 
-    const { register, handleSubmit, reset, formState} = useForm<PaymentFilterData>({
+    const { register, handleSubmit, formState} = useForm<PaymentFilterData>({
         resolver: yupResolver(FilterPaymentsFormSchema),
     });
-
-    const { companyId, changeCompanyId } = useSelectedCompany();
 
     function handleChangeCompany(event:any){
         const selectedCompanyId = (event?.target.value ? event?.target.value : 1);
@@ -195,34 +200,38 @@ export default function Payments(){
         setIsPayPaymentModalOpen(false);
     }
 
+    const [isPayAllPaymentsModalOpen, setIsPayAllPaymentsModalOpen] = useState(false);
+    const [dayToPayPayments, setDayToPayPayments] = useState<string>(() => {
+
+        const day: string = '';
+        
+        return day;
+    });
+
+    function OpenPayAllPaymentsModal(day: string){
+        setDayToPayPayments(day);
+        setIsPayAllPaymentsModalOpen(true);
+    }
+    function ClosePayAllPaymentsModal(){
+        setIsPayAllPaymentsModalOpen(false);
+    }
+
+
+
     const handleSearchPayments = async (search : PaymentFilterData) => {
         console.log(search);
+        setPage(1);
         setFilter(search);
     }
 
     return(
         <MainBoard sidebar="financial" header={ 
-            ( profile && profile.role.id == 1) && ( companies.isLoading ? (
-                <Flex justify="center">
-                    <Spinner/>
-                </Flex>
-            ) : (
-                    <HStack as="form" spacing="10" w="100%" mb="10">
-                        <FormControl pos="relative">
-                            <ChakraSelect onChange={handleChangeCompany} defaultValue={workingCompany.company?.id} h="45px" name="selected_company" w="100%" maxW="200px" fontSize="sm" focusBorderColor="purple.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Empresa">
-                            {companies.data && companies.data.map((company:Company) => {
-                                return (
-                                    <option key={company.id} value={company.id}>{company.name}</option>
-                                )
-                            })}
-                            </ChakraSelect>
-                        </FormControl>
-                    </HStack>
-                ))
+            ( ( profile && profile.role.id === 1) && <CompanySelect filter={filter} setFilter={handleChangeFilter}/> )
         }
         >
             <NewPaymentModal categories={categories} users={users.data} providers={providers.data} afterCreate={payments.refetch} isOpen={isNewPaymentModalOpen} onRequestClose={CloseNewPaymentModal}/>
-            <PayPaymentModal afterCreate={payments.refetch} toPayPaymentData={toPayPaymentData} isOpen={isPayPaymentModalOpen} onRequestClose={ClosePayPaymentModal}/>
+            <PayPaymentModal afterPay={payments.refetch} toPayPaymentData={toPayPaymentData} isOpen={isPayPaymentModalOpen} onRequestClose={ClosePayPaymentModal}/>
+            <PayAllPaymentsModal afterPay={payments.refetch} dayToPayPayments={dayToPayPayments} isOpen={isPayAllPaymentsModalOpen} onRequestClose={ClosePayAllPaymentsModal}/>
             <EditPaymentModal categories={categories} toEditPaymentData={toEditPaymentData} users={users.data} providers={providers.data} afterEdit={payments.refetch} isOpen={isEditPaymentModalOpen} onRequestClose={CloseEditPaymentModal}/>
             <ConfirmPaymentRemoveModal afterRemove={payments.refetch} toRemovePaymentData={removePaymentData} isOpen={isConfirmPaymentRemoveModalOpen} onRequestClose={CloseConfirmPaymentRemoveModal}/>
 
@@ -294,7 +303,7 @@ export default function Payments(){
                         <Flex justify="center" mt="4" mb="4">
                             <Text>Erro listar as contas a pagar</Text>
                         </Flex>
-                    ) : (payments.data.length === 0) && (
+                    ) : (payments.data?.data.length === 0) && (
                         <Flex justify="center">
                             <Text>Nenhuma pagamento encontrado.</Text>
                         </Flex>
@@ -302,9 +311,9 @@ export default function Payments(){
                 }
 
                 {
-                    (!payments.isLoading && !payments.error) && Object.keys(payments.data).map((day:string) => {
-                        const totalDayPayments = payments.data[day].length;
-                        const totalDayAmount = payments.data[day].reduce((sumAmount:number, payment:Payment) => {
+                    (!payments.isLoading && !payments.error) && Object.keys(payments.data?.data).map((day:string) => {
+                        const totalDayPayments = payments.data?.data[day].length;
+                        const totalDayAmount = payments.data?.data[day].reduce((sumAmount:number, payment:Payment) => {
                             return sumAmount + payment.value;
                         }, 0);
 
@@ -313,19 +322,33 @@ export default function Payments(){
                         const tomorrow = getDay(formatYmdDate(new Date().toDateString())) + 1;
                         const paymentDay = getDay(day);
 
+                        const hasPaymentsYoPay = payments.data?.data[day].filter((payment:Payment) => Number(payment.status) === 0).length;
+
                         return (
                             <Accordion key={day} w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" spacing="0" allowMultiple>
                                 <HStack spacing="8" justify="space-between" paddingX="8" paddingY="3" bg="gray.200">
-                                    <Text fontWeight="bold">{(todayFormatedDate === dayPaymentsFormated) ? 'Hoje' : (tomorrow == paymentDay) ? "Amanhã" : ""} {formatBRDate(day)}</Text>
+                                    <Text fontWeight="bold">{(todayFormatedDate === dayPaymentsFormated) ? 'Hoje' : (tomorrow === paymentDay) ? "Amanhã" : ""} {formatBRDate(day)}</Text>
+                                    
                                     <Text fontWeight="bold">{totalDayPayments} Pagamentos</Text>
-                                    <SolidButton h="30px" size="sm" fontSize="11" color="white" bg="green.400" colorScheme="green">
-                                        Pagar Tudo
-                                    </SolidButton>
+
+                                    {
+                                        !hasPaymentsYoPay ? (
+                                            <Flex fontWeight="bold" alignItems="center" color="green.400">
+                                                <CheckIcon stroke="#48bb78" fill="none" width="16px"/>
+                                                <Text ml="2">Pago</Text>
+                                            </Flex>
+                                        ) : (
+                                            <SolidButton h="30px" size="sm" fontSize="11" color="white" bg="green.400" colorScheme="green" onClick={() => OpenPayAllPaymentsModal(day)}>
+                                                Pagar Tudo
+                                            </SolidButton>
+                                        )
+                                    }
+                                    
                                     <Text float="right"><strong>TOTAL: {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalDayAmount)}</strong></Text>
                                 </HStack>
 
                                 {
-                                    payments.data[day].map((payment:Payment) => {
+                                    payments.data?.data[day].map((payment:Payment) => {
                                         const paymentToEditData:EditPaymentFormData = {
                                             id: payment.id,
                                             title: payment.title,
@@ -345,39 +368,49 @@ export default function Payments(){
                                         }
 
                                         return (
-                                            <AccordionItem key={payment.id} display="flex" flexDir="column" paddingX="8" paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
+                                            <AccordionItem isDisabled={payment.status} key={payment.id} display="flex" flexDir="column" paddingX="8" paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
                                                 {({ isExpanded }) => (
                                                     <>
                                                         <HStack justify="space-between" mb="3">
                                                             <AccordionButton p="0" height="fit-content" w="auto">
-                                                                <IconButton h="24px" w="23px" p="0" borderRadius="full" border="2px" borderColor="blue.400" colorScheme="blue" aria-label="Ampliar informações" 
-                                                                    icon={ 
+                                                                <Flex alignItems="center" justifyContent="center" h="24px" w="30px" p="0" borderRadius="full" border="2px" borderColor="blue.400" variant="outline">
+                                                                { 
                                                                         !isExpanded ? <StrongPlusIcon stroke="#2097ed" fill="none" width="12px"/> :
                                                                         <MinusIcon stroke="#2097ed" fill="none" width="12px"/>
-                                                                    } 
-                                                                    variant="outline"/>
+                                                                } 
+                                                                </Flex>
                                                             </AccordionButton>
 
-                                                            <Flex fontWeight="500" alignItems="center">
+                                                            <Flex fontWeight="500" alignItems="center" opacity={payment.status ? 0.5 : 1}>
                                                                 <EllipseIcon stroke="none" fill={payment.category?.color}/>
                                                                 <Text ml="2" color={payment.category?.color}>{payment.title}</Text>
                                                             </Flex>
 
-                                                            <Flex fontWeight="500" alignItems="center" color="gray.800">
+                                                            <Flex fontWeight="500" alignItems="center" color="gray.800" opacity={payment.status ? 0.5 : 1}>
                                                                 <HomeIcon stroke="#4e4b66" fill="none" width="17px"/>
                                                                 <Text ml="2">{payment.company.name}</Text>
                                                             </Flex>
                                                             
                                                             <Flex fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
                                                                 <AttachIcon stroke="#4e4b66" fill="none" width="16px"/>
-                                                                <Text ml="2">Ver Anexo</Text>
+                                                                <Text ml="2">Anexar</Text>
                                                             </Flex>
-                                                            
-                                                            <OutlineButton  onClick={() => OpenPayPaymentModal({ id: payment.id, title: payment.title , value: payment.value.toString(), new_value: ''}) }
-                                                                h="30px" size="sm" color="green.400" borderColor="green.400" colorScheme="green" fontSize="11">
-                                                                Pagar
-                                                            </OutlineButton>
-                                                            <Text float="right">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(payment.value)}</Text>
+
+                                                            {
+                                                                payment.status ? (
+                                                                    <Flex fontWeight="bold" alignItems="center" color="green.400">
+                                                                        <CheckIcon stroke="#48bb78" fill="none" width="16px"/>
+                                                                        <Text ml="2">Pago</Text>
+                                                                    </Flex>
+                                                                ) : (
+                                                                    <OutlineButton isDisabled={payment.status}  onClick={() => OpenPayPaymentModal({ id: payment.id, title: payment.title , value: payment.value.toString(), new_value: ''}) }
+                                                                        h="30px" size="sm" color="green.400" borderColor="green.400" colorScheme="green" fontSize="11">
+                                                                        Pagar
+                                                                    </OutlineButton>
+                                                                )
+                                                            }
+
+                                                            <Text opacity={payment.status ? 0.5 : 1} float="right">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(payment.value)}</Text>
                                                         </HStack>
 
                                                         <AccordionPanel flexDir="column" borderTop="2px" borderColor="gray.500" px="0" py="5">
@@ -429,6 +462,7 @@ export default function Payments(){
                     })
                 }
 
+                <Pagination totalCountOfRegister={payments.data ? payments.data.total : 0} currentPage={page} onPageChange={setPage}/>
             </Stack>
             
         </MainBoard>

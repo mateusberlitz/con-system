@@ -8,9 +8,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { api } from "../../../services/api";
 import { useHistory } from "react-router";
 import { useErrors } from "../../../hooks/useErrors";
-import { Company, Role } from "../../../types";
+import { Company } from "../../../types";
 import { ControlledSelect } from "../../../components/Forms/Selects/ControlledSelect";
-import { useCompanies } from "../../../hooks/useCompanies";
 import { useDesks } from "../../../hooks/useDesks";
 
 interface EditRoleModalProps{
@@ -43,7 +42,7 @@ export function EditRoleModal( { isOpen, toEditRoleData, afterEdit, onRequestClo
     const toast = useToast();
     const { showErrors } = useErrors();
 
-    const { handleSubmit, reset, formState, control} = useForm<EditRoleFormData>({
+    const { handleSubmit, formState, control} = useForm<EditRoleFormData>({
         resolver: yupResolver(EditRoleFormSchema),
         defaultValues: {
             name: toEditRoleData.name,

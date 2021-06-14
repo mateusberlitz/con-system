@@ -8,8 +8,6 @@ export function formatDate(date: string) {
     day = '' + dateObject.getDate(),
     year = dateObject.getFullYear();
 
-        //console.log(d.getDate());
-
     if (month.length < 2) 
         month = '0' + month;
     if (day.length < 2) 

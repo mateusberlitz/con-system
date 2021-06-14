@@ -10,8 +10,7 @@ import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
 import { Flex, HStack, Link, SimpleGrid, Text } from "@chakra-ui/layout";
 import { IconButton } from "@chakra-ui/button";
 import { Input } from "../../../components/Forms/Inputs/Input";
-import { ColorPicker } from "../../../components/Forms/ColorPicker";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { api } from "../../../services/api";
 
 import { useForm } from "react-hook-form";

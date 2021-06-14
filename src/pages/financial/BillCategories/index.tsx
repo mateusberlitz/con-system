@@ -8,7 +8,7 @@ import { ReactComponent as EllipseIcon } from '../../../assets/icons/Ellipse.svg
 import { ReactComponent as BackArrow } from '../../../assets/icons/Back Arrow.svg';
 import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
 
-import { Box, Flex, Grid, HStack, Link, SimpleGrid, Stack, Text } from "@chakra-ui/layout";
+import { Flex, HStack, Link, SimpleGrid, Text } from "@chakra-ui/layout";
 import { IconButton } from "@chakra-ui/button";
 import { Input } from "../../../components/Forms/Inputs/Input";
 import { ColorPicker } from "../../../components/Forms/ColorPicker";

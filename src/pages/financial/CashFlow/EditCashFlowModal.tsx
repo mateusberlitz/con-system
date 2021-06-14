@@ -1,21 +1,17 @@
 import { HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, useToast } from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 
-import { Input } from "../../../components/Forms/Inputs/Input";
-import { Select } from "../../../components/Forms/Selects/Select";
-
 import {  useForm } from "react-hook-form";
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { CashFlowCategory, Payment, PaymentCategory, Provider, User } from "../../../types";
+import { CashFlowCategory, } from "../../../types";
 import { api } from "../../../services/api";
 import { useHistory } from "react-router";
 import { useErrors } from "../../../hooks/useErrors";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { ControlledInput } from "../../../components/Forms/Inputs/ControlledInput";
 import { ControlledSelect } from "../../../components/Forms/Selects/ControlledSelect";
-import { formatDate } from "../../../utils/Date/formatDate";
-import { formatInputDate } from "../../../utils/Date/formatInputDate";
+import moneyToBackend from "../../../utils/moneyToBackend";
 
 interface EditCashFlowModalProps{
     isOpen: boolean;
@@ -46,7 +42,7 @@ export function EditCashFlowModal( { isOpen, onRequestClose, afterEdit, toEditCa
     const toast = useToast();
     const { showErrors } = useErrors();
 
-    const { handleSubmit, formState, reset, control} = useForm<EditCashFlowFormData>({
+    const { handleSubmit, formState, control} = useForm<EditCashFlowFormData>({
         resolver: yupResolver(EditCashFlowFormSchema),
         defaultValues: {
             title: toEditCashFlowData.title,
@@ -57,11 +53,7 @@ export function EditCashFlowModal( { isOpen, onRequestClose, afterEdit, toEditCa
     });
 
     function includeAndFormatData(cashFlowData: EditCashFlowFormData){
-        //const removedValueCurrencyUnit = cashFlowData.value.substring(3);
-        const valueWithDoubleFormat = cashFlowData.value.replace('.', '').replace(',', '.');
-        //const floatValue = parseFloat(valueWithDoubleFormat);
-
-        cashFlowData.value = valueWithDoubleFormat;
+        cashFlowData.value = moneyToBackend(cashFlowData.value);
 
         if(!workingCompany.company){
             return cashFlowData;

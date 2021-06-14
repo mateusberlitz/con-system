@@ -85,12 +85,12 @@ export default function Roles(){
     },[])
 
 
-    const { register, watch, handleSubmit, formState} = useForm();
+    const { register, handleSubmit, formState} = useForm();
 
     const handleSavePermissions = async (data:any) => {
         //Retorna um array com a ID das permissões ativas
         const filteredPermissions = Object.values(data).filter((permissionKey, permissionIndex, permissionArray) => {
-            return (parseInt(Object.keys(data)[permissionIndex].slice(0, 1)) == selectedRoleId && permissionKey !== false);
+            return (parseInt(Object.keys(data)[permissionIndex].slice(0, 1)) === selectedRoleId && permissionKey !== false);
         });
 
         //transforma o Array de permissões em um objeto do tipo SyncPermissions
@@ -122,10 +122,10 @@ export default function Roles(){
 
     useEffect(() => {
         if(!roles.isLoading && !roles.error && selectedRoleId){
-            const selectedRoleData = roles.data.filter((role:Role) => role.id == selectedRoleId)[0];
+            const selectedRoleData = roles.data.filter((role:Role) => role.id === selectedRoleId)[0];
             
             if(selectedRoleData){
-                setEditRoleData(roles.data.filter((role:Role) => role.id == selectedRoleId)[0]);
+                setEditRoleData(roles.data.filter((role:Role) => role.id === selectedRoleId)[0]);
             }
         }
     }, [roles.data, setEditRoleData])

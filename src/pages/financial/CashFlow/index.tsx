@@ -1,28 +1,23 @@
-import { FormControl, Flex, HStack, Stack, Spinner, Text, IconButton, Select as ChakraSelect, Accordion, AccordionItem, AccordionButton, AccordionPanel, Link } from "@chakra-ui/react";
+import { FormControl, Flex, HStack, Stack, Spinner, Text, IconButton, Select as ChakraSelect} from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { MainBoard } from "../../../components/MainBoard";
 import { useCompanies } from "../../../hooks/useCompanies";
 import { useProfile } from "../../../hooks/useProfile";
-import { useSelectedCompany } from "../../../hooks/useSelectedCompany";
-import { BillCategory, CashFlowCategory, CashFlowInterface, Company, dayPayments, Payment, PaymentCategory } from "../../../types";
+import { BillCategory, CashFlowCategory, CashFlowInterface, Company } from "../../../types";
 
 import { useForm } from "react-hook-form";
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import { ReactComponent as PlusIcon } from '../../../assets/icons/Plus.svg';
-import { ReactComponent as MinusIcon } from '../../../assets/icons/Minus.svg';
-import { ReactComponent as StrongPlusIcon } from '../../../assets/icons/StrongPlus.svg';
 import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
 
 import { Input } from "../../../components/Forms/Inputs/Input";
-import { useErrors } from "../../../hooks/useErrors";
 import { OutlineButton } from "../../../components/Buttons/OutlineButton";
 import { EditButton } from "../../../components/Buttons/EditButton";
+import { CompanySelect } from "../../../components/CompanySelect";
 import { useEffect, useState } from "react";
-import { useHistory } from "react-router";
 import { api } from "../../../services/api";
-import { UserFilterData } from "../../../hooks/useUsers";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { formatDate } from "../../../utils/Date/formatDate";
 import { formatYmdDate } from "../../../utils/Date/formatYmdDate";
@@ -49,7 +44,6 @@ const FilterCashFlowFormSchema = yup.object().shape({
 
 export default function CashFlow(){
     const workingCompany = useWorkingCompany();
-    const history = useHistory();
 
     const [filter, setFilter] = useState<CashFlowsFilterData>(() => {
         const data: CashFlowsFilterData = {
@@ -63,17 +57,14 @@ export default function CashFlow(){
 
     const {profile} = useProfile();
     const companies = useCompanies();
-    const { showErrors } = useErrors();
 
-    const { register, handleSubmit, reset, formState} = useForm<CashFlowsFilterData>({
+    const { register, handleSubmit, formState} = useForm<CashFlowsFilterData>({
         resolver: yupResolver(FilterCashFlowFormSchema),
     });
 
-    const { companyId, changeCompanyId } = useSelectedCompany();
-
     function handleChangeCompany(event:any){
         const selectedCompanyId = (event?.target.value ? event?.target.value : 1);
-        const selectedCompanyData = companies.data.filter((company:Company) => company.id == selectedCompanyId)[0]
+        const selectedCompanyData = companies.data.filter((company:Company) => company.id === selectedCompanyId)[0]
         workingCompany.changeCompany(selectedCompanyData);
 
         const updatedFilter = filter;
@@ -81,6 +72,15 @@ export default function CashFlow(){
 
         setFilter(updatedFilter);
     }
+
+    function handleChangeFilter(newFilter: CashFlowsFilterData){
+        setFilter(newFilter);
+    }
+
+    // useEffect(() => {
+    //     console.log(filter);
+    //     cashFlows.refetch();
+    // }, [filter])
 
     const [isNewCashFlowModalOpen, setIsNewCashFlowModalOpen] = useState(false);
 
@@ -147,34 +147,13 @@ export default function CashFlow(){
         
     }, [])
 
-    const usersFilter: UserFilterData = {
-        search: ''
-    };
-
     const handleSearchCashFlow = async (search : CashFlowsFilterData) => {
-        console.log(search);
         setFilter(search);
     }
 
     return(
         <MainBoard sidebar="financial" header={ 
-            ( profile && profile.role.id == 1) && ( companies.isLoading ? (
-                <Flex justify="center">
-                    <Spinner/>
-                </Flex>
-            ) : (
-                    <HStack as="form" spacing="10" w="100%" mb="10">
-                        <FormControl pos="relative">
-                            <ChakraSelect onChange={handleChangeCompany} defaultValue={workingCompany.company?.id} h="45px" name="selected_company" w="100%" maxW="200px" fontSize="sm" focusBorderColor="purple.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Empresa">
-                            {companies.data && companies.data.map((company:Company) => {
-                                return (
-                                    <option key={company.id} value={company.id}>{company.name}</option>
-                                )
-                            })}
-                            </ChakraSelect>
-                        </FormControl>
-                    </HStack>
-                ))
+            ( ( profile && profile.role.id === 1) && <CompanySelect filter={filter} setFilter={handleChangeFilter}/> )
         }
         >
             <NewCashFlowModal categories={categories} afterCreate={cashFlows.refetch} isOpen={isNewCashFlowModalOpen} onRequestClose={CloseNewCashFlowModal}/>
@@ -224,7 +203,7 @@ export default function CashFlow(){
                         </Flex>
                     ) : ( cashFlows.isError ? (
                         <Flex justify="center" mt="4" mb="4">
-                            <Text>Erro listar as contas a pagar</Text>
+                            <Text>Erro listar as movimentações</Text>
                         </Flex>
                     ) : (cashFlows.data.length === 0) && (
                         <Flex justify="center">
@@ -235,7 +214,7 @@ export default function CashFlow(){
 
                 {
                     (!cashFlows.isLoading && !cashFlows.error) && Object.keys(cashFlows.data).map((day:string) => {
-                        const totalDayCashFlows = cashFlows.data[day].length;
+                        //const totalDayCashFlows = cashFlows.data[day].length;
                         const totalDayAmount = cashFlows.data[day].reduce((sumAmount:number, cashFlow:CashFlowInterface) => {
                             return sumAmount + cashFlow.value;
                         }, 0);
@@ -248,7 +227,7 @@ export default function CashFlow(){
                         return (
                             <Stack key={day} w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" spacing="0" allowMultiple>
                                 <HStack spacing="8" w="100%" justify="space-between" paddingX="8" paddingY="3" bg="gray.200">
-                                    <Text fontWeight="bold">{(todayFormatedDate === dayCashFlowsFormated) ? 'Hoje' : (tomorrow == cashFlowDay) ? "Amanhã" : ""} {formatBRDate(day)}</Text>
+                                    <Text fontWeight="bold">{(todayFormatedDate === dayCashFlowsFormated) ? 'Hoje' : (tomorrow === cashFlowDay) ? "Amanhã" : ""} {formatBRDate(day)}</Text>
 
                                     <Flex alignItems="center" float="right" color={totalDayAmount > 0 ? 'green.400' : 'red.400'}>
                                         {/* {totalDayAmount > 0 

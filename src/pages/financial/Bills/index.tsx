@@ -1,10 +1,9 @@
-import { FormControl, Flex, HStack, Stack, Spinner, Text, IconButton, Select as ChakraSelect, Accordion, AccordionItem, AccordionButton, AccordionPanel, Link } from "@chakra-ui/react";
+import { FormControl, Flex, HStack, Stack, Spinner, Text, IconButton, Select as ChakraSelect, Accordion, AccordionItem, AccordionButton, AccordionPanel } from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { MainBoard } from "../../../components/MainBoard";
 import { useCompanies } from "../../../hooks/useCompanies";
 import { useProfile } from "../../../hooks/useProfile";
-import { useSelectedCompany } from "../../../hooks/useSelectedCompany";
-import { Company, dayBills, Bill, BillCategory } from "../../../types";
+import { Company, Bill, BillCategory } from "../../../types";
 
 import { useForm } from "react-hook-form";
 import * as yup from 'yup';
@@ -16,18 +15,18 @@ import { ReactComponent as StrongPlusIcon } from '../../../assets/icons/StrongPl
 import { ReactComponent as EllipseIcon } from '../../../assets/icons/Ellipse.svg';
 import { ReactComponent as AttachIcon } from '../../../assets/icons/Attach.svg';
 import { ReactComponent as HomeIcon } from '../../../assets/icons/Home.svg';
+import { ReactComponent as CheckIcon } from '../../../assets/icons/Check.svg';
 import { Input } from "../../../components/Forms/Inputs/Input";
-import { useErrors } from "../../../hooks/useErrors";
 import { OutlineButton } from "../../../components/Buttons/OutlineButton";
 import { EditButton } from "../../../components/Buttons/EditButton";
 import { RemoveButton } from "../../../components/Buttons/RemoveButton";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { NewBillModal } from "./NewBillModal";
 import { ConfirmBillRemoveModal } from "./ConfirmBillRemoveModal";
+import { CompanySelect } from "../../../components/CompanySelect";
 import { useHistory } from "react-router";
 import { api } from "../../../services/api";
 import { UserFilterData, useUsers } from "../../../hooks/useUsers";
-import { useProviders } from "../../../hooks/useProviders";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { BillFilterData, useBills } from "../../../hooks/useBills";
 import { EditBillFormData, EditBillModal } from "./EditBillModal";
@@ -37,6 +36,9 @@ import { formatBRDate } from "../../../utils/Date/formatBRDate";
 import { getDay } from "../../../utils/Date/getDay";
 import { useSources } from "../../../hooks/useSources";
 import { Select } from "../../../components/Forms/Selects/Select";
+import { Pagination } from "../../../components/Pagination";
+import { ReceiveBillFormData, ReceiveBillModal } from "./ReceiveBillModal";
+import { ReceiveAllBillsModal } from "./ReceiveAllBillsModal";
 
 interface RemoveBillData{
     id: number;
@@ -65,23 +67,25 @@ export default function Bills(){
         return data;
     })
 
-    const bills = useBills(filter);
+    function handleChangeFilter(newFilter: BillFilterData){
+        setFilter(newFilter);
+    }
+
+    const [page, setPage] = useState(1);
+
+    const bills = useBills(filter, page);
 
     const {profile} = useProfile();
     const companies = useCompanies();
     const sources = useSources();
-    const { showErrors } = useErrors();
-    //const { data, isLoading, refetch, error} = useCompanies();
 
-    const { register, handleSubmit, reset, formState} = useForm<BillFilterData>({
+    const { register, handleSubmit, formState} = useForm<BillFilterData>({
         resolver: yupResolver(FilterBillsFormSchema),
     });
 
-    const { companyId, changeCompanyId } = useSelectedCompany();
-
     function handleChangeCompany(event:any){
         const selectedCompanyId = (event?.target.value ? event?.target.value : 1);
-        const selectedCompanyData = companies.data.filter((company:Company) => company.id == selectedCompanyId)[0]
+        const selectedCompanyData = companies.data.filter((company:Company) => company.id === selectedCompanyId)[0]
         workingCompany.changeCompany(selectedCompanyData);
 
         const updatedFilter = filter;
@@ -164,35 +168,57 @@ export default function Bills(){
         setisConfirmBillRemoveModalOpen(false);
     }
 
+    const [isReceiveBillModalOpen, setIsReceiveBillModalOpen] = useState(false);
+    const [toReceiveBillData, setToReceiveBillData] = useState<ReceiveBillFormData>(() => {
+
+        const data: ReceiveBillFormData = {
+            id: 0,
+            value: '',
+            new_value: '',
+            title: '',
+            company: workingCompany.company?.id,
+        };
+        
+        return data;
+    });
+
+    function OpenReceiveBillModal(billIdAndName: ReceiveBillFormData){
+        setToReceiveBillData(billIdAndName);
+        setIsReceiveBillModalOpen(true);
+    }
+    function CloseReceiveBillModal(){
+        setIsReceiveBillModalOpen(false);
+    }
+
+    const [isReceiveAllBillsModalOpen, setIsReceiveAllBillsModalOpen] = useState(false);
+    const [dayToReceiveBills, setDayToReceiveBills] = useState<string>(() => {
+
+        const day: string = '';
+        
+        return day;
+    });
+
+    function OpenReceiveAllBillsModal(day: string){
+        setDayToReceiveBills(day);
+        setIsReceiveAllBillsModalOpen(true);
+    }
+    function CloseReceiveAllBillsModal(){
+        setIsReceiveAllBillsModalOpen(false);
+    }
+
+
     const handleSearchBills = async (search : BillFilterData) => {
-        console.log(search);
         setFilter(search);
     }
-    console.log(bills);
 
     return(
         <MainBoard sidebar="financial" header={ 
-            ( profile && profile.role.id == 1) && ( companies.isLoading ? (
-                <Flex justify="center">
-                    <Spinner/>
-                </Flex>
-            ) : (
-                    <HStack as="form" spacing="10" w="100%" mb="10">
-                        <FormControl pos="relative">
-                            <ChakraSelect onChange={handleChangeCompany} defaultValue={workingCompany.company?.id} h="45px" name="selected_company" w="100%" maxW="200px" fontSize="sm" focusBorderColor="purple.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Empresa">
-                            {companies.data && companies.data.map((company:Company) => {
-                                return (
-                                    <option key={company.id} value={company.id}>{company.name}</option>
-                                )
-                            })}
-                            </ChakraSelect>
-                        </FormControl>
-                    </HStack>
-                ))
+            ( ( profile && profile.role.id === 1) && <CompanySelect filter={filter} setFilter={handleChangeFilter}/> )
         }
         >
             <NewBillModal categories={categories} users={users.data} sources={sources.data} afterCreate={bills.refetch} isOpen={isNewBillModalOpen} onRequestClose={CloseNewBillModal}/>
-            {/* <PayBillModal afterCreate={bills.refetch} toPayBillData={toPayBillData} isOpen={isPayBillModalOpen} onRequestClose={ClosePayBillModal}/> */}
+            <ReceiveBillModal afterReceive={bills.refetch} toReceiveBillData={toReceiveBillData} isOpen={isReceiveBillModalOpen} onRequestClose={CloseReceiveBillModal}/>
+            <ReceiveAllBillsModal afterReceive={bills.refetch} dayToReceiveBills={dayToReceiveBills} isOpen={isReceiveAllBillsModalOpen} onRequestClose={CloseReceiveAllBillsModal}/>
             <EditBillModal categories={categories} toEditBillData={toEditBillData} users={users.data} sources={sources.data} afterEdit={bills.refetch} isOpen={isEditBillModalOpen} onRequestClose={CloseEditBillModal}/>
             <ConfirmBillRemoveModal afterRemove={bills.refetch} toRemoveBillData={removeBillData} isOpen={isConfirmBillRemoveModalOpen} onRequestClose={CloseConfirmBillRemoveModal}/>
 
@@ -247,11 +273,11 @@ export default function Bills(){
                         <Flex justify="center">
                             <Spinner/>
                         </Flex>
-                    ) : (bills.isLoading ? (
+                    ) : (bills.isError ? (
                         <Flex justify="center" mt="4" mb="4">
                             <Text>Erro listar as contas a receber</Text>
                         </Flex>
-                    ) : (bills.data.length === 0) && (
+                    ) : (bills.data?.data.length === 0) && (
                         <Flex justify="center">
                             <Text>Nenhuma conta a pagar encontrada.</Text>
                         </Flex>
@@ -259,9 +285,9 @@ export default function Bills(){
                 }
 
                 {
-                    (!bills.isLoading && !bills.error) && Object.keys(bills.data).map((day:string) => {
-                        const totalDayBills = bills.data[day].length;
-                        const totalDayAmount = bills.data[day].reduce((sumAmount:number, Bill:Bill) => {
+                    (!bills.isLoading && !bills.error) && Object.keys(bills.data?.data).map((day:string) => {
+                        const totalDayBills = bills.data?.data[day].length;
+                        const totalDayAmount = bills.data?.data[day].reduce((sumAmount:number, Bill:Bill) => {
                             return sumAmount + Bill.value;
                         }, 0);
 
@@ -270,21 +296,32 @@ export default function Bills(){
                         const tomorrow = getDay(formatYmdDate(new Date().toDateString())) + 1;
                         const BillDay = getDay(day);
 
-                        console.log(getDay(day), getDay(formatYmdDate(new Date().toDateString())));
+                        const hasBillstoReceive = bills.data?.data[day].filter((bill:Bill) => Number(bill.status) === 0).length;
 
                         return (
                             <Accordion key={day} w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" spacing="0" allowMultiple>
                                 <HStack spacing="8" justify="space-between" paddingX="8" paddingY="3" bg="gray.200">
-                                    <Text fontWeight="bold">{(todayFormatedDate === dayBillsFormated) ? 'Hoje' : (tomorrow == BillDay) ? "Amanhã" : ""} {formatBRDate(day)}</Text>
+                                    <Text fontWeight="bold">{(todayFormatedDate === dayBillsFormated) ? 'Hoje' : (tomorrow === BillDay) ? "Amanhã" : ""} {formatBRDate(day)}</Text>
                                     <Text fontWeight="bold">{totalDayBills} Contas a Receber</Text>
-                                    <SolidButton h="30px" size="sm" fontSize="11" color="white" bg="green.400" colorScheme="green">
-                                        Tudo Recebido
-                                    </SolidButton>
+
+                                    {
+                                        !hasBillstoReceive ? (
+                                            <Flex fontWeight="bold" alignItems="center" color="green.400">
+                                                <CheckIcon stroke="#48bb78" fill="none" width="16px"/>
+                                                <Text ml="2">Tudo Recebido</Text>
+                                            </Flex>
+                                        ) : (
+                                            <SolidButton onClick={() => OpenReceiveAllBillsModal(day)}
+                                            h="30px" size="sm" fontSize="11" color="white" bg="green.400" colorScheme="green">
+                                                Receber Tudo
+                                            </SolidButton>
+                                        )
+                                    }
                                     <Text float="right"><strong>TOTAL: {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalDayAmount)}</strong></Text>
                                 </HStack>
 
                                 {
-                                    bills.data[day].map((bill:Bill) => {
+                                    bills.data?.data[day].map((bill:Bill) => {
                                         const billToEditData:EditBillFormData = {
                                             id: bill.id,
                                             title: bill.title,
@@ -297,36 +334,44 @@ export default function Bills(){
                                             observation: bill.observation,
                                         }
 
-                                        console.log(bill);
-
                                         return (
-                                            <AccordionItem key={bill.id} display="flex" flexDir="column" paddingX="8" paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
+                                            <AccordionItem isDisabled={bill.status} key={bill.id} display="flex" flexDir="column" paddingX="8" paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
                                                 {({ isExpanded }) => (
                                                     <>
                                                         <HStack justify="space-between" mb="3">
                                                             <AccordionButton p="0" height="fit-content" w="auto">
-                                                                <IconButton h="24px" w="23px" p="0" borderRadius="full" border="2px" borderColor="blue.400" colorScheme="blue" aria-label="Ampliar informações" 
-                                                                    icon={ 
+                                                                <Flex alignItems="center" justifyContent="center" h="24px" w="30px" p="0" borderRadius="full" border="2px" borderColor="blue.400" variant="outline">
+                                                                { 
                                                                         !isExpanded ? <StrongPlusIcon stroke="#2097ed" fill="none" width="12px"/> :
                                                                         <MinusIcon stroke="#2097ed" fill="none" width="12px"/>
-                                                                    } 
-                                                                    variant="outline"/>
+                                                                } 
+                                                                </Flex>
                                                             </AccordionButton>
 
-                                                            <Flex fontWeight="500" alignItems="center">
+                                                            <Flex fontWeight="500" alignItems="center" opacity={bill.status ? 0.5 : 1}>
                                                                 <EllipseIcon stroke="none" fill={bill.category?.color}/>
                                                                 <Text ml="2" color={bill.category?.color}>{bill.title}</Text>
                                                             </Flex>
 
-                                                            <Flex fontWeight="500" alignItems="center" color="gray.800">
+                                                            <Flex fontWeight="500" alignItems="center" color="gray.800" opacity={bill.status ? 0.5 : 1}>
                                                                 <HomeIcon stroke="#4e4b66" fill="none" width="17px"/>
                                                                 <Text ml="2">{bill.company.name}</Text>
                                                             </Flex>
                                                             
-                                                            <OutlineButton
-                                                                h="30px" size="sm" color="green.400" borderColor="green.400" colorScheme="green" fontSize="11">
-                                                                Recebido
-                                                            </OutlineButton>
+                                                            {
+                                                                bill.status ? (
+                                                                    <Flex fontWeight="bold" alignItems="center" color="green.400">
+                                                                        <CheckIcon stroke="#48bb78" fill="none" width="16px"/>
+                                                                        <Text ml="2">Recebido</Text>
+                                                                    </Flex>
+                                                                ) : (
+                                                                    <OutlineButton onClick={() => OpenReceiveBillModal({ id: bill.id, title: bill.title , value: bill.value.toString(), new_value: ''})}
+                                                                        h="30px" size="sm" color="green.400" borderColor="green.400" colorScheme="green" fontSize="11">
+                                                                        Receber
+                                                                    </OutlineButton>
+                                                                )
+                                                            }
+                                                            
                                                             <Text float="right">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(bill.value)}</Text>
                                                         </HStack>
 
@@ -361,6 +406,8 @@ export default function Bills(){
                         )
                     })
                 }
+
+                <Pagination totalCountOfRegister={bills.data ? bills.data.total : 0} currentPage={page} onPageChange={setPage}/>
 
             </Stack>
             

@@ -13,9 +13,8 @@ import { Input } from "../../../components/Forms/Inputs/Input";
 import { Select } from "../../../components/Forms/Selects/Select";
 import { PaymentCategory, User, Provider } from "../../../types";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
-import { formatDate } from "../../../utils/Date/formatDate";
-import { unMask } from "../../../utils/ReMask";
 import { formatInputDate } from "../../../utils/Date/formatInputDate";
+import moneyToBackend from "../../../utils/moneyToBackend";
 
 interface NewPaymentModalProps{
     isOpen: boolean;
@@ -71,11 +70,7 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
     });
 
     function includeAndFormatData(paymentData: CreateNewPaymentFormData){
-        const removedValueCurrencyUnit = paymentData.value.substring(3);
-        const valueWithDoubleFormat = removedValueCurrencyUnit.replace('.', '').replace(',', '.');
-        //const floatValue = parseFloat(valueWithDoubleFormat);
-
-        paymentData.value = valueWithDoubleFormat;
+        paymentData.value = moneyToBackend(paymentData.value);
 
         if(paymentData.recurrence === null){
             delete paymentData.recurrence;
@@ -115,8 +110,6 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
             }
 
             paymentData = includeAndFormatData(paymentData);
-
-            console.log(paymentData);
 
             await api.post('/payments/store', paymentData);
 

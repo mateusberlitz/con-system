@@ -11,11 +11,9 @@ import { useErrors } from "../../../hooks/useErrors";
 
 import { Input } from "../../../components/Forms/Inputs/Input";
 import { Select } from "../../../components/Forms/Selects/Select";
-import { PaymentCategory, User, Provider } from "../../../types";
+import { PaymentCategory} from "../../../types";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
-import { formatDate } from "../../../utils/Date/formatDate";
-import { unMask } from "../../../utils/ReMask";
-import { formatInputDate } from "../../../utils/Date/formatInputDate";
+import moneyToBackend from "../../../utils/moneyToBackend";
 
 interface NewCashFlowModalProps{
     isOpen: boolean;
@@ -49,11 +47,7 @@ export function NewCashFlowModal( { isOpen, onRequestClose, afterCreate, categor
     });
 
     function includeAndFormatData(cashFlowData: CreateNewCashFlowFormData){
-        //const removedValueCurrencyUnit = cashFlowData.value.substring(3);
-        const valueWithDoubleFormat = cashFlowData.value.replace('.', '').replace(',', '.');
-        //const floatValue = parseFloat(valueWithDoubleFormat);
-
-        cashFlowData.value = valueWithDoubleFormat;
+        cashFlowData.value = moneyToBackend(cashFlowData.value);
 
         if(!workingCompany.company){
             return cashFlowData;

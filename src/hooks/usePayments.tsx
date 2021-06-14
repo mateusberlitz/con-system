@@ -13,10 +13,11 @@ export interface PaymentFilterData{
     quote?: string;
 }
 
-export const getPayments = async (filter?: PaymentFilterData) => {
+export const getPayments = async (filter?: PaymentFilterData, page: number = 0) => {
     if(filter){
-        const { data } = await api.get('/payments', {
+        const {data, headers} = await api.get('/payments', {
             params: {
+              page: page,
               search: filter.search,
               category: filter.category,
               company: filter.company,
@@ -29,16 +30,16 @@ export const getPayments = async (filter?: PaymentFilterData) => {
             }
         });
 
-        return data;
+        return {data, total: Number(headers['x-total-count'])};
     }
 
-    const { data } = await api.get('/payments');
+    const { data, headers } = await api.get('/payments');
 
-    return data;
+    return {data, total: Number(headers['x-total-count'])};
 }
 
-export function usePayments(filter: PaymentFilterData){
-    return useQuery(['payments', filter], () => getPayments(filter), {
+export function usePayments(filter: PaymentFilterData, page?: number){
+    return useQuery(['payments', [filter, page]], () => getPayments(filter, page), {
         staleTime: 1000 * 5 * 60, //fresh
     });
 }
