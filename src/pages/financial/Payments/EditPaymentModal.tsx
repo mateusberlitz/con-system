@@ -1,21 +1,18 @@
 import { HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, useToast } from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 
-import { Input } from "../../../components/Forms/Inputs/Input";
-import { Select } from "../../../components/Forms/Selects/Select";
-
 import {  useForm } from "react-hook-form";
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Payment, PaymentCategory, Provider, User } from "../../../types";
+import { PaymentCategory, Provider, User } from "../../../types";
 import { api } from "../../../services/api";
 import { useHistory } from "react-router";
 import { useErrors } from "../../../hooks/useErrors";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { ControlledInput } from "../../../components/Forms/Inputs/ControlledInput";
 import { ControlledSelect } from "../../../components/Forms/Selects/ControlledSelect";
-import { formatDate } from "../../../utils/Date/formatDate";
 import { formatInputDate } from "../../../utils/Date/formatInputDate";
+import moneyToBackend from "../../../utils/moneyToBackend";
 
 interface EditPaymentModalProps{
     isOpen: boolean;
@@ -68,7 +65,7 @@ export function EditPaymentModal( { isOpen, onRequestClose, afterEdit, toEditPay
     const toast = useToast();
     const { showErrors } = useErrors();
 
-    const { handleSubmit, formState, reset, control} = useForm<EditPaymentFormData>({
+    const { handleSubmit, formState, control} = useForm<EditPaymentFormData>({
         resolver: yupResolver(EditPaymentFormSchema),
         defaultValues: {
             title: toEditPaymentData.title,
@@ -89,11 +86,7 @@ export function EditPaymentModal( { isOpen, onRequestClose, afterEdit, toEditPay
     });
 
     function includeAndFormatData(paymentData: EditPaymentFormData){
-        const removedValueCurrencyUnit = paymentData.value.substring(3);
-        const valueWithDoubleFormat = removedValueCurrencyUnit.replace('.', '').replace(',', '.');
-        //const floatValue = parseFloat(valueWithDoubleFormat);
-
-        paymentData.value = valueWithDoubleFormat;
+        paymentData.value = moneyToBackend(paymentData.value);
 
         if(paymentData.recurrence === null){
             delete paymentData.recurrence;

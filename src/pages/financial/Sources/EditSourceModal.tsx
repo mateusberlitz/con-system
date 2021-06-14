@@ -8,9 +8,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { api } from "../../../services/api";
 import { useHistory } from "react-router";
 import { useErrors } from "../../../hooks/useErrors";
-import { useDesks } from "../../../hooks/useDesks";
-import { ColorPicker } from "../../../components/Forms/ColorPicker";
-import { useState } from "react";
 
 interface EditSourceModalProps{
     isOpen: boolean;
@@ -34,14 +31,11 @@ const EditSourceFormSchema = yup.object().shape({
 });
 
 export function EditSourceModal( { isOpen, toEditSourceData, afterEdit, onRequestClose } : EditSourceModalProps){
-    //const [color, setColor] = useState('#ffffff');
-
-
     const history = useHistory();
     const toast = useToast();
     const { showErrors } = useErrors();
 
-    const { handleSubmit, reset, formState, control} = useForm<EditSourceFormData>({
+    const { handleSubmit, formState, control} = useForm<EditSourceFormData>({
         resolver: yupResolver(EditSourceFormSchema),
         defaultValues: {
             name: toEditSourceData.name,

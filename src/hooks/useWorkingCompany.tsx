@@ -46,6 +46,7 @@ export function WorkingCompanyProvider({ children } : WorkingCompanyProviderProp
     //LOADERS
     const changeCompany = async (company: Company) => {
         setCompany(company);
+        localStorage.setItem('@lance/company', JSON.stringify(company));
     }
 
 

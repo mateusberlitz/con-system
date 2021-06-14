@@ -11,11 +11,10 @@ import { useErrors } from "../../../hooks/useErrors";
 
 import { Input } from "../../../components/Forms/Inputs/Input";
 import { Select } from "../../../components/Forms/Selects/Select";
-import { PaymentCategory, User, Provider, Source } from "../../../types";
+import { PaymentCategory, User, Source } from "../../../types";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
-import { formatDate } from "../../../utils/Date/formatDate";
-import { unMask } from "../../../utils/ReMask";
 import { formatInputDate } from "../../../utils/Date/formatInputDate";
+import moneyToBackend from "../../../utils/moneyToBackend";
 
 interface NewBillModalProps{
     isOpen: boolean;
@@ -59,10 +58,7 @@ export function NewBillModal( { isOpen, onRequestClose, afterCreate, categories,
     });
 
     function includeAndFormatData(billData: CreateNewBillFormData){
-        const removedValueCurrencyUnit = billData.value.substring(3);
-        const valueWithDoubleFormat = removedValueCurrencyUnit.replace('.', '').replace(',', '.');
-
-        billData.value = valueWithDoubleFormat;
+        billData.value = moneyToBackend(billData.value);
 
         billData.expire = formatInputDate(billData.expire);
 

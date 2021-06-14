@@ -12,11 +12,11 @@ import { formatYmdTodmY } from "../../../utils/Date/formatYmdTodmY";
 import { formatDate } from "../../../utils/Date/formatDate";
 import { formatBRDate } from "../../../utils/Date/formatBRDate";
 
-interface PayPaymentModalProps{
+interface ReceiveAllBillsModalProps{
     isOpen: boolean;
     onRequestClose: () => void;
-    afterPay: () => void;
-    dayToPayPayments: string;
+    afterReceive: () => void;
+    dayToReceiveBills: string;
 }
 
 export interface PayPaymentFormData{
@@ -26,7 +26,7 @@ export interface PayPaymentFormData{
     new_value: string,
 }
 
-export function PayAllPaymentsModal ( { isOpen, onRequestClose, afterPay, dayToPayPayments } : PayPaymentModalProps){
+export function ReceiveAllBillsModal ( { isOpen, onRequestClose, afterReceive, dayToReceiveBills } : ReceiveAllBillsModalProps){
     const workingCompany = useWorkingCompany();
     const history = useHistory();
     const toast = useToast();
@@ -46,18 +46,18 @@ export function PayAllPaymentsModal ( { isOpen, onRequestClose, afterPay, dayToP
                 return;
             }
             
-            await api.post(`/payments/payall/${formatYmdTodmY(dayToPayPayments)}`);
+            await api.post(`/bills/receiveall/${formatYmdTodmY(dayToReceiveBills)}`);
 
             toast({
                 title: "Sucesso",
-                description: `Os pagamentos do dia ${formatBRDate(dayToPayPayments)} foram pagos.`,
+                description: `As contas a receber do dia ${formatBRDate(dayToReceiveBills)} foram recebidas.`,
                 status: "success",
                 duration: 12000,
                 isClosable: true,
             });
 
             onRequestClose();
-            afterPay();
+            afterReceive();
         }catch(error) {
             showErrors(error, toast);
 
@@ -71,13 +71,13 @@ export function PayAllPaymentsModal ( { isOpen, onRequestClose, afterPay, dayToP
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
             <ModalOverlay />
             <ModalContent as="form" borderRadius="24px">
-                <ModalHeader p="10" fontWeight="700" fontSize="2xl">Pagar dia {dayToPayPayments}</ModalHeader>
+                <ModalHeader p="10" fontWeight="700" fontSize="2xl">Receber dia {dayToReceiveBills}</ModalHeader>
 
                 <ModalCloseButton top="10" right="5"/>
                 
                 <ModalBody pl="10" pr="10">
                     <SolidButton onClick={handlePayDay} mr="6" color="white" bg="green.400" _hover={{filter: "brightness(90%)"}} rightIcon={<CheckIcon stroke="#ffffff" fill="none" width="18px" strokeWidth="3px"/>}>
-                        Confirmar e Pagar Tudo
+                        Confirmar e Receber Tudo
                     </SolidButton>
                 </ModalBody>
 

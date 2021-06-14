@@ -8,9 +8,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { api } from "../../../services/api";
 import { useHistory } from "react-router";
 import { useErrors } from "../../../hooks/useErrors";
-import { useDesks } from "../../../hooks/useDesks";
 import { ColorPicker } from "../../../components/Forms/ColorPicker";
-import { useState } from "react";
 
 interface EditPaymentCategoryModalProps{
     isOpen: boolean;
@@ -45,7 +43,7 @@ export function EditPaymentCategoryModal( { isOpen, toEditPaymentCategoryData, c
     const toast = useToast();
     const { showErrors } = useErrors();
 
-    const { handleSubmit, reset, formState, control} = useForm<EditPaymentCategoryFormData>({
+    const { handleSubmit, formState, control} = useForm<EditPaymentCategoryFormData>({
         resolver: yupResolver(EditPaymentCategoryFormSchema),
         defaultValues: {
             name: toEditPaymentCategoryData.name,

@@ -1,5 +1,5 @@
 import { isAuthenticated, login } from "../services/auth";
-import { Redirect, useHistory } from "react-router";
+import { useHistory } from "react-router";
 
 import { Button } from "@chakra-ui/button";
 import { Checkbox } from "@chakra-ui/checkbox";
@@ -20,7 +20,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useToast } from "@chakra-ui/react";
 import { Alert } from "../components/Alert";
 import { useProfile } from "../hooks/useProfile";
-import { useEffect, useState } from "react";
+import { useEffect, } from "react";
 
 interface SignInFormData{
     email: string;

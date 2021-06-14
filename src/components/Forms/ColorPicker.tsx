@@ -1,9 +1,7 @@
-import { IconButton } from "@chakra-ui/button";
+
 import { Flex } from "@chakra-ui/layout";
 import { useState } from "react";
-import { SketchPicker, BlockPicker } from "react-color";
-import { string } from "yup";
-import { ReactComponent as CloseIcon } from '../../assets/icons/Close.svg';
+import { BlockPicker } from "react-color";
 
 interface ColorPickerProps{
     color: string,
