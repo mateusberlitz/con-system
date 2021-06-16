@@ -24,7 +24,7 @@ interface PaymentsSummaryProps{
 export function PaymentsSummary({payments, openPayPayment}: PaymentsSummaryProps){
     return (
                 <Stack w="55%" min-width="300px" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8">
-                    <Text fontSize="xl" mb="8" w="100%" fontWeight="semibold">Contas a Pagar</Text>
+                    <Text fontSize="xl" mb="8" w="100%">Contas a Pagar</Text>
 
                     {   payments.isLoading ? (
                             <Flex justify="left">
@@ -36,7 +36,7 @@ export function PaymentsSummary({payments, openPayPayment}: PaymentsSummaryProps
                             </Flex>
                         ) : (payments.data?.data.length === 0) && (
                             <Flex justify="left">
-                                <Text>Nenhum pagamento encontrado.</Text>
+                                <Text>Nenhum pagamento para hoje.</Text>
                             </Flex>
                         ) ) 
                     }

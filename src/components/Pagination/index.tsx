@@ -17,9 +17,6 @@ function generatePagesArray(from: number, to: number){
 }
 
 export function Pagination({ totalCountOfRegister, registerPerPage = 10, currentPage = 1, onPageChange}: PaginationProps){
-    const totalCountOfRegisters = (totalCountOfRegister > registerPerPage ? registerPerPage * currentPage : totalCountOfRegister)
-    const initialCountOfRegisters = (currentPage === 1 ? 1 : registerPerPage * (currentPage - 1) + 1);
-
     const lastPage = Math.ceil(totalCountOfRegister / registerPerPage);
 
     const previousPages = currentPage > 1 ? generatePagesArray(currentPage - 1 - siblingsCount, currentPage - 1) : [];
@@ -27,6 +24,9 @@ export function Pagination({ totalCountOfRegister, registerPerPage = 10, current
     const nextPages = currentPage < lastPage ? generatePagesArray(currentPage, Math.min(currentPage + siblingsCount, lastPage)) : [];
 
     console.log(currentPage, lastPage);
+
+    const totalCountOfRegisters = (currentPage === lastPage ? totalCountOfRegister : (totalCountOfRegister > registerPerPage ? registerPerPage * currentPage  : totalCountOfRegister))
+    const initialCountOfRegisters = (currentPage === 1 ? 1 : registerPerPage * (currentPage - 1) + 1);
 
     return(
         <Stack direction={["column", "row"]} mt="8" justify="space-between" align="center" spacing="6">

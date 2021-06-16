@@ -12,11 +12,14 @@ import { formatInputDate } from "../../utils/Date/formatInputDate";
 import { formatYmdDate } from "../../utils/Date/formatYmdDate";
 import { getDay } from "../../utils/Date/getDay";
 import { PayPaymentFormData, PayPaymentModal } from "./Payments/PayPaymentModal";
+import { NewTaskModal } from "../../pages/Tasks/NewTaskModal";
 import { PaymentsSummary } from "./PaymentsSummary";
 import { TasksSummary } from "./TasksSummary";
+import { CashSummary } from "./CashSummary";
 
 import { ReactComponent as EllipseIcon } from '../../assets/icons/Ellipse.svg';
 import { IconButton } from "@chakra-ui/button";
+import { TaskFilterData, useTasks } from "../../hooks/useTasks";
 
 
 export default function Financial(){
@@ -61,14 +64,22 @@ export default function Financial(){
     return(
         <MainBoard sidebar="financial">
             <Stack fontSize="13px" spacing="12">
-
                 <PayPaymentModal afterPay={payments.refetch} toPayPaymentData={toPayPaymentData} isOpen={isPayPaymentModalOpen} onRequestClose={ClosePayPaymentModal}/>
 
                 <HStack spacing="8">
-                            {/* PAGAMENTOS */}
-                            <PaymentsSummary payments={payments} openPayPayment={OpenPayPaymentModal} />
+                    {/* PAGAMENTOS */}
+                    <PaymentsSummary payments={payments} openPayPayment={OpenPayPaymentModal} />
 
-                            <TasksSummary />
+                    {/* TAREFAS */}
+                    <TasksSummary/>
+                </HStack>
+
+                <HStack spacing="8">
+                    {/* CAIXA */}
+                    <CashSummary/>
+
+                    {/* FLUXO */}
+                    <PaymentsSummary payments={payments} openPayPayment={OpenPayPaymentModal} />
                 </HStack>
 
             </Stack>

@@ -132,3 +132,14 @@ export interface CashFlowInterface{
     created_at?: string;
     updated_at?: Date;
 }
+
+export interface Task{
+    id: number;
+    description: string;
+    company: Company;
+    author: number;
+    time: string;
+    status?: boolean;
+    created_at?: string;
+    updated_at?: Date;
+}
