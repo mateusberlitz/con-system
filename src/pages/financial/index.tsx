@@ -16,6 +16,7 @@ import { NewTaskModal } from "../../pages/Tasks/NewTaskModal";
 import { PaymentsSummary } from "./PaymentsSummary";
 import { TasksSummary } from "./TasksSummary";
 import { CashSummary } from "./CashSummary";
+import { CashFlowSummary } from "./CashFlowSummary";
 
 import { ReactComponent as EllipseIcon } from '../../assets/icons/Ellipse.svg';
 import { IconButton } from "@chakra-ui/button";
@@ -66,7 +67,7 @@ export default function Financial(){
             <Stack fontSize="13px" spacing="12">
                 <PayPaymentModal afterPay={payments.refetch} toPayPaymentData={toPayPaymentData} isOpen={isPayPaymentModalOpen} onRequestClose={ClosePayPaymentModal}/>
 
-                <HStack spacing="8">
+                <HStack spacing="8" alignItems="flex-start">
                     {/* PAGAMENTOS */}
                     <PaymentsSummary payments={payments} openPayPayment={OpenPayPaymentModal} />
 
@@ -74,12 +75,12 @@ export default function Financial(){
                     <TasksSummary/>
                 </HStack>
 
-                <HStack spacing="8">
+                <HStack spacing="8" alignItems="flex-start">
                     {/* CAIXA */}
                     <CashSummary/>
 
                     {/* FLUXO */}
-                    <PaymentsSummary payments={payments} openPayPayment={OpenPayPaymentModal} />
+                    <CashFlowSummary/>
                 </HStack>
 
             </Stack>

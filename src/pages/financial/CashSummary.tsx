@@ -2,7 +2,7 @@ import { Text, Stack,Link, useToast } from "@chakra-ui/react";
 
 
 import { useWorkingCompany } from "../../hooks/useWorkingCompany";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TaskFilterData, useTasks } from "../../hooks/useTasks";
 import { api } from "../../services/api";
 import { showErrors } from "../../hooks/useErrors";
@@ -56,40 +56,50 @@ export function CashSummary(){
         setIsConfirmRemoveTaskModalOpen(false);
     }
 
-    const toast = useToast();
+    const [amount, setAmount] = useState(0);
 
-    const handleCheckTask = async (taskId: number) => {
-        try{
-            await api.post(`/tasks/check/${taskId}`);
+    const loadAmount = async () => {
+        const { data } = await api.get('/amount');
 
-            toast({
-                title: "Sucesso",
-                description: `A tarefa foi concluída`,
-                status: "success",
-                duration: 12000,
-                isClosable: true,
-            });
-
-            tasks.refetch();
-        }catch(error){
-            showErrors(error, toast);
-        }
+        setAmount(data.total);
     }
 
+    console.log(amount);
+
+    useEffect(() => {
+        loadAmount();
+    }, [])
+
+
+
+    const [monthAmount, setMonthAmount] = useState(0);
+
+    const loadMonthAmount = async () => {
+        const { data } = await api.get('/month_amount');
+
+        setMonthAmount(data.total);
+    }
+
+    console.log(monthAmount);
+
+    useEffect(() => {
+        loadMonthAmount();
+    }, [])
+
     return(
-        <Stack spacing="8">
-            <Stack spacing="5" w="35%" minWidth="300px" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8">
+        <Stack spacing="8" width="40%">
+            <Stack spacing="5" w="100%" minWidth="300px" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8">
                 <Text fontSize="xl" w="100%">Saldo do Caixa</Text>
 
-                <Text fontSize="2xl" w="100%" fontWeight="bold" color="green.400">R$ 120.000,00</Text>
+                <Text fontSize="2xl" w="100%" fontWeight="bold" color="green.400">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(amount)}</Text>
 
                 <Link href="/caixa" display="flex" alignItems="center" fontSize="md" color="gray.700"><CheckIcon width="20px" stroke="#6e7191" fill="none"/> <Text ml="2">Ver fluxo de caixa</Text></Link>  
             </Stack>
 
-            <Stack spacing="5" w="35%" minWidth="300px" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8">
+            <Stack spacing="5" w="100%" minWidth="300px" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8">
                 <Text fontSize="xl" w="100%">Saldo do Mês</Text>
 
-                <Text fontSize="2xl" w="100%" fontWeight="bold" color="red.400">- R$ 20.000,00</Text>
+                <Text fontSize="2xl" w="100%" fontWeight="bold" color="red.400">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(monthAmount)}</Text>
 
                 <Link href="/caixa" display="flex" alignItems="center" fontSize="md" color="gray.700"><CheckIcon width="20px" stroke="#6e7191" fill="none"/> <Text ml="2">Ver fluxo de caixa</Text></Link>  
             </Stack>
