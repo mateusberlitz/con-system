@@ -18,6 +18,7 @@ import { ReactComponent as HomeIcon } from '../../../assets/icons/Home.svg';
 import { ReactComponent as CheckIcon } from '../../../assets/icons/Check.svg';
 import { ReactComponent as FileIcon } from '../../../assets/icons/File.svg';
 import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
+import { ReactComponent as RefreshIcon } from '../../../assets/icons/Refresh.svg';
 
 import { Input } from "../../../components/Forms/Inputs/Input";
 import { OutlineButton } from "../../../components/Buttons/OutlineButton";
@@ -265,9 +266,45 @@ export default function Payments(){
         }
     }
 
+    const handleReversePayment = async (paymentId : number) => {
+        try{
+            await api.post(`/payments/unpay/${paymentId}`);
+
+            toast({
+                title: "Sucesso",
+                description: `Pagamento redefindo como não pago.`,
+                status: "success",
+                duration: 12000,
+                isClosable: true,
+            });
+
+            payments.refetch();
+        }catch(error) {
+            showErrors(error, toast);
+
+            if(error.response.data.access){
+                history.push('/');
+            }
+        }
+    }
+
+    //console.log(filter);
+
     const handleSearchPayments = async (search : PaymentFilterData) => {
+        search.company = workingCompany.company?.id;
+
         setPage(1);
         setFilter(search);
+    }
+
+    let totalOfSelectedDays = 0;
+
+    if((filter.start_date !== undefined && filter.start_date !== '') && (filter.end_date !== undefined && filter.end_date !== '')){
+        (!payments.isLoading && !payments.error) && Object.keys(payments.data?.data).map((day:string) => {
+            totalOfSelectedDays = totalOfSelectedDays + payments.data?.data[day].reduce((sumAmount:number, payment:Payment) => {
+                return sumAmount + payment.value;
+            }, 0);
+        })
     }
 
     return(
@@ -342,6 +379,15 @@ export default function Payments(){
             </Flex>
 
             <Stack fontSize="13px" spacing="12">
+                { totalOfSelectedDays > 0 &&
+                    (
+                        <Flex>
+                            <Text fontSize="md" mr="2">{`Do dia ${formatBRDate(filter.start_date !== undefined ? filter.start_date : '')} ao dia ${formatBRDate(filter.end_date !== undefined ? filter.end_date : '')} soma:`}</Text>
+                            <Text fontSize="md" fontWeight="semibold">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalOfSelectedDays)} a pagar</Text>
+                        </Flex>
+                    )
+                }
+
                 {   payments.isLoading ? (
                         <Flex justify="center">
                             <Spinner/>
@@ -459,10 +505,14 @@ export default function Payments(){
 
                                                             {
                                                                 payment.status ? (
-                                                                    <Flex fontWeight="bold" alignItems="center" color="green.400">
-                                                                        <CheckIcon stroke="#48bb78" fill="none" width="16px"/>
-                                                                        <Text ml="2">Pago</Text>
-                                                                    </Flex>
+                                                                    <HStack>
+                                                                        <Flex fontWeight="bold" alignItems="center" color="green.400">
+                                                                            <CheckIcon stroke="#48bb78" fill="none" width="16px"/>
+                                                                            <Text ml="2">Pago</Text>
+                                                                        </Flex>
+
+                                                                        <IconButton onClick={() => handleReversePayment(payment.id)} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <RefreshIcon width="20px" stroke="#14142b" fill="none"/>} variant="outline"/>
+                                                                    </HStack>
                                                                 ) : (
                                                                     <OutlineButton isDisabled={payment.status}  onClick={() => OpenPayPaymentModal({ id: payment.id, title: payment.title , value: payment.value.toString(), new_value: ''}) }
                                                                         h="30px" size="sm" color="green.400" borderColor="green.400" colorScheme="green" fontSize="11">

@@ -1,4 +1,4 @@
-import { FormControl, Flex, HStack, Stack, Spinner, Text, IconButton, Select as ChakraSelect, Accordion, AccordionItem, AccordionButton, AccordionPanel } from "@chakra-ui/react";
+import { FormControl, Flex, HStack, Stack, Spinner, Text, IconButton, Select as ChakraSelect, Accordion, AccordionItem, AccordionButton, AccordionPanel, useToast } from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { MainBoard } from "../../../components/MainBoard";
 import { useCompanies } from "../../../hooks/useCompanies";
@@ -16,6 +16,8 @@ import { ReactComponent as EllipseIcon } from '../../../assets/icons/Ellipse.svg
 import { ReactComponent as AttachIcon } from '../../../assets/icons/Attach.svg';
 import { ReactComponent as HomeIcon } from '../../../assets/icons/Home.svg';
 import { ReactComponent as CheckIcon } from '../../../assets/icons/Check.svg';
+import { ReactComponent as RefreshIcon } from '../../../assets/icons/Refresh.svg';
+
 import { Input } from "../../../components/Forms/Inputs/Input";
 import { OutlineButton } from "../../../components/Buttons/OutlineButton";
 import { EditButton } from "../../../components/Buttons/EditButton";
@@ -39,6 +41,7 @@ import { Select } from "../../../components/Forms/Selects/Select";
 import { Pagination } from "../../../components/Pagination";
 import { ReceiveBillFormData, ReceiveBillModal } from "./ReceiveBillModal";
 import { ReceiveAllBillsModal } from "./ReceiveAllBillsModal";
+import { showErrors } from "../../../hooks/useErrors";
 
 interface RemoveBillData{
     id: number;
@@ -206,9 +209,45 @@ export default function Bills(){
         setIsReceiveAllBillsModalOpen(false);
     }
 
+    const toast = useToast();
+
+    const handleReverseBill = async (billId : number) => {
+        try{
+            await api.post(`/bills/unreceive/${billId}`);
+
+            toast({
+                title: "Sucesso",
+                description: `Conta a receber redefinda como não recebida.`,
+                status: "success",
+                duration: 12000,
+                isClosable: true,
+            });
+
+            bills.refetch();
+        }catch(error) {
+            showErrors(error, toast);
+
+            if(error.response.data.access){
+                history.push('/');
+            }
+        }
+    }
 
     const handleSearchBills = async (search : BillFilterData) => {
+        search.company = workingCompany.company?.id;
+
+        setPage(1);
         setFilter(search);
+    }
+
+    let totalOfSelectedDays = 0;
+
+    if((filter.start_date !== undefined && filter.start_date !== '') && (filter.end_date !== undefined && filter.end_date !== '')){
+        (!bills.isLoading && !bills.error) && Object.keys(bills.data?.data).map((day:string) => {
+            totalOfSelectedDays = totalOfSelectedDays + bills.data?.data[day].reduce((sumAmount:number, bill:Bill) => {
+                return sumAmount + bill.value;
+            }, 0);
+        })
     }
 
     return(
@@ -269,6 +308,15 @@ export default function Bills(){
             </Flex>
 
             <Stack fontSize="13px" spacing="12">
+                { totalOfSelectedDays > 0 &&
+                    (
+                        <Flex>
+                            <Text fontSize="md" mr="2">{`Do dia ${formatBRDate(filter.start_date !== undefined ? filter.start_date : '')} ao dia ${formatBRDate(filter.end_date !== undefined ? filter.end_date : '')} soma:`}</Text>
+                            <Text fontSize="md" fontWeight="semibold">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalOfSelectedDays)} a receber</Text>
+                        </Flex>
+                    )
+                }
+
                 {   bills.isLoading ? (
                         <Flex justify="center">
                             <Spinner/>
@@ -360,10 +408,14 @@ export default function Bills(){
                                                             
                                                             {
                                                                 bill.status ? (
-                                                                    <Flex fontWeight="bold" alignItems="center" color="green.400">
-                                                                        <CheckIcon stroke="#48bb78" fill="none" width="16px"/>
-                                                                        <Text ml="2">Recebido</Text>
-                                                                    </Flex>
+                                                                    <HStack>
+                                                                        <Flex fontWeight="bold" alignItems="center" color="green.400">
+                                                                            <CheckIcon stroke="#48bb78" fill="none" width="16px"/>
+                                                                            <Text ml="2">Recebido</Text>
+                                                                        </Flex>
+
+                                                                        <IconButton onClick={() => handleReverseBill(bill.id)} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <RefreshIcon width="20px" stroke="#14142b" fill="none"/>} variant="outline"/>
+                                                                    </HStack>
                                                                 ) : (
                                                                     <OutlineButton onClick={() => OpenReceiveBillModal({ id: bill.id, title: bill.title , value: bill.value.toString(), new_value: ''})}
                                                                         h="30px" size="sm" color="green.400" borderColor="green.400" colorScheme="green" fontSize="11">

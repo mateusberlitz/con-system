@@ -12,6 +12,7 @@ import { useErrors } from "../../../hooks/useErrors";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { ControlledInput } from "../../../components/Forms/Inputs/ControlledInput";
 import moneyToBackend from "../../../utils/moneyToBackend";
+import { formatYmdDate } from "../../../utils/Date/formatYmdDate";
 
 interface ReceiveBillModalProps{
     isOpen: boolean;
@@ -25,12 +26,14 @@ export interface ReceiveBillFormData{
     value: string,
     title: string,
     new_value?: string,
+    bill_receive_day?: string,
     company?: number
 }
 
 const ReceiveBillFormSchema = yup.object().shape({
     value: yup.string(),
     new_value: yup.string().nullable(),
+    bill_receive_day: yup.date().required("Selecione a data que foi recebido"),
 });
 
 export function ReceiveBillModal ( { isOpen, onRequestClose, afterReceive, toReceiveBillData } : ReceiveBillModalProps){
@@ -84,6 +87,8 @@ export function ReceiveBillModal ( { isOpen, onRequestClose, afterReceive, toRec
         }
     }
 
+    const todayYmd = formatYmdDate(new Date().toDateString());
+
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
             <ModalOverlay />
@@ -97,6 +102,10 @@ export function ReceiveBillModal ( { isOpen, onRequestClose, afterReceive, toRec
                         <HStack spacing="4" align="baseline">
                             <ControlledInput isDisabled={true} control={control} value={Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(Number(toReceiveBillData.value))} name="value" type="text" placeholder="Valor" variant="outline" error={formState.errors.value} mask="money" focusBorderColor="blue.400"/>
                             <ControlledInput control={control} value={toReceiveBillData.new_value} name="new_value" type="text" placeholder="Novo Valor" variant="outline" mask="money" error={formState.errors.new_value} focusBorderColor="blue.400"/>
+                        </HStack>
+
+                        <HStack spacing="4" align="baseline">
+                            <ControlledInput control={control} value={todayYmd} name="bill_receive_day" type="date" placeholder="Data que foi recebido" variant="outline" error={formState.errors.bill_receive_day} focusBorderColor="blue.400"/>
                         </HStack>
                     </Stack>
                 </ModalBody>

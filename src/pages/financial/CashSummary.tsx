@@ -91,7 +91,7 @@ export function CashSummary(){
             <Stack spacing="5" w="100%" minWidth="300px" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8">
                 <Text fontSize="xl" w="100%">Saldo do Caixa</Text>
 
-                <Text fontSize="2xl" w="100%" fontWeight="bold" color="green.400">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(amount)}</Text>
+                <Text fontSize="2xl" w="100%" fontWeight="bold" color={amount > 0 ? "green.400" : "red.400"}>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(amount)}</Text>
 
                 <Link href="/caixa" display="flex" alignItems="center" fontSize="md" color="gray.700"><CheckIcon width="20px" stroke="#6e7191" fill="none"/> <Text ml="2">Ver fluxo de caixa</Text></Link>  
             </Stack>
@@ -99,7 +99,7 @@ export function CashSummary(){
             <Stack spacing="5" w="100%" minWidth="300px" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8">
                 <Text fontSize="xl" w="100%">Saldo do Mês</Text>
 
-                <Text fontSize="2xl" w="100%" fontWeight="bold" color="red.400">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(monthAmount)}</Text>
+                <Text fontSize="2xl" w="100%" fontWeight="bold" color={monthAmount > 0 ? "green.400" : "red.400"}>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(monthAmount)}</Text>
 
                 <Link href="/caixa" display="flex" alignItems="center" fontSize="md" color="gray.700"><CheckIcon width="20px" stroke="#6e7191" fill="none"/> <Text ml="2">Ver fluxo de caixa</Text></Link>  
             </Stack>
