@@ -29,6 +29,7 @@ import { NewCashFlowModal } from "./NewCashFlowModal";
 import { EditCashFlowFormData, EditCashFlowModal } from "./EditCashFlowModal";
 import { ConfirmCashFlowRemoveModal } from "./ConfirmCashFlowRemoveModal";
 import { Select } from "../../../components/Forms/Selects/Select";
+import { Pagination } from "../../../components/Pagination";
 
 interface RemoveCashFlowData{
     id: number;
@@ -53,7 +54,10 @@ export default function CashFlow(){
         
         return data;
     })
-    const cashFlows = useCashFlows(filter);
+
+    const [page, setPage] = useState(1);
+
+    const cashFlows = useCashFlows(filter, 50, page);
 
     const {profile} = useProfile();
     const companies = useCompanies();
@@ -205,7 +209,7 @@ export default function CashFlow(){
                         <Flex justify="center" mt="4" mb="4">
                             <Text>Erro listar as movimentações</Text>
                         </Flex>
-                    ) : (cashFlows.data.length === 0) && (
+                    ) : (cashFlows.data?.data.length === 0) && (
                         <Flex justify="center">
                             <Text>Nenhuma movimentação encontrada.</Text>
                         </Flex>
@@ -213,9 +217,9 @@ export default function CashFlow(){
                 }
 
                 {
-                    (!cashFlows.isLoading && !cashFlows.error) && Object.keys(cashFlows.data).map((day:string) => {
+                    (!cashFlows.isLoading && !cashFlows.error) && Object.keys(cashFlows.data?.data).map((day:string) => {
                         //const totalDayCashFlows = cashFlows.data[day].length;
-                        const totalDayAmount = cashFlows.data[day].reduce((sumAmount:number, cashFlow:CashFlowInterface) => {
+                        const totalDayAmount = cashFlows.data?.data[day].reduce((sumAmount:number, cashFlow:CashFlowInterface) => {
                             return sumAmount + cashFlow.value;
                         }, 0);
 
@@ -241,7 +245,7 @@ export default function CashFlow(){
                                 </HStack>
 
                                 {
-                                    cashFlows.data[day].map((cashFlow:CashFlowInterface) => {
+                                    cashFlows.data?.data[day].map((cashFlow:CashFlowInterface) => {
                                         const cashFlowToEditData:EditCashFlowFormData = {
                                             id: cashFlow.id,
                                             title: cashFlow.title,
@@ -289,6 +293,7 @@ export default function CashFlow(){
                     })
                 }
 
+                <Pagination totalCountOfRegister={cashFlows.data ? cashFlows.data.total : 0} registerPerPage={50} currentPage={page} onPageChange={setPage}/>
             </Stack>
             
         </MainBoard>

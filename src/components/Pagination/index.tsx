@@ -23,8 +23,6 @@ export function Pagination({ totalCountOfRegister, registerPerPage = 10, current
 
     const nextPages = currentPage < lastPage ? generatePagesArray(currentPage, Math.min(currentPage + siblingsCount, lastPage)) : [];
 
-    console.log(currentPage, lastPage);
-
     const totalCountOfRegisters = (currentPage === lastPage ? totalCountOfRegister : (totalCountOfRegister > registerPerPage ? registerPerPage * currentPage  : totalCountOfRegister))
     const initialCountOfRegisters = (currentPage === 1 ? 1 : registerPerPage * (currentPage - 1) + 1);
 

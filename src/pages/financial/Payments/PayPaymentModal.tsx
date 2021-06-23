@@ -12,6 +12,7 @@ import { useErrors } from "../../../hooks/useErrors";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { ControlledInput } from "../../../components/Forms/Inputs/ControlledInput";
 import moneyToBackend from "../../../utils/moneyToBackend";
+import { formatYmdDate } from "../../../utils/Date/formatYmdDate";
 
 interface PayPaymentModalProps{
     isOpen: boolean;
@@ -25,12 +26,14 @@ export interface PayPaymentFormData{
     value: string,
     title: string,
     new_value?: string,
+    payment_paid_day?: string,
     company?: number
 }
 
 const PayPaymentFormSchema = yup.object().shape({
     value: yup.string(),
     new_value: yup.string().nullable(),
+    payment_paid_day: yup.date().required("Selecione a data que foi pago"),
 });
 
 export function PayPaymentModal ( { isOpen, onRequestClose, afterPay, toPayPaymentData } : PayPaymentModalProps){
@@ -84,6 +87,8 @@ export function PayPaymentModal ( { isOpen, onRequestClose, afterPay, toPayPayme
         }
     }
 
+    const todayYmd = formatYmdDate(new Date().toDateString());
+
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
             <ModalOverlay />
@@ -97,6 +102,10 @@ export function PayPaymentModal ( { isOpen, onRequestClose, afterPay, toPayPayme
                         <HStack spacing="4" align="baseline">
                             <ControlledInput isDisabled={true} control={control} value={Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(Number(toPayPaymentData.value))} name="value" type="text" placeholder="Valor" variant="outline" error={formState.errors.value} mask="money" focusBorderColor="blue.400"/>
                             <ControlledInput control={control} value={toPayPaymentData.new_value} name="new_value" type="text" placeholder="Novo Valor" variant="outline" mask="money" error={formState.errors.new_value} focusBorderColor="blue.400"/>
+                        </HStack>
+
+                        <HStack spacing="4" align="baseline">
+                            <ControlledInput control={control} value={todayYmd} name="payment_paid_day" type="date" placeholder="Data que foi pago" variant="outline" error={formState.errors.payment_paid_day} focusBorderColor="blue.400"/>
                         </HStack>
                     </Stack>
                 </ModalBody>

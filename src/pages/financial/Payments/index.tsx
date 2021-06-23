@@ -1,4 +1,4 @@
-import { FormControl, Flex, HStack, Stack, Spinner, Text, Accordion, Select as ChakraSelect, AccordionItem, AccordionButton, AccordionPanel } from "@chakra-ui/react";
+import { FormControl, Link, Flex, HStack, Stack, Spinner, IconButton, Text, Accordion, Select as ChakraSelect, AccordionItem, AccordionButton, AccordionPanel, useToast } from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { MainBoard } from "../../../components/MainBoard";
 import { useCompanies } from "../../../hooks/useCompanies";
@@ -16,6 +16,10 @@ import { ReactComponent as EllipseIcon } from '../../../assets/icons/Ellipse.svg
 import { ReactComponent as AttachIcon } from '../../../assets/icons/Attach.svg';
 import { ReactComponent as HomeIcon } from '../../../assets/icons/Home.svg';
 import { ReactComponent as CheckIcon } from '../../../assets/icons/Check.svg';
+import { ReactComponent as FileIcon } from '../../../assets/icons/File.svg';
+import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
+import { ReactComponent as RefreshIcon } from '../../../assets/icons/Refresh.svg';
+
 import { Input } from "../../../components/Forms/Inputs/Input";
 import { OutlineButton } from "../../../components/Buttons/OutlineButton";
 import { EditButton } from "../../../components/Buttons/EditButton";
@@ -39,6 +43,8 @@ import { PayPaymentFormData, PayPaymentModal } from "./PayPaymentModal";
 import { Select } from "../../../components/Forms/Selects/Select";
 import { PayAllPaymentsModal } from "./PayAllPaymentsModal";
 import { Pagination } from "../../../components/Pagination";
+import { AddFilePaymentFormData, AddFilePaymentModal } from "./AddFilePaymentModal";
+import { showErrors } from "../../../hooks/useErrors";
 
 interface RemovePaymentData{
     id: number;
@@ -217,11 +223,88 @@ export default function Payments(){
     }
 
 
+    const [isAddFilePaymentModalOpen, setIsAddFilePaymentModalOpen] = useState(false);
+    const [addFilePaymentData, setAddFilePaymentData] = useState<AddFilePaymentFormData>(() => {
+
+        const data: AddFilePaymentFormData = {
+            id: 0,
+            title: '',
+        };
+        
+        return data;
+    });
+
+    function OpenAddFilePaymentModal(toAddFilePayment: AddFilePaymentFormData){
+        setAddFilePaymentData(toAddFilePayment);
+        setIsAddFilePaymentModalOpen(true);
+    }
+    function CloseAddFilePaymentModal(){
+        setIsAddFilePaymentModalOpen(false);
+    }
+
+    const toast = useToast();
+
+    const handleRemoveAttachment = async (paymentId : number) => {
+        try{
+            await api.post(`/payments/remove_file/${paymentId}`);
+
+            toast({
+                title: "Sucesso",
+                description: `Arquivo Removido`,
+                status: "success",
+                duration: 12000,
+                isClosable: true,
+            });
+
+            payments.refetch();
+        }catch(error) {
+            showErrors(error, toast);
+
+            if(error.response.data.access){
+                history.push('/');
+            }
+        }
+    }
+
+    const handleReversePayment = async (paymentId : number) => {
+        try{
+            await api.post(`/payments/unpay/${paymentId}`);
+
+            toast({
+                title: "Sucesso",
+                description: `Pagamento redefindo como não pago.`,
+                status: "success",
+                duration: 12000,
+                isClosable: true,
+            });
+
+            payments.refetch();
+        }catch(error) {
+            showErrors(error, toast);
+
+            if(error.response.data.access){
+                history.push('/');
+            }
+        }
+    }
+
+    //console.log(filter);
 
     const handleSearchPayments = async (search : PaymentFilterData) => {
-        console.log(search);
+        search.company = workingCompany.company?.id;
+
         setPage(1);
         setFilter(search);
+    }
+
+    let totalOfSelectedDays = 0;
+
+    if((filter.start_date !== undefined && filter.start_date !== '') && (filter.end_date !== undefined && filter.end_date !== '')){
+        (!payments.isLoading && !payments.error) && Object.keys(payments.data?.data).map((day:string) => {
+            totalOfSelectedDays = totalOfSelectedDays + payments.data?.data[day].reduce((sumAmount:number, payment:Payment) => {
+                return sumAmount + payment.value;
+            }, 0);
+        })
     }
 
     return(
@@ -234,6 +317,7 @@ export default function Payments(){
             <PayAllPaymentsModal afterPay={payments.refetch} dayToPayPayments={dayToPayPayments} isOpen={isPayAllPaymentsModalOpen} onRequestClose={ClosePayAllPaymentsModal}/>
             <EditPaymentModal categories={categories} toEditPaymentData={toEditPaymentData} users={users.data} providers={providers.data} afterEdit={payments.refetch} isOpen={isEditPaymentModalOpen} onRequestClose={CloseEditPaymentModal}/>
             <ConfirmPaymentRemoveModal afterRemove={payments.refetch} toRemovePaymentData={removePaymentData} isOpen={isConfirmPaymentRemoveModalOpen} onRequestClose={CloseConfirmPaymentRemoveModal}/>
+            <AddFilePaymentModal afterAttach={payments.refetch} toAddFilePaymentData={addFilePaymentData} isOpen={isAddFilePaymentModalOpen} onRequestClose={CloseAddFilePaymentModal}/>
 
             <Flex justify="space-between" alignItems="center" mb="10">
                 <SolidButton onClick={OpenNewPaymentModal} color="white" bg="blue.400" icon={PlusIcon} colorScheme="blue">
@@ -295,6 +379,15 @@ export default function Payments(){
             </Flex>
 
             <Stack fontSize="13px" spacing="12">
+                { totalOfSelectedDays > 0 &&
+                    (
+                        <Flex>
+                            <Text fontSize="md" mr="2">{`Do dia ${formatBRDate(filter.start_date !== undefined ? filter.start_date : '')} ao dia ${formatBRDate(filter.end_date !== undefined ? filter.end_date : '')} soma:`}</Text>
+                            <Text fontSize="md" fontWeight="semibold">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalOfSelectedDays)} a pagar</Text>
+                        </Flex>
+                    )
+                }
+
                 {   payments.isLoading ? (
                         <Flex justify="center">
                             <Spinner/>
@@ -352,7 +445,7 @@ export default function Payments(){
                                         const paymentToEditData:EditPaymentFormData = {
                                             id: payment.id,
                                             title: payment.title,
-                                            value: Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(payment.value),
+                                            value: payment.value.toString().replace('.', ','),
                                             company: payment.company?.id,
                                             category: payment.category?.id,
                                             provider: payment.provider?.id,
@@ -390,18 +483,36 @@ export default function Payments(){
                                                                 <HomeIcon stroke="#4e4b66" fill="none" width="17px"/>
                                                                 <Text ml="2">{payment.company.name}</Text>
                                                             </Flex>
+
+                                                            {
+                                                                payment.file ? (
+                                                                    <HStack>
+                                                                        <Link target="_blank" href={`${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_STORAGE : process.env.REACT_APP_API_LOCAL_STORAGE}${payment.file}`} display="flex" fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
+                                                                            <FileIcon stroke="#4e4b66" fill="none" width="16px"/>
+                                                                            <Text ml="2">Ver Arquivo</Text>
+                                                                        </Link>
+
+                                                                        <IconButton onClick={() => handleRemoveAttachment(payment.id)} isDisabled={payment.status} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
+                                                                    </HStack>
+                                                                ) : (
+                                                                    <Flex onClick={() => OpenAddFilePaymentModal({id: payment.id, title: payment.title})} fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
+                                                                        <AttachIcon stroke="#4e4b66" fill="none" width="16px"/>
+                                                                        <Text ml="2">Anexar</Text>
+                                                                    </Flex>
+                                                                )
                                                             
-                                                            <Flex fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
-                                                                <AttachIcon stroke="#4e4b66" fill="none" width="16px"/>
-                                                                <Text ml="2">Anexar</Text>
-                                                            </Flex>
+                                                            }
 
                                                             {
                                                                 payment.status ? (
-                                                                    <Flex fontWeight="bold" alignItems="center" color="green.400">
-                                                                        <CheckIcon stroke="#48bb78" fill="none" width="16px"/>
-                                                                        <Text ml="2">Pago</Text>
-                                                                    </Flex>
+                                                                    <HStack>
+                                                                        <Flex fontWeight="bold" alignItems="center" color="green.400">
+                                                                            <CheckIcon stroke="#48bb78" fill="none" width="16px"/>
+                                                                            <Text ml="2">Pago</Text>
+                                                                        </Flex>
+
+                                                                        <IconButton onClick={() => handleReversePayment(payment.id)} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <RefreshIcon width="20px" stroke="#14142b" fill="none"/>} variant="outline"/>
+                                                                    </HStack>
                                                                 ) : (
                                                                     <OutlineButton isDisabled={payment.status}  onClick={() => OpenPayPaymentModal({ id: payment.id, title: payment.title , value: payment.value.toString(), new_value: ''}) }
                                                                         h="30px" size="sm" color="green.400" borderColor="green.400" colorScheme="green" fontSize="11">
@@ -438,7 +549,7 @@ export default function Payments(){
 
                                                             <HStack justifyContent="space-between" alignItems="center">
                                                                 <Flex alignItems="center">
-                                                                    <Text fontWeight="500">Observação: </Text>
+                                                                    <Text fontWeight="500" mr="2">Observação: </Text>
                                                                     <Text> {payment.observation && payment.observation}</Text>
                                                                 </Flex>
 
@@ -462,7 +573,7 @@ export default function Payments(){
                     })
                 }
 
-                <Pagination totalCountOfRegister={payments.data ? payments.data.total : 0} currentPage={page} onPageChange={setPage}/>
+                <Pagination totalCountOfRegister={payments.data ? payments.data.total : 0} registerPerPage={10} currentPage={page} onPageChange={setPage}/>
             </Stack>
             
         </MainBoard>

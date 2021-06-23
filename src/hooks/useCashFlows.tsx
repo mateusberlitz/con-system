@@ -7,12 +7,16 @@ export interface CashFlowsFilterData{
     end_date?: string;
     category?: number;
     company?: number;
+    page?: number;
+    limit?: number;
 }
 
-export const getCashFlows = async (filter?: CashFlowsFilterData) => {
+export const getCashFlows = async (filter?: CashFlowsFilterData, limit: number = 20, page: number = 0) => {
     if(filter){
-        const { data } = await api.get('/cashflows', {
+        const { data, headers } = await api.get('/cashflows', {
             params: {
+              page: page,
+              limit: limit,
               search: filter.search,
               company: filter.company,
               category: filter.category,
@@ -21,16 +25,17 @@ export const getCashFlows = async (filter?: CashFlowsFilterData) => {
             }
         });
 
-        return data;
+        return {data, total: Number(headers['x-total-count'])};
+
     }
 
-    const { data } = await api.get('/cashflows');
+    const { data, headers } = await api.get('/cashflows');
 
-    return data;
+    return {data, total: Number(headers['x-total-count'])};
 }
 
-export function useCashFlows(filter: CashFlowsFilterData){
-    return useQuery(['cashflows', filter], () => getCashFlows(filter), {
+export function useCashFlows(filter: CashFlowsFilterData, limit: number = 20, page: number){
+    return useQuery(['cashflows', [filter, page]], () => getCashFlows(filter, limit, page), {
         staleTime: 1000 * 5 * 60, //fresh
     });
 }
