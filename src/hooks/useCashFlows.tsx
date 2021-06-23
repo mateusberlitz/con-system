@@ -25,13 +25,13 @@ export const getCashFlows = async (filter?: CashFlowsFilterData, limit: number =
             }
         });
 
-        return {data, total: Number(headers['x-total-count'])};
+        return {data, total: Number(headers['x-total-count']), initialCash: Number(headers['x-initial-cash'])};
 
     }
 
     const { data, headers } = await api.get('/cashflows');
 
-    return {data, total: Number(headers['x-total-count'])};
+    return {data, total: Number(headers['x-total-count']), initialCash: Number(headers['x-initial-cash'])};
 }
 
 export function useCashFlows(filter: CashFlowsFilterData, limit: number = 20, page: number){

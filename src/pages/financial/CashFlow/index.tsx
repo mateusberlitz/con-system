@@ -58,6 +58,7 @@ export default function CashFlow(){
     const [page, setPage] = useState(1);
 
     const cashFlows = useCashFlows(filter, 50, page);
+    let viewCashAmount = (!cashFlows.isLoading && !cashFlows.error && cashFlows.data?.initialCash) ? cashFlows.data.initialCash : 0;
 
     const {profile} = useProfile();
     const companies = useCompanies();
@@ -148,7 +149,6 @@ export default function CashFlow(){
 
     useEffect(() => {
         loadCategories();
-        
     }, [])
 
     const handleSearchCashFlow = async (search : CashFlowsFilterData) => {
@@ -219,7 +219,7 @@ export default function CashFlow(){
                 {
                     (!cashFlows.isLoading && !cashFlows.error) && Object.keys(cashFlows.data?.data).map((day:string) => {
                         //const totalDayCashFlows = cashFlows.data[day].length;
-                        const totalDayAmount = cashFlows.data?.data[day].reduce((sumAmount:number, cashFlow:CashFlowInterface) => {
+                        viewCashAmount = viewCashAmount + cashFlows.data?.data[day].reduce((sumAmount:number, cashFlow:CashFlowInterface) => {
                             return sumAmount + cashFlow.value;
                         }, 0);
 
@@ -233,13 +233,13 @@ export default function CashFlow(){
                                 <HStack spacing="8" w="100%" justify="space-between" paddingX="8" paddingY="3" bg="gray.200">
                                     <Text fontWeight="bold">{(todayFormatedDate === dayCashFlowsFormated) ? 'Hoje' : (tomorrow === cashFlowDay) ? "Amanhã" : ""} {formatBRDate(day)}</Text>
 
-                                    <Flex alignItems="center" float="right" color={totalDayAmount > 0 ? 'green.400' : 'red.400'}>
+                                    <Flex alignItems="center" float="right" color={viewCashAmount > 0 ? 'green.400' : 'red.400'}>
                                         {/* {totalDayAmount > 0 
                                             ? <StrongPlusIcon stroke="#48bb78" fill="none" width="12px"/> 
                                             : <MinusIcon stroke="#c30052" fill="none" width="12px"/>
                                         } */}
                                         <Text fontWeight="bold" ml="2">
-                                            {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalDayAmount)}
+                                            {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(viewCashAmount)}
                                         </Text>
                                     </Flex>
                                 </HStack>
