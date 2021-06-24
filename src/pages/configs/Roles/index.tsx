@@ -71,7 +71,7 @@ export default function Roles(){
     function handleChangeRole(event:any){
         const selectedRoleData = roles.data.filter((role:Role) => role.id === parseInt(event?.target.value))[0];
 
-        setSelectedRoleId(event?.target.value);
+        setSelectedRoleId(parseInt(event?.target.value));
         setEditRoleData(selectedRoleData);
     }
 

@@ -40,8 +40,15 @@ export function SideBarNav({ desk }: SideBarNavProps){
 
             <NavLink href="/financeiro" icon={ChartPieIcon}>Dashboard</NavLink> 
             <NavLink href="/pagamentos" icon={CardIcon}>Pagamentos</NavLink>
-            <NavLink href="/receber" icon={TagIcon}>Contas a Receber</NavLink>
-            <NavLink href="/caixa" icon={ChartBarIcon}>Fluxo de Caixa</NavLink>
+
+            {
+                HasPermission(permissions, 'Financeiro Completo') && (
+                    <>
+                        <NavLink href="/receber" icon={TagIcon}>Contas a Receber</NavLink>
+                        <NavLink href="/caixa" icon={ChartBarIcon}>Fluxo de Caixa</NavLink>
+                    </>
+                )
+            }
 
             {
                 (HasPermission(permissions, 'Usuários') || HasPermission(permissions, 'Configurações')) && (

@@ -21,9 +21,11 @@ import { CashFlowSummary } from "./CashFlowSummary";
 import { ReactComponent as EllipseIcon } from '../../assets/icons/Ellipse.svg';
 import { IconButton } from "@chakra-ui/button";
 import { TaskFilterData, useTasks } from "../../hooks/useTasks";
+import { HasPermission, useProfile } from "../../hooks/useProfile";
 
 
 export default function Financial(){
+    const { permissions } = useProfile();
     const workingCompany = useWorkingCompany();
     console.log(formatInputDate(new Date().toString()));
 
@@ -75,13 +77,19 @@ export default function Financial(){
                     <TasksSummary/>
                 </HStack>
 
-                <HStack spacing="8" alignItems="flex-start">
-                    {/* CAIXA */}
-                    <CashSummary/>
+                {
+                    HasPermission(permissions, 'Financeiro Completo') && (
+                        <>
+                            <HStack spacing="8" alignItems="flex-start">
+                                {/* CAIXA */}
+                                <CashSummary/>
 
-                    {/* FLUXO */}
-                    <CashFlowSummary/>
-                </HStack>
+                                {/* FLUXO */}
+                                <CashFlowSummary/>
+                            </HStack>
+                        </>
+                    )
+                }
 
             </Stack>
         </MainBoard>

@@ -30,7 +30,10 @@ const PrivateRoute = ({component: Component, neededPermission = "", ...rest} : P
                     <Redirect to={{ pathname: '/' , state: "Por favor, acesse sua conta."}}/>
                     
                 ) : ( neededPermission !== "" && !HasPermission(permissions, neededPermission) ? (
-                    <Redirect to={{ pathname: '/home' , state: "Você não tem permissão para essa página"}}/>
+                    HasPermission(permissions, "Financeiro Limitado") ?
+                    <Redirect to={{ pathname: '/financeiro' , state: "Você não tem permissão para essa página"}}/>
+
+                    : <Redirect to={{ pathname: '/home' , state: "Você não tem permissão para essa página"}}/>
                 )
                 : (
                     <Component {...props} />
@@ -47,7 +50,7 @@ const Routes = (): JSX.Element => {
 
         <Route path="/eu" exact component={Me} />
 
-        <PrivateRoute path="/home" exact component={ConfigsHome} />
+        <PrivateRoute path="/home" exact neededPermission="Configurações" component={ConfigsHome} />
         <PrivateRoute path="/empresas" neededPermission="Configurações" exact component={Companys} />
         <PrivateRoute path="/usuarios" neededPermission="Usuários" exact component={Users} />
         <PrivateRoute path="/permissoes" neededPermission="Configurações" exact component={Roles} />
@@ -56,9 +59,9 @@ const Routes = (): JSX.Element => {
         <PrivateRoute path="/pagamentos" neededPermission="Financeiro Limitado" exact component={Payments} />
         <PrivateRoute path="/pagamentos/categorias" neededPermission="Financeiro Limitado" exact component={PaymentCategories} />
         <PrivateRoute path="/pagamentos/fornecedores" neededPermission="Financeiro Limitado" exact component={Providers} />
-        <PrivateRoute path="/receber" neededPermission="Financeiro Limitado" exact component={Bills} />
-        <PrivateRoute path="/receber/categorias" neededPermission="Financeiro Limitado" exact component={BillCategories} />
-        <PrivateRoute path="/receber/fontes" neededPermission="Financeiro Limitado" exact component={Sources} />
+        <PrivateRoute path="/receber" neededPermission="Financeiro Completo" exact component={Bills} />
+        <PrivateRoute path="/receber/categorias" neededPermission="Financeiro Completo" exact component={BillCategories} />
+        <PrivateRoute path="/receber/fontes" neededPermission="Financeiro Completo" exact component={Sources} />
         <PrivateRoute path="/caixa" neededPermission="Financeiro Completo" exact component={CashFlow} />
 
         {/* <PrivateRoute path="/empresas" component={Roles} /> */}
