@@ -1,6 +1,8 @@
 import { createContext, ReactNode, useContext, useEffect, useRef, useState } from "react";
 import { isAuthenticated } from "../../services/auth";
 import { encodePermissions, simplifyPermissions, decodePermissions } from "../../services/permissionsSecurity";
+import { Company } from "../../types";
+import { useWorkingCompany } from "../useWorkingCompany";
 import { getMe } from "./useMe";
 import { getPermissions } from "./useProfilePermissions";
 
@@ -24,6 +26,7 @@ interface Profile{
         created_at: Date;
         updated_at: Date;
     };
+    company: Company;
     created_at: Date;
     updated_at: Date;
 }
@@ -111,10 +114,12 @@ export function ProfileProvider({ children } : ProfileProviderProps){
 
 
 
+    //const {changeCompany} = useWorkingCompany();
     //LOADERS
     const loadProfile = async () => {
         const loadedProfile = await getMe();
 
+        //changeCompany(loadedProfile.company);
         loadPermissions(loadedProfile.role.id);
 
         setProfile(loadedProfile);

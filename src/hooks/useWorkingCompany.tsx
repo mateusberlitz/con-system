@@ -1,5 +1,6 @@
 import { createContext, ReactNode, useContext, useEffect, useRef, useState } from "react";
 import { Company } from "../types";
+import { useProfile } from "./useProfile";
 
 interface WorkingCompanyProviderProps{
     children: ReactNode;
@@ -13,6 +14,7 @@ interface WorkingCompanyContextData{
 const WorkingCompanyContext = createContext<WorkingCompanyContextData>({} as WorkingCompanyContextData);
 
 export function WorkingCompanyProvider({ children } : WorkingCompanyProviderProps){
+    const {profile} = useProfile();
     const [company, setCompany] = useState<Company>(():Company|any => {
         const storagedCompany = localStorage.getItem('@lance/company');
     
@@ -38,6 +40,10 @@ export function WorkingCompanyProvider({ children } : WorkingCompanyProviderProp
     useEffect(() => {
         if(profileCompanyValue !== company){
             localStorage.setItem('@lance/company', JSON.stringify(company));
+        }else{
+            if(profile && (profile?.role.id !== 1) && (profile?.company.id !== company.id)){
+                changeCompany(profile.company);
+            }
         }
     }, [company, profileCompanyValue]);
 

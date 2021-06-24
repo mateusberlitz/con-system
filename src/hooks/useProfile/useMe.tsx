@@ -1,6 +1,7 @@
 import { useQuery } from "react-query";
 import { api } from "../../services/api";
 import { getToken } from "../../services/auth";
+import { Company } from "../../types";
 
 interface Profile{
     id: number,
@@ -18,6 +19,7 @@ interface Profile{
         created_at: Date;
         updated_at: Date;
     };
+    company: Company;
     created_at: Date;
     updated_at: Date;
 }
