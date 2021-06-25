@@ -2,7 +2,7 @@ import { FormControl, Flex, HStack, Stack, Spinner, Text, IconButton, Select as 
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { MainBoard } from "../../../components/MainBoard";
 import { useCompanies } from "../../../hooks/useCompanies";
-import { useProfile } from "../../../hooks/useProfile";
+import { HasPermission, useProfile } from "../../../hooks/useProfile";
 import { Company, Bill, BillCategory } from "../../../types";
 
 import { useForm } from "react-hook-form";
@@ -80,7 +80,7 @@ export default function Bills(){
 
     const bills = useBills(filter, page);
 
-    const {profile} = useProfile();
+    const {permissions} = useProfile();
     const companies = useCompanies();
     const sources = useSources();
 
@@ -254,7 +254,7 @@ export default function Bills(){
 
     return(
         <MainBoard sidebar="financial" header={ 
-            ( ( profile && profile.role.id === 1) && <CompanySelect searchFilter={filter} setFilter={handleChangeFilter}/> )
+            ( ( permissions && HasPermission(permissions, 'Todas Empresas')) && <CompanySelect searchFilter={filter} setFilter={handleChangeFilter}/> )
         }
         >
             <NewBillModal categories={categories} users={users.data} sources={sources.data} afterCreate={bills.refetch} isOpen={isNewBillModalOpen} onRequestClose={CloseNewBillModal}/>

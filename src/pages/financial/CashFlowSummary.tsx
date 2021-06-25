@@ -16,7 +16,7 @@ import { CashFlowsFilterData, useCashFlows } from "../../hooks/useCashFlows";
 import { useWorkingCompany } from "../../hooks/useWorkingCompany";
 import { useState } from "react";
 import { getHour } from "../../utils/Date/getHour";
-import { useProfile } from "../../hooks/useProfile";
+import { HasPermission, useProfile } from "../../hooks/useProfile";
 import { CompanySelect } from "../../components/CompanySelect";
 
 interface PaymentsSummaryProps{
@@ -44,7 +44,7 @@ export function CashFlowSummary(){
         setFilter(newFilter);
     }
 
-    const {profile} = useProfile();
+    const {permissions} = useProfile();
 
     return (
         <>
@@ -55,7 +55,7 @@ export function CashFlowSummary(){
                     <HStack>
                         <Text fontSize="xl" mb="8" w="100%">Últimas movimentações</Text>
                         {
-                            ( ( profile && profile.role.id === 1) && <CompanySelect mt="-35px !important" searchFilter={filter} setFilter={handleChangeFilter}/> )
+                            ( ( permissions && HasPermission(permissions, 'Todas Empresas')) && <CompanySelect mt="-35px !important" searchFilter={filter} setFilter={handleChangeFilter}/> )
                         }
                     </HStack>
 

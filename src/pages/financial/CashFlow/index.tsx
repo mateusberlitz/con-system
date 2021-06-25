@@ -2,7 +2,7 @@ import { FormControl, Flex, HStack, Stack, Spinner, Text, IconButton, Select as 
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { MainBoard } from "../../../components/MainBoard";
 import { useCompanies } from "../../../hooks/useCompanies";
-import { useProfile } from "../../../hooks/useProfile";
+import { HasPermission, useProfile } from "../../../hooks/useProfile";
 import { BillCategory, CashFlowCategory, CashFlowInterface, Company } from "../../../types";
 
 import { useForm } from "react-hook-form";
@@ -60,7 +60,7 @@ export default function CashFlow(){
     const cashFlows = useCashFlows(filter, 50, page);
     let viewCashAmount = (!cashFlows.isLoading && !cashFlows.error && cashFlows.data?.initialCash) ? cashFlows.data.initialCash : 0;
 
-    const {profile} = useProfile();
+    const {permissions} = useProfile();
     const companies = useCompanies();
 
     const { register, handleSubmit, formState} = useForm<CashFlowsFilterData>({
@@ -159,7 +159,7 @@ export default function CashFlow(){
 
     return(
         <MainBoard sidebar="financial" header={ 
-            ( ( profile && profile.role.id === 1) && <CompanySelect searchFilter={filter} setFilter={handleChangeFilter}/> )
+            ( ( permissions && HasPermission(permissions, 'Todas Empresas')) && <CompanySelect searchFilter={filter} setFilter={handleChangeFilter}/> )
         }
         >
             <NewCashFlowModal categories={categories} afterCreate={cashFlows.refetch} isOpen={isNewCashFlowModalOpen} onRequestClose={CloseNewCashFlowModal}/>

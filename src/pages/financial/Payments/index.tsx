@@ -2,7 +2,7 @@ import { FormControl, Link, Flex, HStack, Stack, Spinner, IconButton, Text, Acco
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { MainBoard } from "../../../components/MainBoard";
 import { useCompanies } from "../../../hooks/useCompanies";
-import { useProfile } from "../../../hooks/useProfile";
+import { HasPermission, useProfile } from "../../../hooks/useProfile";
 import { Company, Payment, PaymentCategory, User } from "../../../types";
 
 import { useForm } from "react-hook-form";
@@ -88,7 +88,7 @@ export default function Payments(){
 
     const payments = usePayments(filter, page);
 
-    const {profile} = useProfile();
+    const {permissions} = useProfile();
     const companies = useCompanies();
     const providers = useProviders();
 
@@ -398,7 +398,7 @@ export default function Payments(){
 
     return(
         <MainBoard sidebar="financial" header={ 
-            ( ( profile && profile.role.id === 1) && <CompanySelect searchFilter={filter} setFilter={handleChangeFilter}/> )
+            ( ( permissions && HasPermission(permissions, 'Todas Empresas')) && <CompanySelect searchFilter={filter} setFilter={handleChangeFilter}/> )
         }
         >
             <NewPaymentModal categories={categories} users={users.data} providers={providers.data} afterCreate={payments.refetch} isOpen={isNewPaymentModalOpen} onRequestClose={CloseNewPaymentModal}/>

@@ -12,7 +12,7 @@ import { ReactComponent as EllipseIcon } from '../../assets/icons/Ellipse.svg';
 import { ReactComponent as AttachIcon } from '../../assets/icons/Attach.svg';
 import { ReactComponent as CheckIcon } from '../../assets/icons/Check.svg';
 import { formatBRDate } from "../../utils/Date/formatBRDate";
-import { useProfile } from "../../hooks/useProfile";
+import { HasPermission, useProfile } from "../../hooks/useProfile";
 import { CompanySelect } from "../../components/CompanySelect";
 import { BillFilterData } from "../../hooks/useBills";
 
@@ -27,14 +27,14 @@ interface BillsSummaryProps{
 }
 
 export function BillsSummary({bills, openReceiveBill, filter, handleChangeFilter}: BillsSummaryProps){
-    const {profile} = useProfile();
+    const {permissions} = useProfile();
 
     return (
                 <Stack w="100%" min-width="300px" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8">
                     <HStack>
                         <Text fontSize="xl" mb="8" w="100%">Contas a Receber</Text>
                         {
-                            ( ( profile && profile.role.id === 1) && <CompanySelect searchFilter={filter} setFilter={handleChangeFilter} mt="-35px !important"/> )
+                            ( ( permissions && HasPermission(permissions, 'Todas Empresas')) && <CompanySelect searchFilter={filter} setFilter={handleChangeFilter} mt="-35px !important"/> )
                         }
                     </HStack>
                     
