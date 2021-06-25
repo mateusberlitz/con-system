@@ -51,7 +51,7 @@ export function PayPaymentModal ( { isOpen, onRequestClose, afterPay, toPayPayme
             if(!workingCompany.company){
                 toast({
                     title: "Ué",
-                    description: `Seleciona uma empresa para trabalhar`,
+                    description: `Seleciona uma empresa`,
                     status: "warning",
                     duration: 12000,
                     isClosable: true,

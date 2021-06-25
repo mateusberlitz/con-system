@@ -30,6 +30,7 @@ export interface PayPaymentFormData{
     title: string,
     new_value: string,
     payment_paid_day?: string,
+    company?: number,
 }
 
 const PayPaymentFormSchema = yup.object().shape({
@@ -52,7 +53,7 @@ export function PayAllPaymentsModal ( { isOpen, onRequestClose, afterPay, dayToP
             if(!workingCompany.company){
                 toast({
                     title: "Ué",
-                    description: `Seleciona uma empresa para trabalhar`,
+                    description: `Seleciona uma empresa`,
                     status: "warning",
                     duration: 12000,
                     isClosable: true,
@@ -60,8 +61,11 @@ export function PayAllPaymentsModal ( { isOpen, onRequestClose, afterPay, dayToP
 
                 return;
             }
+
+            paymentData.company = workingCompany.company.id;
             
             await api.post(`/payments/payall/${formatYmdTodmY(dayToPayPayments)}`, paymentData);
+            
 
             toast({
                 title: "Sucesso",

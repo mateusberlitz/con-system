@@ -16,6 +16,8 @@ import { CashFlowsFilterData, useCashFlows } from "../../hooks/useCashFlows";
 import { useWorkingCompany } from "../../hooks/useWorkingCompany";
 import { useState } from "react";
 import { getHour } from "../../utils/Date/getHour";
+import { useProfile } from "../../hooks/useProfile";
+import { CompanySelect } from "../../components/CompanySelect";
 
 interface PaymentsSummaryProps{
     payments: UseQueryResult<{
@@ -38,11 +40,24 @@ export function CashFlowSummary(){
     })
     const cashFlows = useCashFlows(filter, 5, 1);
 
+    function handleChangeFilter(newFilter: CashFlowsFilterData){
+        setFilter(newFilter);
+    }
+
+    const {profile} = useProfile();
+
     return (
         <>
         
                 <Stack w="60%" min-width="300px" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8">
-                    <Text fontSize="xl" mb="8" w="100%">Últimas movimentações</Text>
+                    
+
+                    <HStack>
+                        <Text fontSize="xl" mb="8" w="100%">Últimas movimentações</Text>
+                        {
+                            ( ( profile && profile.role.id === 1) && <CompanySelect mt="-35px !important" searchFilter={filter} setFilter={handleChangeFilter}/> )
+                        }
+                    </HStack>
 
                     {   cashFlows.isLoading ? (
                             <Flex justify="left">
@@ -71,7 +86,7 @@ export function CashFlowSummary(){
                             const cashFlowDay = getDay(day);
 
                             return (
-                                <Stack w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" spacing="0" allowMultiple>
+                                <Stack key={day} w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" spacing="0">
                                     <HStack spacing="8" w="100%" justify="space-between" paddingX="8" paddingY="3" bg="gray.200">
                                         <Text fontWeight="bold">{(todayFormatedDate === dayCashFlowsFormated) ? 'Hoje' : (tomorrow === cashFlowDay) ? "Amanhã" : ""} {formatBRDate(day)}</Text>
 

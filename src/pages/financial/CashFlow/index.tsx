@@ -152,12 +152,14 @@ export default function CashFlow(){
     }, [])
 
     const handleSearchCashFlow = async (search : CashFlowsFilterData) => {
+        search.company = workingCompany.company?.id;
+        
         setFilter(search);
     }
 
     return(
         <MainBoard sidebar="financial" header={ 
-            ( ( profile && profile.role.id === 1) && <CompanySelect filter={filter} setFilter={handleChangeFilter}/> )
+            ( ( profile && profile.role.id === 1) && <CompanySelect searchFilter={filter} setFilter={handleChangeFilter}/> )
         }
         >
             <NewCashFlowModal categories={categories} afterCreate={cashFlows.refetch} isOpen={isNewCashFlowModalOpen} onRequestClose={CloseNewCashFlowModal}/>

@@ -8,6 +8,7 @@ export interface BillFilterData{
     category?: number;
     company?: number;
     source?: number;
+    status?: number;
 }
 
 export const getBills = async (filter?: BillFilterData, page: number = 0) => {
@@ -20,7 +21,8 @@ export const getBills = async (filter?: BillFilterData, page: number = 0) => {
                 company: filter.company,
                 start_date: filter.start_date,
                 end_date: filter.end_date,
-                source: filter.source
+                source: filter.source,
+                status: filter.status
             }
         });
 

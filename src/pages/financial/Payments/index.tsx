@@ -45,6 +45,8 @@ import { PayAllPaymentsModal } from "./PayAllPaymentsModal";
 import { Pagination } from "../../../components/Pagination";
 import { AddFilePaymentFormData, AddFilePaymentModal } from "./AddFilePaymentModal";
 import { showErrors } from "../../../hooks/useErrors";
+import { AddProofPaymentModal } from "./AddProofPaymentModal";
+import { AddInvoicePaymentModal } from "./AddInvoicePaymentModal";
 
 interface RemovePaymentData{
     id: number;
@@ -60,6 +62,7 @@ const FilterPaymentsFormSchema = yup.object().shape({
     contract: yup.string(),
     group: yup.string(),
     quote: yup.string(),
+    status: yup.string(),
     pay_to_user: yup.string(),
 });
 
@@ -71,6 +74,7 @@ export default function Payments(){
         const data: PaymentFilterData = {
             search: '',
             company: workingCompany.company?.id,
+            status: 0,
         };
         
         return data;
@@ -242,6 +246,47 @@ export default function Payments(){
         setIsAddFilePaymentModalOpen(false);
     }
 
+
+
+    const [isAddProofPaymentModalOpen, setIsAddProofPaymentModalOpen] = useState(false);
+    const [addProofPaymentData, setAddProofPaymentData] = useState<AddFilePaymentFormData>(() => {
+
+        const data: AddFilePaymentFormData = {
+            id: 0,
+            title: '',
+        };
+        
+        return data;
+    });
+
+    function OpenAddProofPaymentModal(toAddProofPayment: AddFilePaymentFormData){
+        setAddProofPaymentData(toAddProofPayment);
+        setIsAddProofPaymentModalOpen(true);
+    }
+    function CloseAddProofPaymentModal(){
+        setIsAddProofPaymentModalOpen(false);
+    }
+
+
+    const [isAddInvoicePaymentModalOpen, setIsAddInvoicePaymentModalOpen] = useState(false);
+    const [addInvoicePaymentData, setAddInvoicePaymentData] = useState<AddFilePaymentFormData>(() => {
+
+        const data: AddFilePaymentFormData = {
+            id: 0,
+            title: '',
+        };
+        
+        return data;
+    });
+
+    function OpenAddInvoicePaymentModal(toAddInvoicePayment: AddFilePaymentFormData){
+        setAddInvoicePaymentData(toAddInvoicePayment);
+        setIsAddInvoicePaymentModalOpen(true);
+    }
+    function CloseAddInvoicePaymentModal(){
+        setIsAddInvoicePaymentModalOpen(false);
+    }
+
     const toast = useToast();
 
     const handleRemoveAttachment = async (paymentId : number) => {
@@ -250,7 +295,51 @@ export default function Payments(){
 
             toast({
                 title: "Sucesso",
-                description: `Arquivo Removido`,
+                description: `Boleto removido`,
+                status: "success",
+                duration: 12000,
+                isClosable: true,
+            });
+
+            payments.refetch();
+        }catch(error) {
+            showErrors(error, toast);
+
+            if(error.response.data.access){
+                history.push('/');
+            }
+        }
+    }
+
+    const handleRemoveProof = async (paymentId : number) => {
+        try{
+            await api.post(`/payments/remove_proof/${paymentId}`);
+
+            toast({
+                title: "Sucesso",
+                description: `Comprovante removido`,
+                status: "success",
+                duration: 12000,
+                isClosable: true,
+            });
+
+            payments.refetch();
+        }catch(error) {
+            showErrors(error, toast);
+
+            if(error.response.data.access){
+                history.push('/');
+            }
+        }
+    }
+
+    const handleRemoveInvoice = async (paymentId : number) => {
+        try{
+            await api.post(`/payments/remove_invoice/${paymentId}`);
+
+            toast({
+                title: "Sucesso",
+                description: `Nota Removida`,
                 status: "success",
                 duration: 12000,
                 isClosable: true,
@@ -309,7 +398,7 @@ export default function Payments(){
 
     return(
         <MainBoard sidebar="financial" header={ 
-            ( ( profile && profile.role.id === 1) && <CompanySelect filter={filter} setFilter={handleChangeFilter}/> )
+            ( ( profile && profile.role.id === 1) && <CompanySelect searchFilter={filter} setFilter={handleChangeFilter}/> )
         }
         >
             <NewPaymentModal categories={categories} users={users.data} providers={providers.data} afterCreate={payments.refetch} isOpen={isNewPaymentModalOpen} onRequestClose={CloseNewPaymentModal}/>
@@ -318,6 +407,8 @@ export default function Payments(){
             <EditPaymentModal categories={categories} toEditPaymentData={toEditPaymentData} users={users.data} providers={providers.data} afterEdit={payments.refetch} isOpen={isEditPaymentModalOpen} onRequestClose={CloseEditPaymentModal}/>
             <ConfirmPaymentRemoveModal afterRemove={payments.refetch} toRemovePaymentData={removePaymentData} isOpen={isConfirmPaymentRemoveModalOpen} onRequestClose={CloseConfirmPaymentRemoveModal}/>
             <AddFilePaymentModal afterAttach={payments.refetch} toAddFilePaymentData={addFilePaymentData} isOpen={isAddFilePaymentModalOpen} onRequestClose={CloseAddFilePaymentModal}/>
+            <AddProofPaymentModal afterAttach={payments.refetch} toAddProofPaymentData={addProofPaymentData} isOpen={isAddProofPaymentModalOpen} onRequestClose={CloseAddProofPaymentModal}/>
+            <AddInvoicePaymentModal afterAttach={payments.refetch} toAddInvoicePaymentData={addInvoicePaymentData} isOpen={isAddInvoicePaymentModalOpen} onRequestClose={CloseAddInvoicePaymentModal}/>
 
             <Flex justify="space-between" alignItems="center" mb="10">
                 <SolidButton onClick={OpenNewPaymentModal} color="white" bg="blue.400" icon={PlusIcon} colorScheme="blue">
@@ -368,6 +459,12 @@ export default function Payments(){
                                     <option key={user.id} value={user.id}>{user.name}</option>
                                 )
                             })}
+                        </Select>
+
+                        <Select register={register} h="45px" name="status" error={formState.errors.status} w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
+                            <option value="">Todos</option>
+                            <option value={1}>Pagos</option>
+                            <option value={0} selected>Pendentes</option>
                         </Select>
 
                         <OutlineButton type="submit" mb="10" color="blue.400" borderColor="blue.400" colorScheme="blue">
@@ -489,7 +586,7 @@ export default function Payments(){
                                                                     <HStack>
                                                                         <Link target="_blank" href={`${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_STORAGE : process.env.REACT_APP_API_LOCAL_STORAGE}${payment.file}`} display="flex" fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
                                                                             <FileIcon stroke="#4e4b66" fill="none" width="16px"/>
-                                                                            <Text ml="2">Ver Arquivo</Text>
+                                                                            <Text ml="2">Ver Boleto</Text>
                                                                         </Link>
 
                                                                         <IconButton onClick={() => handleRemoveAttachment(payment.id)} isDisabled={payment.status} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
@@ -497,7 +594,45 @@ export default function Payments(){
                                                                 ) : (
                                                                     <Flex onClick={() => OpenAddFilePaymentModal({id: payment.id, title: payment.title})} fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
                                                                         <AttachIcon stroke="#4e4b66" fill="none" width="16px"/>
-                                                                        <Text ml="2">Anexar</Text>
+                                                                        <Text ml="2">Boleto</Text>
+                                                                    </Flex>
+                                                                )
+                                                            
+                                                            }
+
+                                                            {
+                                                                payment.proof ? (
+                                                                    <HStack>
+                                                                        <Link target="_blank" href={`${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_STORAGE : process.env.REACT_APP_API_LOCAL_STORAGE}${payment.proof}`} display="flex" fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
+                                                                            <FileIcon stroke="#4e4b66" fill="none" width="16px"/>
+                                                                            <Text ml="2">Ver Comprovante</Text>
+                                                                        </Link>
+
+                                                                        <IconButton onClick={() => handleRemoveProof(payment.id)} isDisabled={payment.status} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
+                                                                    </HStack>
+                                                                ) : (
+                                                                    <Flex onClick={() => OpenAddProofPaymentModal({id: payment.id, title: payment.title})} fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
+                                                                        <AttachIcon stroke="#4e4b66" fill="none" width="16px"/>
+                                                                        <Text ml="2">Comprovante</Text>
+                                                                    </Flex>
+                                                                )
+                                                            
+                                                            }
+
+                                                            {
+                                                                payment.invoice ? (
+                                                                    <HStack>
+                                                                        <Link target="_blank" href={`${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_STORAGE : process.env.REACT_APP_API_LOCAL_STORAGE}${payment.invoice}`} display="flex" fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
+                                                                            <FileIcon stroke="#4e4b66" fill="none" width="16px"/>
+                                                                            <Text ml="2">Ver Nota</Text>
+                                                                        </Link>
+
+                                                                        <IconButton onClick={() => handleRemoveInvoice(payment.id)} isDisabled={payment.status} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
+                                                                    </HStack>
+                                                                ) : (
+                                                                    <Flex onClick={() => OpenAddInvoicePaymentModal({id: payment.id, title: payment.title})} fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
+                                                                        <AttachIcon stroke="#4e4b66" fill="none" width="16px"/>
+                                                                        <Text ml="2">Nota</Text>
                                                                     </Flex>
                                                                 )
                                                             

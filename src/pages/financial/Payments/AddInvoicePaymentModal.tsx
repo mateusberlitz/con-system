@@ -15,7 +15,7 @@ interface AddFilePaymentModalProps{
     isOpen: boolean;
     onRequestClose: () => void;
     afterAttach: () => void;
-    toAddFilePaymentData: AddFilePaymentFormData;
+    toAddInvoicePaymentData: AddFilePaymentFormData;
 }
 
 export interface AddFilePaymentFormData{
@@ -24,10 +24,10 @@ export interface AddFilePaymentFormData{
 }
 
 const PayPaymentFormSchema = yup.object().shape({
-    file: yup.mixed(),
+    invoice: yup.mixed(),
 });
 
-export function AddFilePaymentModal ( { isOpen, onRequestClose, afterAttach, toAddFilePaymentData } : AddFilePaymentModalProps){
+export function AddInvoicePaymentModal ( { isOpen, onRequestClose, afterAttach, toAddInvoicePaymentData } : AddFilePaymentModalProps){
     const history = useHistory();
     const toast = useToast();
     const { showErrors } = useErrors();
@@ -41,7 +41,7 @@ export function AddFilePaymentModal ( { isOpen, onRequestClose, afterAttach, toA
             const paymentFormedData = new FormData();
 
             if(toFormFile !== undefined){
-                paymentFormedData.append('file', toFormFile);
+                paymentFormedData.append('invoice', toFormFile);
             }else{
                 toast({
                     title: "Error",
@@ -56,7 +56,7 @@ export function AddFilePaymentModal ( { isOpen, onRequestClose, afterAttach, toA
 
             console.log(toFormFile, );
 
-            await api.post(`/payments/update/${toAddFilePaymentData.id}`, paymentFormedData, {
+            await api.post(`/payments/update/${toAddInvoicePaymentData.id}`, paymentFormedData, {
                 headers: {
                     'content-type': 'multipart/form-data'
                 }
@@ -64,7 +64,7 @@ export function AddFilePaymentModal ( { isOpen, onRequestClose, afterAttach, toA
 
             toast({
                 title: "Sucesso",
-                description: `Foi anexado um boleto ao pagamento ${toAddFilePaymentData.title}.`,
+                description: `Foi anexado uma nota ao pagamento ${toAddInvoicePaymentData.title}.`,
                 status: "success",
                 duration: 12000,
                 isClosable: true,
@@ -103,7 +103,7 @@ export function AddFilePaymentModal ( { isOpen, onRequestClose, afterAttach, toA
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
             <ModalOverlay />
             <ModalContent as="form" borderRadius="24px" onSubmit={handleSubmit(handleChangePaymentFile)}>
-                <ModalHeader p="10" fontWeight="700" fontSize="2xl">Anexar Boleto em {toAddFilePaymentData.title}</ModalHeader>
+                <ModalHeader p="10" fontWeight="700" fontSize="2xl">Anexar Nota em {toAddInvoicePaymentData.title}</ModalHeader>
 
                 <ModalCloseButton top="10" right="5"/>
                 
@@ -114,7 +114,7 @@ export function AddFilePaymentModal ( { isOpen, onRequestClose, afterAttach, toA
 
                                 <Box as="label" display="flex" borderRadius="full" alignItems="center" h="29px" fontWeight="600" fontSize="12px" pl="6" pr="6" cursor="pointer" border="2px" borderColor="purple.300" color="purple.300">
                                     <Input name="image" type="file" accept="application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint,text/plain, application/pdf" display="none" onChange={handleChangeFile}/> 
-                                    Selecionar Boleto
+                                    Selecionar Nota
                                 </Box>
 
                                 <Text>{fileName}</Text>

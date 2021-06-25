@@ -55,6 +55,7 @@ const FilterBillsFormSchema = yup.object().shape({
     category: yup.string(),
     company: yup.string(),
     source: yup.string(),
+    status: yup.string(),
 });
 
 export default function Bills(){
@@ -64,7 +65,8 @@ export default function Bills(){
     const [filter, setFilter] = useState<BillFilterData>(() => {
         const data: BillFilterData = {
             search: '',
-            company: workingCompany.company?.id
+            company: workingCompany.company?.id,
+            status: 0,
         };
         
         return data;
@@ -252,7 +254,7 @@ export default function Bills(){
 
     return(
         <MainBoard sidebar="financial" header={ 
-            ( ( profile && profile.role.id === 1) && <CompanySelect filter={filter} setFilter={handleChangeFilter}/> )
+            ( ( profile && profile.role.id === 1) && <CompanySelect searchFilter={filter} setFilter={handleChangeFilter}/> )
         }
         >
             <NewBillModal categories={categories} users={users.data} sources={sources.data} afterCreate={bills.refetch} isOpen={isNewBillModalOpen} onRequestClose={CloseNewBillModal}/>
@@ -282,7 +284,15 @@ export default function Bills(){
             <Flex as="form" mb="20" onSubmit={handleSubmit(handleSearchBills)}>
 
                 <Stack spacing="6" w="100%">
-                    <Input register={register} name="search" type="text" placeholder="Procurar" variant="filled" error={formState.errors.search}/>
+                    <HStack spacing="6">
+                        <Input register={register} name="search" type="text" placeholder="Procurar" variant="filled" error={formState.errors.search}/>
+
+                        <Select register={register} h="45px" name="status" error={formState.errors.status} w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
+                            <option value="">Todos</option>
+                            <option value={1}>Recebidos</option>
+                            <option value={0} selected>Pendentes</option>
+                        </Select>
+                    </HStack>
 
                     <HStack spacing="6">
                         <Input register={register} name="source" type="text" placeholder="Cliente" variant="filled" error={formState.errors.source}/>

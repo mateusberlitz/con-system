@@ -70,6 +70,8 @@ export interface Payment{
     recurrence?: number;
     status?: boolean;
     file: string;
+    proof: string;
+    invoice: string;
     created_at?: Date;
     updated_at?: Date;
 }

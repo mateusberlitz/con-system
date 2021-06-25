@@ -11,6 +11,7 @@ export interface PaymentFilterData{
     pay_to_user?: number;
     group?: string;
     quote?: string;
+    status?: number
 }
 
 export const getPayments = async (filter?: PaymentFilterData, page: number = 0) => {
@@ -27,6 +28,7 @@ export const getPayments = async (filter?: PaymentFilterData, page: number = 0) 
               pay_to_user: filter.pay_to_user,
               group: filter.group,
               quote: filter.quote,
+              status: filter.status,
             }
         });
 

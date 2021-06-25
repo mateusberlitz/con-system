@@ -30,6 +30,7 @@ export interface ReceiveBillFormData{
     title: string,
     new_value: string,
     bill_receive_day?: string,
+    company?: number,
 }
 
 const ReceiveBillFormSchema = yup.object().shape({
@@ -59,6 +60,9 @@ export function ReceiveAllBillsModal ( { isOpen, onRequestClose, afterReceive, d
 
                 return;
             }
+
+            billData.company = workingCompany.company.id;
+
             
             await api.post(`/bills/receiveall/${formatYmdTodmY(dayToReceiveBills)}`, billData);
 

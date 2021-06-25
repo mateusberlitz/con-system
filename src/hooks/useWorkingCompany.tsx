@@ -41,8 +41,12 @@ export function WorkingCompanyProvider({ children } : WorkingCompanyProviderProp
         if(profileCompanyValue !== company){
             localStorage.setItem('@lance/company', JSON.stringify(company));
         }else{
-            if(profile && (profile?.role.id !== 1) && (profile?.company.id !== company.id)){
-                changeCompany(profile.company);
+            if(profile){
+                if(Object.keys(profile).length > 0){
+                    if((profile?.role.id !== 1) && (profile?.company.id !== company.id)){
+                        changeCompany(profile.company);
+                    }
+                }
             }
         }
     }, [company, profileCompanyValue]);
