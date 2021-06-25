@@ -8,9 +8,14 @@ import { api } from "../../services/api";
 import { showErrors } from "../../hooks/useErrors";
 
 import { ReactComponent as CheckIcon } from '../../assets/icons/Check.svg';
+import Companys from "../configs/Companys";
 
 interface RemoveTaskData{
     id: number;
+}
+
+interface CashSummaryFilter{
+    company: number | undefined;
 }
 
 export function CashSummary(){
@@ -59,28 +64,38 @@ export function CashSummary(){
     const [amount, setAmount] = useState(0);
 
     const loadAmount = async () => {
-        const { data } = await api.get('/amount');
+        const filterAmount:CashSummaryFilter = {
+            company: workingCompany.company?.id,
+        };
+
+        const { data } = await api.get('/amount', {
+            params: {
+                company: (workingCompany.company ? workingCompany.company?.id.toString() : "0")
+            }
+        });
 
         setAmount(data.total);
     }
-
-    console.log(amount);
 
     useEffect(() => {
         loadAmount();
     }, [])
 
+    console.log((workingCompany.company ? workingCompany.company?.id.toString() : "0"));
 
 
     const [monthAmount, setMonthAmount] = useState(0);
 
     const loadMonthAmount = async () => {
-        const { data } = await api.get('/month_amount');
+
+        const { data } = await api.get('/month_amount', {
+            params: {
+                company: (workingCompany.company ? workingCompany.company?.id.toString() : "0")
+            }
+        });
 
         setMonthAmount(data.total);
     }
-
-    console.log(monthAmount);
 
     useEffect(() => {
         loadMonthAmount();

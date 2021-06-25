@@ -21,6 +21,14 @@ export function WorkingCompanyProvider({ children } : WorkingCompanyProviderProp
         if (storagedCompany) {
             const parsedCompany = JSON.parse(storagedCompany);
             return parsedCompany;
+        }else{
+            if(profile){
+                if(Object.keys(profile).length > 0){
+                    if((profile?.role.id !== 1) && (profile?.company.id !== company.id)){
+                        changeCompany(profile.company);
+                    }
+                }
+            }
         }
     
         return {};

@@ -113,7 +113,7 @@ export function AddFilePaymentModal ( { isOpen, onRequestClose, afterAttach, toA
                             <HStack spacing="6" display="flex" pos="relative">
 
                                 <Box as="label" display="flex" borderRadius="full" alignItems="center" h="29px" fontWeight="600" fontSize="12px" pl="6" pr="6" cursor="pointer" border="2px" borderColor="purple.300" color="purple.300">
-                                    <Input name="image" type="file" accept="application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint,text/plain, application/pdf" display="none" onChange={handleChangeFile}/> 
+                                    <Input name="image" type="file" accept="image/png, image/jpeg, application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint,text/plain, application/pdf" display="none" onChange={handleChangeFile}/> 
                                     Selecionar Boleto
                                 </Box>
 
