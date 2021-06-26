@@ -20,6 +20,7 @@ import { ConfirmTaskRemoveModal } from "../Tasks/ConfirmTaskRemoveModal";
 import { api } from "../../services/api";
 import { showErrors } from "../../hooks/useErrors";
 import { Pagination } from "../../components/Pagination";
+import { useProfile } from "../../hooks/useProfile";
 
 interface RemoveTaskData{
     id: number;
@@ -28,11 +29,13 @@ interface RemoveTaskData{
 export function TasksSummary(){
     const workingCompany = useWorkingCompany();
     const [page, setPage] = useState(1);
+    const {profile} = useProfile();
 
     const [filter, setFilter] = useState<TaskFilterData>(() => {
         const data: TaskFilterData = {
             search: '',
             company: workingCompany.company?.id,
+            author: (profile ? profile.id : 0),
         };
         
         return data;
@@ -155,7 +158,7 @@ export function TasksSummary(){
                                                 <Text justifyContent="center" textDecoration={task.status ? "line-through" : ""}>{task.description}</Text>
                                             </Flex>
 
-                                            <IconButton onClick={() => OpenConfirmRemoveTaskModal({id: task.id})} isDisabled={task.status} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
+                                            <IconButton onClick={() => OpenConfirmRemoveTaskModal({id: task.id})} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
                                         </HStack>
                                     )
                                 })

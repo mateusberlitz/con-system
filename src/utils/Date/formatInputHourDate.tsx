@@ -13,5 +13,5 @@ export function formatInputHourDate(date: string) {
     if (day.length < 2) 
         day = '0' + day;
 
-    return [day, month, year].join('-') + " " + [hour, ( (min < 10 ? '0' : '') + min), "00"].join(':');
+    return [day, month, year].join('-') + " " + [( (hour < 10 ? '0' : '') + hour), ( (min < 10 ? '0' : '') + min), "00"].join(':');
 }

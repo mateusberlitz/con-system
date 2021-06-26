@@ -30,7 +30,6 @@ export function CompanySelect({searchFilter, setFilter, ...rest}: CompanySelectP
             setFilter(updatedFilter);
         }
     }
-    console.log(rest);
 
     return (
     ( companies.isLoading ? (
