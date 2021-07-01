@@ -11,6 +11,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 import { ReactComponent as PlusIcon } from '../../../assets/icons/Plus.svg';
 import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
+import { ReactComponent as TagIcon } from '../../../assets/icons/Tag.svg';
 
 import { Input } from "../../../components/Forms/Inputs/Input";
 import { OutlineButton } from "../../../components/Buttons/OutlineButton";
@@ -263,12 +264,27 @@ export default function CashFlow(){
                                                     <Text color="gray.800">{cashFlow.title}</Text>
                                                 </Flex>
 
+                                                <HStack>
+                                                    {
+                                                        (cashFlow.payment && cashFlow.payment.category) ? <TagIcon stroke="#4e4b66" fill="none" width="17px"/> : (
+                                                            (cashFlow.bill && cashFlow.bill.category)? <TagIcon stroke="#4e4b66" fill="none" width="17px"/> : ""
+                                                        )
+                                                    }
+                                                    <Text fontWeight="" color="gray.800">
+                                                        {
+                                                            (cashFlow.payment && cashFlow.payment.category) ? cashFlow.payment.category.name : (
+                                                                (cashFlow.bill && cashFlow.bill.category)? cashFlow.bill.category.name : ""
+                                                            )
+                                                        }
+                                                    </Text>
+                                                </HStack>
+
                                                 <Flex>
                                                     <Text fontWeight="bold" color="gray.800">{cashFlow.category.name}</Text>
                                                 </Flex>
 
                                                 <Flex>
-                                                    <HStack fontWeight="bold" spacing="7">
+                                                    <HStack fo ntWeight="bold" spacing="7">
                                                         <Flex alignItems="center" color={cashFlow.value > 0 ? 'green.400' : 'red.400'}>
                                                             {/* {cashFlow.value > 0 
                                                                 ? <StrongPlusIcon stroke="#48bb78" fill="none" width="12px"/> 

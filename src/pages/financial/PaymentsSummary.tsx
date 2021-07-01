@@ -27,15 +27,14 @@ interface PaymentsSummaryProps{
 }
 
 export function PaymentsSummary({payments, openPayPayment, filter, handleChangeFilter}: PaymentsSummaryProps){
-    const {permissions} = useProfile();
 
     return (
                 <Stack w="100%" min-width="300px" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8">
                     <HStack>
                         <Text fontSize="xl" mb="8" w="100%">Contas a Pagar</Text>
-                        {
+                        {/* {
                             ( ( permissions && HasPermission(permissions, 'Todas Empresas')) && <CompanySelect searchFilter={filter} setFilter={handleChangeFilter} mt="-35px !important"/> )
-                        }
+                        } */}
                     </HStack>
                     
 

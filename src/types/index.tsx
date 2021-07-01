@@ -58,6 +58,7 @@ export interface Payment{
     id: number;
     title: string;
     value: number;
+    paid: number;
     expire: string;
     category: PaymentCategory;
     company: Company;
@@ -93,6 +94,7 @@ export interface Bill{
     id: number;
     title: string;
     value: number;
+    paid: number;
     expire: string;
     category: BillCategory;
     company: Company;

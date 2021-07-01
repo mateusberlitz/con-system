@@ -70,7 +70,7 @@ export function CashSummary(){
 
         const { data } = await api.get('/amount', {
             params: {
-                company: (workingCompany.company ? workingCompany.company?.id.toString() : "0")
+                company: (workingCompany.company && workingCompany.company.id ? workingCompany.company?.id.toString() : "0")
             }
         });
 
@@ -81,7 +81,7 @@ export function CashSummary(){
         loadAmount();
     }, [])
 
-    console.log((workingCompany.company ? workingCompany.company?.id.toString() : "0"));
+    console.log((workingCompany.company));
 
 
     const [monthAmount, setMonthAmount] = useState(0);
@@ -90,7 +90,7 @@ export function CashSummary(){
 
         const { data } = await api.get('/month_amount', {
             params: {
-                company: (workingCompany.company ? workingCompany.company?.id.toString() : "0")
+                company: (workingCompany.company && workingCompany.company.id  ? workingCompany.company?.id.toString() : "0")
             }
         });
 

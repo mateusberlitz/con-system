@@ -13,8 +13,7 @@ import { ReactComponent as PlusIcon } from '../../../assets/icons/Plus.svg';
 import { ReactComponent as MinusIcon } from '../../../assets/icons/Minus.svg';
 import { ReactComponent as StrongPlusIcon } from '../../../assets/icons/StrongPlus.svg';
 import { ReactComponent as EllipseIcon } from '../../../assets/icons/Ellipse.svg';
-import { ReactComponent as AttachIcon } from '../../../assets/icons/Attach.svg';
-import { ReactComponent as HomeIcon } from '../../../assets/icons/Home.svg';
+import { ReactComponent as TagIcon } from '../../../assets/icons/Tag.svg';
 import { ReactComponent as CheckIcon } from '../../../assets/icons/Check.svg';
 import { ReactComponent as RefreshIcon } from '../../../assets/icons/Refresh.svg';
 
@@ -412,8 +411,8 @@ export default function Bills(){
                                                             </Flex>
 
                                                             <Flex fontWeight="500" alignItems="center" color="gray.800" opacity={bill.status ? 0.5 : 1}>
-                                                                <HomeIcon stroke="#4e4b66" fill="none" width="17px"/>
-                                                                <Text ml="2">{bill.company.name}</Text>
+                                                                <TagIcon stroke="#4e4b66" fill="none" width="17px"/>
+                                                                <Text ml="2">{bill.category.name}</Text>
                                                             </Flex>
                                                             
                                                             {
@@ -434,20 +433,36 @@ export default function Bills(){
                                                                 )
                                                             }
                                                             
-                                                            <Text float="right">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(bill.value)}</Text>
+                                                            <Text float="right">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(bill.value - bill.paid )}</Text>
                                                         </HStack>
 
                                                         <AccordionPanel flexDir="column" borderTop="2px" borderColor="gray.500" px="0" py="5">
                                                             <HStack justifyContent="space-between" alignItems="center">
-                                                                <Flex alignItems="center">
-                                                                    <Text fontWeight="500">Observação: </Text>
-                                                                    <Text> {bill.observation && bill.observation}</Text>
-                                                                </Flex>
+                                                                <Stack>
+                                                                    <HStack spacing="10">
+                                                                        <Flex alignItems="center">
+                                                                            <Text fontWeight="500" mr="2">Valor total: </Text>
+                                                                            <Text fontWeight="700">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(bill.value)}</Text>
+                                                                        </Flex>
 
-                                                                <Flex alignItems="center">
-                                                                    <Text fontWeight="500">Fonte: </Text>
-                                                                    <Text> {bill.source?.name && bill.source?.name}</Text>
-                                                                </Flex>
+                                                                        <Flex alignItems="center">
+                                                                            <Text fontWeight="500" mr="2">Valor Pago: </Text>
+                                                                            <Text fontWeight="700">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(bill.paid)}</Text>
+                                                                        </Flex>
+
+                                                                        <Flex alignItems="center">
+                                                                            <Text fontWeight="500">Fonte: </Text>
+                                                                            <Text> {bill.source?.name && bill.source?.name}</Text>
+                                                                        </Flex>
+                                                                    </HStack>
+
+                                                                    <Flex alignItems="center">
+                                                                        <Text fontWeight="500">Observação: </Text>
+                                                                        <Text> {bill.observation && bill.observation}</Text>
+                                                                    </Flex>
+                                                                </Stack>
+
+                                                                
 
                                                                 <HStack spacing="5" alignItems="center">
                                                                     <EditButton onClick={() => OpenEditBillModal(billToEditData)}/>

@@ -19,32 +19,14 @@ import { getHour } from "../../utils/Date/getHour";
 import { HasPermission, useProfile } from "../../hooks/useProfile";
 import { CompanySelect } from "../../components/CompanySelect";
 
-interface PaymentsSummaryProps{
-    payments: UseQueryResult<{
+interface CashFlowSummaryProps{
+    cashFlows: UseQueryResult<{
         data: any;
         total: number;
     }, unknown>;
-    openPayPayment: (toPayPaymentData: PayPaymentFormData) => void;
 }
 
-export function CashFlowSummary(){
-    const workingCompany = useWorkingCompany();
-
-    const [filter, setFilter] = useState<CashFlowsFilterData>(() => {
-        const data: CashFlowsFilterData = {
-            search: '',
-            company: workingCompany.company?.id,
-        };
-        
-        return data;
-    })
-    const cashFlows = useCashFlows(filter, 5, 1);
-
-    function handleChangeFilter(newFilter: CashFlowsFilterData){
-        setFilter(newFilter);
-    }
-
-    const {permissions} = useProfile();
+export function CashFlowSummary({cashFlows} : CashFlowSummaryProps){
 
     return (
         <>
@@ -54,9 +36,9 @@ export function CashFlowSummary(){
 
                     <HStack>
                         <Text fontSize="xl" mb="8" w="100%">Últimas movimentações</Text>
-                        {
+                        {/* {
                             ( ( permissions && HasPermission(permissions, 'Todas Empresas')) && <CompanySelect mt="-35px !important" searchFilter={filter} setFilter={handleChangeFilter}/> )
-                        }
+                        } */}
                     </HStack>
 
                     {   cashFlows.isLoading ? (

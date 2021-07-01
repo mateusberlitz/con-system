@@ -14,7 +14,7 @@ import { ReactComponent as MinusIcon } from '../../../assets/icons/Minus.svg';
 import { ReactComponent as StrongPlusIcon } from '../../../assets/icons/StrongPlus.svg';
 import { ReactComponent as EllipseIcon } from '../../../assets/icons/Ellipse.svg';
 import { ReactComponent as AttachIcon } from '../../../assets/icons/Attach.svg';
-import { ReactComponent as HomeIcon } from '../../../assets/icons/Home.svg';
+import { ReactComponent as TagIcon } from '../../../assets/icons/Tag.svg';
 import { ReactComponent as CheckIcon } from '../../../assets/icons/Check.svg';
 import { ReactComponent as FileIcon } from '../../../assets/icons/File.svg';
 import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
@@ -557,6 +557,8 @@ export default function Payments(){
                                             file: payment.file,
                                         }
 
+                                        console.log(payment.id, payment.category);
+
                                         return (
                                             <AccordionItem isDisabled={payment.status} key={payment.id} display="flex" flexDir="column" paddingX="8" paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
                                                 {({ isExpanded }) => (
@@ -577,8 +579,9 @@ export default function Payments(){
                                                             </Flex>
 
                                                             <Flex fontWeight="500" alignItems="center" color="gray.800" opacity={payment.status ? 0.5 : 1}>
-                                                                <HomeIcon stroke="#4e4b66" fill="none" width="17px"/>
-                                                                <Text ml="2">{payment.company.name}</Text>
+                                                                <TagIcon stroke="#4e4b66" fill="none" width="17px"/>
+                                                                {/* <Text ml="2">{payment.company.name}</Text> */}
+                                                                <Text ml="2">{payment.category.name}</Text>
                                                             </Flex>
 
                                                             {
@@ -589,7 +592,7 @@ export default function Payments(){
                                                                             <Text ml="2">Ver Boleto</Text>
                                                                         </Link>
 
-                                                                        <IconButton onClick={() => handleRemoveAttachment(payment.id)} isDisabled={payment.status} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
+                                                                        <IconButton onClick={() => handleRemoveAttachment(payment.id)} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
                                                                     </HStack>
                                                                 ) : (
                                                                     <Flex onClick={() => OpenAddFilePaymentModal({id: payment.id, title: payment.title})} fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
@@ -608,7 +611,7 @@ export default function Payments(){
                                                                             <Text ml="2">Ver Comprovante</Text>
                                                                         </Link>
 
-                                                                        <IconButton onClick={() => handleRemoveProof(payment.id)} isDisabled={payment.status} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
+                                                                        <IconButton onClick={() => handleRemoveProof(payment.id)} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
                                                                     </HStack>
                                                                 ) : (
                                                                     <Flex onClick={() => OpenAddProofPaymentModal({id: payment.id, title: payment.title})} fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
@@ -627,7 +630,7 @@ export default function Payments(){
                                                                             <Text ml="2">Ver Nota</Text>
                                                                         </Link>
 
-                                                                        <IconButton onClick={() => handleRemoveInvoice(payment.id)} isDisabled={payment.status} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
+                                                                        <IconButton onClick={() => handleRemoveInvoice(payment.id)} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
                                                                     </HStack>
                                                                 ) : (
                                                                     <Flex onClick={() => OpenAddInvoicePaymentModal({id: payment.id, title: payment.title})} fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
@@ -656,10 +659,21 @@ export default function Payments(){
                                                                 )
                                                             }
 
-                                                            <Text opacity={payment.status ? 0.5 : 1} float="right">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(payment.value)}</Text>
+                                                            <Text opacity={payment.status ? 0.5 : 1} float="right">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(payment.value - payment.paid)}</Text>
                                                         </HStack>
 
                                                         <AccordionPanel flexDir="column" borderTop="2px" borderColor="gray.500" px="0" py="5">
+                                                            <HStack spacing="8" mb="4">
+                                                                    <Text>
+                                                                        Valor total: 
+                                                                        <strong> {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(payment.value)}</strong>
+                                                                    </Text>
+
+                                                                    <Text>
+                                                                        Valor pago: 
+                                                                        <strong> {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(payment.paid)}</strong>
+                                                                    </Text>
+                                                            </HStack>
                                                             <HStack justifyContent="space-between" mb="4">
                                                                     <Text>
                                                                         <strong>Pagar para: </strong>
