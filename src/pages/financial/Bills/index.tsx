@@ -382,7 +382,7 @@ export default function Bills(){
                                         const billToEditData:EditBillFormData = {
                                             id: bill.id,
                                             title: bill.title,
-                                            value: Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(bill.value),
+                                            value: bill.value.toString().replace('.', ','),
                                             company: bill.company?.id,
                                             category: bill.category?.id,
                                             source: bill.source?.id,

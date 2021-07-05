@@ -557,8 +557,6 @@ export default function Payments(){
                                             file: payment.file,
                                         }
 
-                                        console.log(payment.id, payment.category);
-
                                         return (
                                             <AccordionItem isDisabled={payment.status} key={payment.id} display="flex" flexDir="column" paddingX="8" paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
                                                 {({ isExpanded }) => (
@@ -581,7 +579,7 @@ export default function Payments(){
                                                             <Flex fontWeight="500" alignItems="center" color="gray.800" opacity={payment.status ? 0.5 : 1}>
                                                                 <TagIcon stroke="#4e4b66" fill="none" width="17px"/>
                                                                 {/* <Text ml="2">{payment.company.name}</Text> */}
-                                                                <Text ml="2">{payment.category.name}</Text>
+                                                                <Text ml="2">{payment.category?.name}</Text>
                                                             </Flex>
 
                                                             {
@@ -659,7 +657,7 @@ export default function Payments(){
                                                                 )
                                                             }
 
-                                                            <Text opacity={payment.status ? 0.5 : 1} float="right">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(payment.value - payment.paid)}</Text>
+                                                            <Text opacity={payment.status ? 0.5 : 1} float="right">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(payment.status ? payment.value : payment.value - payment.paid)}</Text>
                                                         </HStack>
 
                                                         <AccordionPanel flexDir="column" borderTop="2px" borderColor="gray.500" px="0" py="5">

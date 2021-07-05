@@ -87,7 +87,19 @@ export function EditBillModal( { isOpen, onRequestClose, afterEdit, toEditBillDa
 
     const handleEditBill = async (billData : EditBillFormData) => {
         try{
-            if(!workingCompany.company){
+            if(workingCompany.company){
+                if(Object.keys(workingCompany.company).length === 0){
+                    toast({
+                        title: "Ué",
+                        description: `Seleciona uma empresa para trabalhar`,
+                        status: "warning",
+                        duration: 12000,
+                        isClosable: true,
+                    });
+    
+                    return;
+                }
+            }else{
                 toast({
                     title: "Ué",
                     description: `Seleciona uma empresa para trabalhar`,
