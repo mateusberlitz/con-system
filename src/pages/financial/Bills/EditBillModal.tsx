@@ -32,6 +32,7 @@ export interface EditBillFormData{
     category: number;
     status?: boolean;
     source?: number;
+    paid?: string;
     value: string;
     expire: string;
 }
@@ -44,6 +45,7 @@ const EditBillFormSchema = yup.object().shape({
     status: yup.boolean(),
     source: yup.number().transform((v, o) => o === '' ? null : v).nullable(),
     value: yup.string().required("Informe o valor do pagamento"),
+    paid: yup.string(),
     expire: yup.date().required("Selecione a data de vencimento")
 });
 
@@ -58,6 +60,7 @@ export function EditBillModal( { isOpen, onRequestClose, afterEdit, toEditBillDa
         defaultValues: {
             title: toEditBillData.title,
             value: toEditBillData.value,
+            paid: toEditBillData.paid,
             company: toEditBillData.company,
             category: toEditBillData.category,
             source: toEditBillData.source,
@@ -147,23 +150,24 @@ export function EditBillModal( { isOpen, onRequestClose, afterEdit, toEditBillDa
                     <Stack spacing="6">
                         <ControlledInput control={control} value={toEditBillData.title} name="title" type="text" placeholder="Título" variant="outline" error={formState.errors.title} focusBorderColor="blue.400"/>
 
+                        <ControlledSelect control={control} name="category" value={toEditBillData.category.toString()} error={formState.errors.category} variant="outline" w="100%" maxW="100%" focusBorderColor="blue.400"> 
+                                <option key="0" value="0">Categoria</option>
+                                {categories && categories.map((category:PaymentCategory) => {
+                                    return (
+                                        <option key={category.id} value={category.id}>{category.name}</option>
+                                    )
+                                })}
+                        </ControlledSelect>
+
+                        
                         <HStack spacing="4" align="baseline">
                             <ControlledInput control={control} value={toEditBillData.expire} name="expire" type="date" placeholder="Data de Vencimento" variant="outline" error={formState.errors.expire} focusBorderColor="blue.400"/>
-                            <ControlledInput control={control} value={toEditBillData.value} name="value" type="text" placeholder="Telefone" variant="outline" mask="money" error={formState.errors.value} focusBorderColor="blue.400"/>
+                            <ControlledInput control={control} value={toEditBillData.value} name="value" type="text" placeholder="Valor a receber" variant="outline" mask="money" error={formState.errors.value} focusBorderColor="blue.400"/>
                         </HStack>
 
 
                         <HStack spacing="4" align="baseline">
-                            <ControlledSelect control={control} name="category" value={toEditBillData.category.toString()} error={formState.errors.category} variant="outline" w="100%" maxW="200px" focusBorderColor="blue.400"> 
-                                    <option key="0" value="0">Categoria</option>
-                                    {categories && categories.map((category:PaymentCategory) => {
-                                        return (
-                                            <option key={category.id} value={category.id}>{category.name}</option>
-                                        )
-                                    })}
-                            </ControlledSelect>
-
-                            <ControlledSelect control={control} name="source" value={toEditBillData.source?.toString()} error={formState.errors.source} variant="outline" w="100%" maxW="200px" focusBorderColor="blue.400"> 
+                            <ControlledSelect control={control} name="source" value={toEditBillData.source?.toString()} error={formState.errors.source} variant="outline" w="100%" maxW="100%" focusBorderColor="blue.400"> 
                                     <option key="0" value="0">Fonte</option>
                                     {sources && sources.map((source:Source) => {
                                         return (
@@ -171,6 +175,8 @@ export function EditBillModal( { isOpen, onRequestClose, afterEdit, toEditBillDa
                                         )
                                     })}
                             </ControlledSelect>
+
+                            <ControlledInput control={control} value={toEditBillData.paid} name="paid" type="text" placeholder="Valor recebido" variant="outline" mask="money" error={formState.errors.paid} focusBorderColor="blue.400"/>
                         </HStack>
 
                         <ControlledInput control={control} value={toEditBillData.observation} name="observation" type="text" placeholder="Observação" variant="outline" error={formState.errors.observation} focusBorderColor="blue.400"/>

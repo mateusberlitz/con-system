@@ -1,9 +1,9 @@
-import { FormControl, Link, Flex, HStack, Stack, Spinner, IconButton, Text, Accordion, Select as ChakraSelect, AccordionItem, AccordionButton, AccordionPanel, useToast } from "@chakra-ui/react";
+import { FormControl, Link, Flex, HStack, Stack, Spinner, IconButton, Text, Accordion, Select as ChakraSelect, AccordionItem, AccordionButton, AccordionPanel, useToast, Divider, Table, Thead, Th, Td, Tbody, Tr } from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { MainBoard } from "../../../components/MainBoard";
 import { useCompanies } from "../../../hooks/useCompanies";
 import { HasPermission, useProfile } from "../../../hooks/useProfile";
-import { Company, Payment, PaymentCategory, User } from "../../../types";
+import { Company, PartialPayment, Payment, PaymentCategory, User } from "../../../types";
 
 import { useForm } from "react-hook-form";
 import * as yup from 'yup';
@@ -47,6 +47,7 @@ import { AddFilePaymentFormData, AddFilePaymentModal } from "./AddFilePaymentMod
 import { showErrors } from "../../../hooks/useErrors";
 import { AddProofPaymentModal } from "./AddProofPaymentModal";
 import { AddInvoicePaymentModal } from "./AddInvoicePaymentModal";
+import { ConfirmPartialRemoveModal } from "./ConfirmPartialRemoveModal";
 
 interface RemovePaymentData{
     id: number;
@@ -142,6 +143,7 @@ export default function Payments(){
             id: 0,
             title: '',
             value: '',
+            paid: '',
             company: 0,
             category: 0,
             provider: 0,
@@ -186,6 +188,25 @@ export default function Payments(){
     }
     function CloseConfirmPaymentRemoveModal(){
         setisConfirmPaymentRemoveModalOpen(false);
+    }
+
+    const [isConfirmPartialRemoveModalOpen, setisConfirmPartialRemoveModalOpen] = useState(false);
+    const [removePartialData, setRemovePartialData] = useState<RemovePaymentData>(() => {
+
+        const data: RemovePaymentData = {
+            title: '',
+            id: 0,
+        };
+        
+        return data;
+    });
+
+    function OpenConfirmPartialRemoveModal(partialData: RemovePaymentData){
+        setRemovePartialData(partialData);
+        setisConfirmPartialRemoveModalOpen(true);
+    }
+    function CloseConfirmPartialRemoveModal(){
+        setisConfirmPartialRemoveModalOpen(false);
     }
 
     const [isPayPaymentModalOpen, setIsPayPaymentModalOpen] = useState(false);
@@ -406,6 +427,7 @@ export default function Payments(){
             <PayAllPaymentsModal afterPay={payments.refetch} dayToPayPayments={dayToPayPayments} isOpen={isPayAllPaymentsModalOpen} onRequestClose={ClosePayAllPaymentsModal}/>
             <EditPaymentModal categories={categories} toEditPaymentData={toEditPaymentData} users={users.data} providers={providers.data} afterEdit={payments.refetch} isOpen={isEditPaymentModalOpen} onRequestClose={CloseEditPaymentModal}/>
             <ConfirmPaymentRemoveModal afterRemove={payments.refetch} toRemovePaymentData={removePaymentData} isOpen={isConfirmPaymentRemoveModalOpen} onRequestClose={CloseConfirmPaymentRemoveModal}/>
+            <ConfirmPartialRemoveModal afterRemove={payments.refetch} toRemovePaymentData={removePartialData} isOpen={isConfirmPartialRemoveModalOpen} onRequestClose={CloseConfirmPartialRemoveModal}/>
             <AddFilePaymentModal afterAttach={payments.refetch} toAddFilePaymentData={addFilePaymentData} isOpen={isAddFilePaymentModalOpen} onRequestClose={CloseAddFilePaymentModal}/>
             <AddProofPaymentModal afterAttach={payments.refetch} toAddProofPaymentData={addProofPaymentData} isOpen={isAddProofPaymentModalOpen} onRequestClose={CloseAddProofPaymentModal}/>
             <AddInvoicePaymentModal afterAttach={payments.refetch} toAddInvoicePaymentData={addInvoicePaymentData} isOpen={isAddInvoicePaymentModalOpen} onRequestClose={CloseAddInvoicePaymentModal}/>
@@ -543,6 +565,7 @@ export default function Payments(){
                                             id: payment.id,
                                             title: payment.title,
                                             value: payment.value.toString().replace('.', ','),
+                                            paid: payment.paid.toString().replace('.', ','),
                                             company: payment.company?.id,
                                             category: payment.category?.id,
                                             provider: payment.provider?.id,
@@ -558,7 +581,7 @@ export default function Payments(){
                                         }
 
                                         return (
-                                            <AccordionItem isDisabled={payment.status} key={payment.id} display="flex" flexDir="column" paddingX="8" paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
+                                            <AccordionItem key={payment.id} display="flex" flexDir="column" paddingX="8" paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
                                                 {({ isExpanded }) => (
                                                     <>
                                                         <HStack justify="space-between" mb="3">
@@ -657,22 +680,16 @@ export default function Payments(){
                                                                 )
                                                             }
 
-                                                            <Text opacity={payment.status ? 0.5 : 1} float="right">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(payment.status ? payment.value : payment.value - payment.paid)}</Text>
+                                                            <Text opacity={payment.status ? 0.5 : 1} float="right">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(payment.status ? (payment.paid > 0 ? payment.paid : payment.value) : payment.value - payment.paid)}</Text>
                                                         </HStack>
 
                                                         <AccordionPanel flexDir="column" borderTop="2px" borderColor="gray.500" px="0" py="5">
-                                                            <HStack spacing="8" mb="4">
+                                                            <HStack justifyContent="space-between" mb="4">
                                                                     <Text>
                                                                         Valor total: 
                                                                         <strong> {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(payment.value)}</strong>
                                                                     </Text>
-
-                                                                    <Text>
-                                                                        Valor pago: 
-                                                                        <strong> {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(payment.paid)}</strong>
-                                                                    </Text>
-                                                            </HStack>
-                                                            <HStack justifyContent="space-between" mb="4">
+                                                                    
                                                                     <Text>
                                                                         <strong>Pagar para: </strong>
                                                                         {payment.pay_to_user?.name && `${payment.pay_to_user.name} ${payment.pay_to_user.last_name}`}
@@ -694,11 +711,56 @@ export default function Payments(){
                                                                     </Text>
                                                             </HStack>
 
-                                                            <HStack justifyContent="space-between" alignItems="center">
+                                                            <HStack mb="3">
                                                                 <Flex alignItems="center">
                                                                     <Text fontWeight="500" mr="2">Observação: </Text>
                                                                     <Text> {payment.observation && payment.observation}</Text>
                                                                 </Flex>
+                                                            </HStack>
+
+                                                            <Divider mb="3"/>
+
+                                                            <HStack justifyContent="space-between" alignItems="center">
+                                                                <Table size="sm" variant="simple">
+                                                                    <Thead>
+                                                                        <Tr>
+                                                                            <Th color="gray.900">Valores pagos: </Th>
+                                                                            <Th color="gray.900">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(payment.paid)}</Th>
+                                                                            <Th></Th>
+                                                                        </Tr>
+                                                                    </Thead>
+                                                                    <Tbody>
+                                                                        
+                                                                        {
+                                                                            payment.partial_payments && payment.partial_payments.map((partial: PartialPayment) => {
+                                                                                return (
+                                                                                    <Tr>
+                                                                                        <Td fontSize="12px">{partial.pay_date && formatBRDate(partial.pay_date.toString())}</Td>
+                                                                                        <Td color="gray.800" fontWeight="semibold" fontSize="12px">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(partial.value)}</Td>
+                                                                                        <Td><IconButton onClick={() => OpenConfirmPartialRemoveModal({id: partial.id, title: partial.value.toString()})} h="24px" w="23px" p="0" float="right" aria-label="Excluir pagamento parcial" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/></Td>
+                                                                                    </Tr>
+                                                                                )
+                                                                            })
+                                                                        }
+                                                                    </Tbody>
+
+                                                                    {/* <HStack>
+                                                                        <Text>Valores pagos: </Text>
+                                                                        <strong> {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(payment.paid)}</strong>
+                                                                    </HStack>
+
+                                                                    {
+                                                                        payment.partial_payments && payment.partial_payments.map((partial: PartialPayment) => {
+                                                                            return (
+                                                                                <HStack>
+                                                                                    <Text>{partial.pay_date && formatBRDate(partial.pay_date.toString())}</Text>
+                                                                                    <Text color="gray.800" fontWeight="semibold"> {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(partial.value)}</Text>
+                                                                                </HStack>
+                                                                            )
+                                                                        })
+                                                                    } */}
+                                                                </Table>
+                                                                
 
                                                                 <HStack spacing="5" alignItems="center">
                                                                     <EditButton onClick={() => OpenEditPaymentModal(paymentToEditData)}/>

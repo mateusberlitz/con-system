@@ -53,6 +53,15 @@ export interface Provider{
     updated_at?: Date;
 }
 
+export interface PartialPayment{
+    id: number;
+    value: number;
+    payment: number;
+    cash_flow: number;
+    pay_date?: Date;
+    created_at?: Date;
+    updated_at?: Date;
+}
 
 export interface Payment{
     id: number;
@@ -73,6 +82,7 @@ export interface Payment{
     file: string;
     proof: string;
     invoice: string;
+    partial_payments?: PartialPayment[];
     created_at?: Date;
     updated_at?: Date;
 }
@@ -90,6 +100,16 @@ export interface BillCategory{
     updated_at?: Date;
 }
 
+export interface PartialBill{
+    id: number;
+    value: number;
+    bill: number;
+    cash_flow: number;
+    receive_date?: Date;
+    created_at?: Date;
+    updated_at?: Date;
+}
+
 export interface Bill{
     id: number;
     title: string;
@@ -101,6 +121,7 @@ export interface Bill{
     source?: Source;
     observation: string;
     status?: boolean;
+    partial_bills?: PartialBill[];
     created_at?: Date;
     updated_at?: Date;
 }

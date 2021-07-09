@@ -1,9 +1,9 @@
-import { FormControl, Flex, HStack, Stack, Spinner, Text, IconButton, Select as ChakraSelect, Accordion, AccordionItem, AccordionButton, AccordionPanel, useToast } from "@chakra-ui/react";
+import { FormControl, Flex, HStack, Stack, Spinner, Text, IconButton, Select as ChakraSelect, Accordion, AccordionItem, AccordionButton, AccordionPanel, useToast, Table, Thead, Tr, Th, Tbody, Td, Divider } from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { MainBoard } from "../../../components/MainBoard";
 import { useCompanies } from "../../../hooks/useCompanies";
 import { HasPermission, useProfile } from "../../../hooks/useProfile";
-import { Company, Bill, BillCategory } from "../../../types";
+import { Company, Bill, BillCategory, PartialBill } from "../../../types";
 
 import { useForm } from "react-hook-form";
 import * as yup from 'yup';
@@ -15,6 +15,7 @@ import { ReactComponent as StrongPlusIcon } from '../../../assets/icons/StrongPl
 import { ReactComponent as EllipseIcon } from '../../../assets/icons/Ellipse.svg';
 import { ReactComponent as TagIcon } from '../../../assets/icons/Tag.svg';
 import { ReactComponent as CheckIcon } from '../../../assets/icons/Check.svg';
+import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
 import { ReactComponent as RefreshIcon } from '../../../assets/icons/Refresh.svg';
 
 import { Input } from "../../../components/Forms/Inputs/Input";
@@ -41,6 +42,7 @@ import { Pagination } from "../../../components/Pagination";
 import { ReceiveBillFormData, ReceiveBillModal } from "./ReceiveBillModal";
 import { ReceiveAllBillsModal } from "./ReceiveAllBillsModal";
 import { showErrors } from "../../../hooks/useErrors";
+import { ConfirmPartialBillRemoveModal } from "./ConfirmPartialBillRemoveModal";
 
 interface RemoveBillData{
     id: number;
@@ -172,6 +174,25 @@ export default function Bills(){
         setisConfirmBillRemoveModalOpen(false);
     }
 
+    const [isConfirmPartialRemoveModalOpen, setisConfirmPartialRemoveModalOpen] = useState(false);
+    const [removePartialData, setRemovePartialData] = useState<RemoveBillData>(() => {
+
+        const data: RemoveBillData = {
+            title: '',
+            id: 0,
+        };
+        
+        return data;
+    });
+
+    function OpenConfirmPartialRemoveModal(partialData: RemoveBillData){
+        setRemovePartialData(partialData);
+        setisConfirmPartialRemoveModalOpen(true);
+    }
+    function CloseConfirmPartialRemoveModal(){
+        setisConfirmPartialRemoveModalOpen(false);
+    }
+
     const [isReceiveBillModalOpen, setIsReceiveBillModalOpen] = useState(false);
     const [toReceiveBillData, setToReceiveBillData] = useState<ReceiveBillFormData>(() => {
 
@@ -260,6 +281,7 @@ export default function Bills(){
             <ReceiveBillModal afterReceive={bills.refetch} toReceiveBillData={toReceiveBillData} isOpen={isReceiveBillModalOpen} onRequestClose={CloseReceiveBillModal}/>
             <ReceiveAllBillsModal afterReceive={bills.refetch} dayToReceiveBills={dayToReceiveBills} isOpen={isReceiveAllBillsModalOpen} onRequestClose={CloseReceiveAllBillsModal}/>
             <EditBillModal categories={categories} toEditBillData={toEditBillData} users={users.data} sources={sources.data} afterEdit={bills.refetch} isOpen={isEditBillModalOpen} onRequestClose={CloseEditBillModal}/>
+            <ConfirmPartialBillRemoveModal afterRemove={bills.refetch} toRemoveBillData={removePartialData} isOpen={isConfirmPartialRemoveModalOpen} onRequestClose={CloseConfirmPartialRemoveModal}/>
             <ConfirmBillRemoveModal afterRemove={bills.refetch} toRemoveBillData={removeBillData} isOpen={isConfirmBillRemoveModalOpen} onRequestClose={CloseConfirmBillRemoveModal}/>
 
             <Flex justify="space-between" alignItems="center" mb="10">
@@ -383,6 +405,7 @@ export default function Bills(){
                                             id: bill.id,
                                             title: bill.title,
                                             value: bill.value.toString().replace('.', ','),
+                                            paid: bill.paid.toString().replace('.', ','),
                                             company: bill.company?.id,
                                             category: bill.category?.id,
                                             source: bill.source?.id,
@@ -392,7 +415,7 @@ export default function Bills(){
                                         }
 
                                         return (
-                                            <AccordionItem isDisabled={bill.status} key={bill.id} display="flex" flexDir="column" paddingX="8" paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
+                                            <AccordionItem key={bill.id} display="flex" flexDir="column" paddingX="8" paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
                                                 {({ isExpanded }) => (
                                                     <>
                                                         <HStack justify="space-between" mb="3">
@@ -433,41 +456,73 @@ export default function Bills(){
                                                                 )
                                                             }
                                                             
-                                                            <Text float="right">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(bill.value - bill.paid )}</Text>
+                                                            <Text float="right">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(bill.status ? (bill.paid > 0 ? bill.paid : bill.value) : bill.value - bill.paid)}</Text>
                                                         </HStack>
 
                                                         <AccordionPanel flexDir="column" borderTop="2px" borderColor="gray.500" px="0" py="5">
-                                                            <HStack justifyContent="space-between" alignItems="center">
-                                                                <Stack>
-                                                                    <HStack spacing="10">
-                                                                        <Flex alignItems="center">
-                                                                            <Text fontWeight="500" mr="2">Valor total: </Text>
-                                                                            <Text fontWeight="700">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(bill.value)}</Text>
-                                                                        </Flex>
+                                                            <HStack mb="3" justifyContent="space-between" alignItems="center">
+                                                                
+                                                                <Flex alignItems="center">
+                                                                    <Text fontWeight="500" mr="2">Valor total: </Text>
+                                                                    <Text fontWeight="700">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(bill.value)}</Text>
+                                                                </Flex>
 
-                                                                        <Flex alignItems="center">
-                                                                            <Text fontWeight="500" mr="2">Valor Pago: </Text>
-                                                                            <Text fontWeight="700">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(bill.paid)}</Text>
-                                                                        </Flex>
+                                                                <Flex alignItems="center">
+                                                                    <Text fontWeight="500">Fonte: </Text>
+                                                                    <Text> {bill.source?.name && bill.source?.name}</Text>
+                                                                </Flex>
 
-                                                                        <Flex alignItems="center">
-                                                                            <Text fontWeight="500">Fonte: </Text>
-                                                                            <Text> {bill.source?.name && bill.source?.name}</Text>
-                                                                        </Flex>
+                                                                <Flex alignItems="center">
+                                                                    <Text fontWeight="500">Observação: </Text>
+                                                                    <Text> {bill.observation && bill.observation}</Text>
+                                                                </Flex>
+                                                            </HStack>
+                                                                
+                                                            <Divider mb="3"/>
+
+                                                            <HStack spacing="5" alignItems="center">
+                                                                <Table size="sm" variant="simple">
+                                                                    <Thead>
+                                                                        <Tr>
+                                                                            <Th color="gray.900">Valores recebidos: </Th>
+                                                                            <Th color="gray.900">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(bill.paid)}</Th>
+                                                                            <Th></Th>
+                                                                        </Tr>
+                                                                    </Thead>
+                                                                    <Tbody>
+                                                                        
+                                                                        {
+                                                                            bill.partial_bills && bill.partial_bills.map((partial: PartialBill) => {
+                                                                                return (
+                                                                                    <Tr>
+                                                                                        <Td fontSize="12px">{partial.receive_date && formatBRDate(partial.receive_date.toString())}</Td>
+                                                                                        <Td color="gray.800" fontWeight="semibold" fontSize="12px">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(partial.value)}</Td>
+                                                                                        <Td><IconButton onClick={() => OpenConfirmPartialRemoveModal({id: partial.id, title: partial.value.toString()})} h="24px" w="23px" p="0" float="right" aria-label="Excluir pagamento parcial" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/></Td>
+                                                                                    </Tr>
+                                                                                )
+                                                                            })
+                                                                        }
+                                                                    </Tbody>
+
+                                                                    {/* <HStack>
+                                                                        <Text>Valores pagos: </Text>
+                                                                        <strong> {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(payment.paid)}</strong>
                                                                     </HStack>
 
-                                                                    <Flex alignItems="center">
-                                                                        <Text fontWeight="500">Observação: </Text>
-                                                                        <Text> {bill.observation && bill.observation}</Text>
-                                                                    </Flex>
-                                                                </Stack>
+                                                                    {
+                                                                        payment.partial_payments && payment.partial_payments.map((partial: PartialPayment) => {
+                                                                            return (
+                                                                                <HStack>
+                                                                                    <Text>{partial.pay_date && formatBRDate(partial.pay_date.toString())}</Text>
+                                                                                    <Text color="gray.800" fontWeight="semibold"> {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(partial.value)}</Text>
+                                                                                </HStack>
+                                                                            )
+                                                                        })
+                                                                    } */}
+                                                                </Table>
 
-                                                                
-
-                                                                <HStack spacing="5" alignItems="center">
-                                                                    <EditButton onClick={() => OpenEditBillModal(billToEditData)}/>
-                                                                    <RemoveButton onClick={() => OpenConfirmBillRemoveModal({ id: bill.id, title: bill.title }) }/>
-                                                                </HStack>
+                                                                <EditButton onClick={() => OpenEditBillModal(billToEditData)}/>
+                                                                <RemoveButton onClick={() => OpenConfirmBillRemoveModal({ id: bill.id, title: bill.title }) }/>
                                                             </HStack>
 
                                                         </AccordionPanel>

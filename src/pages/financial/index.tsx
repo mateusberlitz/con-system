@@ -183,7 +183,7 @@ export default function Financial(){
 
     return(
         <MainBoard sidebar="financial" header={
-            (
+            ( (permissions && HasPermission(permissions, 'Todas Empresas')) ?
                 ( companies.isLoading ? (
                     <Flex justify="center">
                         <Spinner/>
@@ -201,7 +201,9 @@ export default function Financial(){
                             </FormControl>
                         </HStack>
                     ))
-                )
+                :
+                <div></div>
+            )
         }>
             <Stack fontSize="13px" spacing="12">
                 <PayPaymentModal afterPay={payments.refetch} toPayPaymentData={toPayPaymentData} isOpen={isPayPaymentModalOpen} onRequestClose={ClosePayPaymentModal}/>

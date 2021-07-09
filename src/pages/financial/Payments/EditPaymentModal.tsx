@@ -34,6 +34,7 @@ export interface EditPaymentFormData{
     status?: boolean;
     pay_to_user?: number;
     value: string;
+    paid?: string;
     expire: string;
     contract?: string;
     group?: string;
@@ -51,6 +52,7 @@ const EditPaymentFormSchema = yup.object().shape({
     status: yup.boolean(),
     pay_to_user: yup.number().transform((v, o) => o === '' ? null : v).nullable(),
     value: yup.string().required("Informe o valor do pagamento"),
+    paid: yup.string(),
     expire: yup.date().required("Selecione a data de vencimento"),
     contract: yup.string().nullable(),
     group: yup.string(),
@@ -81,6 +83,7 @@ export function EditPaymentModal( { isOpen, onRequestClose, afterEdit, toEditPay
             group: toEditPaymentData.group,
             quote: toEditPaymentData.quote,
             recurrence: toEditPaymentData.recurrence,
+            paid: toEditPaymentData.paid,
             file: toEditPaymentData.file,
         }
     });
@@ -172,7 +175,7 @@ export function EditPaymentModal( { isOpen, onRequestClose, afterEdit, toEditPay
 
 
                         <HStack spacing="4" align="baseline">
-                            <ControlledSelect control={control} name="category" value={toEditPaymentData.category.toString()} error={formState.errors.category} variant="outline" w="100%" maxW="200px" focusBorderColor="blue.400"> 
+                            <ControlledSelect control={control} name="category" value={toEditPaymentData.category.toString()} error={formState.errors.category} variant="outline" w="100%" maxW="100%" focusBorderColor="blue.400"> 
                                     <option key="0" value="0">Categoria</option>
                                     {categories && categories.map((category:PaymentCategory) => {
                                         return (
@@ -181,7 +184,7 @@ export function EditPaymentModal( { isOpen, onRequestClose, afterEdit, toEditPay
                                     })}
                             </ControlledSelect>
 
-                            <ControlledSelect control={control} name="provider" value={toEditPaymentData.provider?.toString()} error={formState.errors.provider} variant="outline" w="100%" maxW="200px" focusBorderColor="blue.400"> 
+                            <ControlledSelect control={control} name="provider" value={toEditPaymentData.provider?.toString()} error={formState.errors.provider} variant="outline" w="100%" maxW="100%" focusBorderColor="blue.400"> 
                                     <option key="0" value="0">Fornecedor</option>
                                     {providers && providers.map((provider:Provider) => {
                                         return (
@@ -194,7 +197,7 @@ export function EditPaymentModal( { isOpen, onRequestClose, afterEdit, toEditPay
                         <HStack spacing="4" align="baseline">
                             <ControlledInput control={control} value={toEditPaymentData.contract} name="contract" type="text" placeholder="Contrato" variant="outline" error={formState.errors.contract} focusBorderColor="blue.400"/>
 
-                            <ControlledSelect control={control} name="pay_to_user" value={toEditPaymentData.pay_to_user?.toString()} error={formState.errors.pay_to_user} variant="outline" w="100%" maxW="200px" focusBorderColor="blue.400"> 
+                            <ControlledSelect control={control} name="pay_to_user" value={toEditPaymentData.pay_to_user?.toString()} error={formState.errors.pay_to_user} variant="outline" w="100%" maxW="100%" focusBorderColor="blue.400"> 
                                     <option key="0" value="0">Pagar para</option>
                                     {users && users.map((user:User) => {
                                         return (
@@ -204,8 +207,14 @@ export function EditPaymentModal( { isOpen, onRequestClose, afterEdit, toEditPay
                             </ControlledSelect>
                         </HStack>
 
-                        <ControlledInput control={control} value={toEditPaymentData.recurrence?.toString()} name="recurrence" type="text" placeholder="Repetir Mensalmente" variant="outline" error={formState.errors.recurrence} focusBorderColor="blue.400"/>
+                        <HStack spacing="4" align="baseline">
+                            <ControlledInput control={control} value={toEditPaymentData.recurrence?.toString()} name="recurrence" type="text" placeholder="Repetir Mensalmente" variant="outline" error={formState.errors.recurrence} focusBorderColor="blue.400"/>
+
+                            <ControlledInput control={control} value={toEditPaymentData.paid} name="paid" type="text" placeholder="Valor já pago" variant="outline" error={formState.errors.paid} focusBorderColor="blue.400"/>
+                        </HStack>
+                        
                         <ControlledInput control={control} value={toEditPaymentData.observation} name="observation" type="text" placeholder="Observação" variant="outline" error={formState.errors.observation} focusBorderColor="blue.400"/>
+                        
 
                     </Stack>
                 </ModalBody>
