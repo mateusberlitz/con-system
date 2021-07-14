@@ -31,6 +31,7 @@ import { EditCashFlowFormData, EditCashFlowModal } from "./EditCashFlowModal";
 import { ConfirmCashFlowRemoveModal } from "./ConfirmCashFlowRemoveModal";
 import { Select } from "../../../components/Forms/Selects/Select";
 import { Pagination } from "../../../components/Pagination";
+import { ExportReportModal } from "./ExportReportModal";
 
 interface RemoveCashFlowData{
     id: number;
@@ -140,6 +141,18 @@ export default function CashFlow(){
     }
 
 
+
+    const [isExportReportModalOpen, setIsExportReportModalOpen] = useState(false);
+
+    function OpenExportReportModal(){
+        setIsExportReportModalOpen(true);
+    }
+    function CloseExportReportModal(){
+        setIsExportReportModalOpen(false);
+    }
+
+
+
     const [categories, setCategories] = useState<BillCategory[]>([]);
 
     const loadCategories = async () => {
@@ -165,12 +178,17 @@ export default function CashFlow(){
         >
             <NewCashFlowModal categories={categories} afterCreate={cashFlows.refetch} isOpen={isNewCashFlowModalOpen} onRequestClose={CloseNewCashFlowModal}/>
             <EditCashFlowModal categories={categories} toEditCashFlowData={toEditCashFlowData} afterEdit={cashFlows.refetch} isOpen={isEditCashFlowModalOpen} onRequestClose={CloseEditCashFlowModal}/>
+            <ExportReportModal isOpen={isExportReportModalOpen} onRequestClose={CloseExportReportModal}/>
             <ConfirmCashFlowRemoveModal afterRemove={cashFlows.refetch} toRemoveCashFlowData={removeCashFlowData} isOpen={isConfirmCashFlowRemoveModalOpen} onRequestClose={CloseConfirmCashFlowRemoveModal}/>
 
             <Flex justify="space-between" alignItems="center" mb="10">
                 <SolidButton onClick={OpenNewCashFlowModal} color="white" bg="blue.400" icon={PlusIcon} colorScheme="blue">
                     Adicionar Movimentação
                 </SolidButton>
+
+                <OutlineButton onClick={OpenExportReportModal} variant="outline" colorScheme="blue" color="blue.400" borderColor="blue.400">
+                    Gerar Relatório
+                </OutlineButton>
 
                 {/* <Link href="/categorias" border="2px" borderRadius="full" borderColor="gray.500" px="6" h="8" alignItems="center">
                     <Text>Categorias</Text>
