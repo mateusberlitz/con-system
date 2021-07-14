@@ -23,6 +23,7 @@ interface ExportReportModalProps{
 export interface ExportReportFormData{
     start_date: string,
     end_date: string,
+    company: number
 }
 
 const ExportReportFormSchema = yup.object().shape({
@@ -57,10 +58,10 @@ export function ExportReportModal ( { isOpen, onRequestClose} : ExportReportModa
             paymentData.start_date = formatYmdDate(paymentData.start_date);
             paymentData.end_date = formatYmdDate(paymentData.end_date);
 
+            paymentData.company = workingCompany.company?.id;
 
-            const {data, headers} = await api.get(`/report`, {params: {
-                    paymentData
-                }
+
+            const {data, headers} = await api.get(`/report`, {params: paymentData
             });
 
             const win = window.open(`${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_STORAGE : process.env.REACT_APP_API_LOCAL_STORAGE}${data.file}`, "_blank");
