@@ -63,18 +63,8 @@ export function ExportReportModal ( { isOpen, onRequestClose} : ExportReportModa
                 }
             });
 
-            const win = window.open(data.file, "_blank");
-            //win.focus();
-            console.log(data.file);
-
-            // toast({
-            //     title: "Sucesso",
-            //     description: `Relatório gerado.`,
-            //     status: "success",
-            //     duration: 12000,
-            //     isClosable: true,
-            // });
-
+            const win = window.open(`${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_STORAGE : process.env.REACT_APP_API_LOCAL_STORAGE}${data.file}`, "_blank");
+            
             onRequestClose();
             //reset();
         }catch(error) {
