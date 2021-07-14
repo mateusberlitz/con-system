@@ -58,21 +58,25 @@ export function ExportReportModal ( { isOpen, onRequestClose} : ExportReportModa
             paymentData.end_date = formatYmdDate(paymentData.end_date);
 
 
-            await api.get(`/report`, {params: {
+            const {data, headers} = await api.get(`/report`, {params: {
                     paymentData
                 }
             });
 
-            toast({
-                title: "Sucesso",
-                description: `Relatório gerado.`,
-                status: "success",
-                duration: 12000,
-                isClosable: true,
-            });
+            const win = window.open(data.file, "_blank");
+            //win.focus();
+            console.log(data.file);
+
+            // toast({
+            //     title: "Sucesso",
+            //     description: `Relatório gerado.`,
+            //     status: "success",
+            //     duration: 12000,
+            //     isClosable: true,
+            // });
 
             onRequestClose();
-            reset();
+            //reset();
         }catch(error) {
             showErrors(error, toast);
 
