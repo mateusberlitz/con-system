@@ -1,10 +1,10 @@
-import { HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, useToast } from "@chakra-ui/react";
+import { Flex, HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, Text, useToast } from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 
 import {  useForm } from "react-hook-form";
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { PaymentCategory, Source, User } from "../../../types";
+import { Company, PaymentCategory, Source, User } from "../../../types";
 import { api } from "../../../services/api";
 import { useHistory } from "react-router";
 import { useErrors } from "../../../hooks/useErrors";
@@ -13,6 +13,7 @@ import { ControlledInput } from "../../../components/Forms/Inputs/ControlledInpu
 import { ControlledSelect } from "../../../components/Forms/Selects/ControlledSelect";
 import { formatInputDate } from "../../../utils/Date/formatInputDate";
 import moneyToBackend from "../../../utils/moneyToBackend";
+import { useProfile } from "../../../hooks/useProfile";
 
 interface EditBillModalProps{
     isOpen: boolean;
@@ -53,6 +54,8 @@ export function EditBillModal( { isOpen, onRequestClose, afterEdit, toEditBillDa
     const workingCompany = useWorkingCompany();
     const history = useHistory();
     const toast = useToast();
+    const {profile} = useProfile();
+
     const { showErrors } = useErrors();
 
     const { handleSubmit, formState, control} = useForm<EditBillFormData>({
@@ -75,21 +78,29 @@ export function EditBillModal( { isOpen, onRequestClose, afterEdit, toEditBillDa
 
         billData.expire = formatInputDate(billData.expire);
 
+        if(billData.paid === null || billData.paid === undefined){
+            delete billData.paid;
+        }else{
+            billData.paid = moneyToBackend(billData.paid);
+        }
+
         if(billData.source === null || billData.source === 0){
             delete billData.source;
         }
 
         if(!workingCompany.company){
             return billData;
+        }else if(billData.company === 0){
+            billData.company = workingCompany.company?.id;
         }
-
-        billData.company = workingCompany.company?.id;
 
         return billData;
     }
 
     const handleEditBill = async (billData : EditBillFormData) => {
         try{
+            console.log(billData.company);
+
             if(workingCompany.company){
                 if(Object.keys(workingCompany.company).length === 0){
                     toast({
@@ -102,7 +113,8 @@ export function EditBillModal( { isOpen, onRequestClose, afterEdit, toEditBillDa
     
                     return;
                 }
-            }else{
+            }
+            if(!workingCompany.company && billData.company === 0){
                 toast({
                     title: "Ué",
                     description: `Seleciona uma empresa para trabalhar`,
@@ -115,7 +127,6 @@ export function EditBillModal( { isOpen, onRequestClose, afterEdit, toEditBillDa
             }
 
             billData = includeAndFormatData(billData);
-            console.log(billData);
 
             await api.post(`/bills/update/${toEditBillData.id}`, billData);
 
@@ -150,13 +161,29 @@ export function EditBillModal( { isOpen, onRequestClose, afterEdit, toEditBillDa
                     <Stack spacing="6">
                         <ControlledInput control={control} value={toEditBillData.title} name="title" type="text" placeholder="Título" variant="outline" error={formState.errors.title} focusBorderColor="blue.400"/>
 
+                        {
+                            ( !profile || !profile.companies ? (
+                                <Flex justify="center">
+                                    <Text>Nenhuma empresa disponível</Text>
+                                </Flex>
+                            ) : (
+                                <ControlledSelect control={control} value={toEditBillData.company.toString()}  h="45px" name="company" w="100%" fontSize="sm" focusBorderColor="blue.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" error={formState.errors.company}>
+                                    {profile.companies && profile.companies.map((company:Company) => {
+                                        return (
+                                            <option key={company.id} value={company.id}>{company.name}</option>
+                                        )
+                                    })}
+                                </ControlledSelect>
+                            ))
+                        }
+
                         <ControlledSelect control={control} name="category" value={toEditBillData.category.toString()} error={formState.errors.category} variant="outline" w="100%" maxW="100%" focusBorderColor="blue.400"> 
-                                <option key="0" value="0">Categoria</option>
-                                {categories && categories.map((category:PaymentCategory) => {
-                                    return (
-                                        <option key={category.id} value={category.id}>{category.name}</option>
-                                    )
-                                })}
+                            <option key="0" value="0">Categoria</option>
+                            {categories && categories.map((category:PaymentCategory) => {
+                                return (
+                                    <option key={category.id} value={category.id}>{category.name}</option>
+                                )
+                            })}
                         </ControlledSelect>
 
                         

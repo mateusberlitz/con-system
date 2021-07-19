@@ -96,7 +96,7 @@ export function TasksSummary(){
         <NewTaskModal afterCreate={tasks.refetch} isOpen={isNewTaskModalOpen} onRequestClose={CloseNewTaskModal}/>
         <ConfirmTaskRemoveModal toRemoveTaskData={removeTaskData} afterRemove={tasks.refetch} isOpen={isConfirmRemoveTaskModalOpen} onRequestClose={CloseConfirmRemoveTaskModal}/>
 
-        <Stack spacing="5" w="45%" minWidth="300px" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8">
+        <Stack spacing="5" w="100%" minWidth="300px" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8">
             <Flex>
                 <Text fontSize="xl" mb="5" w="100%">Agenda</Text>
 

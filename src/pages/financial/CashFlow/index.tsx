@@ -62,7 +62,7 @@ export default function CashFlow(){
     const cashFlows = useCashFlows(filter, 50, page);
     let viewCashAmount = (!cashFlows.isLoading && !cashFlows.error && cashFlows.data?.initialCash) ? cashFlows.data.initialCash : 0;
 
-    const {permissions} = useProfile();
+    const {profile, permissions} = useProfile();
     const companies = useCompanies();
 
     const { register, handleSubmit, formState} = useForm<CashFlowsFilterData>({
@@ -173,7 +173,7 @@ export default function CashFlow(){
 
     return(
         <MainBoard sidebar="financial" header={ 
-            ( ( permissions && HasPermission(permissions, 'Todas Empresas')) && <CompanySelect searchFilter={filter} setFilter={handleChangeFilter}/> )
+            ( ( (permissions && HasPermission(permissions, 'Todas Empresas')) || (profile && profile.companies && profile.companies.length > 1)) && <CompanySelect searchFilter={filter} setFilter={handleChangeFilter}/> )
         }
         >
             <NewCashFlowModal categories={categories} afterCreate={cashFlows.refetch} isOpen={isNewCashFlowModalOpen} onRequestClose={CloseNewCashFlowModal}/>
@@ -240,14 +240,22 @@ export default function CashFlow(){
                 {
                     (!cashFlows.isLoading && !cashFlows.error) && Object.keys(cashFlows.data?.data).map((day:string) => {
                         //const totalDayCashFlows = cashFlows.data[day].length;
-                        viewCashAmount = viewCashAmount + cashFlows.data?.data[day].reduce((sumAmount:number, cashFlow:CashFlowInterface) => {
-                            return sumAmount + cashFlow.value;
-                        }, 0);
+                        // viewCashAmount = viewCashAmount + cashFlows.data?.data[day].reduce((sumAmount:number, cashFlow:CashFlowInterface) => {
+                        //     return sumAmount + cashFlow.value;
+                        // }, 0);
+
 
                         const todayFormatedDate = formatDate(formatYmdDate(new Date().toDateString()));
                         const dayCashFlowsFormated = formatDate(day);
                         const tomorrow = getDay(formatYmdDate(new Date().toDateString())) + 1;
                         const cashFlowDay = getDay(day);
+
+                        viewCashAmount = cashFlows.data?.data[day]['balance'];
+
+                        // const indexBalance = cashFlows.data?.data[day].indexOf('balance');
+                        // if (indexBalance > -1) {
+                        //     cashFlows.data?.data[day].splice(indexBalance, 1);
+                        // }
 
                         return (
                             <Stack key={day} w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" spacing="0" allowMultiple>
@@ -266,7 +274,7 @@ export default function CashFlow(){
                                 </HStack>
 
                                 {
-                                    cashFlows.data?.data[day].map((cashFlow:CashFlowInterface) => {
+                                    cashFlows.data?.data[day]['items'].map((cashFlow:CashFlowInterface) => {
                                         const cashFlowToEditData:EditCashFlowFormData = {
                                             id: cashFlow.id,
                                             title: cashFlow.title,

@@ -48,6 +48,7 @@ import { showErrors } from "../../../hooks/useErrors";
 import { AddProofPaymentModal } from "./AddProofPaymentModal";
 import { AddInvoicePaymentModal } from "./AddInvoicePaymentModal";
 import { ConfirmPartialRemoveModal } from "./ConfirmPartialRemoveModal";
+import { profile } from "node:console";
 
 interface RemovePaymentData{
     id: number;
@@ -89,7 +90,7 @@ export default function Payments(){
 
     const payments = usePayments(filter, page);
 
-    const {permissions} = useProfile();
+    const {permissions, profile} = useProfile();
     const companies = useCompanies();
     const providers = useProviders();
 
@@ -419,7 +420,7 @@ export default function Payments(){
 
     return(
         <MainBoard sidebar="financial" header={ 
-            ( ( permissions && HasPermission(permissions, 'Todas Empresas')) && <CompanySelect searchFilter={filter} setFilter={handleChangeFilter}/> )
+            ( ( (permissions && HasPermission(permissions, 'Todas Empresas')) || (profile && profile.companies && profile.companies.length > 1)) && <CompanySelect searchFilter={filter} setFilter={handleChangeFilter}/> )
         }
         >
             <NewPaymentModal categories={categories} users={users.data} providers={providers.data} afterCreate={payments.refetch} isOpen={isNewPaymentModalOpen} onRequestClose={CloseNewPaymentModal}/>

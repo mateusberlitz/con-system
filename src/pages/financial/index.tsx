@@ -6,22 +6,13 @@ import { SolidButton } from "../../components/Buttons/SolidButton";
 import { MainBoard } from "../../components/MainBoard";
 import { PaymentFilterData, usePayments } from "../../hooks/usePayments";
 import { useWorkingCompany } from "../../hooks/useWorkingCompany";
-import { Company, Payment } from "../../types";
-import { formatBRDate } from "../../utils/Date/formatBRDate";
-import { formatDate } from "../../utils/Date/formatDate";
-import { formatInputDate } from "../../utils/Date/formatInputDate";
+import { Company } from "../../types";
 import { formatYmdDate } from "../../utils/Date/formatYmdDate";
-import { getDay } from "../../utils/Date/getDay";
 import { PayPaymentFormData, PayPaymentModal } from "./Payments/PayPaymentModal";
-import { NewTaskModal } from "../../pages/Tasks/NewTaskModal";
 import { PaymentsSummary } from "./PaymentsSummary";
 import { TasksSummary } from "./TasksSummary";
 import { CashSummary } from "./CashSummary";
-import { CashFlowSummary } from "./CashFlowSummary";
 
-import { ReactComponent as EllipseIcon } from '../../assets/icons/Ellipse.svg';
-import { IconButton } from "@chakra-ui/button";
-import { TaskFilterData, useTasks } from "../../hooks/useTasks";
 import { HasPermission, useProfile } from "../../hooks/useProfile";
 import { BillFilterData, useBills } from "../../hooks/useBills";
 import { ReceiveBillFormData, ReceiveBillModal } from "./Bills/ReceiveBillModal";
@@ -33,17 +24,16 @@ import { CashFlowsFilterData, useCashFlows } from "../../hooks/useCashFlows";
 
 
 export default function Financial(){
-    const { permissions } = useProfile();
+    const { profile, permissions } = useProfile();
     const workingCompany = useWorkingCompany();
-    console.log(formatInputDate(new Date().toString()));
 
     const [filter, setFilter] = useState<PaymentFilterData>(() => {
         const data: PaymentFilterData = {
             search: '',
-            company: workingCompany.company?.id,
             start_date: formatYmdDate(new Date().toString()),
             end_date: formatYmdDate(new Date().toString()),
-            status: 0
+            status: 0,
+            group_by: 'company',
         };
         
         return data;
@@ -84,10 +74,10 @@ export default function Financial(){
     const [filterBills, setFilterBills] = useState<BillFilterData>(() => {
         const data: BillFilterData = {
             search: '',
-            company: workingCompany.company?.id,
             start_date: formatYmdDate(new Date().toString()),
             end_date: formatYmdDate(new Date().toString()),
-            status: 0
+            status: 0,
+            group_by: 'company',
         };
         
         return data;
@@ -124,9 +114,9 @@ export default function Financial(){
     const [filterPendencies, setFilterPendencies] = useState<PaymentFilterData>(() => {
         const data: PaymentFilterData = {
             search: '',
-            company: workingCompany.company?.id,
             end_date: formatYmdDate(new Date().toString()),
-            status: 0
+            status: 0,
+            group_by: 'company',
         };
         
         return data;
@@ -144,7 +134,7 @@ export default function Financial(){
         return data;
     })
 
-    const cashFlows = useCashFlows(filterCashFlow, 5, 1);
+    //const cashFlows = useCashFlows(filterCashFlow, 5, 1);
 
 
 
@@ -157,22 +147,22 @@ export default function Financial(){
         workingCompany.changeCompany(selectedCompanyData);
 
         //filtro das contas a receber
-        const updatedFilterBills = filterBills;
-        updatedFilterBills.company = selectedCompanyId;
+        // const updatedFilterBills = filterBills;
+        // updatedFilterBills.company = selectedCompanyId;
 
-        setFilterBills(updatedFilterBills);
+        // setFilterBills(updatedFilterBills);
 
         //filtro dos pagamentos
-        const updatedFilterPayments = filter;
-        updatedFilterPayments.company = selectedCompanyId;
+        // const updatedFilterPayments = filter;
+        // updatedFilterPayments.company = selectedCompanyId;
 
-        setFilter(updatedFilterPayments);
+        // setFilter(updatedFilterPayments);
 
         //filtro dos pagamentos pendentes
-        const updatedFilterPendencies = filterPendencies;
-        updatedFilterPendencies.company = selectedCompanyId;
+        // const updatedFilterPendencies = filterPendencies;
+        // updatedFilterPendencies.company = selectedCompanyId;
 
-        setFilterPendencies(updatedFilterPendencies);
+        // setFilterPendencies(updatedFilterPendencies);
 
         //filtro do fluxo de caixa
         const updatedFilterCashFlow = filterCashFlow;
@@ -183,16 +173,16 @@ export default function Financial(){
 
     return(
         <MainBoard sidebar="financial" header={
-            ( (permissions && HasPermission(permissions, 'Todas Empresas')) ?
-                ( companies.isLoading ? (
+            ( ((permissions && HasPermission(permissions, 'Todas Empresas'))  || (profile && profile.companies && profile.companies.length > 1)) ?
+                ( !profile || !profile.companies ? (
                     <Flex justify="center">
-                        <Spinner/>
+                        <Text>Nenhuma empresa disponível</Text>
                     </Flex>
                 ) : (
                         <HStack as="form" spacing="10" w="100%" mb="10">
                             <FormControl pos="relative">
                                 <ChakraSelect onChange={handleChangeCompany} defaultValue={workingCompany.company?.id} h="45px" name="selected_company" w="100%" maxW="200px" fontSize="sm" focusBorderColor="purple.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
-                                {companies.data && companies.data.map((company:Company) => {
+                                {profile.companies && profile.companies.map((company:Company) => {
                                     return (
                                         <option key={company.id} value={company.id}>{company.name}</option>
                                     )
@@ -221,22 +211,18 @@ export default function Financial(){
                     
 
                     {/* TAREFAS */}
-                    <TasksSummary/>
-                </HStack>
+                    
 
-                {
-                    HasPermission(permissions, 'Financeiro Completo') && (
-                        <>
-                            <HStack spacing="8" alignItems="flex-start">
-                                {/* CAIXA */}
+                    <Stack spacing="8" w="45%">
+                        <TasksSummary/>
+
+                        {
+                            HasPermission(permissions, 'Financeiro Completo') && (
                                 <CashSummary/>
-
-                                {/* FLUXO */}
-                                <CashFlowSummary cashFlows={cashFlows}/>
-                            </HStack>
-                        </>
-                    )
-                }
+                            )
+                        }
+                    </Stack>
+                </HStack>
 
             </Stack>
         </MainBoard>

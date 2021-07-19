@@ -1,4 +1,4 @@
-import { HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, useToast } from "@chakra-ui/react";
+import { Flex, HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, Text, useToast } from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 
 
@@ -11,10 +11,13 @@ import { useErrors } from "../../../hooks/useErrors";
 
 import { Input } from "../../../components/Forms/Inputs/Input";
 import { Select } from "../../../components/Forms/Selects/Select";
-import { PaymentCategory, User, Provider } from "../../../types";
+import { PaymentCategory, User, Provider, Company } from "../../../types";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { formatInputDate } from "../../../utils/Date/formatInputDate";
 import moneyToBackend from "../../../utils/moneyToBackend";
+import { profile } from "console";
+import { useProfile } from "../../../hooks/useProfile";
+import { ControlledSelect } from "../../../components/Forms/Selects/ControlledSelect";
 
 interface NewPaymentModalProps{
     isOpen: boolean;
@@ -61,11 +64,13 @@ const CreateNewPaymentFormSchema = yup.object().shape({
 
 export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categories, users, providers } : NewPaymentModalProps){
     const workingCompany = useWorkingCompany();
+    const {profile} = useProfile();
+
     const history = useHistory();
     const toast = useToast();
     const { showErrors } = useErrors();
 
-    const { register, handleSubmit, reset, formState} = useForm<CreateNewPaymentFormData>({
+    const { register, handleSubmit, control, reset, formState} = useForm<CreateNewPaymentFormData>({
         resolver: yupResolver(CreateNewPaymentFormSchema),
     });
 
@@ -88,16 +93,17 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
 
         if(!workingCompany.company){
             return paymentData;
+        }else if(paymentData.company === 0){
+            paymentData.company = workingCompany.company?.id;
         }
 
-        paymentData.company = workingCompany.company?.id;
 
         return paymentData;
     }
 
     const handleCreateNewPayment = async (paymentData : CreateNewPaymentFormData) => {
         try{
-            if(!workingCompany.company){
+            if(!workingCompany.company && paymentData.company === 0){
                 toast({
                     title: "Ué",
                     description: `Seleciona uma empresa para trabalhar`,
@@ -145,6 +151,22 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
                     <Stack spacing="6">
                         
                         <Input register={register} name="title" type="text" placeholder="Título" variant="outline" error={formState.errors.title}/>
+
+                        {
+                            ( !profile || !profile.companies ? (
+                                <Flex justify="center">
+                                    <Text>Nenhuma empresa disponível</Text>
+                                </Flex>
+                            ) : (
+                                <ControlledSelect control={control} value={(workingCompany && workingCompany.company) ? workingCompany.company.id.toString() : "0"}  h="45px" name="company" w="100%" fontSize="sm" focusBorderColor="blue.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" error={formState.errors.company}>
+                                    {profile.companies && profile.companies.map((company:Company) => {
+                                        return (
+                                            <option key={company.id} value={company.id}>{company.name}</option>
+                                        )
+                                    })}
+                                </ControlledSelect>
+                            ))
+                        }
 
                         <HStack spacing="4" align="baseline">
                             <Input register={register} name="expire" type="date" placeholder="Data de Vencimento" variant="outline" error={formState.errors.expire}/>

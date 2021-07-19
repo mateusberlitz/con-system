@@ -1,4 +1,4 @@
-import { Text, Stack,Link, useToast } from "@chakra-ui/react";
+import { Text, Stack,Link, useToast, HStack } from "@chakra-ui/react";
 
 
 import { useWorkingCompany } from "../../hooks/useWorkingCompany";
@@ -102,7 +102,7 @@ export function CashSummary(){
     }, [])
 
     return(
-        <Stack spacing="8" width="40%">
+        <Stack spacing="8" width="100%">
             <Stack spacing="5" w="100%" minWidth="300px" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8">
                 <Text fontSize="xl" w="100%">Saldo do Caixa</Text>
 

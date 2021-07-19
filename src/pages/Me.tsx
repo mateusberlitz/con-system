@@ -109,7 +109,7 @@ export default function Me(){
 
                     <HStack spacing="6" display="flex" pos="relative">
                         <Flex w="fit-content" borderRadius="full" height="fit-content" bgGradient="linear(to-r, purple.600, blue.300)" p="2px">
-                            <Avatar borderColor="gray.600" border="2px" size="md" name="Mateus Berlitz" src={profileImage}/>
+                            <Avatar borderColor="gray.600" border="2px" size="md" name={profile && `${profile.name} ${profile.last_name}`} src={profileImage}/>
                         </Flex>
 
                         <Box as="label" display="flex" borderRadius="full" alignItems="center" h="29px" fontWeight="600" fontSize="12px" pl="6" pr="6" cursor="pointer" border="2px" borderColor="purple.300" color="purple.300">

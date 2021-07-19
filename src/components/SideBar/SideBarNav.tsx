@@ -25,9 +25,19 @@ export function SideBarNav({ desk }: SideBarNavProps){
         <Stack spacing="0" align="flex-start" h="100vh" bg="purple.300">
             <Img src={LogoBranco} px="7" mt="9" mb="14" />
 
-            <NavLink href="/empresas" icon={HomeIcon}>Empresas</NavLink> 
-            <NavLink href="/usuarios" icon={ProfileIcon}>Usuários</NavLink>
-            <NavLink href="/permissoes" icon={ConfigureIcon}>Permissões</NavLink>
+            {
+                HasPermission(permissions, 'Usuários') && (
+                    <NavLink href="/usuarios" icon={ProfileIcon}>Usuários</NavLink>
+                )
+            }
+            {
+                HasPermission(permissions, 'Usuários') && (
+                    <>
+                        <NavLink href="/empresas" icon={HomeIcon}>Empresas</NavLink> 
+                        <NavLink href="/permissoes" icon={ConfigureIcon}>Permissões</NavLink>
+                    </>
+                )
+            }
 
             <Link mt="24" href="/home" display="flex" h="16" alignItems="center" w="100%" px="7" color="white" _hover={{textDecor: 'none'}} >
                 <Icon as={BackArrowIcon} fontSize="20" stroke="#ffffff" fill="none"/>

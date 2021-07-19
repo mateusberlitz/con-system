@@ -3,7 +3,7 @@ import { api } from "../../services/api";
 import { getToken } from "../../services/auth";
 import { Company } from "../../types";
 
-interface Profile{
+export interface Profile{
     id: number,
     name: string;
     last_name: string;
@@ -19,7 +19,7 @@ interface Profile{
         created_at: Date;
         updated_at: Date;
     };
-    company: Company;
+    companies: Company[];
     created_at: Date;
     updated_at: Date;
 }

@@ -24,9 +24,9 @@ export function WorkingCompanyProvider({ children } : WorkingCompanyProviderProp
         }else{
             if(profile){
                 if(Object.keys(profile).length > 0){
-                    if((profile?.role.id !== 1)){
-                        localStorage.setItem('@lance/company', JSON.stringify(profile.company));
-                        return profile.company;
+                    if((profile?.role.id !== 1) && (profile?.companies.length > 0)){
+                        localStorage.setItem('@lance/company', JSON.stringify(profile.companies[0]));
+                        return profile.companies[0];
                     }
                 }
             }
@@ -49,8 +49,8 @@ export function WorkingCompanyProvider({ children } : WorkingCompanyProviderProp
         }else{
             if(profile){
                 if(Object.keys(profile).length > 0){
-                    if((profile?.role.id !== 1) && (profile?.company.id !== company.id)){
-                        changeCompany(profile.company);
+                    if((profile?.role.id !== 1) && (profile?.companies.length > 0) && (profile?.companies[0].id !== company.id)){
+                        changeCompany(profile.companies[0]);
                     }
                 }
             }

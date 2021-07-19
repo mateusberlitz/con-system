@@ -32,14 +32,12 @@ interface EditUserData{
     name: string;
     phone: string;
     email: string;
-    company: number;
     role: number;
 }
 
 const EditUserFormSchema = yup.object().shape({
     phone: yup.string().min(9, "Existe Telefone com menos de 9 dígitos?"),//51991090700
     email: yup.string().required("Informe um E-mail").email("Informe um e-mail válido"),
-    company: yup.number().required("Selecione uma Empresa"),
     role: yup.number().required("Selecione um Cargo")
 });
 
@@ -56,7 +54,6 @@ export function EditUserModal( { isOpen, toEditUserData, afterEdit, onRequestClo
         defaultValues: {
             phone: toEditUserData.phone,
             email: toEditUserData.name,
-            company: toEditUserData.company,
             role: toEditUserData.role,
         }
     });
@@ -102,21 +99,6 @@ export function EditUserModal( { isOpen, toEditUserData, afterEdit, onRequestClo
 
 
                         <HStack spacing="4" align="baseline">
-                        { companies.isLoading ? (
-                            <Flex justify="center">
-                                <Spinner/>
-                            </Flex>
-                        ) : (
-                                <ControlledSelect control={control} name="company" value={toEditUserData.company.toString()} variant="outline" error={formState.errors.email} focusBorderColor="purple.600"> 
-                                        <option key="0" value="0">Empresa</option>
-                                        {companies.data && companies.data.map((company:Company) => {
-                                            return (
-                                                <option key={company.id} value={company.id}>{company.name}</option>
-                                            )
-                                        })}
-                                </ControlledSelect>
-                            )
-                        }
 
                         { companies.isLoading ? (
                             <Flex justify="center">

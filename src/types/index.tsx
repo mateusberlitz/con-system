@@ -28,7 +28,7 @@ export interface User{
     role: Role;
     created_at?: Date;
     updated_at?: Date;
-    company: Company;
+    companies: Company[];
 }
 
 export interface Permission{

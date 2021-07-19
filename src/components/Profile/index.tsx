@@ -20,7 +20,7 @@ export function Profile(){
     return(
         <Flex ml="auto" title="Ver informações ou sair" cursor="pointer">
             { profile && (
-                <Link href="/eu" mr="4" mt="1" textAlign="right" _hover={{textDecoration: "none"}}>
+                <Link width="max-content" href="/eu" mr="4" mt="1" textAlign="right" _hover={{textDecoration: "none"}}>
                     <Text fontWeight="600" fontSize="sm" color="gray.700">{profile.name} {profile.last_name}</Text>
                     <Text fontSize="small" color="gray.700">
                         {profile.role.name}

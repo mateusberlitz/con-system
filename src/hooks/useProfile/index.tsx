@@ -3,32 +3,11 @@ import { isAuthenticated } from "../../services/auth";
 import { encodePermissions, simplifyPermissions, decodePermissions } from "../../services/permissionsSecurity";
 import { Company } from "../../types";
 import { useWorkingCompany } from "../useWorkingCompany";
-import { getMe } from "./useMe";
+import { getMe, Profile } from "./useMe";
 import { getPermissions } from "./useProfilePermissions";
 
 interface ProfileProviderProps{
     children: ReactNode;
-}
-
-interface Profile{
-    id: number,
-    name: string;
-    last_name: string;
-    email: string;
-    image: string;
-    cpf: string;
-    email_verified_at: Date;
-    phone: string;
-    role: {
-        id: number,
-        name: string,
-        desk_id: number,
-        created_at: Date;
-        updated_at: Date;
-    };
-    company: Company;
-    created_at: Date;
-    updated_at: Date;
 }
 
 // interface Permission{

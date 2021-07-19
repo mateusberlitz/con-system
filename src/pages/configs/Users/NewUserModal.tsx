@@ -1,4 +1,4 @@
-import { HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, useToast } from "@chakra-ui/react";
+import { Flex, HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Spinner, Stack, useToast } from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 
 
@@ -11,6 +11,9 @@ import { useErrors } from "../../../hooks/useErrors";
 
 import { Input } from "../../../components/Forms/Inputs/Input";
 import { Select } from "../../../components/Forms/Selects/Select";
+import { useCompanies } from "../../../hooks/useCompanies";
+import { useRoles } from "../../../hooks/useRoles";
+import { Company, Role } from "../../../types";
 
 interface NewUserModalProps{
     isOpen: boolean;
@@ -44,6 +47,9 @@ export function NewUserModal( { isOpen, onRequestClose, afterCreate } : NewUserM
     const history = useHistory();
     const toast = useToast();
     const { showErrors } = useErrors();
+
+    const companies = useCompanies();
+    const roles = useRoles();
 
     const { register, handleSubmit, reset, formState} = useForm<CreateNewUserFormData>({
         resolver: yupResolver(CreateNewUserFormSchema),
@@ -101,20 +107,38 @@ export function NewUserModal( { isOpen, onRequestClose, afterCreate } : NewUserM
                         </HStack>
 
                         <HStack spacing="4" align="baseline">
-                            <Select register={register} name="company" variant="outline" error={formState.errors.email} focusBorderColor="purple.600"> 
-                                    <option value="0">Empresa</option>
-                                    <option value="1">Central</option>
-                                    <option value="2">Londrina</option>
-                                    <option value="3">Quero Carta</option>
-                            </Select>
 
-                            <Select register={register} name="role" variant="outline" error={formState.errors.email} focusBorderColor="purple.600">
-                                    <option value="0">Cargo</option>
-                                    <option value="1">Diretor</option>
-                                    <option value="2">Financeiro</option>
-                                    <option value="3">Gerente</option>
-                                    <option value="4">Vendedor</option>
-                            </Select>
+                            { companies.isLoading ? (
+                                <Flex justify="center">
+                                    <Spinner/>
+                                </Flex>
+                            ) : (
+                                <Select register={register} name="company" variant="outline" error={formState.errors.company} focusBorderColor="purple.600">
+                                        <option key="0" value="0">Empresa</option>
+                                        {companies.data && companies.data.map((company:Company) => {
+                                            return (
+                                                <option key={company.id} value={company.id}>{company.name}</option>
+                                            )
+                                        })}
+                                </Select>
+                                )
+                            }
+
+                            { roles.isLoading ? (
+                                <Flex justify="center">
+                                    <Spinner/>
+                                </Flex>
+                            ) : (
+                                <Select register={register}name="role" variant="outline" error={formState.errors.email} focusBorderColor="purple.600">
+                                        <option key="0" value="0">Cargo</option>
+                                        {roles.data && roles.data.map((role:Role) => {
+                                            return (
+                                                <option key={role.id} value={role.id}>{role.name}</option>
+                                            )
+                                        })}
+                                </Select>
+                                )
+                            }           
                         </HStack>
 
                     </Stack>

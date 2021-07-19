@@ -27,6 +27,7 @@ import { EditUserModal } from "./EditUserModal";
 import { ConfirmUserRemoveModal } from "./ConfirmUserRemoveModal";
 import { useCompanies } from "../../../hooks/useCompanies";
 import { useRoles } from "../../../hooks/useRoles";
+import { SyncCompaniesModal, SyncUserData } from "./SyncCompaniesModal";
 
 
 const SearchUserFormSchema = yup.object().shape({
@@ -40,7 +41,6 @@ interface EditUserFormData{
     id: number;
     phone: string;
     email: string;
-    company: number;
     role: number;
 }
 
@@ -68,7 +68,6 @@ export default function Users(){
             id: 0,
             email: '',
             phone: '',
-            company: 0,
             role: 0,
         };
         
@@ -124,10 +123,31 @@ export default function Users(){
         setFilter(search);
     }
 
+    const [ editSyncUserData, setEditSyncUserData ] = useState<SyncUserData>(() => {
+
+        const data: SyncUserData = {
+            name: '',
+            id: 0,
+            companies: []
+        };
+        
+        return data;
+    });
+
+    const [isSyncCompaniesModalOpen, setIsSyncCompaniesModalOpen] = useState(false);
+    function OpenSyncCompaniesModal(user : SyncUserData){
+        setEditSyncUserData(user);
+        setIsSyncCompaniesModalOpen(true);
+    }
+    function CloseSyncCompaniesModal(){
+        setIsSyncCompaniesModalOpen(false);
+    }
+
     return(
         <MainBoard sidebar="configs">
             <NewUserModal afterCreate={refetch} isOpen={isNewUserModalOpen} onRequestClose={CloseNewUserModal}/>
             <EditUserModal afterEdit={refetch} toEditUserData={editUserData} isOpen={isEditModalOpen} onRequestClose={CloseEditModal}/>
+            <SyncCompaniesModal afterEdit={refetch} toEditUserData={editSyncUserData} isOpen={isSyncCompaniesModalOpen} onRequestClose={CloseSyncCompaniesModal}/>
             <ConfirmUserRemoveModal afterRemove={refetch} toRemoveUserData={removeUserData} isOpen={isConfirmUserRemoveModalOpen} onRequestClose={CloseConfirmUserRemoveModal}/>
             
             <SolidButton onClick={OpenNewUserModal} mb="12" color="white" bg="purple.300" icon={PlusIcon} colorScheme="purple">
@@ -136,7 +156,7 @@ export default function Users(){
 
             <HStack as="form" spacing="24px" w="100%" onSubmit={handleSubmit(handleSearchUser)}>
 
-                <Input register={register} name="search" type="text" icon={SearchIcon} error={formState.errors.search} focusBorderColor="purple.600" placeholder="Procurar"/>
+                <Input register={register} name="search" variant="filled" type="text" icon={SearchIcon} error={formState.errors.search} focusBorderColor="purple.600" placeholder="Procurar"/>
 
                 <Select register={register} name="role" error={formState.errors.role} focusBorderColor="purple.600">
                         <option value="0">Cargo</option>
@@ -185,6 +205,7 @@ export default function Users(){
                 }>
                     {/* ITEMS */}
                     { (!isLoading &&!error) && data.map((user:User) => {
+                        console.log(user.companies);
                         return(
                             <Tr key={user.id}>
                                 <Td alignItems="center" display="flex">
@@ -193,12 +214,12 @@ export default function Users(){
                                     </Flex>
                                     <Text display="flex" fontSize="sm" color="gray.700" fontWeight="600">{user.name} {user.last_name && user.last_name}</Text>
                                 </Td>
-                                <Td fontSize="sm" color="gray.800">{user.company.name}</Td>
+                                <Td fontSize="sm" color="blue.800" cursor="pointer" onClick={() => OpenSyncCompaniesModal({id:user.id, name: user.name, companies:user.companies}) }>{user.companies.length > 0 ? user.companies[0].name : "Sem empresas"} {user.companies.length > 1 && `+ ${user.companies.length - 1}`}</Td>
                                 <Td fontSize="sm" color="gray.800">{user.role.name}</Td>
                                 <Td>
                                     <HStack spacing="4">
                                         <RemoveButton onClick={() => OpenConfirmUserRemoveModal({ id: user.id, name: user.name }) }/>
-                                        <EditButton onClick={() => OpenEditModal({id: user.id, name: user.name, phone: user.phone, email: user.email, company: user.company.id, role: user.role.id }) }/>
+                                        <EditButton onClick={() => OpenEditModal({id: user.id, name: user.name, phone: user.phone, email: user.email, role: user.role.id }) }/>
                                     </HStack>
                                 </Td>
                             </Tr>

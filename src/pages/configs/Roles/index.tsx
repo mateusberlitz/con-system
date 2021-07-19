@@ -90,7 +90,7 @@ export default function Roles(){
     const handleSavePermissions = async (data:any) => {
         //Retorna um array com a ID das permissões ativas
         const filteredPermissions = Object.values(data).filter((permissionKey, permissionIndex, permissionArray) => {
-            return (parseInt(Object.keys(data)[permissionIndex].slice(0, 1)) === selectedRoleId && permissionKey !== false);
+            return (parseInt(Object.keys(data)[permissionIndex].split('-')[0]) === selectedRoleId && permissionKey !== false);
         });
 
         //transforma o Array de permissões em um objeto do tipo SyncPermissions

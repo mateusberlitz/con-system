@@ -9,6 +9,7 @@ export interface BillFilterData{
     company?: number;
     source?: number;
     status?: number;
+    group_by?: string;
 }
 
 export const getBills = async (filter?: BillFilterData, page: number = 0) => {
@@ -22,7 +23,8 @@ export const getBills = async (filter?: BillFilterData, page: number = 0) => {
                 start_date: filter.start_date,
                 end_date: filter.end_date,
                 source: filter.source,
-                status: filter.status
+                status: filter.status,
+                group_by: filter.group_by
             }
         });
 

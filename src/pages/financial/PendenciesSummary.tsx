@@ -61,9 +61,9 @@ export function PendenciesSummary({payments, paymentFilter, openPayPayment, hand
     // const payments = usePayments(filter, 1);
 
     return (
-        <Stack w="100%" min-width="300px" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8">
+        <Stack w="100%" spacing="6" min-width="300px" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8">
                     <HStack>
-                        <Text fontSize="xl" mb="8" w="100%">Pendências</Text>
+                        <Text fontSize="xl" mb="4" w="100%">Pendências</Text>
                         {/* {
                             ( ( permissions && HasPermission(permissions, 'Todas Empresas')) && <CompanySelect searchFilter={filter} setFilter={handleChangeFilter} mt="-35px !important"/> )
                         } */}
@@ -86,20 +86,17 @@ export function PendenciesSummary({payments, paymentFilter, openPayPayment, hand
                     }
 
                     {
-                        (!payments.isLoading && !payments.error) && Object.keys(payments.data?.data).map((day:string) => {
-                            const totalDayAmount = payments.data?.data[day].reduce((sumAmount:number, payment:Payment) => {
+                        (!payments.isLoading && !payments.error) && Object.keys(payments.data?.data).map((company:string) => {
+                            const totalDayAmount = payments.data?.data[company].reduce((sumAmount:number, payment:Payment) => {
                                 return sumAmount + payment.value;
                             }, 0);
 
-                            const todayFormatedDate = formatDate(formatYmdDate(new Date().toDateString()));
-                            const dayCashFlowsFormated = formatDate(day);
-                            const tomorrow = getDay(formatYmdDate(new Date().toDateString())) + 1;
-                            const cashFlowDay = getDay(day);
+                            const companyName = payments.data?.data[company][0].company.name;
 
                             return (
-                                <Stack key={day} w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" spacing="0">
+                                <Stack key={company} w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" spacing="0">
                                     <HStack spacing="8" w="100%" justify="space-between" paddingX="8" paddingY="3" bg="gray.200">
-                                        <Text fontWeight="bold" color="orange.400">{(todayFormatedDate === dayCashFlowsFormated) ? 'Hoje' : (tomorrow === cashFlowDay) ? "Amanhã" : ""} {formatBRDate(day)}</Text>
+                                        <Text fontWeight="bold" color="orange.400">{companyName}</Text>
 
                                         <Flex alignItems="center" float="right" color={totalDayAmount > 0 ? 'green.400' : 'red.400'}>
                                             {/* {totalDayAmount > 0 
@@ -113,7 +110,7 @@ export function PendenciesSummary({payments, paymentFilter, openPayPayment, hand
                                     </HStack>
 
                                     {
-                                        payments.data?.data[day].map((payment:Payment) => {
+                                        payments.data?.data[company].map((payment:Payment) => {
 
                                             return (
                                                 <HStack key={payment.id} justifyContent="space-between" borderTop="2px" borderColor="gray.500" px="8" py="4">

@@ -1,5 +1,5 @@
 import { StackProps } from "@chakra-ui/core";
-import { Flex, Spinner, HStack, FormControl, Select as ChakraSelect, ChakraProps, HTMLChakraProps } from "@chakra-ui/react";
+import { Flex, Text, Spinner, HStack, FormControl, Select as ChakraSelect, ChakraProps, HTMLChakraProps } from "@chakra-ui/react";
 import { BillFilterData } from "../../hooks/useBills";
 import { CashFlowsFilterData } from "../../hooks/useCashFlows";
 import { useCompanies } from "../../hooks/useCompanies";
@@ -17,6 +17,7 @@ export function CompanySelect({searchFilter, setFilter, ...rest}: CompanySelectP
     const workingCompany = useWorkingCompany();
 
     const companies = useCompanies();
+    const {profile} = useProfile();
 
     function handleChangeCompany(event:any){
         const selectedCompanyId = (event?.target.value ? event?.target.value : 1);
@@ -32,15 +33,15 @@ export function CompanySelect({searchFilter, setFilter, ...rest}: CompanySelectP
     }
 
     return (
-    ( companies.isLoading ? (
+    ( !profile || !profile.companies ? (
         <Flex justify="center">
-            <Spinner/>
+            <Text>Nenhuma empresa disponível</Text>
         </Flex>
     ) : (
             <HStack as="form" spacing="10" w="100%" mb="10" {...rest}>
                 <FormControl pos="relative">
                     <ChakraSelect onChange={handleChangeCompany} defaultValue={workingCompany.company?.id} h="45px" name="selected_company" w="100%" maxW="200px" fontSize="sm" focusBorderColor="purple.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Empresa">
-                    {companies.data && companies.data.map((company:Company) => {
+                    {profile.companies && profile.companies.map((company:Company) => {
                         return (
                             <option key={company.id} value={company.id}>{company.name}</option>
                         )

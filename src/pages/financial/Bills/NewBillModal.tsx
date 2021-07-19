@@ -1,4 +1,4 @@
-import { HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, useToast } from "@chakra-ui/react";
+import { Flex, HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, Text, useToast } from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 
 
@@ -11,10 +11,12 @@ import { useErrors } from "../../../hooks/useErrors";
 
 import { Input } from "../../../components/Forms/Inputs/Input";
 import { Select } from "../../../components/Forms/Selects/Select";
-import { PaymentCategory, User, Source } from "../../../types";
+import { PaymentCategory, User, Source, Company } from "../../../types";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { formatInputDate } from "../../../utils/Date/formatInputDate";
 import moneyToBackend from "../../../utils/moneyToBackend";
+import { ControlledSelect } from "../../../components/Forms/Selects/ControlledSelect";
+import { useProfile } from "../../../hooks/useProfile";
 
 interface NewBillModalProps{
     isOpen: boolean;
@@ -53,7 +55,9 @@ export function NewBillModal( { isOpen, onRequestClose, afterCreate, categories,
     const toast = useToast();
     const { showErrors } = useErrors();
 
-    const { register, handleSubmit, reset, formState} = useForm<CreateNewBillFormData>({
+    const {profile} = useProfile();
+
+    const { register, handleSubmit, reset, control, formState} = useForm<CreateNewBillFormData>({
         resolver: yupResolver(CreateNewBillFormSchema),
     });
 
@@ -68,16 +72,16 @@ export function NewBillModal( { isOpen, onRequestClose, afterCreate, categories,
 
         if(!workingCompany.company){
             return billData;
+        }else if(billData.company === 0){
+            billData.company = workingCompany.company?.id;
         }
-
-        billData.company = workingCompany.company?.id;
 
         return billData;
     }
 
     const handleCreateNewBill = async (billData : CreateNewBillFormData) => {
         try{
-            if(!workingCompany.company){
+            if(!workingCompany.company && billData.company === 0){
                 toast({
                     title: "Ué",
                     description: `Seleciona uma empresa para trabalhar`,
@@ -127,6 +131,22 @@ export function NewBillModal( { isOpen, onRequestClose, afterCreate, categories,
                     <Stack spacing="6">
                         
                         <Input register={register} name="title" type="text" placeholder="Título" variant="outline" error={formState.errors.title}/>
+
+                        {
+                            ( !profile || !profile.companies ? (
+                                <Flex justify="center">
+                                    <Text>Nenhuma empresa disponível</Text>
+                                </Flex>
+                            ) : (
+                                <ControlledSelect control={control} value={(workingCompany && workingCompany.company) ? workingCompany.company.id.toString() : "0"}  h="45px" name="company" w="100%" fontSize="sm" focusBorderColor="blue.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" error={formState.errors.company}>
+                                    {profile.companies && profile.companies.map((company:Company) => {
+                                        return (
+                                            <option key={company.id} value={company.id}>{company.name}</option>
+                                        )
+                                    })}
+                                </ControlledSelect>
+                            ))
+                        }
 
                         <HStack spacing="4" align="baseline">
                             <Input register={register} name="expire" type="date" placeholder="Data de Vencimento" variant="outline" error={formState.errors.expire}/>
