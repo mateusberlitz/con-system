@@ -49,6 +49,7 @@ import { AddProofPaymentModal } from "./AddProofPaymentModal";
 import { AddInvoicePaymentModal } from "./AddInvoicePaymentModal";
 import { ConfirmPartialRemoveModal } from "./ConfirmPartialRemoveModal";
 import { profile } from "node:console";
+import { ExportDocumentsModal } from "./ExportDocumentsModal";
 
 interface RemovePaymentData{
     id: number;
@@ -309,6 +310,17 @@ export default function Payments(){
         setIsAddInvoicePaymentModalOpen(false);
     }
 
+
+    const [isExportDocumentsModalOpen, setIsExportDocumentsModalOpen] = useState(false);
+
+    function OpenExportDocumentsModal(){
+        setIsExportDocumentsModalOpen(true);
+    }
+    function CloseExportDocumentsModal(){
+        setIsExportDocumentsModalOpen(false);
+    }
+
+
     const toast = useToast();
 
     const handleRemoveAttachment = async (paymentId : number) => {
@@ -432,6 +444,7 @@ export default function Payments(){
             <AddFilePaymentModal afterAttach={payments.refetch} toAddFilePaymentData={addFilePaymentData} isOpen={isAddFilePaymentModalOpen} onRequestClose={CloseAddFilePaymentModal}/>
             <AddProofPaymentModal afterAttach={payments.refetch} toAddProofPaymentData={addProofPaymentData} isOpen={isAddProofPaymentModalOpen} onRequestClose={CloseAddProofPaymentModal}/>
             <AddInvoicePaymentModal afterAttach={payments.refetch} toAddInvoicePaymentData={addInvoicePaymentData} isOpen={isAddInvoicePaymentModalOpen} onRequestClose={CloseAddInvoicePaymentModal}/>
+            <ExportDocumentsModal isOpen={isExportDocumentsModalOpen} onRequestClose={CloseExportDocumentsModal}/>
 
             <Flex justify="space-between" alignItems="center" mb="10">
                 <SolidButton onClick={OpenNewPaymentModal} color="white" bg="blue.400" icon={PlusIcon} colorScheme="blue">
@@ -448,6 +461,10 @@ export default function Payments(){
 
                 <OutlineButton onClick={() => {history.push('/pagamentos/fornecedores')}}>
                     Fornecedores
+                </OutlineButton>
+
+                <OutlineButton onClick={OpenExportDocumentsModal} variant="outline" colorScheme="blue" color="blue.400" borderColor="blue.400">
+                    Baixar Documentos
                 </OutlineButton>
             </Flex>
 
