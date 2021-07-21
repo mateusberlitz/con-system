@@ -43,7 +43,7 @@ const EditBillFormSchema = yup.object().shape({
     observation: yup.string().nullable(),
     company: yup.number(),
     category: yup.number(),
-    status: yup.boolean(),
+    //status: yup.boolean(),
     source: yup.number().transform((v, o) => o === '' ? null : v).nullable(),
     value: yup.string().required("Informe o valor do pagamento"),
     paid: yup.string(),
@@ -67,7 +67,7 @@ export function EditBillModal( { isOpen, onRequestClose, afterEdit, toEditBillDa
             company: toEditBillData.company,
             category: toEditBillData.category,
             source: toEditBillData.source,
-            status: toEditBillData.status,
+            //status: toEditBillData.status,
             expire: toEditBillData.expire,
             observation: toEditBillData.observation,
         }

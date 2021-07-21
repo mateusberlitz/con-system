@@ -32,7 +32,7 @@ export interface EditPaymentFormData{
     company: number;
     category: number;
     provider?: number;
-    status?: boolean;
+    //status?: boolean;
     pay_to_user?: number;
     value: string;
     paid?: string;
@@ -50,7 +50,7 @@ const EditPaymentFormSchema = yup.object().shape({
     company: yup.number(),
     category: yup.number(),
     provider: yup.number().transform((v, o) => o === '' ? null : v).nullable(),
-    status: yup.boolean(),
+    //status: yup.boolean(),
     pay_to_user: yup.number().transform((v, o) => o === '' ? null : v).nullable(),
     value: yup.string().required("Informe o valor do pagamento"),
     paid: yup.string(),
@@ -79,7 +79,7 @@ export function EditPaymentModal( { isOpen, onRequestClose, afterEdit, toEditPay
             category: toEditPaymentData.category,
             provider: toEditPaymentData.provider,
             pay_to_user: toEditPaymentData.pay_to_user,
-            status: toEditPaymentData.status,
+            //status: toEditPaymentData.status,
             expire: toEditPaymentData.expire,
             observation: toEditPaymentData.observation,
             contract: toEditPaymentData.contract,
