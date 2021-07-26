@@ -11,6 +11,9 @@ import { useErrors } from "../../../hooks/useErrors";
 import { Company } from "../../../types";
 import { ControlledSelect } from "../../../components/Forms/Selects/ControlledSelect";
 import { useDesks } from "../../../hooks/useDesks";
+import { useEffect } from "react";
+import { isAuthenticated } from "../../../services/auth";
+import { redirectMessages } from "../../../utils/redirectMessages";
 
 interface EditRoleModalProps{
     isOpen: boolean;
@@ -72,6 +75,15 @@ export function EditRoleModal( { isOpen, toEditRoleData, afterEdit, onRequestClo
             }
         }
     }
+
+    useEffect(() => {
+        if(!isAuthenticated()){
+            history.push({
+                pathname: '/',
+                state: redirectMessages.auth
+            });
+        }
+    }, [isOpen])
 
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">

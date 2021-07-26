@@ -14,6 +14,9 @@ import { ControlledSelect } from "../../../components/Forms/Selects/ControlledSe
 import { formatInputDate } from "../../../utils/Date/formatInputDate";
 import moneyToBackend from "../../../utils/moneyToBackend";
 import { useProfile } from "../../../hooks/useProfile";
+import { redirectMessages } from "../../../utils/redirectMessages";
+import { isAuthenticated } from "../../../services/auth";
+import { useEffect } from "react";
 
 interface EditPaymentModalProps{
     isOpen: boolean;
@@ -165,6 +168,15 @@ export function EditPaymentModal( { isOpen, onRequestClose, afterEdit, toEditPay
             }
         }
     }
+
+    useEffect(() => {
+        if(!isAuthenticated()){
+            history.push({
+                pathname: '/',
+                state: redirectMessages.auth
+            });
+        }
+    }, [isOpen])
 
     return (
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">

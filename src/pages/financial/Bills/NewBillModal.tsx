@@ -17,6 +17,9 @@ import { formatInputDate } from "../../../utils/Date/formatInputDate";
 import moneyToBackend from "../../../utils/moneyToBackend";
 import { ControlledSelect } from "../../../components/Forms/Selects/ControlledSelect";
 import { useProfile } from "../../../hooks/useProfile";
+import { isAuthenticated } from "../../../services/auth";
+import { useEffect } from "react";
+import { redirectMessages } from "../../../utils/redirectMessages";
 
 interface NewBillModalProps{
     isOpen: boolean;
@@ -118,6 +121,15 @@ export function NewBillModal( { isOpen, onRequestClose, afterCreate, categories,
             }
         }
     }
+
+    useEffect(() => {
+        if(!isAuthenticated()){
+            history.push({
+                pathname: '/',
+                state: redirectMessages.auth
+            });
+        }
+    }, [isOpen])
 
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">

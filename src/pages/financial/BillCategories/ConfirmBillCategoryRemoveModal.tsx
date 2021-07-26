@@ -4,6 +4,10 @@ import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
 import { showErrors } from "../../../hooks/useErrors";
 import { api } from "../../../services/api";
+import { redirectMessages } from "../../../utils/redirectMessages";
+import { useEffect } from "react";
+import { isAuthenticated } from "../../../services/auth";
+import { useHistory } from "react-router-dom";
 
 interface ConfirmBillCategoryRemoveModalProps{
     isOpen: boolean;
@@ -14,6 +18,8 @@ interface ConfirmBillCategoryRemoveModalProps{
 
 export function ConfirmBillCategoryRemoveModal( { isOpen, toRemoveBillCategoryId, afterRemove, onRequestClose } : ConfirmBillCategoryRemoveModalProps){
     const toast = useToast();
+
+    const history = useHistory();
 
     const handleBillPaymentCategory = async () => {
         try{
@@ -33,6 +39,15 @@ export function ConfirmBillCategoryRemoveModal( { isOpen, toRemoveBillCategoryId
             showErrors(error, toast);
         }
     }
+
+    useEffect(() => {
+        if(!isAuthenticated()){
+            history.push({
+                pathname: '/',
+                state: redirectMessages.auth
+            });
+        }
+    }, [isOpen])
 
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">

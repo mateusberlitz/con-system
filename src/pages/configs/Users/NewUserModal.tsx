@@ -14,6 +14,9 @@ import { Select } from "../../../components/Forms/Selects/Select";
 import { useCompanies } from "../../../hooks/useCompanies";
 import { useRoles } from "../../../hooks/useRoles";
 import { Company, Role } from "../../../types";
+import { redirectMessages } from "../../../utils/redirectMessages";
+import { useEffect } from "react";
+import { isAuthenticated } from "../../../services/auth";
 
 interface NewUserModalProps{
     isOpen: boolean;
@@ -79,6 +82,15 @@ export function NewUserModal( { isOpen, onRequestClose, afterCreate } : NewUserM
             }
         }
     }
+
+    useEffect(() => {
+        if(!isAuthenticated()){
+            history.push({
+                pathname: '/',
+                state: redirectMessages.auth
+            });
+        }
+    }, [isOpen])
 
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">

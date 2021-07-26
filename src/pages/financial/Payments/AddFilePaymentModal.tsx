@@ -9,7 +9,9 @@ import { api } from "../../../services/api";
 import { useHistory } from "react-router";
 import { useErrors } from "../../../hooks/useErrors";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { isAuthenticated } from "../../../services/auth";
+import { redirectMessages } from "../../../utils/redirectMessages";
 
 interface AddFilePaymentModalProps{
     isOpen: boolean;
@@ -98,6 +100,14 @@ export function AddFilePaymentModal ( { isOpen, onRequestClose, afterAttach, toA
         }
     }
 
+    useEffect(() => {
+        if(!isAuthenticated()){
+            history.push({
+                pathname: '/',
+                state: redirectMessages.auth
+            });
+        }
+    }, [isOpen])
 
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">

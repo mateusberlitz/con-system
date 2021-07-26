@@ -4,6 +4,10 @@ import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
 import { showErrors } from "../../../hooks/useErrors";
 import { api } from "../../../services/api";
+import { useEffect } from "react";
+import { isAuthenticated } from "../../../services/auth";
+import { redirectMessages } from "../../../utils/redirectMessages";
+import { useHistory } from "react-router-dom";
 
 interface ConfirmCompanyRemoveModalProps{
     isOpen: boolean;
@@ -14,6 +18,7 @@ interface ConfirmCompanyRemoveModalProps{
 
 export function ConfirmCompanyRemoveModal( { isOpen, toRemoveCompanyId, afterRemove, onRequestClose } : ConfirmCompanyRemoveModalProps){
     const toast = useToast();
+    const history = useHistory();
 
     const handleRemoveCompany = async () => {
         try{
@@ -33,6 +38,15 @@ export function ConfirmCompanyRemoveModal( { isOpen, toRemoveCompanyId, afterRem
             showErrors(error, toast);
         }
     }
+
+    useEffect(() => {
+        if(!isAuthenticated()){
+            history.push({
+                pathname: '/',
+                state: redirectMessages.auth
+            });
+        }
+    }, [isOpen])
 
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">

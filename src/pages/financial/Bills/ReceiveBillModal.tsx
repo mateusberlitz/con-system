@@ -13,6 +13,9 @@ import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { ControlledInput } from "../../../components/Forms/Inputs/ControlledInput";
 import moneyToBackend from "../../../utils/moneyToBackend";
 import { formatYmdDate } from "../../../utils/Date/formatYmdDate";
+import { useEffect } from "react";
+import { isAuthenticated } from "../../../services/auth";
+import { redirectMessages } from "../../../utils/redirectMessages";
 
 interface ReceiveBillModalProps{
     isOpen: boolean;
@@ -86,6 +89,15 @@ export function ReceiveBillModal ( { isOpen, onRequestClose, afterReceive, toRec
             }
         }
     }
+
+    useEffect(() => {
+        if(!isAuthenticated()){
+            history.push({
+                pathname: '/',
+                state: redirectMessages.auth
+            });
+        }
+    }, [isOpen])
 
     const todayYmd = formatYmdDate(new Date().toDateString());
 

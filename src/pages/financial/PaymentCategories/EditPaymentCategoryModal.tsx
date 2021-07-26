@@ -9,6 +9,9 @@ import { api } from "../../../services/api";
 import { useHistory } from "react-router";
 import { useErrors } from "../../../hooks/useErrors";
 import { ColorPicker } from "../../../components/Forms/ColorPicker";
+import { useEffect } from "react";
+import { redirectMessages } from "../../../utils/redirectMessages";
+import { isAuthenticated } from "../../../services/auth";
 
 interface EditPaymentCategoryModalProps{
     isOpen: boolean;
@@ -88,6 +91,15 @@ export function EditPaymentCategoryModal( { isOpen, toEditPaymentCategoryData, c
             }
         }
     }
+
+    useEffect(() => {
+        if(!isAuthenticated()){
+            history.push({
+                pathname: '/',
+                state: redirectMessages.auth
+            });
+        }
+    }, [isOpen])
 
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">

@@ -14,6 +14,9 @@ import { ControlledInput } from "../../../components/Forms/Inputs/ControlledInpu
 import moneyToBackend from "../../../utils/moneyToBackend";
 import { formatYmdDate } from "../../../utils/Date/formatYmdDate";
 import { formatInputDate } from "../../../utils/Date/formatInputDate";
+import { redirectMessages } from "../../../utils/redirectMessages";
+import { isAuthenticated } from "../../../services/auth";
+import { useEffect } from "react";
 
 interface ExportDocumentsModalProps{
     isOpen: boolean;
@@ -78,6 +81,15 @@ export function ExportDocumentsModal ( { isOpen, onRequestClose} : ExportDocumen
     }
 
     const todayYmd = formatYmdDate(new Date().toDateString());
+
+    useEffect(() => {
+        if(!isAuthenticated()){
+            history.push({
+                pathname: '/',
+                state: redirectMessages.auth
+            });
+        }
+    }, [isOpen])
 
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">

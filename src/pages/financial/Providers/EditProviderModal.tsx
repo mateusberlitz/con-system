@@ -8,6 +8,9 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { api } from "../../../services/api";
 import { useHistory } from "react-router";
 import { useErrors } from "../../../hooks/useErrors";
+import { redirectMessages } from "../../../utils/redirectMessages";
+import { isAuthenticated } from "../../../services/auth";
+import { useEffect } from "react";
 
 interface EditProviderModalProps{
     isOpen: boolean;
@@ -66,6 +69,15 @@ export function EditProviderModal( { isOpen, toEditProviderData, afterEdit, onRe
             }
         }
     }
+
+    useEffect(() => {
+        if(!isAuthenticated()){
+            history.push({
+                pathname: '/',
+                state: redirectMessages.auth
+            });
+        }
+    }, [isOpen])
 
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">

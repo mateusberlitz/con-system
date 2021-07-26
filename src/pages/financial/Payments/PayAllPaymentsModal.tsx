@@ -16,6 +16,9 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ControlledInput } from "../../../components/Forms/Inputs/ControlledInput";
 import { formatYmdDate } from "../../../utils/Date/formatYmdDate";
+import { redirectMessages } from "../../../utils/redirectMessages";
+import { isAuthenticated } from "../../../services/auth";
+import { useEffect } from "react";
 
 interface PayPaymentModalProps{
     isOpen: boolean;
@@ -96,6 +99,15 @@ export function PayAllPaymentsModal ( { isOpen, onRequestClose, afterPay, dayToP
             }
         }
     }
+
+    useEffect(() => {
+        if(!isAuthenticated()){
+            history.push({
+                pathname: '/',
+                state: redirectMessages.auth
+            });
+        }
+    }, [isOpen])
 
     const todayYmd = formatYmdDate(new Date().toDateString());
 

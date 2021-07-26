@@ -18,6 +18,9 @@ import moneyToBackend from "../../../utils/moneyToBackend";
 import { profile } from "console";
 import { useProfile } from "../../../hooks/useProfile";
 import { ControlledSelect } from "../../../components/Forms/Selects/ControlledSelect";
+import { useEffect } from "react";
+import { isAuthenticated } from "../../../services/auth";
+import { redirectMessages } from "../../../utils/redirectMessages";
 
 interface NewPaymentModalProps{
     isOpen: boolean;
@@ -138,6 +141,15 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
             }
         }
     }
+
+    useEffect(() => {
+        if(!isAuthenticated()){
+            history.push({
+                pathname: '/',
+                state: redirectMessages.auth
+            });
+        }
+    }, [isOpen])
 
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">

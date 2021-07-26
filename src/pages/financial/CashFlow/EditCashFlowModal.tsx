@@ -12,6 +12,9 @@ import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { ControlledInput } from "../../../components/Forms/Inputs/ControlledInput";
 import { ControlledSelect } from "../../../components/Forms/Selects/ControlledSelect";
 import moneyToBackend from "../../../utils/moneyToBackend";
+import { useEffect } from "react";
+import { isAuthenticated } from "../../../services/auth";
+import { redirectMessages } from "../../../utils/redirectMessages";
 
 interface EditCashFlowModalProps{
     isOpen: boolean;
@@ -100,6 +103,15 @@ export function EditCashFlowModal( { isOpen, onRequestClose, afterEdit, toEditCa
             }
         }
     }
+
+    useEffect(() => {
+        if(!isAuthenticated()){
+            history.push({
+                pathname: '/',
+                state: redirectMessages.auth
+            });
+        }
+    }, [isOpen])
 
     return (
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">

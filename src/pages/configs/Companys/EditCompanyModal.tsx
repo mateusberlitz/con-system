@@ -9,6 +9,9 @@ import { api } from "../../../services/api";
 import { useHistory } from "react-router";
 import { useErrors } from "../../../hooks/useErrors";
 import { Company } from "../../../types";
+import { useEffect } from "react";
+import { redirectMessages } from "../../../utils/redirectMessages";
+import { isAuthenticated } from "../../../services/auth";
 
 interface EditCompanyModalProps{
     isOpen: boolean;
@@ -61,6 +64,15 @@ export function EditCompanyModal( { isOpen, toEditCompanyData, afterEdit, onRequ
             }
         }
     }
+
+    useEffect(() => {
+        if(!isAuthenticated()){
+            history.push({
+                pathname: '/',
+                state: redirectMessages.auth
+            });
+        }
+    }, [isOpen])
 
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">

@@ -13,6 +13,9 @@ import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { ControlledInput } from "../../../components/Forms/Inputs/ControlledInput";
 import moneyToBackend from "../../../utils/moneyToBackend";
 import { formatYmdDate } from "../../../utils/Date/formatYmdDate";
+import { redirectMessages } from "../../../utils/redirectMessages";
+import { isAuthenticated } from "../../../services/auth";
+import { useEffect } from "react";
 
 interface PayPaymentModalProps{
     isOpen: boolean;
@@ -86,6 +89,15 @@ export function PayPaymentModal ( { isOpen, onRequestClose, afterPay, toPayPayme
             }
         }
     }
+
+    useEffect(() => {
+        if(!isAuthenticated()){
+            history.push({
+                pathname: '/',
+                state: redirectMessages.auth
+            });
+        }
+    }, [isOpen])
 
     const todayYmd = formatYmdDate(new Date().toDateString());
 

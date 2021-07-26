@@ -14,6 +14,9 @@ import { Select } from "../../../components/Forms/Selects/Select";
 import { PaymentCategory} from "../../../types";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import moneyToBackend from "../../../utils/moneyToBackend";
+import { useEffect } from "react";
+import { isAuthenticated } from "../../../services/auth";
+import { redirectMessages } from "../../../utils/redirectMessages";
 
 interface NewCashFlowModalProps{
     isOpen: boolean;
@@ -97,6 +100,15 @@ export function NewCashFlowModal( { isOpen, onRequestClose, afterCreate, categor
             }
         }
     }
+
+    useEffect(() => {
+        if(!isAuthenticated()){
+            history.push({
+                pathname: '/',
+                state: redirectMessages.auth
+            });
+        }
+    }, [isOpen])
 
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">

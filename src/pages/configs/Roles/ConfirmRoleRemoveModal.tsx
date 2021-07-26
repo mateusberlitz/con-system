@@ -4,6 +4,10 @@ import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
 import { showErrors } from "../../../hooks/useErrors";
 import { api } from "../../../services/api";
+import { useEffect } from "react";
+import { redirectMessages } from "../../../utils/redirectMessages";
+import { isAuthenticated } from "../../../services/auth";
+import { useHistory } from "react-router-dom";
 
 interface ConfirmRoleRemoveModalProps{
     isOpen: boolean;
@@ -14,6 +18,7 @@ interface ConfirmRoleRemoveModalProps{
 
 export function ConfirmRoleRemoveModal( { isOpen, toRemoveRoleId, afterRemove, onRequestClose } : ConfirmRoleRemoveModalProps){
     const toast = useToast();
+    const history = useHistory();
 
     const handleRemoveRole = async () => {
         console.log(toRemoveRoleId);
@@ -34,6 +39,15 @@ export function ConfirmRoleRemoveModal( { isOpen, toRemoveRoleId, afterRemove, o
             showErrors(error, toast);
         }
     }
+
+    useEffect(() => {
+        if(!isAuthenticated()){
+            history.push({
+                pathname: '/',
+                state: redirectMessages.auth
+            });
+        }
+    }, [isOpen])
 
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">

@@ -14,6 +14,9 @@ import { ControlledSelect } from "../../../components/Forms/Selects/ControlledSe
 import { formatInputDate } from "../../../utils/Date/formatInputDate";
 import moneyToBackend from "../../../utils/moneyToBackend";
 import { useProfile } from "../../../hooks/useProfile";
+import { useEffect } from "react";
+import { redirectMessages } from "../../../utils/redirectMessages";
+import { isAuthenticated } from "../../../services/auth";
 
 interface EditBillModalProps{
     isOpen: boolean;
@@ -148,6 +151,15 @@ export function EditBillModal( { isOpen, onRequestClose, afterEdit, toEditBillDa
             }
         }
     }
+
+    useEffect(() => {
+        if(!isAuthenticated()){
+            history.push({
+                pathname: '/',
+                state: redirectMessages.auth
+            });
+        }
+    }, [isOpen])
 
     return (
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">

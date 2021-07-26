@@ -9,6 +9,9 @@ import { api } from "../../../services/api";
 import { useHistory } from "react-router";
 import { useErrors } from "../../../hooks/useErrors";
 import { ColorPicker } from "../../../components/Forms/ColorPicker";
+import { useEffect } from "react";
+import { isAuthenticated } from "../../../services/auth";
+import { redirectMessages } from "../../../utils/redirectMessages";
 
 interface EditBillCategoryModalProps{
     isOpen: boolean;
@@ -86,6 +89,15 @@ export function EditBillCategoryModal( { isOpen, toEditBillCategoryData, color, 
             }
         }
     }
+
+    useEffect(() => {
+        if(!isAuthenticated()){
+            history.push({
+                pathname: '/',
+                state: redirectMessages.auth
+            });
+        }
+    }, [isOpen])
 
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">

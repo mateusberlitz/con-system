@@ -4,6 +4,10 @@ import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
 import { showErrors } from "../../../hooks/useErrors";
 import { api } from "../../../services/api";
+import { useEffect } from "react";
+import { isAuthenticated } from "../../../services/auth";
+import { redirectMessages } from "../../../utils/redirectMessages";
+import { useHistory } from "react-router-dom";
 
 interface ConfirmUserRemoveModalProps{
     isOpen: boolean;
@@ -17,6 +21,7 @@ interface ConfirmUserRemoveModalProps{
 
 export function ConfirmUserRemoveModal( { isOpen, toRemoveUserData, afterRemove, onRequestClose } : ConfirmUserRemoveModalProps){
     const toast = useToast();
+    const history = useHistory();
 
     const handleRemoveUser = async () => {
         try{
@@ -36,6 +41,15 @@ export function ConfirmUserRemoveModal( { isOpen, toRemoveUserData, afterRemove,
             showErrors(error, toast);
         }
     }
+
+    useEffect(() => {
+        if(!isAuthenticated()){
+            history.push({
+                pathname: '/',
+                state: redirectMessages.auth
+            });
+        }
+    }, [isOpen])
 
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">

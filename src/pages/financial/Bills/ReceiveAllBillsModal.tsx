@@ -16,6 +16,9 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { ControlledInput } from "../../../components/Forms/Inputs/ControlledInput";
 import { formatYmdDate } from "../../../utils/Date/formatYmdDate";
 import { useForm } from "react-hook-form";
+import { isAuthenticated } from "../../../services/auth";
+import { useEffect } from "react";
+import { redirectMessages } from "../../../utils/redirectMessages";
 
 interface ReceiveAllBillsModalProps{
     isOpen: boolean;
@@ -84,6 +87,15 @@ export function ReceiveAllBillsModal ( { isOpen, onRequestClose, afterReceive, d
             }
         }
     }
+
+    useEffect(() => {
+        if(!isAuthenticated()){
+            history.push({
+                pathname: '/',
+                state: redirectMessages.auth
+            });
+        }
+    }, [isOpen])
 
     const todayYmd = formatYmdDate(new Date().toDateString());
 

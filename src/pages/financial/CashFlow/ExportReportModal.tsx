@@ -14,6 +14,9 @@ import { ControlledInput } from "../../../components/Forms/Inputs/ControlledInpu
 import moneyToBackend from "../../../utils/moneyToBackend";
 import { formatYmdDate } from "../../../utils/Date/formatYmdDate";
 import { formatInputDate } from "../../../utils/Date/formatInputDate";
+import { useEffect } from "react";
+import { redirectMessages } from "../../../utils/redirectMessages";
+import { isAuthenticated } from "../../../services/auth";
 
 interface ExportReportModalProps{
     isOpen: boolean;
@@ -76,6 +79,15 @@ export function ExportReportModal ( { isOpen, onRequestClose} : ExportReportModa
             }
         }
     }
+
+    useEffect(() => {
+        if(!isAuthenticated()){
+            history.push({
+                pathname: '/',
+                state: redirectMessages.auth
+            });
+        }
+    }, [isOpen])
 
     const todayYmd = formatYmdDate(new Date().toDateString());
 

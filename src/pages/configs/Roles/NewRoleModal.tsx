@@ -13,6 +13,9 @@ import { Input } from "../../../components/Forms/Inputs/Input";
 import { Select } from "../../../components/Forms/Selects/Select";
 import { Role } from "../../../types";
 import { useDesks } from "../../../hooks/useDesks";
+import { useEffect } from "react";
+import { redirectMessages } from "../../../utils/redirectMessages";
+import { isAuthenticated } from "../../../services/auth";
 
 interface NewRoleModalProps{
     isOpen: boolean;
@@ -64,6 +67,15 @@ export function NewRoleModal( { isOpen, onRequestClose, afterCreate } : NewRoleM
             }
         }
     }
+
+    useEffect(() => {
+        if(!isAuthenticated()){
+            history.push({
+                pathname: '/',
+                state: redirectMessages.auth
+            });
+        }
+    }, [isOpen])
 
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">

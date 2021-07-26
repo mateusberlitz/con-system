@@ -10,6 +10,9 @@ import { useHistory } from "react-router";
 import { useErrors } from "../../../hooks/useErrors";
 
 import { Input } from "../../../components/Forms/Inputs/Input";
+import { isAuthenticated } from "../../../services/auth";
+import { useEffect } from "react";
+import { redirectMessages } from "../../../utils/redirectMessages";
 
 interface NewCompanyModalProps{
     isOpen: boolean;
@@ -63,6 +66,15 @@ export function NewCompanyModal( { isOpen, onRequestClose, afterCreate } : NewCo
             }
         }
     }
+
+    useEffect(() => {
+        if(!isAuthenticated()){
+            history.push({
+                pathname: '/',
+                state: redirectMessages.auth
+            });
+        }
+    }, [isOpen])
 
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">

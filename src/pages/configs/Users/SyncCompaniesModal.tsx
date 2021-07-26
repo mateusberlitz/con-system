@@ -13,6 +13,8 @@ import { ControlledSelect } from "../../../components/Forms/Selects/ControlledSe
 import { useCompanies } from "../../../hooks/useCompanies";
 import { useRoles } from "../../../hooks/useRoles";
 import { useEffect, useState } from "react";
+import { isAuthenticated } from "../../../services/auth";
+import { redirectMessages } from "../../../utils/redirectMessages";
 
 interface SyncCompaniesModalProps{
     isOpen: boolean;
@@ -118,6 +120,15 @@ export function SyncCompaniesModal( { isOpen, toEditUserData, afterEdit, onReque
             }
         }
     }
+
+    useEffect(() => {
+        if(!isAuthenticated()){
+            history.push({
+                pathname: '/',
+                state: redirectMessages.auth
+            });
+        }
+    }, [isOpen])
 
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">

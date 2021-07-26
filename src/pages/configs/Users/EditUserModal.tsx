@@ -12,6 +12,9 @@ import { Company, Role } from "../../../types";
 import { ControlledSelect } from "../../../components/Forms/Selects/ControlledSelect";
 import { useCompanies } from "../../../hooks/useCompanies";
 import { useRoles } from "../../../hooks/useRoles";
+import { useEffect } from "react";
+import { isAuthenticated } from "../../../services/auth";
+import { redirectMessages } from "../../../utils/redirectMessages";
 
 interface EditUserModalProps{
     isOpen: boolean;
@@ -80,6 +83,15 @@ export function EditUserModal( { isOpen, toEditUserData, afterEdit, onRequestClo
             }
         }
     }
+
+    useEffect(() => {
+        if(!isAuthenticated()){
+            history.push({
+                pathname: '/',
+                state: redirectMessages.auth
+            });
+        }
+    }, [isOpen])
 
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
