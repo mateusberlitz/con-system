@@ -19,7 +19,7 @@ export function NavLink({icon, children, href, ...rest} : NavLinkProps){
 
     return (
         <Link href={href} display="flex" h="16" alignItems="center" w="100%" {...rest} px="7" color={isActive ? "white" : "gray.200"} bg={isActive ? "rgba(0,0,0,0.2)" : ""} _hover={{textDecor: 'none', bg: 'rgba(0,0,0,0.2)'}} >
-            <Icon as={icon} fontSize="20" stroke={isActive ? "#ffffff" : "#e2e8f0"} fill="none"/>
+            <Icon as={icon} fontSize="20" stroke={isActive ? "#ffffff" : "#e2e8f0"} fill={isActive ? "#ffffff" : "#e2e8f0"}/>
             <Text ml="4" fontWeight="medium">{children}</Text>
         </Link>
             

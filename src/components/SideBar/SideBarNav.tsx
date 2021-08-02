@@ -10,6 +10,7 @@ import { ReactComponent as CardIcon } from '../../assets/icons/Card.svg';
 import { ReactComponent as TagIcon } from '../../assets/icons/Tag.svg';
 import { ReactComponent as ChartBarIcon } from '../../assets/icons/Chart-bar.svg';
 import { ReactComponent as SettingsIcon } from '../../assets/icons/Settings.svg';
+import { ReactComponent as ScrollIcon } from '../../assets/icons/Scroll.svg';
 
 import LogoBranco from '../../assets/icons/Logo-Branco.svg';
 import { HasPermission, useProfile } from "../../hooks/useProfile";
@@ -56,6 +57,7 @@ export function SideBarNav({ desk }: SideBarNavProps){
                     <>
                         <NavLink href="/receber" icon={TagIcon}>Contas a Receber</NavLink>
                         <NavLink href="/caixa" icon={ChartBarIcon}>Fluxo de Caixa</NavLink>
+                        <NavLink href="/relatorios" icon={ScrollIcon}>Relatórios</NavLink>
                     </>
                 )
             }
