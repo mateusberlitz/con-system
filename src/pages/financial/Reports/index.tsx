@@ -183,7 +183,7 @@ export default function Reports(){
 
                                         {
                                             Object.keys(exitTransactions.data?.data[category]).map((month:string) => {
-                                                return <Th whiteSpace="nowrap" color={exitTransactions.data?.data[category][month] > 0 ? 'green.400' : 'red.400'} key={`${category}-${exitTransactions.data?.data[category][month]}`}>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(exitTransactions.data?.data[category][month])}</Th>
+                                                return <Th whiteSpace="nowrap" color={exitTransactions.data?.data[category][month] > 0 ? 'green.400' : (exitTransactions.data?.data[category][month] < 0 ? 'red.400' : 'gray.800')} key={`${category}-${exitTransactions.data?.data[category][month]}`}>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(exitTransactions.data?.data[category][month])}</Th>
                                             })
                                         }
                                     </Tr>
@@ -206,7 +206,7 @@ export default function Reports(){
 
                                         {
                                             Object.keys(entryTransactions.data?.data[category]).map((month:string) => {
-                                                return <Th whiteSpace="nowrap" color={entryTransactions.data?.data[category][month] > 0 ? 'green.400' : 'red.400'} key={`${category}-${entryTransactions.data?.data[category][month]}`}>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(entryTransactions.data?.data[category][month])}</Th>
+                                                return <Th whiteSpace="nowrap" color={entryTransactions.data?.data[category][month] > 0 ? 'green.400' : (entryTransactions.data?.data[category][month] < 0 ? 'red.400' : 'gray.800')} key={`${category}-${entryTransactions.data?.data[category][month]}`}>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(entryTransactions.data?.data[category][month])}</Th>
                                             })
                                         }
                                     </Tr>
