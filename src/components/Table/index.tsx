@@ -14,14 +14,14 @@ interface TableProps{
 
 export function Table({ header, children } : TableProps){
     return (
-        <Flex overflowX="auto" w="100%">
+        <Flex overflow="auto" w="100%" h="400px">
             <ChakraTable size="md">
                 <Thead>
                     <Tr>
                         {
                             header.map(th => {
                                 return(
-                                    <Th key={th.text} fontSize="small" textTransform="capitalize" border="none" fontWeight={th.bold ? 700 : 500} color="gray.900">
+                                    <Th key={th.text} position="sticky" top="0" bg="white" fontSize="small" textTransform="capitalize" border="none" fontWeight={th.bold ? 700 : 500} color="gray.900">
                                         { th.icon && <Icon as={th.icon} stroke="#14142B" fill="none" h="30px" w="18px" mr="4"/> }
                                         { th.text }
                                     </Th>

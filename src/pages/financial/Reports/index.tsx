@@ -12,6 +12,7 @@ import { TransactionsByAccountFilterData, useTransactionsByAccount } from "../..
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { api } from "../../../services/api";
 import { Company } from "../../../types";
+import { newMonthsAmountArray } from "./populateMonthAmountArray";
 
 export default function Reports(){
     const {permissions, profile} = useProfile();
@@ -94,7 +95,10 @@ export default function Reports(){
     const exitTransactions = useTransactionsByAccount(filterExitTransactions, page);
     const entryTransactions = useTransactionsByAccount(filterEntryTransactions, page);
 
-    console.log(entryTransactions);
+    const totalExitsByMonths = newMonthsAmountArray();
+    const totalEntriesByMonths = newMonthsAmountArray();
+
+    console.log();
 
     return(
         <MainBoard sidebar="financial" header={
@@ -173,46 +177,69 @@ export default function Reports(){
                             <Th></Th>
                         </Tr>
                         <Tr>
-                            <Th color="gray.900" fontSize="sm">SAÍDAS</Th>
+                            <Th color="gray.900" fontSize="sm" position="sticky" left="0">SAÍDAS</Th>
                         </Tr>
                         {
+
                             Object.keys(exitTransactions.data?.data).map((category:string) => {
                                 return (
-                                    <Tr>
-                                        <Th fontWeight="bold" color="gray.800" textTransform="capitalize" key={category}>{category}</Th>
+                                    <Tr key={`exits-${category}`}>
+                                        <Th fontWeight="bold" color="gray.800" textTransform="capitalize" key={category} position="sticky" left="0" bg="white">{category}</Th>
 
                                         {
-                                            Object.keys(exitTransactions.data?.data[category]).map((month:string) => {
-                                                return <Th whiteSpace="nowrap" color={exitTransactions.data?.data[category][month] > 0 ? 'green.400' : (exitTransactions.data?.data[category][month] < 0 ? 'red.400' : 'gray.800')} key={`${category}-${exitTransactions.data?.data[category][month]}`}>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(exitTransactions.data?.data[category][month])}</Th>
+                                            Object.keys(exitTransactions.data?.data[category]).map((month:string, index:number) => {
+                                                totalExitsByMonths[index + 1] += exitTransactions.data?.data[category][month];
+
+                                                return <Th whiteSpace="nowrap" fontWeight="500" color={exitTransactions.data?.data[category][month] > 0 ? 'green.400' : (exitTransactions.data?.data[category][month] < 0 ? 'red.400' : 'gray.800')} key={`${category}-${month}-${exitTransactions.data?.data[category][month]}`}>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(exitTransactions.data?.data[category][month])}</Th>
                                             })
                                         }
                                     </Tr>
                                 )
                             })
                         }
+                        <Tr>
+                            <Th position="sticky" left="0" bg="white">Total de Saídas</Th>
+                            {
+
+                                totalExitsByMonths.map((value:number, index:number) => {
+                                    return <Th whiteSpace="nowrap" color={value > 0 ? 'green.400' : (value < 0 ? 'red.400' : 'gray.800')} key={`exits-${index}-${value}}`}>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(value)}</Th>
+                                })
+                            }
+                        </Tr>
 
                         <Tr>
                             <Th></Th>
                         </Tr>
                         <Tr>
-                            <Th color="gray.900" fontSize="sm">ENTRADAS</Th>
+                            <Th color="gray.900" fontSize="sm" position="sticky" left="0" bg="white">ENTRADAS</Th>
                         </Tr>
 
                         {
                             Object.keys(entryTransactions.data?.data).map((category:string) => {
                                 return (
-                                    <Tr key={category}>
-                                        <Th fontWeight="bold" color="gray.800" textTransform="capitalize">{category}</Th>
+                                    <Tr key={`entries-${category}`}>
+                                        <Th fontWeight="bold" color="gray.800" textTransform="capitalize" position="sticky" left="0" bg="white">{category}</Th>
 
                                         {
-                                            Object.keys(entryTransactions.data?.data[category]).map((month:string) => {
-                                                return <Th whiteSpace="nowrap" color={entryTransactions.data?.data[category][month] > 0 ? 'green.400' : (entryTransactions.data?.data[category][month] < 0 ? 'red.400' : 'gray.800')} key={`${category}-${entryTransactions.data?.data[category][month]}`}>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(entryTransactions.data?.data[category][month])}</Th>
+                                            Object.keys(entryTransactions.data?.data[category]).map((month:string, index: number) => {
+                                                totalEntriesByMonths[index + 1] += entryTransactions.data?.data[category][month];
+
+                                                return <Th whiteSpace="nowrap" fontWeight="500" color={entryTransactions.data?.data[category][month] > 0 ? 'green.400' : (entryTransactions.data?.data[category][month] < 0 ? 'red.400' : 'gray.800')} key={`${category}-${month}-${entryTransactions.data?.data[category][month]}`}>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(entryTransactions.data?.data[category][month])}</Th>
                                             })
                                         }
                                     </Tr>
                                 )
                             })
                         }
+                        <Tr>
+                            <Th position="sticky" left="0" bg="white">Total de Entradas</Th>
+                            {
+
+                                totalEntriesByMonths.map((value:number, index:number) => {
+                                    return <Th whiteSpace="nowrap" color={value > 0 ? 'green.400' : (value < 0 ? 'red.400' : 'gray.800')} key={`exits-${index}-${value}}`}>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(value)}</Th>
+                                })
+                            }
+                        </Tr>
         
                     </Table>
                 )
