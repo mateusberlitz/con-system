@@ -81,8 +81,6 @@ export function CashSummary(){
         loadAmount();
     }, [])
 
-    console.log((workingCompany.company));
-
 
     const [monthAmount, setMonthAmount] = useState(0);
 

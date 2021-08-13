@@ -182,6 +182,8 @@ export default function Financial(){
                         <HStack as="form" spacing="10" w="100%" mb="10">
                             <FormControl pos="relative">
                                 <ChakraSelect onChange={handleChangeCompany} defaultValue={workingCompany.company?.id} h="45px" name="selected_company" w="100%" maxW="200px" fontSize="sm" focusBorderColor="purple.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
+                                {profile.role.name === "Diretor" && <option value="">Todas as empresas</option>}
+
                                 {profile.companies && profile.companies.map((company:Company) => {
                                     return (
                                         <option key={company.id} value={company.id}>{company.name}</option>

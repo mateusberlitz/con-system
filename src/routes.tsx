@@ -31,14 +31,15 @@ const PrivateRoute = ({component: Component, neededPermission = "", ...rest} : P
                     <Redirect to={{ pathname: '/' , state: "Por favor, acesse sua conta."}}/>
                     
                 ) : ( neededPermission !== "" && !HasPermission(permissions, neededPermission) ? (
-                    HasPermission(permissions, "Financeiro Limitado") ?
-                    <Redirect to={{ pathname: '/financeiro' , state: "Você não tem permissão para essa página"}}/>
+                      HasPermission(permissions, "Financeiro Limitado") || HasPermission(permissions, "Financeiro Completo") ?
+                        <Redirect to={{ pathname: '/financeiro' , state: "Você não tem permissão para essa página"}}/>
 
-                    : <Redirect to={{ pathname: '/home' , state: "Você não tem permissão para essa página"}}/>
-                )
-                : (
-                    <Component {...props} />
-                ))
+                        : <Redirect to={{ pathname: '/home' , state: "Você não tem permissão para essa página"}}/>
+                      )
+                      : (
+                          <Component {...props} />
+                        )
+                    )
               )
             } 
           />

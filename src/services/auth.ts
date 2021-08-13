@@ -24,6 +24,7 @@ export const logout = () => {
   localStorage.removeItem('@lance/access_token');
   localStorage.removeItem('@lance/profile');
   localStorage.removeItem('@lance/permissions');
+  localStorage.removeItem('@lance/company');
 
   return true;
 };

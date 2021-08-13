@@ -20,15 +20,29 @@ export function CompanySelect({searchFilter, setFilter, ...rest}: CompanySelectP
     const {profile} = useProfile();
 
     function handleChangeCompany(event:any){
-        const selectedCompanyId = (event?.target.value ? event?.target.value : 1);
-        const selectedCompanyData = companies.data.filter((company:Company) => Number(company.id) === Number(selectedCompanyId))[0]
-        workingCompany.changeCompany(selectedCompanyData);
+        console.log(event.target.value);
 
-        if(searchFilter && setFilter){
-            const updatedFilter = searchFilter;
-            updatedFilter.company = selectedCompanyId;
+        if(event.target.value === ''){
+            workingCompany.changeCompany(event.target.value);
 
-            setFilter(updatedFilter);
+            if(searchFilter && setFilter){
+                const updatedFilter = searchFilter;
+                updatedFilter.company = event.target.value;
+
+                setFilter(updatedFilter);
+            }
+
+        }else{
+            const selectedCompanyId = (event?.target.value ? event?.target.value : 1);
+            const selectedCompanyData = companies.data.filter((company:Company) => Number(company.id) === Number(selectedCompanyId))[0]
+            workingCompany.changeCompany(selectedCompanyData);
+
+            if(searchFilter && setFilter){
+                const updatedFilter = searchFilter;
+                updatedFilter.company = selectedCompanyId;
+
+                setFilter(updatedFilter);
+            }
         }
     }
 
@@ -41,6 +55,8 @@ export function CompanySelect({searchFilter, setFilter, ...rest}: CompanySelectP
             <HStack as="form" spacing="10" w="100%" mb="10" {...rest}>
                 <FormControl pos="relative">
                     <ChakraSelect onChange={handleChangeCompany} defaultValue={workingCompany.company?.id} h="45px" name="selected_company" w="100%" maxW="200px" fontSize="sm" focusBorderColor="purple.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
+                    {profile.role.name === "Diretor" && <option value="">Todas as empresas</option>}
+
                     {profile.companies && profile.companies.map((company:Company) => {
                         return (
                             <option key={company.id} value={company.id}>{company.name}</option>
