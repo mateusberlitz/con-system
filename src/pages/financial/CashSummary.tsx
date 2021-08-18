@@ -20,46 +20,6 @@ interface CashSummaryFilter{
 
 export function CashSummary(){
     const workingCompany = useWorkingCompany();
-    const [page, setPage] = useState(1);
-
-    const [filter, setFilter] = useState<TaskFilterData>(() => {
-        const data: TaskFilterData = {
-            search: '',
-            company: workingCompany.company?.id,
-        };
-        
-        return data;
-    })
-
-    const tasks = useTasks(filter, page);
-
-    const [isNewTaskModalOpen, setIsNewTaskModalOpen] = useState(false);
-
-    function OpenNewTaskModal(){
-        setIsNewTaskModalOpen(true);
-    }
-    function CloseNewTaskModal(){
-        setIsNewTaskModalOpen(false);
-    }
-
-    const [isConfirmRemoveTaskModalOpen, setIsConfirmRemoveTaskModalOpen] = useState(false);
-    const [removeTaskData, setRemoveTaskData] = useState<RemoveTaskData>(() => {
-
-        const data: RemoveTaskData = {
-            id: 0,
-        };
-        
-        return data;
-    });
-
-
-    function OpenConfirmRemoveTaskModal(taskRemoveData: RemoveTaskData){
-        setRemoveTaskData(taskRemoveData);
-        setIsConfirmRemoveTaskModalOpen(true);
-    }
-    function CloseConfirmRemoveTaskModal(){
-        setIsConfirmRemoveTaskModalOpen(false);
-    }
 
     const [amount, setAmount] = useState(0);
 

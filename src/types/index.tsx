@@ -168,3 +168,11 @@ export interface Task{
     created_at?: string;
     updated_at?: Date;
 }
+
+export interface CashDeskCategory{
+    id: number;
+    name: string;
+    color: string;
+    created_at?: Date;
+    updated_at?: Date;
+}

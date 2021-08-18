@@ -308,10 +308,10 @@ export default function Bills(){
                     <HStack spacing="6">
                         <Input register={register} name="search" type="text" placeholder="Procurar" variant="filled" error={formState.errors.search}/>
 
-                        <Select register={register} h="45px" name="status" error={formState.errors.status} w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
+                        <Select register={register} defaultValue={0} h="45px" name="status" error={formState.errors.status} w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
                             <option value="">Todos</option>
                             <option value={1}>Recebidos</option>
-                            <option value={0} selected>Pendentes</option>
+                            <option value={0}>Pendentes</option>
                         </Select>
                     </HStack>
 
@@ -494,7 +494,7 @@ export default function Bills(){
                                                                         {
                                                                             bill.partial_bills && bill.partial_bills.map((partial: PartialBill) => {
                                                                                 return (
-                                                                                    <Tr>
+                                                                                    <Tr key={`${partial.id}-${partial.value}`}>
                                                                                         <Td fontSize="12px">{partial.receive_date && formatBRDate(partial.receive_date.toString())}</Td>
                                                                                         <Td color="gray.800" fontWeight="semibold" fontSize="12px">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(partial.value)}</Td>
                                                                                         <Td><IconButton onClick={() => OpenConfirmPartialRemoveModal({id: partial.id, title: partial.value.toString()})} h="24px" w="23px" p="0" float="right" aria-label="Excluir pagamento parcial" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/></Td>

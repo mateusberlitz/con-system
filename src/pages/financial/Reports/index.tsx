@@ -97,6 +97,7 @@ export default function Reports(){
 
     const totalExitsByMonths = newMonthsAmountArray();
     const totalEntriesByMonths = newMonthsAmountArray();
+    const totalByMonths = newMonthsAmountArray();
 
     console.log();
 
@@ -172,6 +173,8 @@ export default function Reports(){
                         {text: 'Outubro'},
                         {text: 'Novembro'},
                         {text: 'Dezembro'},
+                        {text: 'Soma da Categoria', bold:true},
+                        {text: 'Resultado da Categoria', bold:true},
                     ]}>
                         <Tr>
                             <Th></Th>
@@ -189,6 +192,7 @@ export default function Reports(){
                                         {
                                             Object.keys(exitTransactions.data?.data[category]).map((month:string, index:number) => {
                                                 totalExitsByMonths[index + 1] += exitTransactions.data?.data[category][month];
+                                                totalByMonths[index + 1] += exitTransactions.data?.data[category][month];
 
                                                 return <Th whiteSpace="nowrap" fontWeight="500" color={exitTransactions.data?.data[category][month] > 0 ? 'green.400' : (exitTransactions.data?.data[category][month] < 0 ? 'red.400' : 'gray.800')} key={`${category}-${month}-${exitTransactions.data?.data[category][month]}`}>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(exitTransactions.data?.data[category][month])}</Th>
                                             })
@@ -202,6 +206,7 @@ export default function Reports(){
                             {
 
                                 totalExitsByMonths.map((value:number, index:number) => {
+                                    if(index === 14){return;};
                                     return <Th whiteSpace="nowrap" color={value > 0 ? 'green.400' : (value < 0 ? 'red.400' : 'gray.800')} key={`exits-${index}-${value}}`}>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(value)}</Th>
                                 })
                             }
@@ -223,6 +228,7 @@ export default function Reports(){
                                         {
                                             Object.keys(entryTransactions.data?.data[category]).map((month:string, index: number) => {
                                                 totalEntriesByMonths[index + 1] += entryTransactions.data?.data[category][month];
+                                                totalByMonths[index + 1] += entryTransactions.data?.data[category][month];
 
                                                 return <Th whiteSpace="nowrap" fontWeight="500" color={entryTransactions.data?.data[category][month] > 0 ? 'green.400' : (entryTransactions.data?.data[category][month] < 0 ? 'red.400' : 'gray.800')} key={`${category}-${month}-${entryTransactions.data?.data[category][month]}`}>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(entryTransactions.data?.data[category][month])}</Th>
                                             })
@@ -236,6 +242,22 @@ export default function Reports(){
                             {
 
                                 totalEntriesByMonths.map((value:number, index:number) => {
+                                    if(index === 14){return;};
+                                    return <Th whiteSpace="nowrap" color={value > 0 ? 'green.400' : (value < 0 ? 'red.400' : 'gray.800')} key={`exits-${index}-${value}}`}>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(value)}</Th>
+                                })
+                            }
+                        </Tr>
+
+                        <Tr>
+                            <Th></Th>
+                        </Tr>
+
+                        <Tr>
+                            <Th position="sticky" fontSize="sm" left="0" bg="white" color="black">RESULTADO</Th>
+                            {
+
+                                totalByMonths.map((value:number, index:number) => {
+                                    if(index === 14){return;};
                                     return <Th whiteSpace="nowrap" color={value > 0 ? 'green.400' : (value < 0 ? 'red.400' : 'gray.800')} key={`exits-${index}-${value}}`}>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(value)}</Th>
                                 })
                             }

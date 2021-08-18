@@ -24,32 +24,33 @@ import { formatDate } from "../../../utils/Date/formatDate";
 import { formatYmdDate } from "../../../utils/Date/formatYmdDate";
 import { formatBRDate } from "../../../utils/Date/formatBRDate";
 import { getDay } from "../../../utils/Date/getDay";
-import { useCashFlows, CashFlowsFilterData } from "../../../hooks/useCashFlows";
+import { useCashDesks, CashDesksFilterData } from "../../../hooks/useCashDesks";
 import { getHour } from "../../../utils/Date/getHour";
-import { NewCashFlowModal } from "./NewCashFlowModal";
-import { EditCashFlowFormData, EditCashFlowModal } from "./EditCashFlowModal";
-import { ConfirmCashFlowRemoveModal } from "./ConfirmCashFlowRemoveModal";
+import { NewCashDesksModal } from "./NewCashDesksModal";
+import { EditCashDeskFormData, EditCashDeskModal } from "./EditCashDeskModal";
+import { ConfirmCashDeskRemoveModal } from "./ConfirmCashDeskRemoveModal";
 import { Select } from "../../../components/Forms/Selects/Select";
 import { Pagination } from "../../../components/Pagination";
-import { ExportReportModal } from "./ExportReportModal";
+import { useHistory } from "react-router-dom";
 
 interface RemoveCashFlowData{
     id: number;
     title: string;
 }
 
-const FilterCashFlowFormSchema = yup.object().shape({
+const FilterCashDeskFormSchema = yup.object().shape({
     search: yup.string(),
     start_date: yup.string(),
     end_date: yup.string(),
     category: yup.string(),
 });
 
-export default function CashFlow(){
+export default function CashDesks(){
     const workingCompany = useWorkingCompany();
+    const history = useHistory();
 
-    const [filter, setFilter] = useState<CashFlowsFilterData>(() => {
-        const data: CashFlowsFilterData = {
+    const [filter, setFilter] = useState<CashDesksFilterData>(() => {
+        const data: CashDesksFilterData = {
             search: '',
             company: workingCompany.company?.id,
         };
@@ -59,14 +60,14 @@ export default function CashFlow(){
 
     const [page, setPage] = useState(1);
 
-    const cashFlows = useCashFlows(filter, 50, page);
-    let viewCashAmount = (!cashFlows.isLoading && !cashFlows.error && cashFlows.data?.initialCash) ? cashFlows.data.initialCash : 0;
+    const cashDesks = useCashDesks(filter, 50, page);
+    let viewCashAmount = (!cashDesks.isLoading && !cashDesks.error && cashDesks.data?.initialCash) ? cashDesks.data.initialCash : 0;
 
     const {profile, permissions} = useProfile();
     const companies = useCompanies();
 
-    const { register, handleSubmit, formState} = useForm<CashFlowsFilterData>({
-        resolver: yupResolver(FilterCashFlowFormSchema),
+    const { register, handleSubmit, formState} = useForm<CashDesksFilterData>({
+        resolver: yupResolver(FilterCashDeskFormSchema),
     });
 
     function handleChangeCompany(event:any){
@@ -80,27 +81,27 @@ export default function CashFlow(){
         setFilter(updatedFilter);
     }
 
-    function handleChangeFilter(newFilter: CashFlowsFilterData){
+    function handleChangeFilter(newFilter: CashDesksFilterData){
         setFilter(newFilter);
     }
 
     // useEffect(() => {
     //     console.log(filter);
-    //     cashFlows.refetch();
+    //     cashDesks.refetch();
     // }, [filter])
 
-    const [isNewCashFlowModalOpen, setIsNewCashFlowModalOpen] = useState(false);
+    const [isNewCashDeskModalOpen, setIsNewCashDeskModalOpen] = useState(false);
 
-    function OpenNewCashFlowModal(){
-        setIsNewCashFlowModalOpen(true);
+    function OpenNewCashDeskModal(){
+        setIsNewCashDeskModalOpen(true);
     }
-    function CloseNewCashFlowModal(){
-        setIsNewCashFlowModalOpen(false);
+    function CloseNewCashDeskModal(){
+        setIsNewCashDeskModalOpen(false);
     }
 
-    const [toEditCashFlowData, setToEditCashFlowData] = useState<EditCashFlowFormData>(() => {
+    const [toEditCashDeskData, setToEditCashDeskData] = useState<EditCashDeskFormData>(() => {
 
-        const data: EditCashFlowFormData = {
+        const data: EditCashDeskFormData = {
             id: 0,
             title: '',
             value: '',
@@ -111,17 +112,17 @@ export default function CashFlow(){
         return data;
     });
 
-    const [isEditCashFlowModalOpen, setIsEditCashFlowModalOpen] = useState(false);
+    const [isEditCashDeskModalOpen, setIsEditCashDeskModalOpen] = useState(false);
 
-    function OpenEditCashFlowModal(cashFlow : EditCashFlowFormData){
-        setToEditCashFlowData(cashFlow);
-        setIsEditCashFlowModalOpen(true);
+    function OpenEditCashDeskModal(cashFlow : EditCashDeskFormData){
+        setToEditCashDeskData(cashFlow);
+        setIsEditCashDeskModalOpen(true);
     }
-    function CloseEditCashFlowModal(){
-        setIsEditCashFlowModalOpen(false);
+    function CloseEditCashDeskModal(){
+        setIsEditCashDeskModalOpen(false);
     }
 
-    const [isConfirmCashFlowRemoveModalOpen, setisConfirmCashFlowRemoveModalOpen] = useState(false);
+    const [isConfirmCashDeskRemoveModalOpen, setisConfirmCashDeskRemoveModalOpen] = useState(false);
     const [removeCashFlowData, setRemoveCashFlowData] = useState<RemoveCashFlowData>(() => {
 
         const data: RemoveCashFlowData = {
@@ -132,12 +133,12 @@ export default function CashFlow(){
         return data;
     });
 
-    function OpenConfirmCashFlowRemoveModal(paymentData: RemoveCashFlowData){
+    function OpenConfirmCashDeskRemoveModal(paymentData: RemoveCashFlowData){
         setRemoveCashFlowData(paymentData);
-        setisConfirmCashFlowRemoveModalOpen(true);
+        setisConfirmCashDeskRemoveModalOpen(true);
     }
-    function CloseConfirmCashFlowRemoveModal(){
-        setisConfirmCashFlowRemoveModalOpen(false);
+    function CloseConfirmCashDeskRemoveModal(){
+        setisConfirmCashDeskRemoveModalOpen(false);
     }
 
 
@@ -156,7 +157,7 @@ export default function CashFlow(){
     const [categories, setCategories] = useState<BillCategory[]>([]);
 
     const loadCategories = async () => {
-        const { data } = await api.get('/cashflow_categories');
+        const { data } = await api.get('/cashdesk_categories');
 
         setCategories(data);
     }
@@ -165,7 +166,7 @@ export default function CashFlow(){
         loadCategories();
     }, [])
 
-    const handleSearchCashFlow = async (search : CashFlowsFilterData) => {
+    const handleSearchCashFlow = async (search : CashDesksFilterData) => {
         search.company = workingCompany.company?.id;
         
         setFilter(search);
@@ -176,19 +177,22 @@ export default function CashFlow(){
             ( ( (permissions && HasPermission(permissions, 'Todas Empresas')) || (profile && profile.companies && profile.companies.length > 1)) && <CompanySelect searchFilter={filter} setFilter={handleChangeFilter}/> )
         }
         >
-            <NewCashFlowModal categories={categories} afterCreate={cashFlows.refetch} isOpen={isNewCashFlowModalOpen} onRequestClose={CloseNewCashFlowModal}/>
-            <EditCashFlowModal categories={categories} toEditCashFlowData={toEditCashFlowData} afterEdit={cashFlows.refetch} isOpen={isEditCashFlowModalOpen} onRequestClose={CloseEditCashFlowModal}/>
-            <ExportReportModal isOpen={isExportReportModalOpen} onRequestClose={CloseExportReportModal}/>
-            <ConfirmCashFlowRemoveModal afterRemove={cashFlows.refetch} toRemoveCashFlowData={removeCashFlowData} isOpen={isConfirmCashFlowRemoveModalOpen} onRequestClose={CloseConfirmCashFlowRemoveModal}/>
+            <NewCashDesksModal categories={categories} afterCreate={cashDesks.refetch} isOpen={isNewCashDeskModalOpen} onRequestClose={CloseNewCashDeskModal}/>
+            <EditCashDeskModal categories={categories} toEditCashDeskData={toEditCashDeskData} afterEdit={cashDesks.refetch} isOpen={isEditCashDeskModalOpen} onRequestClose={CloseEditCashDeskModal}/>
+            <ConfirmCashDeskRemoveModal afterRemove={cashDesks.refetch} toRemoveCashDeskData={removeCashFlowData} isOpen={isConfirmCashDeskRemoveModalOpen} onRequestClose={CloseConfirmCashDeskRemoveModal}/>
 
             <Flex justify="space-between" alignItems="center" mb="10">
-                <SolidButton onClick={OpenNewCashFlowModal} color="white" bg="blue.400" icon={PlusIcon} colorScheme="blue">
+                <SolidButton onClick={OpenNewCashDeskModal} color="white" bg="blue.400" icon={PlusIcon} colorScheme="blue">
                     Adicionar Movimentação
                 </SolidButton>
 
-                <OutlineButton onClick={OpenExportReportModal} variant="outline" colorScheme="blue" color="blue.400" borderColor="blue.400">
-                    Gerar Relatório
+                <OutlineButton onClick={() => {history.push('/pagamentos/categorias')}}>
+                    Categorias
                 </OutlineButton>
+
+                {/* <OutlineButton onClick={OpenExportReportModal} variant="outline" colorScheme="blue" color="blue.400" borderColor="blue.400">
+                    Gerar Relatório
+                </OutlineButton> */}
 
                 {/* <Link href="/categorias" border="2px" borderRadius="full" borderColor="gray.500" px="6" h="8" alignItems="center">
                     <Text>Categorias</Text>
@@ -222,15 +226,15 @@ export default function CashFlow(){
             </Flex>
 
             <Stack fontSize="13px" spacing="12">
-                {   cashFlows.isLoading ? (
+                {   cashDesks.isLoading ? (
                         <Flex justify="center">
                             <Spinner/>
                         </Flex>
-                    ) : ( cashFlows.isError ? (
+                    ) : ( cashDesks.isError ? (
                         <Flex justify="center" mt="4" mb="4">
                             <Text>Erro listar as movimentações</Text>
                         </Flex>
-                    ) : (cashFlows.data?.data.length === 0) && (
+                    ) : (cashDesks.data?.data.length === 0) && (
                         <Flex justify="center">
                             <Text>Nenhuma movimentação encontrada.</Text>
                         </Flex>
@@ -238,28 +242,28 @@ export default function CashFlow(){
                 }
 
                 {
-                    (!cashFlows.isLoading && !cashFlows.error) && Object.keys(cashFlows.data?.data).map((day:string) => {
-                        //const totalDayCashFlows = cashFlows.data[day].length;
-                        // viewCashAmount = viewCashAmount + cashFlows.data?.data[day].reduce((sumAmount:number, cashFlow:CashFlowInterface) => {
+                    (!cashDesks.isLoading && !cashDesks.error) && Object.keys(cashDesks.data?.data).map((day:string) => {
+                        //const totalDayCashDesks = cashDesks.data[day].length;
+                        // viewCashAmount = viewCashAmount + cashDesks.data?.data[day].reduce((sumAmount:number, cashFlow:CashFlowInterface) => {
                         //     return sumAmount + cashFlow.value;
                         // }, 0);
 
                         const todayFormatedDate = formatDate(formatYmdDate(new Date().toDateString()));
-                        const dayCashFlowsFormated = formatDate(day);
+                        const dayCashDesksFormated = formatDate(day);
                         const tomorrow = getDay(formatYmdDate(new Date().toDateString())) + 1;
                         const cashFlowDay = getDay(day);
 
-                        viewCashAmount = cashFlows.data?.data[day]['balance'];
+                        viewCashAmount = cashDesks.data?.data[day]['balance'];
 
-                        // const indexBalance = cashFlows.data?.data[day].indexOf('balance');
+                        // const indexBalance = cashDesks.data?.data[day].indexOf('balance');
                         // if (indexBalance > -1) {
-                        //     cashFlows.data?.data[day].splice(indexBalance, 1);
+                        //     cashDesks.data?.data[day].splice(indexBalance, 1);
                         // }
 
                         return (
                             <Stack key={day} w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" spacing="0">
                                 <HStack spacing="8" w="100%" justify="space-between" paddingX="8" paddingY="3" bg="gray.200">
-                                    <Text fontWeight="bold">{(todayFormatedDate === dayCashFlowsFormated) ? 'Hoje' : (tomorrow === cashFlowDay) ? "Amanhã" : ""} {formatBRDate(day)}</Text>
+                                    <Text fontWeight="bold">{(todayFormatedDate === dayCashDesksFormated) ? 'Hoje' : (tomorrow === cashFlowDay) ? "Amanhã" : ""} {formatBRDate(day)}</Text>
 
                                     <Flex alignItems="center" float="right" color={viewCashAmount > 0 ? 'green.400' : 'red.400'}>
                                         {/* {totalDayAmount > 0 
@@ -273,8 +277,8 @@ export default function CashFlow(){
                                 </HStack>
 
                                 {
-                                    cashFlows.data?.data[day]['items'].map((cashFlow:CashFlowInterface) => {
-                                        const cashFlowToEditData:EditCashFlowFormData = {
+                                    cashDesks.data?.data[day]['items'].map((cashFlow:CashFlowInterface) => {
+                                        const cashFlowToEditData:EditCashDeskFormData = {
                                             id: cashFlow.id,
                                             title: cashFlow.title,
                                             value: cashFlow.value.toString().replace('.', ','),
@@ -320,9 +324,9 @@ export default function CashFlow(){
                                                             </Text>
                                                         </Flex>
 
-                                                        <EditButton onClick={() => OpenEditCashFlowModal(cashFlowToEditData)}/>
+                                                        <EditButton onClick={() => OpenEditCashDeskModal(cashFlowToEditData)}/>
 
-                                                        <IconButton onClick={() => OpenConfirmCashFlowRemoveModal({ id: cashFlow.id, title: cashFlow.title })} h="24px" w="23px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
+                                                        <IconButton onClick={() => OpenConfirmCashDeskRemoveModal({ id: cashFlow.id, title: cashFlow.title })} h="24px" w="23px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
                                                     </HStack>
                                                 </Flex>
                                             </HStack>
@@ -336,7 +340,7 @@ export default function CashFlow(){
                     })
                 }
 
-                <Pagination totalCountOfRegister={cashFlows.data ? cashFlows.data.total : 0} registerPerPage={50} currentPage={page} onPageChange={setPage}/>
+                <Pagination totalCountOfRegister={cashDesks.data ? cashDesks.data.total : 0} registerPerPage={50} currentPage={page} onPageChange={setPage}/>
             </Stack>
             
         </MainBoard>

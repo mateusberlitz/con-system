@@ -501,10 +501,10 @@ export default function Payments(){
                             })}
                         </Select>
 
-                        <Select register={register} h="45px" name="status" error={formState.errors.status} w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
+                        <Select register={register} defaultValue={0} h="45px" name="status" error={formState.errors.status} w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
                             <option value="">Todos</option>
                             <option value={1}>Pagos</option>
-                            <option value={0} selected>Pendentes</option>
+                            <option value={0}>Pendentes</option>
                         </Select>
 
                         <OutlineButton type="submit" mb="10" color="blue.400" borderColor="blue.400" colorScheme="blue">

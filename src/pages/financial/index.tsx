@@ -142,33 +142,44 @@ export default function Financial(){
     const companies = useCompanies();
 
     function handleChangeCompany(event:any){
-        const selectedCompanyId = (event?.target.value ? event?.target.value : 1);
-        const selectedCompanyData = companies.data.filter((company:Company) => Number(company.id) === Number(selectedCompanyId))[0]
-        workingCompany.changeCompany(selectedCompanyData);
+        let selectedCompanyId: number | undefined;
+
+        if(event.target.value === ''){
+            selectedCompanyId = event.target.value;
+            workingCompany.changeCompany(event.target.value);
+        }else{
+            selectedCompanyId = (event?.target.value ? event?.target.value : 1);
+            const selectedCompanyData = companies.data.filter((company:Company) => Number(company.id) === Number(selectedCompanyId))[0]
+            workingCompany.changeCompany(selectedCompanyData);
+        }
+
+        // const selectedCompanyId = (event?.target.value ? event?.target.value : 1);
+        // const selectedCompanyData = companies.data.filter((company:Company) => Number(company.id) === Number(selectedCompanyId))[0]
+        // workingCompany.changeCompany(selectedCompanyData);
 
         //filtro das contas a receber
-        // const updatedFilterBills = filterBills;
-        // updatedFilterBills.company = selectedCompanyId;
+        const updatedFilterBills = filterBills;
+        updatedFilterBills.company = selectedCompanyId;
 
-        // setFilterBills(updatedFilterBills);
+        setFilterBills(updatedFilterBills);
 
-        //filtro dos pagamentos
-        // const updatedFilterPayments = filter;
-        // updatedFilterPayments.company = selectedCompanyId;
+        // //filtro dos pagamentos
+        const updatedFilterPayments = filter;
+        updatedFilterPayments.company = selectedCompanyId;
 
-        // setFilter(updatedFilterPayments);
+        setFilter(updatedFilterPayments);
 
-        //filtro dos pagamentos pendentes
+        // //filtro dos pagamentos pendentes
         // const updatedFilterPendencies = filterPendencies;
         // updatedFilterPendencies.company = selectedCompanyId;
 
         // setFilterPendencies(updatedFilterPendencies);
 
-        //filtro do fluxo de caixa
-        const updatedFilterCashFlow = filterCashFlow;
-        updatedFilterCashFlow.company = selectedCompanyId;
+        // //filtro do fluxo de caixa
+        // const updatedFilterCashFlow = filterCashFlow;
+        // updatedFilterCashFlow.company = selectedCompanyId;
 
-        setFilterCashFlow(updatedFilterCashFlow);
+        // setFilterCashFlow(updatedFilterCashFlow);
     }
 
     return(

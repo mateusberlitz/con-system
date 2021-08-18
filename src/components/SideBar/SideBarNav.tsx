@@ -11,6 +11,7 @@ import { ReactComponent as TagIcon } from '../../assets/icons/Tag.svg';
 import { ReactComponent as ChartBarIcon } from '../../assets/icons/Chart-bar.svg';
 import { ReactComponent as SettingsIcon } from '../../assets/icons/Settings.svg';
 import { ReactComponent as ScrollIcon } from '../../assets/icons/Scroll.svg';
+import { ReactComponent as PrinterIcon } from '../../assets/icons/Printer.svg';
 
 import LogoBranco from '../../assets/icons/Logo-Branco.svg';
 import { HasPermission, useProfile } from "../../hooks/useProfile";
@@ -56,7 +57,8 @@ export function SideBarNav({ desk }: SideBarNavProps){
                 HasPermission(permissions, 'Financeiro Completo') && (
                     <>
                         <NavLink href="/receber" icon={TagIcon}>Contas a Receber</NavLink>
-                        <NavLink href="/caixa" icon={ChartBarIcon}>Fluxo de Caixa</NavLink>
+                        <NavLink href="/fluxo" icon={ChartBarIcon}>Fluxo de Caixa</NavLink>
+                        <NavLink href="/caixa" icon={PrinterIcon}>Caixa</NavLink>
                         <NavLink href="/relatorios" icon={ScrollIcon}>Relatórios</NavLink>
                     </>
                 )

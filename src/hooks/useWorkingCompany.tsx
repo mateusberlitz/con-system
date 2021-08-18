@@ -22,6 +22,7 @@ export function WorkingCompanyProvider({ children } : WorkingCompanyProviderProp
             const parsedCompany = JSON.parse(storagedCompany);
             return parsedCompany;
         }else{
+            console.log(profile);
             if(profile){
                 if(Object.keys(profile).length > 0){
                     if((profile?.role.id !== 1) && (profile?.companies.length > 0)){

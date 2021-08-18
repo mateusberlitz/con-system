@@ -1,21 +1,12 @@
 import { createContext, ReactNode, useContext, useEffect, useRef, useState } from "react";
 import { isAuthenticated } from "../../services/auth";
 import { encodePermissions, simplifyPermissions, decodePermissions } from "../../services/permissionsSecurity";
-import { Company } from "../../types";
-import { useWorkingCompany } from "../useWorkingCompany";
 import { getMe, Profile } from "./useMe";
 import { getPermissions } from "./useProfilePermissions";
 
 interface ProfileProviderProps{
     children: ReactNode;
 }
-
-// interface Permission{
-//     id: number;
-//     name: string;
-//     created_at: Date;
-//     updated_at: Date;
-// }
 
 interface SimplePermission{
     name: string;
@@ -30,6 +21,7 @@ interface ProfileContextData{
 const ProfileContext = createContext<ProfileContextData>({} as ProfileContextData);
 
 export function ProfileProvider({ children } : ProfileProviderProps){
+
     const [permissions, setPermissions] = useState<SimplePermission[]>(():SimplePermission[]|any => {
         const storagedPermissions = localStorage.getItem('@lance/permissions');
     
@@ -98,8 +90,9 @@ export function ProfileProvider({ children } : ProfileProviderProps){
     const loadProfile = async () => {
         const loadedProfile = await getMe();
 
-        //changeCompany(loadedProfile.company);
         loadPermissions(loadedProfile.role.id);
+
+        localStorage.setItem('@lance/company', JSON.stringify(loadedProfile.companies[0]));
 
         setProfile(loadedProfile);
     }
