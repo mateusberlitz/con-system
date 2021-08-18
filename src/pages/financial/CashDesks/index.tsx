@@ -141,19 +141,6 @@ export default function CashDesks(){
         setisConfirmCashDeskRemoveModalOpen(false);
     }
 
-
-
-    const [isExportReportModalOpen, setIsExportReportModalOpen] = useState(false);
-
-    function OpenExportReportModal(){
-        setIsExportReportModalOpen(true);
-    }
-    function CloseExportReportModal(){
-        setIsExportReportModalOpen(false);
-    }
-
-
-
     const [categories, setCategories] = useState<BillCategory[]>([]);
 
     const loadCategories = async () => {
@@ -186,7 +173,7 @@ export default function CashDesks(){
                     Adicionar Movimentação
                 </SolidButton>
 
-                <OutlineButton onClick={() => {history.push('/pagamentos/categorias')}}>
+                <OutlineButton onClick={() => {history.push('/caixa/categorias')}}>
                     Categorias
                 </OutlineButton>
 
