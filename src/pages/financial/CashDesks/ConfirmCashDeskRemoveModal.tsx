@@ -25,7 +25,7 @@ export function ConfirmCashDeskRemoveModal( { isOpen, toRemoveCashDeskData, afte
 
     const handleRemoveCashDesk = async () => {
         try{
-            await api.delete(`/cashDesks/destroy/${toRemoveCashDeskData.id}`);
+            await api.delete(`/cashdesk/destroy/${toRemoveCashDeskData.id}`);
 
             toast({
                 title: "Sucesso",
