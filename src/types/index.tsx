@@ -176,3 +176,14 @@ export interface CashDeskCategory{
     created_at?: Date;
     updated_at?: Date;
 }
+
+export interface CashDeskInterface{
+    id: number;
+    title: string;
+    value: number;
+    category: CashDeskCategory;
+    company: Company;
+    date: string;
+    created_at?: string;
+    updated_at?: Date;
+}

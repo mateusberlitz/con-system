@@ -17,6 +17,8 @@ import moneyToBackend from "../../../utils/moneyToBackend";
 import { useEffect } from "react";
 import { isAuthenticated } from "../../../services/auth";
 import { redirectMessages } from "../../../utils/redirectMessages";
+import { formatYmdDate } from "../../../utils/Date/formatYmdDate";
+import { ControlledInput } from "../../../components/Forms/Inputs/ControlledInput";
 
 interface NewCashDesksModalProps{
     isOpen: boolean;
@@ -30,6 +32,7 @@ interface CreateNewCashDesksFormData{
     company: number;
     category: number;
     value: string;
+    date: string;
 }
 
 const CreateNewCashDesksFormSchema = yup.object().shape({
@@ -37,6 +40,7 @@ const CreateNewCashDesksFormSchema = yup.object().shape({
     company: yup.number(),
     category: yup.number(),
     value: yup.string().required("Informe o valor da movimentação."),
+    date: yup.date().required("Selecione a data"),
 });
 
 export function NewCashDesksModal( { isOpen, onRequestClose, afterCreate, categories, } : NewCashDesksModalProps){
@@ -45,7 +49,7 @@ export function NewCashDesksModal( { isOpen, onRequestClose, afterCreate, catego
     const toast = useToast();
     const { showErrors } = useErrors();
 
-    const { register, handleSubmit, reset, formState} = useForm<CreateNewCashDesksFormData>({
+    const { register, control, handleSubmit, reset, formState} = useForm<CreateNewCashDesksFormData>({
         resolver: yupResolver(CreateNewCashDesksFormSchema),
     });
 
@@ -108,7 +112,9 @@ export function NewCashDesksModal( { isOpen, onRequestClose, afterCreate, catego
                 state: redirectMessages.auth
             });
         }
-    }, [isOpen])
+    }, [isOpen]);
+
+    const todayYmd = formatYmdDate(new Date().toDateString());
 
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
@@ -123,16 +129,19 @@ export function NewCashDesksModal( { isOpen, onRequestClose, afterCreate, catego
                         
                         <Input register={register} name="title" type="text" placeholder="Título" variant="outline" error={formState.errors.title}/>
 
-                        <HStack spacing="4" align="baseline">
-                            <Select register={register} h="45px" value="0" name="category" w="100%" fontSize="sm" focusBorderColor="blue.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Categoria" error={formState.errors.category}>
-                                {categories && categories.map((category:PaymentCategory) => {
-                                    return (
-                                        <option key={category.id} value={category.id}>{category.name}</option>
-                                    )
-                                })}
-                            </Select>
+                        <Select register={register} h="45px" value="0" name="category" w="100%" fontSize="sm" focusBorderColor="blue.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Categoria" error={formState.errors.category}>
+                            {categories && categories.map((category:PaymentCategory) => {
+                                return (
+                                    <option key={category.id} value={category.id}>{category.name}</option>
+                                )
+                            })}
+                        </Select>
 
+                        <HStack spacing="4" align="baseline">
                             <Input register={register} name="value" type="text" placeholder="Valor" variant="outline" mask="money" error={formState.errors.value}/>
+                            
+                            {/* <Input register={register} name="date" value={todayYmd} type="date" placeholder="Data da movimentação" variant="outline" error={formState.errors.date}/> */}
+                            <ControlledInput control={control} value={todayYmd} name="date" type="date" placeholder="Data da Movimentação" variant="outline" error={formState.errors.date} focusBorderColor="blue.400"/>
                         </HStack>
 
                     </Stack>

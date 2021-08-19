@@ -3,7 +3,7 @@ import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { MainBoard } from "../../../components/MainBoard";
 import { useCompanies } from "../../../hooks/useCompanies";
 import { HasPermission, useProfile } from "../../../hooks/useProfile";
-import { BillCategory, CashFlowCategory, CashFlowInterface, Company } from "../../../types";
+import { BillCategory, CashDeskInterface, CashFlowCategory, CashFlowInterface, Company } from "../../../types";
 
 import { useForm } from "react-hook-form";
 import * as yup from 'yup';
@@ -107,6 +107,7 @@ export default function CashDesks(){
             value: '',
             company: 0,
             category: 0,
+            date: '',
         };
         
         return data;
@@ -264,13 +265,14 @@ export default function CashDesks(){
                                 </HStack>
 
                                 {
-                                    cashDesks.data?.data[day]['items'].map((cashFlow:CashFlowInterface) => {
+                                    cashDesks.data?.data[day]['items'].map((cashFlow:CashDeskInterface) => {
                                         const cashFlowToEditData:EditCashDeskFormData = {
                                             id: cashFlow.id,
                                             title: cashFlow.title,
                                             value: cashFlow.value.toString().replace('.', ','),
                                             company: cashFlow.company?.id,
                                             category: cashFlow.category?.id,
+                                            date: cashFlow.date,
                                         }
 
                                         return (
@@ -280,7 +282,7 @@ export default function CashDesks(){
                                                     <Text color="gray.800">{cashFlow.title}</Text>
                                                 </Flex>
 
-                                                <HStack>
+                                                {/* <HStack>
                                                     {
                                                         (cashFlow.payment && cashFlow.payment.category) ? <TagIcon stroke="#4e4b66" fill="none" width="17px"/> : (
                                                             (cashFlow.bill && cashFlow.bill.category)? <TagIcon stroke="#4e4b66" fill="none" width="17px"/> : ""
@@ -293,7 +295,7 @@ export default function CashDesks(){
                                                             )
                                                         }
                                                     </Text>
-                                                </HStack>
+                                                </HStack> */}
 
                                                 <Flex>
                                                     <Text fontWeight="bold" color="gray.800">{cashFlow.category.name}</Text>
