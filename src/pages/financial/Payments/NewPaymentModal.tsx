@@ -1,4 +1,4 @@
-import { Flex, HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, Text, useToast } from "@chakra-ui/react";
+import { Box, Flex, HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, Text, useToast, Input as ChakraInput } from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 
 
@@ -18,7 +18,7 @@ import moneyToBackend from "../../../utils/moneyToBackend";
 import { profile } from "console";
 import { useProfile } from "../../../hooks/useProfile";
 import { ControlledSelect } from "../../../components/Forms/Selects/ControlledSelect";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { isAuthenticated } from "../../../services/auth";
 import { redirectMessages } from "../../../utils/redirectMessages";
 
@@ -41,6 +41,7 @@ interface CreateNewPaymentFormData{
     pay_to_user?: number;
     value: string;
     expire: string;
+    invoice_date?: string;
     contract?: string;
     group?: string;
     quote?: string;
@@ -57,7 +58,8 @@ const CreateNewPaymentFormSchema = yup.object().shape({
     status: yup.boolean(),
     pay_to_user: yup.number().transform((v, o) => o === '' ? null : v).nullable(),
     value: yup.string().required("Informe o valor do pagamento"),
-    expire: yup.date().required("Selecione a data de vencimento"),
+    expire: yup.string().required("Selecione a data de vencimento"),
+    invoice_date: yup.string(),
     contract: yup.string(),
     group: yup.string(),
     quote: yup.string(),
@@ -94,6 +96,12 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
 
         paymentData.expire = formatInputDate(paymentData.expire);
 
+        if(paymentData.invoice_date != null && paymentData.invoice_date != ""){
+            paymentData.invoice_date = formatInputDate(paymentData.invoice_date);
+        }else{
+            delete paymentData.invoice_date;
+        }
+
         if(!workingCompany.company){
             return paymentData;
         }else if(paymentData.company === 0){
@@ -106,6 +114,8 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
 
     const handleCreateNewPayment = async (paymentData : CreateNewPaymentFormData) => {
         try{
+            const paymentFormedData = new FormData();
+
             if(!workingCompany.company && paymentData.company === 0){
                 toast({
                     title: "Ué",
@@ -120,7 +130,17 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
 
             paymentData = includeAndFormatData(paymentData);
 
-            await api.post('/payments/store', paymentData);
+            if(toFormFile !== undefined){
+                paymentFormedData.append('invoice', toFormFile);
+            }
+
+            const response = await api.post('/payments/store', paymentData);
+
+            if(toFormFile !== undefined){
+                paymentFormedData.append('invoice', toFormFile);
+            }
+
+            await api.post(`/payments/update/${response.data.id}`, paymentFormedData);
 
             toast({
                 title: "Sucesso",
@@ -150,6 +170,37 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
             });
         }
     }, [isOpen])
+
+
+    const [fileName, setFileName] = useState("");
+    const [toFormFile, setToFormFile] = useState<File>();
+
+    function handleChangeFile(event: any){
+        if(event.target.files.length){
+            setFileName(event.target.files[0].name);
+
+            setToFormFile(event.target.files[0]);
+        }else{
+            setFileName("");
+
+            setToFormFile(event.target);
+        }
+    }
+
+    const [invoiceName, setInvoiceName] = useState("");
+    const [toFormInvoice, setToFormInvoice] = useState<File>();
+
+    function handleChangeInvoice(event: any){
+        if(event.target.files.length){
+            setInvoiceName(event.target.files[0].name);
+
+            setToFormFile(event.target.files[0]);
+        }else{
+            setInvoiceName("");
+
+            setToFormFile(event.target);
+        }
+    }
 
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
@@ -220,7 +271,33 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
                             <Input register={register} name="recurrence" type="number" placeholder="Repetir Mensalmente" variant="outline" error={formState.errors.recurrence}/>
                         </HStack>
 
+                        <HStack spacing="4" align="baseline">
+
+                            <Flex alignSelf="center">
+                                <Box as="label" mr="10px" display="flex" borderRadius="full" alignItems="center" h="29px" fontWeight="600" fontSize="10px" pl="6" pr="6" cursor="pointer" border="2px" borderColor="purple.300" color="purple.300">
+                                    <ChakraInput name="image" type="file" accept="image/png, image/jpeg, application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint,text/plain, application/pdf" display="none" onChange={handleChangeFile}/> 
+                                    Selecionar Boleto
+                                </Box>
+
+                                <Text>{fileName}</Text>
+                            </Flex>
+                        </HStack>
+
                         <Input register={register} name="observation" type="text" placeholder="Observação" variant="outline" error={formState.errors.observation}/>
+
+                        <HStack spacing="4" align="baseline">
+
+                            <Flex alignSelf="center">
+                                <Box as="label" mr="10px" display="flex" borderRadius="full" alignItems="center" h="29px" fontWeight="600" fontSize="10px" pl="6" pr="6" cursor="pointer" border="2px" borderColor="purple.300" color="purple.300">
+                                    <ChakraInput name="image" type="invoice" accept="image/png, image/jpeg, application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint,text/plain, application/pdf" display="none" onChange={handleChangeInvoice}/> 
+                                    Selecionar Nota
+                                </Box>
+
+                                <Text>{invoiceName}</Text>
+                            </Flex>
+
+                            <Input register={register} name="invoice_date" type="date" placeholder="Data da nota" variant="outline" error={formState.errors.invoice_date}/>
+                        </HStack>
 
                     </Stack>
                 </ModalBody>
