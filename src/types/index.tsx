@@ -85,6 +85,7 @@ export interface Payment{
     partial_payments?: PartialPayment[];
     created_at?: Date;
     updated_at?: Date;
+    invoice_date?: string;
 }
 
 export interface dayPayments{

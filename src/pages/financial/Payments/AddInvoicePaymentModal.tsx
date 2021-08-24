@@ -1,4 +1,4 @@
-import { Text, Input, HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, useToast, Box } from "@chakra-ui/react";
+import { Text, Input as ChakraInput, HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, useToast, Box } from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 
 
@@ -12,21 +12,27 @@ import { useErrors } from "../../../hooks/useErrors";
 import { useEffect, useState } from "react";
 import { redirectMessages } from "../../../utils/redirectMessages";
 import { isAuthenticated } from "../../../services/auth";
+import { Input } from "../../../components/Forms/Inputs/Input";
+import { formatYmdDate } from "../../../utils/Date/formatYmdDate";
+import { ControlledInput } from "../../../components/Forms/Inputs/ControlledInput";
+import { formatInputDate } from "../../../utils/Date/formatInputDate";
 
 interface AddFilePaymentModalProps{
     isOpen: boolean;
     onRequestClose: () => void;
     afterAttach: () => void;
-    toAddInvoicePaymentData: AddFilePaymentFormData;
+    toAddInvoicePaymentData: AddInvoicePaymentFormData;
 }
 
-export interface AddFilePaymentFormData{
+export interface AddInvoicePaymentFormData{
     title: string;
     id: number,
+    invoice_date: string,
 }
 
 const PayPaymentFormSchema = yup.object().shape({
     invoice: yup.mixed(),
+    invoice_date: yup.string(),
 });
 
 export function AddInvoicePaymentModal ( { isOpen, onRequestClose, afterAttach, toAddInvoicePaymentData } : AddFilePaymentModalProps){
@@ -34,11 +40,11 @@ export function AddInvoicePaymentModal ( { isOpen, onRequestClose, afterAttach, 
     const toast = useToast();
     const { showErrors } = useErrors();
 
-    const { handleSubmit, reset, control, formState} = useForm<AddFilePaymentFormData>({
+    const { handleSubmit, register, reset, control, formState} = useForm<AddInvoicePaymentFormData>({
         resolver: yupResolver(PayPaymentFormSchema),
     });
 
-    const handleChangePaymentFile = async (paymentData : AddFilePaymentFormData) => {
+    const handleChangePaymentFile = async (paymentData : AddInvoicePaymentFormData) => {
         try{
             const paymentFormedData = new FormData();
 
@@ -56,7 +62,10 @@ export function AddInvoicePaymentModal ( { isOpen, onRequestClose, afterAttach, 
                 return;
             }
 
-            console.log(toFormFile, );
+            paymentData.invoice_date = formatInputDate(paymentData.invoice_date);
+            paymentFormedData.append('invoice_date', paymentData.invoice_date);
+
+            console.log(paymentFormedData );
 
             await api.post(`/payments/update/${toAddInvoicePaymentData.id}`, paymentFormedData, {
                 headers: {
@@ -109,6 +118,8 @@ export function AddInvoicePaymentModal ( { isOpen, onRequestClose, afterAttach, 
         }
     }, [isOpen])
 
+    const todayYmd = formatYmdDate(new Date().toDateString());
+
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
             <ModalOverlay />
@@ -122,8 +133,8 @@ export function AddInvoicePaymentModal ( { isOpen, onRequestClose, afterAttach, 
                         <HStack spacing="4" align="baseline">
                             <HStack spacing="6" display="flex" pos="relative">
 
-                                <Box as="label" display="flex" borderRadius="full" alignItems="center" h="29px" fontWeight="600" fontSize="12px" pl="6" pr="6" cursor="pointer" border="2px" borderColor="purple.300" color="purple.300">
-                                    <Input name="image" type="file" accept="image/png, image/jpeg, application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint,text/plain, application/pdf" display="none" onChange={handleChangeFile}/> 
+                                <Box as="label" display="flex" borderRadius="full" alignItems="center" h="29px" fontWeight="600" fontSize="12px" pl="6" pr="6" cursor="pointer" border="2px" borderColor="blue.400" color="blue.400">
+                                    <ChakraInput name="image" type="file" accept="image/png, image/jpeg, application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint,text/plain, application/pdf" display="none" onChange={handleChangeFile}/> 
                                     Selecionar Nota
                                 </Box>
 
@@ -131,6 +142,9 @@ export function AddInvoicePaymentModal ( { isOpen, onRequestClose, afterAttach, 
                                 
                             </HStack>
                         </HStack>
+
+                        {/* <Input register={register} name="invoice_date" type="date" placeholder="Data da nota" variant="outline" error={formState.errors.invoice_date}/> */}
+                        <ControlledInput control={control} value={todayYmd} name="invoice_date" type="date" placeholder="Data da nota" variant="outline" error={formState.errors.invoice_date} focusBorderColor="blue.400"/>
                     </Stack>
                 </ModalBody>
 

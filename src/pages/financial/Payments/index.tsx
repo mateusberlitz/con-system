@@ -46,7 +46,7 @@ import { Pagination } from "../../../components/Pagination";
 import { AddFilePaymentFormData, AddFilePaymentModal } from "./AddFilePaymentModal";
 import { showErrors } from "../../../hooks/useErrors";
 import { AddProofPaymentModal } from "./AddProofPaymentModal";
-import { AddInvoicePaymentModal } from "./AddInvoicePaymentModal";
+import { AddInvoicePaymentFormData, AddInvoicePaymentModal } from "./AddInvoicePaymentModal";
 import { ConfirmPartialRemoveModal } from "./ConfirmPartialRemoveModal";
 import { profile } from "node:console";
 import { ExportDocumentsModal } from "./ExportDocumentsModal";
@@ -292,17 +292,18 @@ export default function Payments(){
 
 
     const [isAddInvoicePaymentModalOpen, setIsAddInvoicePaymentModalOpen] = useState(false);
-    const [addInvoicePaymentData, setAddInvoicePaymentData] = useState<AddFilePaymentFormData>(() => {
+    const [addInvoicePaymentData, setAddInvoicePaymentData] = useState<AddInvoicePaymentFormData>(() => {
 
-        const data: AddFilePaymentFormData = {
+        const data: AddInvoicePaymentFormData = {
             id: 0,
             title: '',
+            invoice_date: '',
         };
         
         return data;
     });
 
-    function OpenAddInvoicePaymentModal(toAddInvoicePayment: AddFilePaymentFormData){
+    function OpenAddInvoicePaymentModal(toAddInvoicePayment: AddInvoicePaymentFormData){
         setAddInvoicePaymentData(toAddInvoicePayment);
         setIsAddInvoicePaymentModalOpen(true);
     }
@@ -598,6 +599,8 @@ export default function Payments(){
                                             file: payment.file,
                                         }
 
+                                        console.log(payment.invoice_date);
+
                                         return (
                                             <AccordionItem key={payment.id} display="flex" flexDir="column" paddingX="8" paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
                                                 {({ isExpanded }) => (
@@ -663,16 +666,20 @@ export default function Payments(){
 
                                                             {
                                                                 payment.invoice ? (
-                                                                    <HStack>
-                                                                        <Link target="_blank" href={`${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_STORAGE : process.env.REACT_APP_API_LOCAL_STORAGE}${payment.invoice}`} display="flex" fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
-                                                                            <FileIcon stroke="#4e4b66" fill="none" width="16px"/>
-                                                                            <Text ml="2">Ver Nota</Text>
-                                                                        </Link>
+                                                                    <Stack>
+                                                                        <HStack>
+                                                                            <Link target="_blank" href={`${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_STORAGE : process.env.REACT_APP_API_LOCAL_STORAGE}${payment.invoice}`} display="flex" fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
+                                                                                <FileIcon stroke="#4e4b66" fill="none" width="16px"/>
+                                                                                <Text ml="2">Ver Nota</Text>
+                                                                            </Link>
 
-                                                                        <IconButton onClick={() => handleRemoveInvoice(payment.id)} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
-                                                                    </HStack>
+                                                                            <IconButton onClick={() => handleRemoveInvoice(payment.id)} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
+                                                                        </HStack>
+
+                                                                        <Text>{payment.invoice_date && payment.invoice_date}</Text>
+                                                                    </Stack>
                                                                 ) : (
-                                                                    <Flex onClick={() => OpenAddInvoicePaymentModal({id: payment.id, title: payment.title})} fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
+                                                                    <Flex onClick={() => OpenAddInvoicePaymentModal({id: payment.id, title: payment.title, invoice_date: (payment.invoice_date ? payment.invoice_date : '')})} fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
                                                                         <AttachIcon stroke="#4e4b66" fill="none" width="16px"/>
                                                                         <Text ml="2">Nota</Text>
                                                                     </Flex>

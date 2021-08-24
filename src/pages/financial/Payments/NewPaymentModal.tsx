@@ -137,7 +137,11 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
             const response = await api.post('/payments/store', paymentData);
 
             if(toFormFile !== undefined){
-                paymentFormedData.append('invoice', toFormFile);
+                paymentFormedData.append('file', toFormFile);
+            }
+
+            if(toFormInvoice !== undefined){
+                paymentFormedData.append('invoice', toFormInvoice);
             }
 
             await api.post(`/payments/update/${response.data.id}`, paymentFormedData);
@@ -194,11 +198,11 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
         if(event.target.files.length){
             setInvoiceName(event.target.files[0].name);
 
-            setToFormFile(event.target.files[0]);
+            setToFormInvoice(event.target.files[0]);
         }else{
             setInvoiceName("");
 
-            setToFormFile(event.target);
+            setToFormInvoice(event.target);
         }
     }
 
