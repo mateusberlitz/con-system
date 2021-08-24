@@ -676,7 +676,7 @@ export default function Payments(){
                                                                             <IconButton onClick={() => handleRemoveInvoice(payment.id)} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
                                                                         </HStack>
 
-                                                                        <Text>{payment.invoice_date && payment.invoice_date}</Text>
+                                                                        <Text fontWeight="bold" fontSize="10px" color="gray.800">{payment.invoice_date && formatBRDate(payment.invoice_date)}</Text>
                                                                     </Stack>
                                                                 ) : (
                                                                     <Flex onClick={() => OpenAddInvoicePaymentModal({id: payment.id, title: payment.title, invoice_date: (payment.invoice_date ? payment.invoice_date : '')})} fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
