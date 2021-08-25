@@ -297,7 +297,10 @@ export default function Payments(){
         const data: AddInvoicePaymentFormData = {
             id: 0,
             title: '',
+            invoice: '',
+            invoice2: '',
             invoice_date: '',
+            invoice2_date: '',
         };
         
         return data;
@@ -460,6 +463,10 @@ export default function Payments(){
                     Categorias
                 </OutlineButton>
 
+                <OutlineButton onClick={() => {history.push('/pagamentos/notas')}}>
+                    Notas
+                </OutlineButton>
+
                 <OutlineButton onClick={() => {history.push('/pagamentos/fornecedores')}}>
                     Fornecedores
                 </OutlineButton>
@@ -599,8 +606,6 @@ export default function Payments(){
                                             file: payment.file,
                                         }
 
-                                        console.log(payment.invoice_date);
-
                                         return (
                                             <AccordionItem key={payment.id} display="flex" flexDir="column" paddingX="8" paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
                                                 {({ isExpanded }) => (
@@ -679,9 +684,9 @@ export default function Payments(){
                                                                         <Text fontWeight="bold" fontSize="10px" color="gray.800">{payment.invoice_date && formatBRDate(payment.invoice_date)}</Text>
                                                                     </Stack>
                                                                 ) : (
-                                                                    <Flex onClick={() => OpenAddInvoicePaymentModal({id: payment.id, title: payment.title, invoice_date: (payment.invoice_date ? payment.invoice_date : '')})} fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
+                                                                    <Flex onClick={() => OpenAddInvoicePaymentModal({id: payment.id, title: payment.title, invoice: (payment.invoice ? payment.invoice : ''), invoice2: (payment.invoice2 ? payment.invoice2 : ''), invoice_date: (payment.invoice_date ? payment.invoice_date : ''), invoice2_date: (payment.invoice2_date ? payment.invoice2_date : '')})} fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
                                                                         <AttachIcon stroke="#4e4b66" fill="none" width="16px"/>
-                                                                        <Text ml="2">Nota</Text>
+                                                                        <Text ml="2">Anexar Nota</Text>
                                                                     </Flex>
                                                                 )
                                                             

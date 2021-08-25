@@ -279,7 +279,7 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
 
                             <Flex alignSelf="center">
                                 <Box as="label" mr="10px" display="flex" borderRadius="full" alignItems="center" h="29px" fontWeight="600" fontSize="10px" pl="6" pr="6" cursor="pointer" border="2px" borderColor="purple.300" color="purple.300">
-                                    <ChakraInput name="image" type="file" accept="image/png, image/jpeg, application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint,text/plain, application/pdf" display="none" onChange={handleChangeFile}/> 
+                                    <ChakraInput name="file" type="file" accept="image/png, image/jpeg, application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint,text/plain, application/pdf" display="none" onChange={handleChangeFile}/> 
                                     Selecionar Boleto
                                 </Box>
 
@@ -293,7 +293,7 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
 
                             <Flex alignSelf="center">
                                 <Box as="label" mr="10px" display="flex" borderRadius="full" alignItems="center" h="29px" fontWeight="600" fontSize="10px" pl="6" pr="6" cursor="pointer" border="2px" borderColor="purple.300" color="purple.300">
-                                    <ChakraInput name="image" type="invoice" accept="image/png, image/jpeg, application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint,text/plain, application/pdf" display="none" onChange={handleChangeInvoice}/> 
+                                    <ChakraInput name="invoice" type="file" accept="image/png, image/jpeg, application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint,text/plain, application/pdf" display="none" onChange={handleChangeInvoice}/> 
                                     Selecionar Nota
                                 </Box>
 
