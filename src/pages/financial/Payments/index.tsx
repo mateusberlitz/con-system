@@ -670,25 +670,10 @@ export default function Payments(){
                                                             }
 
                                                             {
-                                                                payment.invoice ? (
-                                                                    <Stack>
-                                                                        <HStack>
-                                                                            <Link target="_blank" href={`${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_STORAGE : process.env.REACT_APP_API_LOCAL_STORAGE}${payment.invoice}`} display="flex" fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
-                                                                                <FileIcon stroke="#4e4b66" fill="none" width="16px"/>
-                                                                                <Text ml="2">Ver Nota</Text>
-                                                                            </Link>
-
-                                                                            <IconButton onClick={() => handleRemoveInvoice(payment.id)} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
-                                                                        </HStack>
-
-                                                                        <Text fontWeight="bold" fontSize="10px" color="gray.800">{payment.invoice_date && formatBRDate(payment.invoice_date)}</Text>
-                                                                    </Stack>
-                                                                ) : (
                                                                     <Flex onClick={() => OpenAddInvoicePaymentModal({id: payment.id, title: payment.title, invoice: (payment.invoice ? payment.invoice : ''), invoice2: (payment.invoice2 ? payment.invoice2 : ''), invoice_date: (payment.invoice_date ? payment.invoice_date : ''), invoice2_date: (payment.invoice2_date ? payment.invoice2_date : '')})} fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
                                                                         <AttachIcon stroke="#4e4b66" fill="none" width="16px"/>
-                                                                        <Text ml="2">Anexar Nota</Text>
+                                                                        <Text ml="2">Notas</Text>
                                                                     </Flex>
-                                                                )
                                                             
                                                             }
 
