@@ -5,7 +5,7 @@ export function formatDate(date: string) {
 
     //var d = new Date(date),
     let month = '' + (dateObject.getMonth() + 1),
-    day = '' + dateObject.getDate(),
+    day = '' + dateObject.getUTCDate(),
     year = dateObject.getFullYear();
 
     if (month.length < 2) 

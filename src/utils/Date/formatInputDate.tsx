@@ -1,8 +1,12 @@
 export function formatInputDate(date: string) {
-    var d = new Date(date),
-        month = '' + (d.getMonth() + 1),
-        day = '' + d.getDate(),
-        year = d.getFullYear();
+    var parts = date.split('-');
+
+    var dateObject = new Date(parseInt((parts ? parts[0] : '')), parseInt((parts ? (parseInt(parts[1])-1).toString() : '')), parseInt((parts ? parts[2] : ''))); // months are 0-based
+
+    let
+        month = '' + (dateObject.getMonth() + 1),
+        day = '' + dateObject.getDate(),
+        year = dateObject.getFullYear();
 
     if (month.length < 2) 
         month = '0' + month;

@@ -82,10 +82,12 @@ export interface Payment{
     file: string;
     proof: string;
     invoice: string;
+    invoice2: string;
     partial_payments?: PartialPayment[];
     created_at?: Date;
     updated_at?: Date;
     invoice_date?: string;
+    invoice2_date?: string;
 }
 
 export interface dayPayments{

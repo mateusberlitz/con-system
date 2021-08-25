@@ -27,7 +27,10 @@ interface AddFilePaymentModalProps{
 export interface AddInvoicePaymentFormData{
     title: string;
     id: number,
+    invoice: string,
+    invoice2: string,
     invoice_date: string,
+    invoice2_date: string,
 }
 
 const PayPaymentFormSchema = yup.object().shape({
@@ -64,8 +67,6 @@ export function AddInvoicePaymentModal ( { isOpen, onRequestClose, afterAttach, 
 
             paymentData.invoice_date = formatInputDate(paymentData.invoice_date);
             paymentFormedData.append('invoice_date', paymentData.invoice_date);
-
-            console.log(paymentFormedData );
 
             await api.post(`/payments/update/${toAddInvoicePaymentData.id}`, paymentFormedData, {
                 headers: {
@@ -134,7 +135,7 @@ export function AddInvoicePaymentModal ( { isOpen, onRequestClose, afterAttach, 
                             <HStack spacing="6" display="flex" pos="relative">
 
                                 <Box as="label" display="flex" borderRadius="full" alignItems="center" h="29px" fontWeight="600" fontSize="12px" pl="6" pr="6" cursor="pointer" border="2px" borderColor="blue.400" color="blue.400">
-                                    <ChakraInput name="image" type="file" accept="image/png, image/jpeg, application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint,text/plain, application/pdf" display="none" onChange={handleChangeFile}/> 
+                                    <ChakraInput name="file" type="file" accept="image/png, image/jpeg, application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint,text/plain, application/pdf" display="none" onChange={handleChangeFile}/> 
                                     Selecionar Nota
                                 </Box>
 
@@ -145,6 +146,23 @@ export function AddInvoicePaymentModal ( { isOpen, onRequestClose, afterAttach, 
 
                         {/* <Input register={register} name="invoice_date" type="date" placeholder="Data da nota" variant="outline" error={formState.errors.invoice_date}/> */}
                         <ControlledInput control={control} value={todayYmd} name="invoice_date" type="date" placeholder="Data da nota" variant="outline" error={formState.errors.invoice_date} focusBorderColor="blue.400"/>
+
+
+                        <HStack spacing="4" align="baseline">
+                            <HStack spacing="6" display="flex" pos="relative">
+
+                                <Box as="label" display="flex" borderRadius="full" alignItems="center" h="29px" fontWeight="600" fontSize="12px" pl="6" pr="6" cursor="pointer" border="2px" borderColor="blue.400" color="blue.400">
+                                    <ChakraInput name="invoice2" type="file" accept="image/png, image/jpeg, application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint,text/plain, application/pdf" display="none" onChange={handleChangeFile}/> 
+                                    Selecionar Nota 2
+                                </Box>
+
+                                <Text>{fileName}</Text>
+                                
+                            </HStack>
+                        </HStack>
+
+                        {/* <Input register={register} name="invoice_date" type="date" placeholder="Data da nota" variant="outline" error={formState.errors.invoice_date}/> */}
+                        <ControlledInput control={control} value={todayYmd} name="invoice2_date" type="date" placeholder="Data da nota" variant="outline" error={formState.errors.invoice2_date} focusBorderColor="blue.400"/>
                     </Stack>
                 </ModalBody>
 
