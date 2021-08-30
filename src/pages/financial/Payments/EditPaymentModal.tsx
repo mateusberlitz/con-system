@@ -159,6 +159,7 @@ export function EditPaymentModal( { isOpen, onRequestClose, afterEdit, toEditPay
                 isClosable: true,
             });
 
+            setIsDisabledRecurrence(true);
             afterEdit();
             onRequestClose();
         }catch(error) {
