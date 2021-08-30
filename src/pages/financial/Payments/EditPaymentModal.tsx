@@ -1,4 +1,4 @@
-import { Flex, HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, Text, useToast } from "@chakra-ui/react";
+import { Checkbox, Flex, HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, Text, useToast } from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 
 import {  useForm } from "react-hook-form";
@@ -44,6 +44,7 @@ export interface EditPaymentFormData{
     group?: string;
     quote?: string;
     recurrence?: number;
+    activeRecurrence?: string;
     file: any;
 }
 
@@ -73,7 +74,7 @@ export function EditPaymentModal( { isOpen, onRequestClose, afterEdit, toEditPay
 
     const { showErrors } = useErrors();
 
-    const { handleSubmit, formState, control} = useForm<EditPaymentFormData>({
+    const { handleSubmit, register, formState, control} = useForm<EditPaymentFormData>({
         resolver: yupResolver(EditPaymentFormSchema),
         defaultValues: {
             title: toEditPaymentData.title,
@@ -248,8 +249,12 @@ export function EditPaymentModal( { isOpen, onRequestClose, afterEdit, toEditPay
                         <HStack spacing="4" align="baseline">
                             <ControlledInput control={control} value={toEditPaymentData.recurrence?.toString()} name="recurrence" type="text" placeholder="Repetir Mensalmente" variant="outline" error={formState.errors.recurrence} focusBorderColor="blue.400"/>
 
-                            <ControlledInput control={control} value={toEditPaymentData.paid} name="paid" type="text" placeholder="Valor já pago" variant="outline" error={formState.errors.paid} focusBorderColor="blue.400"/>
+                            <Checkbox {...register("activeRecurrence")} colorScheme="blue" size="md" mr="15" borderRadius="full" fontSize="11px" color="gray.800" value="true">
+                                Criar uma programação
+                            </Checkbox>
                         </HStack>
+
+                        <ControlledInput control={control} value={toEditPaymentData.paid} name="paid" type="text" placeholder="Valor já pago" variant="outline" error={formState.errors.paid} focusBorderColor="blue.400"/>
                         
                         <ControlledInput control={control} value={toEditPaymentData.observation} name="observation" type="text" placeholder="Observação" variant="outline" error={formState.errors.observation} focusBorderColor="blue.400"/>
                         
