@@ -16,7 +16,7 @@ import moneyToBackend from "../../../utils/moneyToBackend";
 import { useProfile } from "../../../hooks/useProfile";
 import { redirectMessages } from "../../../utils/redirectMessages";
 import { isAuthenticated } from "../../../services/auth";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface EditPaymentModalProps{
     isOpen: boolean;
@@ -179,6 +179,12 @@ export function EditPaymentModal( { isOpen, onRequestClose, afterEdit, toEditPay
         }
     }, [isOpen])
 
+    const [isDisabledRecurrence, setIsDisabledRecurrence] = useState(true);
+
+    const changeIsDisabledRecurrence = () => {
+        setIsDisabledRecurrence(!isDisabledRecurrence);
+    }
+
     return (
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
             <ModalOverlay />
@@ -247,18 +253,19 @@ export function EditPaymentModal( { isOpen, onRequestClose, afterEdit, toEditPay
                         </HStack>
 
                         <HStack spacing="4" align="baseline">
-                            <ControlledInput control={control} value={toEditPaymentData.recurrence?.toString()} name="recurrence" type="text" placeholder="Repetir Mensalmente" variant="outline" error={formState.errors.recurrence} focusBorderColor="blue.400"/>
+                            <ControlledInput isDisabled={isDisabledRecurrence} control={control} value={toEditPaymentData.recurrence?.toString()} name="recurrence" type="text" placeholder="Repetir Mensalmente" variant="outline" error={formState.errors.recurrence} focusBorderColor="blue.400"/>
 
-                            <Checkbox {...register("activeRecurrence")} colorScheme="blue" size="md" mr="15" borderRadius="full" fontSize="11px" color="gray.800" value="true">
-                                Criar uma programação
-                            </Checkbox>
+                            <Flex alignSelf="center">
+                                <Checkbox onChange={() => {changeIsDisabledRecurrence()}} colorScheme="blue" size="md" mr="15" borderRadius="full" fontSize="11px" color="gray.800">
+                                    <Text fontSize="12px">Criar uma programação</Text>
+                                </Checkbox>
+                            </Flex>
                         </HStack>
 
                         <ControlledInput control={control} value={toEditPaymentData.paid} name="paid" type="text" placeholder="Valor já pago" variant="outline" error={formState.errors.paid} focusBorderColor="blue.400"/>
                         
                         <ControlledInput control={control} value={toEditPaymentData.observation} name="observation" type="text" placeholder="Observação" variant="outline" error={formState.errors.observation} focusBorderColor="blue.400"/>
                         
-
                     </Stack>
                 </ModalBody>
 
