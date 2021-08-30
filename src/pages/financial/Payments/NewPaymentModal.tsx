@@ -96,11 +96,11 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
 
         paymentData.expire = formatInputDate(paymentData.expire);
 
-        if(paymentData.invoice_date != null && paymentData.invoice_date != ""){
-            paymentData.invoice_date = formatInputDate(paymentData.invoice_date);
-        }else{
-            delete paymentData.invoice_date;
-        }
+        // if(paymentData.invoice_date != null && paymentData.invoice_date != ""){
+        //     paymentData.invoice_date = formatInputDate(paymentData.invoice_date);
+        // }else{
+        //     delete paymentData.invoice_date;
+        // }
 
         if(!workingCompany.company){
             return paymentData;
@@ -108,13 +108,13 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
             paymentData.company = workingCompany.company?.id;
         }
 
-
         return paymentData;
     }
 
     const handleCreateNewPayment = async (paymentData : CreateNewPaymentFormData) => {
         try{
             const paymentFormedData = new FormData();
+            const invoiceFormedData = new FormData();
 
             if(!workingCompany.company && paymentData.company === 0){
                 toast({
@@ -130,21 +130,31 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
 
             paymentData = includeAndFormatData(paymentData);
 
-            if(toFormFile !== undefined){
-                paymentFormedData.append('invoice', toFormFile);
+            if(paymentData.invoice_date !== undefined && paymentData.invoice_date !== ""){
+                paymentData.invoice_date = formatInputDate(paymentData.invoice_date);
+                invoiceFormedData.append('date', paymentData.invoice_date);
             }
+
+            delete paymentData.invoice_date;
 
             const response = await api.post('/payments/store', paymentData);
 
-            if(toFormFile !== undefined){
+            if(toFormFile !== undefined && toFormFile !== ""){
                 paymentFormedData.append('file', toFormFile);
             }
 
-            if(toFormInvoice !== undefined){
-                paymentFormedData.append('invoice', toFormInvoice);
-            }
-
             await api.post(`/payments/update/${response.data.id}`, paymentFormedData);
+
+            if(toFormInvoice !== undefined && toFormInvoice !== ""){
+                invoiceFormedData.append('file', toFormInvoice);
+                invoiceFormedData.append('payment', response.data.id);
+
+                await api.post(`/invoices/store`, invoiceFormedData, {
+                    headers: {
+                        'content-type': 'multipart/form-data'
+                    }
+                });
+            }
 
             toast({
                 title: "Sucesso",
@@ -153,6 +163,12 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
                 duration: 12000,
                 isClosable: true,
             });
+
+            setFileName("");
+            setToFormFile("");
+
+            setInvoiceName("");
+            setToFormInvoice("");
 
             onRequestClose();
             afterCreate();
@@ -177,7 +193,7 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
 
 
     const [fileName, setFileName] = useState("");
-    const [toFormFile, setToFormFile] = useState<File>();
+    const [toFormFile, setToFormFile] = useState<File | "">();
 
     function handleChangeFile(event: any){
         if(event.target.files.length){
@@ -192,7 +208,7 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
     }
 
     const [invoiceName, setInvoiceName] = useState("");
-    const [toFormInvoice, setToFormInvoice] = useState<File>();
+    const [toFormInvoice, setToFormInvoice] = useState<File | "">();
 
     function handleChangeInvoice(event: any){
         if(event.target.files.length){

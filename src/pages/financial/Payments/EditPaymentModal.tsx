@@ -119,7 +119,7 @@ export function EditPaymentModal( { isOpen, onRequestClose, afterEdit, toEditPay
         if(paymentData.file === null || paymentData.file === "" || paymentData.file.length === 0){
             delete paymentData.file;
         }
-
+        console.log(paymentData.expire);
         paymentData.expire = formatInputDate(paymentData.expire);
 
         if(!workingCompany.company){

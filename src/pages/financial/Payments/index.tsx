@@ -296,11 +296,7 @@ export default function Payments(){
 
         const data: AddInvoicePaymentFormData = {
             id: 0,
-            title: '',
-            invoice: '',
-            invoice2: '',
-            invoice_date: '',
-            invoice2_date: '',
+            title: ''
         };
         
         return data;
@@ -447,7 +443,7 @@ export default function Payments(){
             <ConfirmPartialRemoveModal afterRemove={payments.refetch} toRemovePaymentData={removePartialData} isOpen={isConfirmPartialRemoveModalOpen} onRequestClose={CloseConfirmPartialRemoveModal}/>
             <AddFilePaymentModal afterAttach={payments.refetch} toAddFilePaymentData={addFilePaymentData} isOpen={isAddFilePaymentModalOpen} onRequestClose={CloseAddFilePaymentModal}/>
             <AddProofPaymentModal afterAttach={payments.refetch} toAddProofPaymentData={addProofPaymentData} isOpen={isAddProofPaymentModalOpen} onRequestClose={CloseAddProofPaymentModal}/>
-            <AddInvoicePaymentModal afterAttach={payments.refetch} toAddInvoicePaymentData={addInvoicePaymentData} isOpen={isAddInvoicePaymentModalOpen} onRequestClose={CloseAddInvoicePaymentModal}/>
+            <AddInvoicePaymentModal afterAttach={payments.refetch} toAddInvoiceData={addInvoicePaymentData} isOpen={isAddInvoicePaymentModalOpen} onRequestClose={CloseAddInvoicePaymentModal}/>
             <ExportDocumentsModal isOpen={isExportDocumentsModalOpen} onRequestClose={CloseExportDocumentsModal}/>
 
             <Flex justify="space-between" alignItems="center" mb="10">
@@ -670,7 +666,20 @@ export default function Payments(){
                                                             }
 
                                                             {
-                                                                    <Flex onClick={() => OpenAddInvoicePaymentModal({id: payment.id, title: payment.title, invoice: (payment.invoice ? payment.invoice : ''), invoice2: (payment.invoice2 ? payment.invoice2 : ''), invoice_date: (payment.invoice_date ? payment.invoice_date : ''), invoice2_date: (payment.invoice2_date ? payment.invoice2_date : '')})} fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
+                                                                payment.invoice && (
+                                                                    <HStack>
+                                                                        <Link target="_blank" href={`${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_STORAGE : process.env.REACT_APP_API_LOCAL_STORAGE}${payment.invoice}`} display="flex" fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
+                                                                            <FileIcon stroke="#4e4b66" fill="none" width="16px"/>
+                                                                            <Text ml="2">Ver Nota</Text>
+                                                                        </Link>
+
+                                                                        <IconButton onClick={() => handleRemoveProof(payment.id)} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
+                                                                    </HStack>
+                                                                ) 
+                                                            }
+
+                                                            {
+                                                                    <Flex onClick={() => OpenAddInvoicePaymentModal({id: payment.id, title: payment.title})} fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
                                                                         <AttachIcon stroke="#4e4b66" fill="none" width="16px"/>
                                                                         <Text ml="2">Notas</Text>
                                                                     </Flex>

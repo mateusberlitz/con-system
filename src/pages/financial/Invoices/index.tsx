@@ -3,7 +3,7 @@ import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { MainBoard } from "../../../components/MainBoard";
 import { useCompanies } from "../../../hooks/useCompanies";
 import { HasPermission, useProfile } from "../../../hooks/useProfile";
-import { Company, PartialPayment, Payment, PaymentCategory, User } from "../../../types";
+import { Company, Invoice, PartialPayment, Payment, PaymentCategory, User } from "../../../types";
 
 import { useForm } from "react-hook-form";
 import * as yup from 'yup';
@@ -28,7 +28,6 @@ import { useEffect, useState } from "react";
 import { CompanySelect } from "../../../components/CompanySelect";
 import { useProviders } from "../../../hooks/useProviders";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
-import { PaymentFilterData, usePayments } from "../../../hooks/usePayments";
 import { formatDate } from "../../../utils/Date/formatDate";
 import { formatYmdDate } from "../../../utils/Date/formatYmdDate";
 import { formatBRDate } from "../../../utils/Date/formatBRDate";
@@ -38,7 +37,7 @@ import { Pagination } from "../../../components/Pagination";
 import { ReactComponent as BackArrow } from '../../../assets/icons/Back Arrow.svg';
 import { api } from "../../../services/api";
 import { UserFilterData, useUsers } from "../../../hooks/useUsers";
-
+import { InvoicesFilterData, useInvoices } from "../../../hooks/useInvoices";
 
 interface RemovePaymentData{
     id: number;
@@ -61,30 +60,28 @@ const FilterPaymentsFormSchema = yup.object().shape({
 export default function Invoices(){
     const workingCompany = useWorkingCompany();
 
-    const [filter, setFilter] = useState<PaymentFilterData>(() => {
-        const data: PaymentFilterData = {
+    const [filter, setFilter] = useState<InvoicesFilterData>(() => {
+        const data: InvoicesFilterData = {
             search: '',
             company: workingCompany.company?.id,
-            status: 0,
-            group_by: 'invoice_date',
         };
         
         return data;
     })
 
-    function handleChangeFilter(newFilter: PaymentFilterData){
+    function handleChangeFilter(newFilter: InvoicesFilterData){
         setFilter(newFilter);
     }
 
     const [page, setPage] = useState(1);
 
-    const payments = usePayments(filter, page);
+    const invoices = useInvoices(filter, page);
 
     const {permissions, profile} = useProfile();
     const companies = useCompanies();
     const providers = useProviders();
 
-    const { register, handleSubmit, formState} = useForm<PaymentFilterData>({
+    const { register, handleSubmit, formState} = useForm<InvoicesFilterData>({
         resolver: yupResolver(FilterPaymentsFormSchema),
     });
 
@@ -119,7 +116,7 @@ export default function Invoices(){
     };
     const users = useUsers(usersFilter);
 
-    const handleSearchPayments = async (search : PaymentFilterData) => {
+    const handleSearchPayments = async (search : InvoicesFilterData) => {
         search.company = workingCompany.company?.id;
 
         setPage(1);
@@ -146,36 +143,9 @@ export default function Invoices(){
                         <Input register={register} name="start_date" type="date" placeholder="Data Inicial" variant="filled" error={formState.errors.start_date}/>
                         <Input register={register} name="end_date" type="date" placeholder="Data Final" variant="filled" error={formState.errors.end_date}/>
 
-                        <Select register={register} h="45px" name="category" w="100%" maxW="200px" error={formState.errors.category} fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Categoria">
-                            {categories && categories.map((category:PaymentCategory) => {
-                                return (
-                                    <option key={category.id} value={category.id}>{category.name}</option>
-                                )
-                            })}
-                        </Select>
-
                     </HStack>
 
                     <HStack spacing="6">
-                        <Input register={register} name="group" type="text" placeholder="Grupo" variant="filled" error={formState.errors.group}/>
-                            
-                        <Input register={register} name="quote" type="text" placeholder="Cota" variant="filled" error={formState.errors.quote}/>
-                        <Input register={register} name="contract" type="text" placeholder="Contrato" variant="filled" error={formState.errors.contract}/>
-                            
-                        <Select register={register} h="45px" name="pay_to_user" error={formState.errors.pay_to_user} w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Pagar para">
-                            {users.data && users.data.map((user:User) => {
-                                return (
-                                    <option key={user.id} value={user.id}>{user.name}</option>
-                                )
-                            })}
-                        </Select>
-
-                        <Select register={register} defaultValue={0} h="45px" name="status" error={formState.errors.status} w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
-                            <option value="">Todos</option>
-                            <option value={1}>Pagos</option>
-                            <option value={0}>Pendentes</option>
-                        </Select>
-
                         <OutlineButton type="submit" mb="10" color="blue.400" borderColor="blue.400" colorScheme="blue">
                             Filtrar
                         </OutlineButton>
@@ -194,15 +164,15 @@ export default function Invoices(){
                     )
                 }
 
-                {   payments.isLoading ? (
+                {   invoices.isLoading ? (
                         <Flex justify="center">
                             <Spinner/>
                         </Flex>
-                    ) : ( payments.isError ? (
+                    ) : ( invoices.isError ? (
                         <Flex justify="center" mt="4" mb="4">
                             <Text>Erro listar as contas a pagar</Text>
                         </Flex>
-                    ) : (payments.data?.data.length === 0) && (
+                    ) : (invoices.data?.data.length === 0) && (
                         <Flex justify="center">
                             <Text>Nenhuma pagamento encontrado.</Text>
                         </Flex>
@@ -210,10 +180,10 @@ export default function Invoices(){
                 }
 
                 {
-                    (!payments.isLoading && !payments.error) && Object.keys(payments.data?.data).map((day:string) => {
-                        const totalDayPayments = payments.data?.data[day].length;
-                        const totalDayAmount = payments.data?.data[day].reduce((sumAmount:number, payment:Payment) => {
-                            return sumAmount + payment.value;
+                    (!invoices.isLoading && !invoices.error) && Object.keys(invoices.data?.data).map((day:string) => {
+                        const totalDayPayments = invoices.data?.data[day].length;
+                        const totalDayAmount = invoices.data?.data[day].reduce((sumAmount:number, invoice:Invoice) => {
+                            return sumAmount + invoice.payment.value;
                         }, 0);
 
                         const todayFormatedDate = formatDate(formatYmdDate(new Date().toDateString()));
@@ -221,55 +191,51 @@ export default function Invoices(){
                         const tomorrow = getDay(formatYmdDate(new Date().toDateString())) + 1;
                         const paymentDay = getDay(day);
 
-                        const hasPaymentsYoPay = payments.data?.data[day].filter((payment:Payment) => Number(payment.status) === 0).length;
+                        const hasPaymentsYoPay = invoices.data?.data[day].filter((invoices:Invoice) => Number(invoices.payment.status) === 0).length;
 
                         return (
                             <Accordion key={day} w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" spacing="0" allowMultiple>
                                 <HStack spacing="8" justify="space-between" paddingX="8" paddingY="3" bg="gray.200">
                                     <Text fontWeight="bold">{(todayFormatedDate === dayPaymentsFormated) ? 'Hoje' : (tomorrow === paymentDay) ? "Amanhã" : ""} {day ? formatBRDate(day) : "Sem data"}</Text>
                                     
-                                    <Text fontWeight="bold">{totalDayPayments} Pagamentos por Nota</Text>
+                                    <Text fontWeight="bold">{totalDayPayments} Notas</Text>
                                     
                                     <Text float="right"><strong>TOTAL: {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalDayAmount)}</strong></Text>
                                 </HStack>
 
                                 {
-                                    payments.data?.data[day].map((payment:Payment) => {
-
+                                    invoices.data?.data[day].map((invoice:Invoice) => {
                                         return (
-                                            <AccordionItem key={payment.id} display="flex" flexDir="column" paddingX="8" paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
+                                            <AccordionItem key={invoice.id} display="flex" flexDir="column" paddingX="8" paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
                                                 {({ isExpanded }) => (
                                                     <>
                                                         <HStack justify="space-between" mb="3">
-                                                            <Flex fontWeight="500" alignItems="center" opacity={payment.status ? 0.5 : 1}>
-                                                                <EllipseIcon stroke="none" fill={payment.category?.color}/>
-                                                                <Text ml="2" color={payment.category?.color}>{payment.title}</Text>
+                                                            <Flex fontWeight="500" alignItems="center" opacity={invoice.payment.status ? 0.5 : 1}>
+                                                                <EllipseIcon stroke="none" fill={invoice.payment.category?.color}/>
+                                                                <Text ml="2" color={invoice.payment.category?.color}>{invoice.payment.title}</Text>
                                                             </Flex>
 
-                                                            <Flex fontWeight="500" alignItems="center" color="gray.800" opacity={payment.status ? 0.5 : 1}>
+                                                            <Flex fontWeight="500" alignItems="center" color="gray.800" opacity={invoice.payment.status ? 0.5 : 1}>
                                                                 <TagIcon stroke="#4e4b66" fill="none" width="17px"/>
                                                                 {/* <Text ml="2">{payment.company.name}</Text> */}
-                                                                <Text ml="2">{payment.category?.name}</Text>
+                                                                <Text ml="2">{invoice.payment.category?.name}</Text>
                                                             </Flex>
 
-                                                            {
-                                                                payment.invoice && (
-                                                                    <Stack>
-                                                                        <HStack>
-                                                                            <Link target="_blank" href={`${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_STORAGE : process.env.REACT_APP_API_LOCAL_STORAGE}${payment.invoice}`} display="flex" fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
-                                                                                <FileIcon stroke="#4e4b66" fill="none" width="16px"/>
-                                                                                <Text ml="2">Ver Nota</Text>
-                                                                            </Link>
+                                                            
+                                                            <Stack>
+                                                                <HStack>
+                                                                    <Link target="_blank" href={`${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_STORAGE : process.env.REACT_APP_API_LOCAL_STORAGE}${invoice.file}`} display="flex" fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
+                                                                        <FileIcon stroke="#4e4b66" fill="none" width="16px"/>
+                                                                        <Text ml="2">Ver Nota 1</Text>
+                                                                    </Link>
 
-                                                                            {/* <IconButton onClick={() => handleRemoveInvoice(payment.id)} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/> */}
-                                                                        </HStack>
+                                                                    {/* <IconButton onClick={() => handleRemoveInvoice(payment.id)} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/> */}
+                                                                </HStack>
 
-                                                                        <Text fontWeight="bold" fontSize="10px" color="gray.800">{payment.invoice_date && formatBRDate(payment.invoice_date)}</Text>
-                                                                    </Stack>
-                                                                )
-                                                            }
+                                                                <Text fontWeight="bold" fontSize="10px" color="gray.800">{(invoice.date && formatBRDate(invoice.date))}</Text>
+                                                            </Stack>
 
-                                                            <Text opacity={payment.status ? 0.5 : 1} float="right">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(payment.status ? (payment.paid > 0 ? payment.paid : payment.value) : payment.value - payment.paid)}</Text>
+                                                            <Text opacity={invoice.payment.status ? 0.5 : 1} float="right">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(invoice.payment.status ? (invoice.payment.paid > 0 ? invoice.payment.paid : invoice.payment.value) : invoice.payment.value - invoice.payment.paid)}</Text>
                                                         </HStack>
                                                         
                                                     </>
@@ -285,7 +251,7 @@ export default function Invoices(){
                     })
                 }
 
-                <Pagination totalCountOfRegister={payments.data ? payments.data.total : 0} registerPerPage={10} currentPage={page} onPageChange={setPage}/>
+                <Pagination totalCountOfRegister={invoices.data ? invoices.data.total : 0} registerPerPage={10} currentPage={page} onPageChange={setPage}/>
             </Stack>
             
         </MainBoard>

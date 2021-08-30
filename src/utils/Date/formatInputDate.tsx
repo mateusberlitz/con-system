@@ -1,7 +1,12 @@
 export function formatInputDate(date: string) {
-    var parts = date.split('-');
+    let dateObject;
 
-    var dateObject = new Date(parseInt((parts ? parts[0] : '')), parseInt((parts ? (parseInt(parts[1])-1).toString() : '')), parseInt((parts ? parts[2] : ''))); // months are 0-based
+    if(typeof date === "object"){
+        dateObject = new Date(date);
+    }else{
+        var parts = date.split('-');
+        dateObject = new Date(parseInt((parts ? parts[0] : '')), parseInt((parts ? (parseInt(parts[1])-1).toString() : '')), parseInt((parts ? parts[2] : ''))); // months are 0-based
+    }
 
     let
         month = '' + (dateObject.getMonth() + 1),

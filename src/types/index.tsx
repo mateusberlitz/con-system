@@ -94,6 +94,18 @@ export interface dayPayments{
     [day: string]: Payment[];
 }
 
+export interface Invoice{
+    id: number;
+    date: string;
+    payment: Payment;
+    file: string;
+    created_at?: Date;
+    updated_at?: Date;
+}
+
+export interface dayInvoices{
+    [day: string]: Invoice[];
+}
 
 export interface BillCategory{
     id: number;

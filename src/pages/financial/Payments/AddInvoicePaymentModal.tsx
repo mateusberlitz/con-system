@@ -1,4 +1,4 @@
-import { Text, Input as ChakraInput, HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, useToast, Box, IconButton, Flex, Spinner } from "@chakra-ui/react";
+import { Text, Input as ChakraInput, HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, useToast, Box, IconButton, Flex, Spinner, Divider } from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 
 
@@ -21,40 +21,75 @@ import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
 import { ReactComponent as FileIcon } from '../../../assets/icons/File.svg';
 
 import { formatBRDate } from "../../../utils/Date/formatBRDate";
-import { Payment } from "../../../types";
+import { Invoice, Payment } from "../../../types";
+import { InvoicesFilterData, useInvoices } from "../../../hooks/useInvoices";
+import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 
 interface AddFilePaymentModalProps{
     isOpen: boolean;
     onRequestClose: () => void;
     afterAttach: () => void;
-    toAddInvoicePaymentData: AddInvoicePaymentFormData;
+    toAddInvoiceData: AddInvoicePaymentFormData;
 }
 
 export interface AddInvoicePaymentFormData{
     title: string;
     id: number,
-    invoice: string,
-    invoice2: string,
-    invoice_date: string,
-    invoice2_date: string,
 }
 
-const PayPaymentFormSchema = yup.object().shape({
-    invoice: yup.mixed(),
-    invoice2: yup.mixed(),
-    invoice_date: yup.string(),
-    invoice2_date: yup.string(),
+export interface AddInvoiceFormData{
+    file: string,
+    date: string,
+}
+
+export interface UpdateInvoiceFormData{
+    date: string,
+}
+
+
+const CreateInvoiceFormSchema = yup.object().shape({
+    file: yup.mixed(),
+    date: yup.string(),
 });
 
-export function AddInvoicePaymentModal ( { isOpen, onRequestClose, afterAttach, toAddInvoicePaymentData } : AddFilePaymentModalProps){
+const UpdateInvoiceFormSchema = yup.object().shape({
+    date: yup.string(),
+});
+
+export function AddInvoicePaymentModal ( { isOpen, onRequestClose, afterAttach, toAddInvoiceData } : AddFilePaymentModalProps){
     const history = useHistory();
     const toast = useToast();
     const { showErrors } = useErrors();
 
+    const workingCompany = useWorkingCompany();
+
+    const [filter, setFilter] = useState<InvoicesFilterData>(() => {
+        const data: InvoicesFilterData = {
+            search: '',
+            company: workingCompany.company?.id,
+            payment: toAddInvoiceData.id,
+        };
+        
+        return data;
+    })
+
+    useEffect(() => {
+        setFilter({
+            search: '',
+            company: workingCompany.company?.id,
+            payment: toAddInvoiceData.id,
+        });
+
+    }, [toAddInvoiceData.id, setFilter, workingCompany.company?.id])
+
+    const [page, setPage] = useState(1);
+
+    const invoices = useInvoices(filter, page);
+
     // const [payment, setPayment] = useState<Payment>();
 
     // const loadPayment = async () => {
-    //     const { data } = await api.get(`/payments/${toAddInvoicePaymentData.id}`);
+    //     const { data } = await api.get(`/payments/${toAddInvoiceData.id}`);
 
     //     setPayment(data);
     // }
@@ -64,41 +99,38 @@ export function AddInvoicePaymentModal ( { isOpen, onRequestClose, afterAttach, 
     // }, [])
 
 
-    const { handleSubmit, register, reset, control, formState} = useForm<AddInvoicePaymentFormData>({
-        resolver: yupResolver(PayPaymentFormSchema),
+    const { handleSubmit, register, reset, control, formState} = useForm<AddInvoiceFormData>({
+        resolver: yupResolver(CreateInvoiceFormSchema),
     });
 
-    const handleChangePaymentFile = async (paymentData : AddInvoicePaymentFormData) => {
+    const handleCreateInvoice = async (invoiceData : AddInvoiceFormData) => {
         try{
-            const paymentFormedData = new FormData();
+            const InvoiceFormedData = new FormData();
 
-            if(toFormFile !== undefined){
-                paymentFormedData.append('invoice', toFormFile);
-            }// }else{
-            //     toast({
-            //         title: "Error",
-            //         description: `Nenhum arquivo foi selecionado.`,
-            //         status: "error",
-            //         duration: 12000,
-            //         isClosable: true,
-            //     });
+            if(toFormFile !== undefined && toFormFile !== ""){
+                InvoiceFormedData.append('file', toFormFile);
+            }else{
+                toast({
+                    title: "Error",
+                    description: `Nenhum arquivo foi selecionado.`,
+                    status: "error",
+                    duration: 12000,
+                    isClosable: true,
+                });
 
-            //     return;
-            // }
-
-            if(toFormFile2 !== undefined){
-                paymentFormedData.append('invoice2', toFormFile2);
+                return;
             }
 
-            paymentData.invoice_date = formatInputDate(paymentData.invoice_date);
-            paymentFormedData.append('invoice_date', paymentData.invoice_date);
+            console.log(toFormFile);
 
-            paymentData.invoice2_date = formatInputDate(paymentData.invoice2_date);
-            paymentFormedData.append('invoice2_date', paymentData.invoice2_date);
+            if(invoiceData.date !== ""){
+                invoiceData.date = formatInputDate(invoiceData.date);
+                InvoiceFormedData.append('date', invoiceData.date);
+            }
 
-            console.log(paymentData.invoice2_date);
+            InvoiceFormedData.append('payment', toAddInvoiceData.id.toString());
 
-            await api.post(`/payments/update/${toAddInvoicePaymentData.id}`, paymentFormedData, {
+            await api.post(`/invoices/store`, InvoiceFormedData, {
                 headers: {
                     'content-type': 'multipart/form-data'
                 }
@@ -106,15 +138,42 @@ export function AddInvoicePaymentModal ( { isOpen, onRequestClose, afterAttach, 
 
             toast({
                 title: "Sucesso",
-                description: `Foi anexado uma nota ao pagamento ${toAddInvoicePaymentData.title}.`,
+                description: `Foi anexado uma nota ao pagamento ${toAddInvoiceData.title}.`,
                 status: "success",
                 duration: 12000,
                 isClosable: true,
             });
 
-            onRequestClose();
-            afterAttach();
-            reset();
+            setFileName("");
+            setToFormFile("");
+
+            invoices.refetch();
+        }catch(error) {
+            showErrors(error, toast);
+
+            if(error.response.data.access){
+                history.push('/');
+            }
+        }
+    }
+
+    const UpdateInvoiceForm = useForm<AddInvoiceFormData>({
+        resolver: yupResolver(UpdateInvoiceFormSchema),
+    });
+
+    const handleUpdateInvoice = async (invoiceData : AddInvoiceFormData, invoiceId : number) => {
+        try{
+            await api.post(`/invoices/update/${invoiceId}`, invoiceData);
+
+            invoices.refetch();
+
+            toast({
+                title: "Sucesso",
+                description: `Atualizada a data da nota.`,
+                status: "success",
+                duration: 12000,
+                isClosable: true,
+            });
         }catch(error) {
             showErrors(error, toast);
 
@@ -126,7 +185,7 @@ export function AddInvoicePaymentModal ( { isOpen, onRequestClose, afterAttach, 
 
 
     const [fileName, setFileName] = useState("");
-    const [toFormFile, setToFormFile] = useState<File>();
+    const [toFormFile, setToFormFile] = useState<File | "">();
 
     function handleChangeFile(event: any){
         if(event.target.files.length){
@@ -136,22 +195,7 @@ export function AddInvoicePaymentModal ( { isOpen, onRequestClose, afterAttach, 
         }else{
             setFileName("");
 
-            setToFormFile(event.target);
-        }
-    }
-
-    const [fileName2, setFileName2] = useState("");
-    const [toFormFile2, setToFormFile2] = useState<File>();
-
-    function handleChangeFile2(event: any){
-        if(event.target.files.length){
-            setFileName2(event.target.files[0].name);
-
-            setToFormFile2(event.target.files[0]);
-        }else{
-            setFileName2("");
-
-            setToFormFile2(event.target);
+            setToFormFile("");
         }
     }
 
@@ -166,13 +210,11 @@ export function AddInvoicePaymentModal ( { isOpen, onRequestClose, afterAttach, 
 
     const todayYmd = formatYmdDate(new Date().toDateString());
 
-    const handleRemoveInvoice = async (paymentId : number) => {
+    const handleRemoveInvoice = async (invoiceId : number) => {
         try{
-            await api.post(`/payments/remove_invoice2/${paymentId}`);
+            await api.delete(`/invoices/destroy/${invoiceId}`);
             
-            afterAttach();
-            toAddInvoicePaymentData.invoice = "";
-            toAddInvoicePaymentData.invoice_date = "";
+            invoices.refetch();
 
             toast({
                 title: "Sucesso",
@@ -190,118 +232,99 @@ export function AddInvoicePaymentModal ( { isOpen, onRequestClose, afterAttach, 
         }
     }
 
-    const handleRemoveInvoice2 = async (paymentId : number) => {
-        try{
-            await api.post(`/payments/remove_invoice2/${paymentId}`);
-            
-            afterAttach();
-            toAddInvoicePaymentData.invoice2 = "";
-            toAddInvoicePaymentData.invoice2_date = "";
+    console.log(invoices, filter);
+    // useEffect(() => {
 
-            toast({
-                title: "Sucesso",
-                description: `Segunda Nota Removida`,
-                status: "success",
-                duration: 12000,
-                isClosable: true,
-            });
-        }catch(error) {
-            showErrors(error, toast);
-
-            if(error.response.data.access){
-                history.push('/');
-            }
-        }
-    }
+    // }, [invoices])
 
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
             <ModalOverlay />
-            <ModalContent as="form" borderRadius="24px" onSubmit={handleSubmit(handleChangePaymentFile)}>
-                <ModalHeader p="10" fontWeight="700" fontSize="2xl">Anexar Nota em {toAddInvoicePaymentData.title}</ModalHeader>
+            <ModalContent borderRadius="24px">
+                <ModalHeader p="10" fontWeight="700" fontSize="2xl">Anexar Nota em {toAddInvoiceData.title}</ModalHeader>
 
                 <ModalCloseButton top="10" right="5"/>
                 
                     <ModalBody pl="10" pr="10">
-                        <Stack spacing="6">
-                            {
-                                toAddInvoicePaymentData.invoice ? (
-                                    <Stack>
-                                        <HStack>
-                                            <Link target="_blank" href={`${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_STORAGE : process.env.REACT_APP_API_LOCAL_STORAGE}${toAddInvoicePaymentData.invoice}`} display="flex" fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
-                                                <FileIcon stroke="#4e4b66" fill="none" width="16px"/>
-                                                <Text ml="2">Ver Nota</Text>
-                                            </Link>
+                        <Stack spacing="8">
 
-                                            <IconButton onClick={() => handleRemoveInvoice(toAddInvoicePaymentData.id)} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
-                                        </HStack>
-
-                                    </Stack>
-                                )
-                                : (
-                                    <HStack spacing="4" align="baseline">
-                                        <HStack spacing="6" display="flex" pos="relative">
-
-                                            <Box as="label" display="flex" borderRadius="full" alignItems="center" h="29px" fontWeight="600" fontSize="12px" pl="6" pr="6" cursor="pointer" border="2px" borderColor="blue.400" color="blue.400">
-                                                <ChakraInput name="file" type="file" accept="image/png, image/jpeg, application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint,text/plain, application/pdf" display="none" onChange={handleChangeFile}/> 
-                                                Selecionar Nota
-                                            </Box>
-
-                                            <Text>{fileName}</Text>
-                                            
-                                        </HStack>
-                                    </HStack>
-                                )
-                            }
-                            
-
-                            {/* <Input register={register} name="invoice_date" type="date" placeholder="Data da nota" variant="outline" error={formState.errors.invoice_date}/> */}
-                            <ControlledInput control={control} value={toAddInvoicePaymentData.invoice_date} name="invoice_date" type="date" placeholder="Data da nota" variant="outline" error={formState.errors.invoice_date} focusBorderColor="blue.400"/>
-
-
-                            {
-                                toAddInvoicePaymentData.invoice2 ? (
-                                    <Stack>
-                                        <HStack>
-                                            <Link target="_blank" href={`${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_STORAGE : process.env.REACT_APP_API_LOCAL_STORAGE}${toAddInvoicePaymentData.invoice2}`} display="flex" fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
-                                                <FileIcon stroke="#4e4b66" fill="none" width="16px"/>
-                                                <Text ml="2">Ver Nota</Text>
-                                            </Link>
-
-                                            <IconButton onClick={() => handleRemoveInvoice2(toAddInvoicePaymentData.id)} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
-                                        </HStack>
-
-                                    </Stack>
-                                )
-                                :(
-                                    <HStack spacing="4" align="baseline">
-                                        <HStack spacing="6" display="flex" pos="relative">
-
-                                            <Box as="label" display="flex" borderRadius="full" alignItems="center" h="29px" fontWeight="600" fontSize="12px" pl="6" pr="6" cursor="pointer" border="2px" borderColor="blue.400" color="blue.400">
-                                                <ChakraInput name="invoice2" type="file" accept="image/png, image/jpeg, application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint,text/plain, application/pdf" display="none" onChange={handleChangeFile2}/> 
-                                                Selecionar Nota 2
-                                            </Box>
-
-                                            <Text>{fileName2}</Text>
-                                            
-                                        </HStack>
-                                    </HStack>
-                                )
+                            {   invoices.isLoading ? (
+                                    <Flex justify="center">
+                                        <Spinner/>
+                                    </Flex>
+                                ) : ( invoices.isError ? (
+                                    <Flex justify="left" mt="4" mb="4">
+                                        <Text>Erro listar as contas a pagar</Text>
+                                    </Flex>
+                                ) : (invoices.data?.data.length === 0) && (
+                                    <Flex justify="left">
+                                        <Text>Nenhuma nota encontrada.</Text>
+                                    </Flex>
+                                ) ) 
                             }
 
-                            
+                            {
+                                (!invoices.isLoading && !invoices.error) && Object.keys(invoices.data?.data).map((day:string) => {
+                                    return(
+                                        invoices.data?.data[day].map((invoice:Invoice) => {
+                                            return (
+                                                <Stack key={invoice.file} p="6" border="1px solid" borderColor="gray.400" borderRadius="26px">
+                                                    <HStack>
+                                                        <Link target="_blank" href={`${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_STORAGE : process.env.REACT_APP_API_LOCAL_STORAGE}${invoice.file}`} display="flex" fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
+                                                            <FileIcon stroke="#4e4b66" fill="none" width="16px"/>
+                                                            <Text ml="2">Ver Nota</Text>
+                                                        </Link>
+    
+                                                        <IconButton onClick={() => handleRemoveInvoice(invoice.id)} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir nota" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
+                                                    </HStack>
+    
+                                                    <HStack spacing="6" as="form" onSubmit={UpdateInvoiceForm.handleSubmit( (data) => handleUpdateInvoice(data, invoice.id))}>
+                                                        <ControlledInput key={invoice.file} control={UpdateInvoiceForm.control} value={invoice.date} name="date" type="date" placeholder="Data da nota" variant="outline" error={formState.errors.file} focusBorderColor="blue.400"/>
+                                                        
+                                                        <SolidButton mr="6" color="white" bg="green.400" colorScheme="green" type="submit" isLoading={UpdateInvoiceForm.formState.isSubmitting}>
+                                                            Salvar
+                                                        </SolidButton>
+                                                    </HStack>
+                                                </Stack>
+                                            )
+                                        })
+                                    )
+                                })
+                            }
 
-                            {/* <Input register={register} name="invoice_date" type="date" placeholder="Data da nota" variant="outline" error={formState.errors.invoice_date}/> */}
-                            <ControlledInput control={control} value={toAddInvoicePaymentData.invoice2_date} name="invoice2_date" type="date" placeholder="Data da nota" variant="outline" error={formState.errors.invoice2_date} focusBorderColor="blue.400"/>
+                            <Stack>
+                                <Text fontWeight="bold">Adicionar Nota</Text>
+
+                                <Divider/>
+                            </Stack>
+
+                            <Stack as="form"  spacing="4" onSubmit={handleSubmit(handleCreateInvoice)}>
+                                <HStack spacing="4" align="baseline">
+                                    <HStack spacing="6" display="flex" pos="relative">
+
+                                        <Box as="label" display="flex" borderRadius="full" alignItems="center" h="29px" fontWeight="600" fontSize="12px" pl="6" pr="6" cursor="pointer" border="2px" borderColor="blue.400" color="blue.400">
+                                            <ChakraInput name="date" type="file" accept="image/png, image/jpeg, application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint,text/plain, application/pdf" display="none" onChange={handleChangeFile}/> 
+                                            Selecionar Nota
+                                        </Box>
+
+                                        <Text>{fileName}</Text>
+                                        
+                                    </HStack>
+                                </HStack>
+
+                                <HStack spacing="6">
+                                    <ControlledInput control={control} value={todayYmd} name="date" type="date" placeholder="Data da nota" variant="outline" error={formState.errors.date} focusBorderColor="blue.400"/>
+
+                                    <SolidButton mr="6" color="white" bg="green.400" colorScheme="green" type="submit" isLoading={formState.isSubmitting}>
+                                        Adicionar
+                                    </SolidButton>
+                                </HStack>
+                            </Stack>
                         </Stack>
                     </ModalBody>
 
                 <ModalFooter p="10">
-                    <SolidButton mr="6" color="white" bg="green.400" colorScheme="green" type="submit" isLoading={formState.isSubmitting}>
-                        Salvar
-                    </SolidButton>
-
-                    <Link onClick={onRequestClose} color="gray.700" fontSize="14px">Cancelar</Link>
+                    <Link onClick={onRequestClose} color="gray.700" fontSize="14px">Fechar</Link>
                 </ModalFooter>
             </ModalContent>
         </Modal>
