@@ -42,6 +42,7 @@ export interface PaymentCategory{
     id: number;
     name: string;
     color: string;
+    individual: boolean;
     created_at?: Date;
     updated_at?: Date;
 }
@@ -111,6 +112,7 @@ export interface BillCategory{
     id: number;
     name: string;
     color: string;
+    individual: boolean;
     created_at?: Date;
     updated_at?: Date;
 }

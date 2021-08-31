@@ -55,6 +55,7 @@ export default function BillCategories(){
             name: '',
             id: 0,
             color: '#ffffff',
+            individual: false,
         };
         
         return data;

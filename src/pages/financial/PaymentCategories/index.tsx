@@ -7,6 +7,7 @@ import { ReactComponent as PlusIcon } from '../../../assets/icons/Plus.svg';
 import { ReactComponent as EllipseIcon } from '../../../assets/icons/Ellipse.svg';
 import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
 import { ReactComponent as BackArrow } from '../../../assets/icons/Back Arrow.svg';
+import { ReactComponent as LinkIcon } from '../../../assets/icons/Link.svg';
 
 import { Flex, HStack, Link, SimpleGrid, Text } from "@chakra-ui/layout";
 import { IconButton } from "@chakra-ui/button";
@@ -24,10 +25,12 @@ import { useHistory } from "react-router";
 import { Spinner } from "@chakra-ui/spinner";
 import { EditPaymentCategoryModal } from "./EditPaymentCategoryModal";
 import { ConfirmPaymentCategoryRemoveModal } from "./ConfirmPaymentCategoryRemoveModal";
+import { Checkbox } from "@chakra-ui/react";
 
 interface CreateNewPaymentCategoryFormData{
     name: string;
     color: string;
+    individual: boolean;
 }
 
 const CreateNewPaymentCategoryFormSchema = yup.object().shape({
@@ -55,6 +58,7 @@ export default function PaymentCategories(){
             name: '',
             id: 0,
             color: '#ffffff',
+            individual: false,
         };
         
         return data;
@@ -117,6 +121,8 @@ export default function PaymentCategories(){
             return;
         }
 
+        console.log(paymentCategoryData);
+
         try{
             await api.post('/payment_categories/store', paymentCategoryData);
 
@@ -157,6 +163,13 @@ export default function PaymentCategories(){
             <HStack as="form" spacing="4" mb="10" onSubmit={handleSubmit(handleCreateCategory)}>
                 <ColorPicker color={color} setNewColor={setColor}/>
                 <Input name="name" register={register} type="text" placeholder="Categoria" variant="outline" maxW="200px" error={formState.errors.name}/>
+
+                <Flex as="div">
+                    <Checkbox {...register("individual")} colorScheme="blue" size="md" mr="15" borderRadius="full" fontSize="sm" color="gray.800" value={1}>
+                        Individual
+                    </Checkbox>
+                </Flex>
+
                 <SolidButton type="submit" mb="10" color="white" bg="blue.400" icon={PlusIcon} colorScheme="blue">
                     Adicionar
                 </SolidButton>
@@ -174,6 +187,11 @@ export default function PaymentCategories(){
                             <Flex alignItems="center" cursor="pointer" onClick={() => OpenEditPaymentCategoryModal(category.id)}>
                                 <EllipseIcon stroke="none" fill={category.color ? category.color : "#dddddd"}/>
                                 <Text mx="4" color={category.color ? category.color : "#dddddd"}>{category.name}</Text>
+                                {
+                                    category.individual ?
+                                        <LinkIcon width="19px" height="19px" stroke="none" fill={category.color ? category.color : "#dddddd"}/>
+                                    : ""
+                                }
                             </Flex>
                             
                             <IconButton onClick={() => OpenConfirmPaymentCategoryRemoveModal(category.id)} h="24px" w="23px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>

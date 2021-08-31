@@ -128,9 +128,9 @@ export default function Reports(){
         >
 
         <Board>
-            <HStack as="form" spacing="10" w="100%" mb="10">
-                <FormControl pos="relative">
-                    <ChakraSelect onChange={handleChangeYear} defaultValue={workingCompany.company?.id} h="45px" name="selected_company" w="100%" maxW="200px" fontSize="sm" focusBorderColor="purple.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
+            <HStack as="form" spacing="12" w="100%" mb="6" justifyContent="left">
+                <FormControl display="flex" w="fit-content" minW="150px">
+                    <ChakraSelect onChange={handleChangeYear} defaultValue={workingCompany.company?.id} h="45px" name="selected_company" maxW="200px" fontSize="sm" focusBorderColor="purple.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
                         {
                             years.map((year:Number) => {
                                 return (
@@ -140,7 +140,11 @@ export default function Reports(){
                         }
                     </ChakraSelect>
                 </FormControl>
+
+                <Text fontWeight="bold">RELATÓRIO GERAL</Text>
             </HStack>
+
+            <Divider mb="6"/>
 
             { exitTransactions.isLoading ? (
                     <Flex justify="center">
