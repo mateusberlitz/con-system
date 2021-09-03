@@ -185,7 +185,7 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
             onRequestClose();
             afterCreate();
             reset();
-        }catch(error) {
+        }catch(error:any) {
             showErrors(error, toast);
 
             if(error.response.data.access){

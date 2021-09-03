@@ -336,7 +336,7 @@ export default function Payments(){
             });
 
             payments.refetch();
-        }catch(error) {
+        }catch(error: any) {
             showErrors(error, toast);
 
             if(error.response.data.access){
@@ -358,7 +358,7 @@ export default function Payments(){
             });
 
             payments.refetch();
-        }catch(error) {
+        }catch(error:any) {
             showErrors(error, toast);
 
             if(error.response.data.access){
@@ -380,7 +380,7 @@ export default function Payments(){
             });
 
             payments.refetch();
-        }catch(error) {
+        }catch(error:any) {
             showErrors(error, toast);
 
             if(error.response.data.access){
@@ -402,7 +402,7 @@ export default function Payments(){
             });
 
             payments.refetch();
-        }catch(error) {
+        }catch(error:any) {
             showErrors(error, toast);
 
             if(error.response.data.access){
@@ -682,6 +682,13 @@ export default function Payments(){
                                                                     <Flex onClick={() => OpenAddInvoicePaymentModal({id: payment.id, title: payment.title})} fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
                                                                         <AttachIcon stroke="#4e4b66" fill="none" width="16px"/>
                                                                         <Text ml="2">Notas</Text>
+                                                                        {
+                                                                            (payment.invoices_count && payment.invoices_count > 0) ? (
+                                                                                <Text ml="2">: {payment.invoices_count}</Text>
+                                                                            ) : (
+                                                                                <Text ml="2">-</Text>
+                                                                            )
+                                                                        }
                                                                     </Flex>
                                                             
                                                             }

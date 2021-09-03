@@ -89,6 +89,7 @@ export interface Payment{
     updated_at?: Date;
     invoice_date?: string;
     invoice2_date?: string;
+    invoices_count?: number;
 }
 
 export interface dayPayments{
@@ -134,6 +135,7 @@ export interface Bill{
     paid: number;
     expire: string;
     category: BillCategory;
+    cash_desk_category: CashDeskCategory;
     company: Company;
     source?: Source;
     observation: string;

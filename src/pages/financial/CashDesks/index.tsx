@@ -149,7 +149,7 @@ export default function CashDesks(){
     const [categories, setCategories] = useState<BillCategory[]>([]);
 
     const loadCategories = async () => {
-        const { data } = await api.get('/bill_categories');
+        const { data } = await api.get('/cashdesk_categories');
 
         setCategories(data);
     }
@@ -178,9 +178,9 @@ export default function CashDesks(){
                     Adicionar Movimentação
                 </SolidButton>
 
-                {/* <OutlineButton onClick={() => {history.push('/caixa/categorias')}}>
+                <OutlineButton onClick={() => {history.push('/caixa/categorias')}}>
                     Categorias
-                </OutlineButton> */}
+                </OutlineButton>
 
                 {/* <OutlineButton onClick={OpenExportReportModal} variant="outline" colorScheme="blue" color="blue.400" borderColor="blue.400">
                     Gerar Relatório

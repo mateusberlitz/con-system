@@ -246,7 +246,7 @@ export default function Bills(){
             });
 
             bills.refetch();
-        }catch(error) {
+        }catch(error: any) {
             showErrors(error, toast);
 
             if(error.response.data.access){
@@ -428,14 +428,15 @@ export default function Bills(){
                                                                 </Flex>
                                                             </AccordionButton>
 
+                                                            
                                                             <Flex fontWeight="500" alignItems="center" opacity={bill.status ? 0.5 : 1}>
-                                                                <EllipseIcon stroke="none" fill={bill.category?.color}/>
-                                                                <Text ml="2" color={bill.category?.color}>{bill.title}</Text>
+                                                                <EllipseIcon stroke="none" fill={bill.cash_desk_category !== null ? bill.cash_desk_category.color : bill.category?.color}/>
+                                                                <Text ml="2" color={bill.cash_desk_category !== null ? bill.cash_desk_category.color : bill.category?.color}>{bill.title}</Text>
                                                             </Flex>
 
                                                             <Flex fontWeight="500" alignItems="center" color="gray.800" opacity={bill.status ? 0.5 : 1}>
                                                                 <TagIcon stroke="#4e4b66" fill="none" width="17px"/>
-                                                                <Text ml="2">{bill.category.name}</Text>
+                                                                <Text ml="2">{bill.cash_desk_category !== null ? bill.cash_desk_category.name : bill.category.name}</Text>
                                                             </Flex>
                                                             
                                                             {
