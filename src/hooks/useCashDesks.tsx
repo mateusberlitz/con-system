@@ -6,6 +6,7 @@ export interface CashDesksFilterData{
     start_date?: string;
     end_date?: string;
     category?: number;
+    type?: number;
     company?: number;
     page?: number;
     limit?: number;
@@ -20,6 +21,7 @@ export const getCashDesks = async (filter?: CashDesksFilterData, limit: number =
               search: filter.search,
               company: filter.company,
               category: filter.category,
+              type: filter.type,
               start_date: filter.start_date,
               end_date: filter.end_date,
             }

@@ -12,6 +12,7 @@ import { ColorPicker } from "../../../components/Forms/ColorPicker";
 import { useEffect, useState } from "react";
 import { redirectMessages } from "../../../utils/redirectMessages";
 import { isAuthenticated } from "../../../services/auth";
+import { ControlledCheckbox } from "../../../components/Forms/CheckBox/ControlledCheckbox";
 
 interface EditPaymentCategoryModalProps{
     isOpen: boolean;
@@ -49,7 +50,7 @@ export function EditPaymentCategoryModal( { isOpen, toEditPaymentCategoryData, c
     const toast = useToast();
     const { showErrors } = useErrors();
 
-    const { handleSubmit, register, formState, control} = useForm<EditPaymentCategoryFormData>({
+    const { handleSubmit, reset, register, formState, control} = useForm<EditPaymentCategoryFormData>({
         resolver: yupResolver(EditPaymentCategoryFormSchema),
         defaultValues: {
             name: toEditPaymentCategoryData.name,
@@ -85,6 +86,7 @@ export function EditPaymentCategoryModal( { isOpen, toEditPaymentCategoryData, c
             });
 
             afterEdit();
+            reset();
             onRequestClose();
         }catch(error) {
             console.log(error);
@@ -139,7 +141,7 @@ export function EditPaymentCategoryModal( { isOpen, toEditPaymentCategoryData, c
                         </HStack>
 
                         <Flex as="div">
-                            <Controller 
+                            {/* <Controller 
                                 name="individual"
                                 control={control}
                                 defaultValue={isIndividualChecked}
@@ -148,7 +150,8 @@ export function EditPaymentCategoryModal( { isOpen, toEditPaymentCategoryData, c
                                             Individual
                                         </Checkbox>
                                 }
-                            />
+                            /> */}
+                            <ControlledCheckbox label="Categoria Individual" control={control} defaultIsChecked={toEditPaymentCategoryData.individual} name="individual" error={formState.errors.individual}/>
                         </Flex>
                     
                     </Stack>

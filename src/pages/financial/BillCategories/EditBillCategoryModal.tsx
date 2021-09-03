@@ -1,4 +1,4 @@
-import { HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, useToast } from "@chakra-ui/react";
+import { Flex, HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, useToast } from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { ControlledInput } from "../../../components/Forms/Inputs/ControlledInput";
 
@@ -12,6 +12,7 @@ import { ColorPicker } from "../../../components/Forms/ColorPicker";
 import { useEffect } from "react";
 import { isAuthenticated } from "../../../services/auth";
 import { redirectMessages } from "../../../utils/redirectMessages";
+import { ControlledCheckbox } from "../../../components/Forms/CheckBox/ControlledCheckbox";
 
 interface EditBillCategoryModalProps{
     isOpen: boolean;
@@ -25,17 +26,20 @@ interface EditBillCategoryModalProps{
 interface EditBillCategoryFormData{
     name: string;
     color: string;
+    individual: boolean;
 }
 
 interface EditBillCategoryData{
     id: number;
     name: string;
     color: string;
+    individual: boolean;
 }
 
 const EditBillCategoryFormSchema = yup.object().shape({
     name: yup.string().required('Nome da categoria é obrigatório'),
     color: yup.string(),
+    individual: yup.boolean(),
 });
 
 export function EditBillCategoryModal( { isOpen, toEditBillCategoryData, color, changeColor, afterEdit, onRequestClose } : EditBillCategoryModalProps){
@@ -114,6 +118,10 @@ export function EditBillCategoryModal( { isOpen, toEditBillCategoryData, color, 
                             <ColorPicker color={color} setNewColor={changeColor}/>
                             <ControlledInput control={control} value={toEditBillCategoryData.name} name="name" type="text" placeholder="Nome da categoria" variant="outline" error={formState.errors.name}/>
                         </HStack>
+
+                        <Flex as="div">
+                            <ControlledCheckbox label="Categoria Individual" control={control} defaultIsChecked={toEditBillCategoryData.individual} name="individual" error={formState.errors.individual}/>
+                        </Flex>
                     
                     </Stack>
                 </ModalBody>

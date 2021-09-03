@@ -21,6 +21,7 @@ import { PendenciesSummary } from "./PendenciesSummary";
 import { useCompanies } from "../../hooks/useCompanies";
 import { FormControl } from "@chakra-ui/react";
 import { CashFlowsFilterData, useCashFlows } from "../../hooks/useCashFlows";
+import { TaskFilterData, useTasks } from "../../hooks/useTasks";
 
 
 export default function Financial(){
@@ -137,7 +138,23 @@ export default function Financial(){
     //const cashFlows = useCashFlows(filterCashFlow, 5, 1);
 
 
+    const [page, setPage] = useState(1);
 
+    const handleChangePage = (page: number) => {
+        setPage(page);
+    }
+
+    const [tasksFilter, setTasksFilter] = useState<TaskFilterData>(() => {
+        const data: TaskFilterData = {
+            search: '',
+            company: workingCompany.company?.id,
+            author: (profile ? profile.id : 0),
+        };
+        
+        return data;
+    })
+
+    const tasks = useTasks(tasksFilter, page);
 
     const companies = useCompanies();
 
@@ -168,6 +185,12 @@ export default function Financial(){
         updatedFilterPayments.company = selectedCompanyId;
 
         setFilter(updatedFilterPayments);
+
+        // //filtro de tarefas
+        const updatedTasksFilter = tasksFilter;
+        updatedTasksFilter.company = selectedCompanyId;
+
+        setTasksFilter(updatedTasksFilter);
 
         // //filtro dos pagamentos pendentes
         // const updatedFilterPendencies = filterPendencies;
@@ -227,7 +250,7 @@ export default function Financial(){
                     
 
                     <Stack spacing="8" w="45%">
-                        <TasksSummary/>
+                        <TasksSummary tasks={tasks} page={page} setPage={handleChangePage}/>
 
                         {
                             HasPermission(permissions, 'Financeiro Completo') && (

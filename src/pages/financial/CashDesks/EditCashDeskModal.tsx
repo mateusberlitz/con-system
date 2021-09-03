@@ -29,6 +29,7 @@ export interface EditCashDeskFormData{
     title: string;
     company: number;
     category: number;
+    type?: number;
     value: string;
     date: string;
 }
@@ -37,6 +38,7 @@ const EditCashDeskFormSchema = yup.object().shape({
     title: yup.string().required('Título da movimentação obrigatório'),
     company: yup.number(),
     category: yup.number(),
+    type: yup.number(),
     value: yup.string().required("Informe o valor da movimentação"),
     date: yup.date().required("Selecione a data"),
 });
@@ -126,16 +128,24 @@ export function EditCashDeskModal( { isOpen, onRequestClose, afterEdit, toEditCa
                 
                 <ModalBody pl="10" pr="10">
                     <Stack spacing="6">
-                        <ControlledInput control={control} value={toEditCashDeskData.title} name="title" type="text" placeholder="Título" variant="outline" error={formState.errors.title} focusBorderColor="blue.400"/>
+                        <HStack spacing="4" align="baseline">
+                            <ControlledSelect control={control} name="type" value={toEditCashDeskData.type?.toString()} error={formState.errors.type} variant="outline" w="100%" maxW="200px" focusBorderColor="blue.400"> 
+                                <option value={1}>Dinheiro</option>
+                                <option value={2}>Cartão</option>
+                                <option value={3}>Pix</option>
+                            </ControlledSelect>
 
-                        <ControlledSelect control={control} name="category" value={toEditCashDeskData.category.toString()} error={formState.errors.category} variant="outline" w="100%" maxW="200px" focusBorderColor="blue.400"> 
-                                <option key="0" value="0">Categoria</option>
-                                {categories && categories.map((category:CashDeskCategory) => {
-                                    return (
-                                        <option key={category.id} value={category.id}>{category.name}</option>
-                                    )
-                                })}
-                        </ControlledSelect>
+                            <ControlledSelect control={control} name="category" value={toEditCashDeskData.category.toString()} error={formState.errors.category} variant="outline" w="100%" maxW="200px" focusBorderColor="blue.400"> 
+                                    <option key="0" value="0">Categoria</option>
+                                    {categories && categories.map((category:CashDeskCategory) => {
+                                        return (
+                                            <option key={category.id} value={category.id}>{category.name}</option>
+                                        )
+                                    })}
+                            </ControlledSelect>
+                        </HStack>
+
+                        <ControlledInput control={control} value={toEditCashDeskData.title} name="title" type="text" placeholder="Título" variant="outline" error={formState.errors.title} focusBorderColor="blue.400"/>
 
                         <HStack spacing="4" align="baseline">
                             <ControlledInput control={control} value={toEditCashDeskData.value} name="value" type="text" placeholder="Telefone" variant="outline" mask="money" error={formState.errors.value} focusBorderColor="blue.400"/>

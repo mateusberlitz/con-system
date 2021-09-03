@@ -10,7 +10,7 @@ import { useState } from "react";
 import { TaskFilterData, useTasks } from "../../hooks/useTasks";
 import { formatYmdDate } from "../../utils/Date/formatYmdDate";
 import { NewTaskModal } from "../../pages/Tasks/NewTaskModal";
-import { Task } from "../../types";
+import { Company, Task } from "../../types";
 import { formatDate } from "../../utils/Date/formatDate";
 import { getDay } from "../../utils/Date/getDay";
 import { formatBRDate } from "../../utils/Date/formatBRDate";
@@ -21,27 +21,38 @@ import { api } from "../../services/api";
 import { showErrors } from "../../hooks/useErrors";
 import { Pagination } from "../../components/Pagination";
 import { useProfile } from "../../hooks/useProfile";
+import { useEffect } from "react";
+import { UseQueryResult } from "react-query";
 
 interface RemoveTaskData{
     id: number;
 }
 
-export function TasksSummary(){
-    const workingCompany = useWorkingCompany();
-    const [page, setPage] = useState(1);
-    const {profile} = useProfile();
+interface TasksSummaryProps{
+    tasks: UseQueryResult<{
+        data: any;
+        total: number;
+    }, unknown>;
+    page: number;
+    setPage: (page:number) => void;
+}
 
-    const [filter, setFilter] = useState<TaskFilterData>(() => {
-        const data: TaskFilterData = {
-            search: '',
-            company: workingCompany.company?.id,
-            author: (profile ? profile.id : 0),
-        };
+export function TasksSummary({tasks, page, setPage}: TasksSummaryProps){
+    // const workingCompany = useWorkingCompany();
+    // const [page, setPage] = useState(1);
+    // const {profile} = useProfile();
+
+    // const [filter, setFilter] = useState<TaskFilterData>(() => {
+    //     const data: TaskFilterData = {
+    //         search: '',
+    //         company: company?.id,
+    //         author: (profile ? profile.id : 0),
+    //     };
         
-        return data;
-    })
+    //     return data;
+    // })
 
-    const tasks = useTasks(filter, page);
+    // const tasks = useTasks(filter, page);
 
     const [isNewTaskModalOpen, setIsNewTaskModalOpen] = useState(false);
 
@@ -90,6 +101,14 @@ export function TasksSummary(){
             showErrors(error, toast);
         }
     }
+
+    // useEffect(() => {
+    //     console.log(company?.id);
+    //     const updatedFilter = filter;
+    //     updatedFilter.company = company?.id;
+
+    //     setFilter(updatedFilter);
+    // }, [company, setFilter])
 
     return(
         <>

@@ -133,6 +133,18 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
             if(paymentData.invoice_date !== undefined && paymentData.invoice_date !== ""){
                 paymentData.invoice_date = formatInputDate(paymentData.invoice_date);
                 invoiceFormedData.append('date', paymentData.invoice_date);
+            }else{
+                if(toFormInvoice !== undefined && toFormInvoice !== ""){
+                    toast({
+                        title: "Ops",
+                        description: `Selecione a data da nota`,
+                        status: "warning",
+                        duration: 12000,
+                        isClosable: true,
+                    });
+    
+                    return;
+                }
             }
 
             delete paymentData.invoice_date;

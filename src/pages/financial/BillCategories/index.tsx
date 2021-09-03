@@ -7,6 +7,7 @@ import { ReactComponent as PlusIcon } from '../../../assets/icons/Plus.svg';
 import { ReactComponent as EllipseIcon } from '../../../assets/icons/Ellipse.svg';
 import { ReactComponent as BackArrow } from '../../../assets/icons/Back Arrow.svg';
 import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
+import { ReactComponent as LinkIcon } from '../../../assets/icons/Link.svg';
 
 import { Flex, HStack, Link, SimpleGrid, Text } from "@chakra-ui/layout";
 import { IconButton } from "@chakra-ui/button";
@@ -24,15 +25,18 @@ import { useHistory } from "react-router";
 import { Spinner } from "@chakra-ui/spinner";
 import { EditBillCategoryModal } from "./EditBillCategoryModal";
 import { ConfirmBillCategoryRemoveModal } from "./ConfirmBillCategoryRemoveModal";
+import { ControlledCheckbox } from "../../../components/Forms/CheckBox/ControlledCheckbox";
 
 interface CreateNewBillCategoryFormData{
     name: string;
     color: string;
+    individual: boolean;
 }
 
 const CreateNewBillCategoryFormSchema = yup.object().shape({
     name: yup.string().required('Insira um nome para a categoria.'),
     color: yup.string(),
+    individual: yup.boolean(),
 });
 
 export default function BillCategories(){
@@ -88,7 +92,7 @@ export default function BillCategories(){
         setEditBillCategoryData(selectedBillData);
     }
 
-    const { register, handleSubmit, reset, formState} = useForm<CreateNewBillCategoryFormData>({
+    const { register, control, handleSubmit, reset, formState} = useForm<CreateNewBillCategoryFormData>({
         resolver: yupResolver(CreateNewBillCategoryFormSchema),
     });
 
@@ -158,6 +162,11 @@ export default function BillCategories(){
             <HStack as="form" spacing="4" mb="10" onSubmit={handleSubmit(handleCreateCategory)}>
                 <ColorPicker color={color} setNewColor={setColor}/>
                 <Input name="name" register={register} type="text" placeholder="Categoria" variant="outline" maxW="200px" error={formState.errors.name}/>
+
+                <Flex as="div">
+                    <ControlledCheckbox label="Categoria Individual" control={control} defaultIsChecked={false} name="individual" error={formState.errors.individual}/>
+                </Flex>
+
                 <SolidButton type="submit" mb="10" color="white" bg="blue.400" icon={PlusIcon} colorScheme="blue">
                     Adicionar
                 </SolidButton>
@@ -170,12 +179,16 @@ export default function BillCategories(){
                         <Spinner/>
                     </Flex>
                 ) : categories.map(category => {
-                    console.log(category);
                     return (
                         <Flex key={category.name} w="100%" justify="space-between" fontWeight="500" alignItems="center" bg="white" borderRadius="full" shadow="xl" h="54px" px="8">
                             <Flex alignItems="center" cursor="pointer" onClick={() => OpenEditBillCategoryModal(category.id)}>
                                 <EllipseIcon stroke="none" fill={category.color ? category.color : "#dddddd"}/>
                                 <Text mx="4" color={category.color ? category.color : "#dddddd"}>{category.name}</Text>
+                                {
+                                    category.individual ?
+                                        <LinkIcon width="19px" height="19px" stroke="none" fill={category.color ? category.color : "#dddddd"}/>
+                                    : ""
+                                }
                             </Flex>
                             
                             <IconButton onClick={() => OpenConfirmBillCategoryRemoveModal(category.id)} h="24px" w="23px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>

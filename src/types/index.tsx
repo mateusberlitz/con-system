@@ -200,6 +200,7 @@ export interface CashDeskInterface{
     value: number;
     category: CashDeskCategory;
     company: Company;
+    type: number;
     date: string;
     created_at?: string;
     updated_at?: Date;

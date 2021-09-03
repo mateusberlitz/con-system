@@ -19,6 +19,7 @@ import { isAuthenticated } from "../../../services/auth";
 import { redirectMessages } from "../../../utils/redirectMessages";
 import { formatYmdDate } from "../../../utils/Date/formatYmdDate";
 import { ControlledInput } from "../../../components/Forms/Inputs/ControlledInput";
+import { ControlledCheckbox } from "../../../components/Forms/CheckBox/ControlledCheckbox";
 
 interface NewCashDesksModalProps{
     isOpen: boolean;
@@ -31,6 +32,7 @@ interface CreateNewCashDesksFormData{
     title: string;
     company: number;
     category: number;
+    type?: number;
     value: string;
     date: string;
 }
@@ -39,6 +41,7 @@ const CreateNewCashDesksFormSchema = yup.object().shape({
     title: yup.string().required('Título da movimentação é obrigatório.'),
     company: yup.number(),
     category: yup.number(),
+    type: yup.number(),
     value: yup.string().required("Informe o valor da movimentação."),
     date: yup.date().required("Selecione a data"),
 });
@@ -126,16 +129,23 @@ export function NewCashDesksModal( { isOpen, onRequestClose, afterCreate, catego
                 
                 <ModalBody pl="10" pr="10">
                     <Stack spacing="6">
+                        <HStack spacing="4" align="baseline">
+                            <Select register={register} h="45px" value="0" name="type" w="100%" fontSize="sm" focusBorderColor="blue.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" error={formState.errors.type}>
+                                <option value={1}>Dinheiro</option>
+                                <option value={2}>Cartão</option>
+                                <option value={3}>Pix</option>
+                            </Select>
+
+                            <Select register={register} h="45px" value="0" name="category" w="100%" fontSize="sm" focusBorderColor="blue.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Categoria" error={formState.errors.category}>
+                                {categories && categories.map((category:PaymentCategory) => {
+                                    return (
+                                        <option key={category.id} value={category.id}>{category.name}</option>
+                                    )
+                                })}
+                            </Select>
+                        </HStack>
                         
                         <Input register={register} name="title" type="text" placeholder="Título" variant="outline" error={formState.errors.title}/>
-
-                        <Select register={register} h="45px" value="0" name="category" w="100%" fontSize="sm" focusBorderColor="blue.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Categoria" error={formState.errors.category}>
-                            {categories && categories.map((category:PaymentCategory) => {
-                                return (
-                                    <option key={category.id} value={category.id}>{category.name}</option>
-                                )
-                            })}
-                        </Select>
 
                         <HStack spacing="4" align="baseline">
                             <Input register={register} name="value" type="text" placeholder="Valor" variant="outline" mask="money" error={formState.errors.value}/>

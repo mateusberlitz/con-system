@@ -12,6 +12,9 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { ReactComponent as PlusIcon } from '../../../assets/icons/Plus.svg';
 import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
 import { ReactComponent as TagIcon } from '../../../assets/icons/Tag.svg';
+import { ReactComponent as CardIcon } from '../../../assets/icons/Card.svg';
+import { ReactComponent as PixIcon } from '../../../assets/icons/Pix.svg';
+import { DollarSign } from "react-feather";
 
 import { Input } from "../../../components/Forms/Inputs/Input";
 import { OutlineButton } from "../../../components/Buttons/OutlineButton";
@@ -47,6 +50,7 @@ const FilterCashDeskFormSchema = yup.object().shape({
 
 export default function CashDesks(){
     const workingCompany = useWorkingCompany();
+
     const history = useHistory();
 
     const [filter, setFilter] = useState<CashDesksFilterData>(() => {
@@ -145,7 +149,7 @@ export default function CashDesks(){
     const [categories, setCategories] = useState<BillCategory[]>([]);
 
     const loadCategories = async () => {
-        const { data } = await api.get('/cashdesk_categories');
+        const { data } = await api.get('/bill_categories');
 
         setCategories(data);
     }
@@ -174,9 +178,9 @@ export default function CashDesks(){
                     Adicionar Movimentação
                 </SolidButton>
 
-                <OutlineButton onClick={() => {history.push('/caixa/categorias')}}>
+                {/* <OutlineButton onClick={() => {history.push('/caixa/categorias')}}>
                     Categorias
-                </OutlineButton>
+                </OutlineButton> */}
 
                 {/* <OutlineButton onClick={OpenExportReportModal} variant="outline" colorScheme="blue" color="blue.400" borderColor="blue.400">
                     Gerar Relatório
@@ -202,6 +206,12 @@ export default function CashDesks(){
                                     <option key={category.id} value={category.id}>{category.name}</option>
                                 )
                             })}
+                        </Select>
+
+                        <Select register={register} h="45px" name="type" w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Tipo" error={formState.errors.type}>
+                            <option value={1}>Dinheiro</option>
+                            <option value={2}>Cartão</option>
+                            <option value={3}>Pix</option>
                         </Select>
 
                         <OutlineButton type="submit" mb="10" color="blue.400" borderColor="blue.400" colorScheme="blue">
@@ -277,9 +287,29 @@ export default function CashDesks(){
 
                                         return (
                                             <HStack key={`${cashFlow.id}-${cashFlow.title}`} justifyContent="space-between" borderTop="2px" borderColor="gray.500" px="8" py="4">
-                                                <Flex>
+                                                <Flex align="center">
                                                     <Text mr="6" fontSize="sm" color="gray.800">{cashFlow.created_at && getHour(cashFlow.created_at)}</Text>
-                                                    <Text color="gray.800">{cashFlow.title}</Text>
+                                                    <Text color="gray.800" mr="8">{cashFlow.title}</Text>
+                                                    
+                                                    {
+                                                        cashFlow.type === 1 ? (
+                                                            <HStack>
+                                                                <DollarSign width="16px" color="#4e4b66"/>
+                                                                <Text fontWeight="bold" color="gray.800">DINHEIRO</Text>
+                                                            </HStack>
+                                                        ) : cashFlow.type === 2 ? (
+                                                            <HStack>
+                                                                <CardIcon width="16px" stroke="#4e4b66"/>
+                                                                <Text fontWeight="bold" color="gray.800">CARTÃO</Text>
+                                                            </HStack>
+                                                        ) : (
+                                                            <HStack>
+                                                                <PixIcon width="16px" height="16px" stroke="#4e4b66"/>
+                                                                <Text fontWeight="bold" color="gray.800">PIX</Text>
+                                                            </HStack>
+                                                        )
+                                                        
+                                                    }
                                                 </Flex>
 
                                                 {/* <HStack>
