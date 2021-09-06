@@ -148,7 +148,7 @@ export function AddInvoicePaymentModal ( { isOpen, onRequestClose, afterAttach, 
             setToFormFile("");
 
             invoices.refetch();
-        }catch(error) {
+        }catch(error:any) {
             showErrors(error, toast);
 
             if(error.response.data.access){
@@ -174,7 +174,7 @@ export function AddInvoicePaymentModal ( { isOpen, onRequestClose, afterAttach, 
                 duration: 12000,
                 isClosable: true,
             });
-        }catch(error) {
+        }catch(error:any) {
             showErrors(error, toast);
 
             if(error.response.data.access){
@@ -223,7 +223,7 @@ export function AddInvoicePaymentModal ( { isOpen, onRequestClose, afterAttach, 
                 duration: 12000,
                 isClosable: true,
             });
-        }catch(error) {
+        }catch(error:any) {
             showErrors(error, toast);
 
             if(error.response.data.access){
