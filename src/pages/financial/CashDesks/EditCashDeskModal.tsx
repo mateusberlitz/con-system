@@ -56,6 +56,7 @@ export function EditCashDeskModal( { isOpen, onRequestClose, afterEdit, toEditCa
             value: toEditCashDeskData.value,
             company: toEditCashDeskData.company,
             category: toEditCashDeskData.category,
+            type: toEditCashDeskData.type,
             date: toEditCashDeskData.date
         }
     });
@@ -100,7 +101,7 @@ export function EditCashDeskModal( { isOpen, onRequestClose, afterEdit, toEditCa
 
             afterEdit();
             onRequestClose();
-        }catch(error) {
+        }catch(error:any) {
             showErrors(error, toast);
 
             if(error.response.data.access){
@@ -118,6 +119,8 @@ export function EditCashDeskModal( { isOpen, onRequestClose, afterEdit, toEditCa
         }
     }, [isOpen])
 
+    console.log(toEditCashDeskData);
+
     return (
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
             <ModalOverlay />
@@ -129,7 +132,7 @@ export function EditCashDeskModal( { isOpen, onRequestClose, afterEdit, toEditCa
                 <ModalBody pl="10" pr="10">
                     <Stack spacing="6">
                         <HStack spacing="4" align="baseline">
-                            <ControlledSelect control={control} name="type" value={toEditCashDeskData.type?.toString()} error={formState.errors.type} variant="outline" w="100%" maxW="200px" focusBorderColor="blue.400"> 
+                            <ControlledSelect control={control} name="type" value={toEditCashDeskData.type} error={formState.errors.type} variant="outline" w="100%" maxW="200px" focusBorderColor="blue.400"> 
                                 <option value={1}>Dinheiro</option>
                                 <option value={2}>Cartão</option>
                                 <option value={3}>Pix</option>

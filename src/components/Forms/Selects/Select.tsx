@@ -8,7 +8,7 @@ interface FormSelectProps extends SelectProps{
     variant?: string;
     leftIcon?: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
 
-    value?: string;
+    value?: string | number;
     error?: FieldError;
     register?: UseFormRegister<any>;
     onChange?: (value: any) => void;
@@ -18,7 +18,7 @@ interface FormSelectProps extends SelectProps{
 }
 
 export function Select({ name, children, variant, selectRef, value = "", selected, error, register, onChange, ...rest } : FormSelectProps){
-    const [controlledValue, setControlledValue] = useState("");
+    const [controlledValue, setControlledValue] = useState<string | number>("");
 
     function getRegister(){
         if(register){

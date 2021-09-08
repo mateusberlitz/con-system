@@ -143,7 +143,7 @@ export function EditBillModal( { isOpen, onRequestClose, afterEdit, toEditBillDa
 
             afterEdit();
             onRequestClose();
-        }catch(error) {
+        }catch(error:any) {
             showErrors(error, toast);
 
             if(error.response.data.access){
@@ -189,15 +189,18 @@ export function EditBillModal( { isOpen, onRequestClose, afterEdit, toEditBillDa
                             ))
                         }
 
-                        <ControlledSelect control={control} name="category" value={toEditBillData.category.toString()} error={formState.errors.category} variant="outline" w="100%" maxW="100%" focusBorderColor="blue.400"> 
-                            <option key="0" value="0">Categoria</option>
-                            {categories && categories.map((category:PaymentCategory) => {
-                                return (
-                                    <option key={category.id} value={category.id}>{category.name}</option>
-                                )
-                            })}
-                        </ControlledSelect>
-
+                        {
+                            toEditBillData.category && (
+                                <ControlledSelect control={control} name="category" value={toEditBillData.category.toString()} error={formState.errors.category} variant="outline" w="100%" maxW="100%" focusBorderColor="blue.400"> 
+                                    <option key="0" value="0">Categoria</option>
+                                    {categories && categories.map((category:PaymentCategory) => {
+                                        return (
+                                            <option key={category.id} value={category.id}>{category.name}</option>
+                                        )
+                                    })}
+                                </ControlledSelect>
+                            )
+                        }
                         
                         <HStack spacing="4" align="baseline">
                             <ControlledInput control={control} value={toEditBillData.expire} name="expire" type="date" placeholder="Data de Vencimento" variant="outline" error={formState.errors.expire} focusBorderColor="blue.400"/>

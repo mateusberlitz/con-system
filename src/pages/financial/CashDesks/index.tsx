@@ -282,6 +282,7 @@ export default function CashDesks(){
                                             value: cashFlow.value.toString().replace('.', ','),
                                             company: cashFlow.company?.id,
                                             category: cashFlow.category?.id,
+                                            type: cashFlow.type,
                                             date: cashFlow.date,
                                         }
 

@@ -92,7 +92,7 @@ export function NewCashFlowModal( { isOpen, onRequestClose, afterCreate, categor
             onRequestClose();
             afterCreate();
             reset();
-        }catch(error) {
+        }catch(error: any) {
             showErrors(error, toast);
 
             if(error.response.data.access){

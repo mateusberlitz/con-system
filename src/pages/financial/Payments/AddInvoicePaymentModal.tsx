@@ -24,6 +24,7 @@ import { formatBRDate } from "../../../utils/Date/formatBRDate";
 import { Invoice, Payment } from "../../../types";
 import { InvoicesFilterData, useInvoices } from "../../../hooks/useInvoices";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
+import { FileInput } from "../../../components/Forms/FileInput";
 
 interface AddFilePaymentModalProps{
     isOpen: boolean;
@@ -187,18 +188,6 @@ export function AddInvoicePaymentModal ( { isOpen, onRequestClose, afterAttach, 
     const [fileName, setFileName] = useState("");
     const [toFormFile, setToFormFile] = useState<File | "">();
 
-    function handleChangeFile(event: any){
-        if(event.target.files.length){
-            setFileName(event.target.files[0].name);
-
-            setToFormFile(event.target.files[0]);
-        }else{
-            setFileName("");
-
-            setToFormFile("");
-        }
-    }
-
     useEffect(() => {
         if(!isAuthenticated()){
             history.push({
@@ -279,7 +268,7 @@ export function AddInvoicePaymentModal ( { isOpen, onRequestClose, afterAttach, 
                                                     </HStack>
     
                                                     <HStack spacing="6" as="form" onSubmit={UpdateInvoiceForm.handleSubmit( (data) => handleUpdateInvoice(data, invoice.id))}>
-                                                        <ControlledInput key={invoice.file} control={UpdateInvoiceForm.control} value={invoice.date} name="date" type="date" placeholder="Data da nota" variant="outline" error={formState.errors.file} focusBorderColor="blue.400"/>
+                                                        <ControlledInput key={invoice.file} control={UpdateInvoiceForm.control} value={invoice.date} name="date" type="date" placeholder="Data da nota" variant="outline" error={formState.errors.date} focusBorderColor="blue.400"/>
                                                         
                                                         <SolidButton mr="6" color="white" bg="green.400" colorScheme="green" type="submit" isLoading={UpdateInvoiceForm.formState.isSubmitting}>
                                                             Salvar
@@ -300,7 +289,7 @@ export function AddInvoicePaymentModal ( { isOpen, onRequestClose, afterAttach, 
 
                             <Stack as="form"  spacing="4" onSubmit={handleSubmit(handleCreateInvoice)}>
                                 <HStack spacing="4" align="baseline">
-                                    <HStack spacing="6" display="flex" pos="relative">
+                                    {/* <HStack spacing="6" display="flex" pos="relative">
 
                                         <Box as="label" display="flex" borderRadius="full" alignItems="center" h="29px" fontWeight="600" fontSize="12px" pl="6" pr="6" cursor="pointer" border="2px" borderColor="blue.400" color="blue.400">
                                             <ChakraInput name="date" type="file" accept="image/png, image/jpeg, application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint,text/plain, application/pdf" display="none" onChange={handleChangeFile}/> 
@@ -309,7 +298,8 @@ export function AddInvoicePaymentModal ( { isOpen, onRequestClose, afterAttach, 
 
                                         <Text>{fileName}</Text>
                                         
-                                    </HStack>
+                                    </HStack> */}
+                                    <FileInput label="Selecionar Nota" handleChangeFile={setToFormFile} fileName={fileName} handleChangeFileName={setFileName}/>
                                 </HStack>
 
                                 <HStack spacing="6">

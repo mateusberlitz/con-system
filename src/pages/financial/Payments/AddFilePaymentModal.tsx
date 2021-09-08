@@ -12,6 +12,7 @@ import { useErrors } from "../../../hooks/useErrors";
 import { useEffect, useState } from "react";
 import { isAuthenticated } from "../../../services/auth";
 import { redirectMessages } from "../../../utils/redirectMessages";
+import { FileInput } from "../../../components/Forms/FileInput";
 
 interface AddFilePaymentModalProps{
     isOpen: boolean;
@@ -75,7 +76,7 @@ export function AddFilePaymentModal ( { isOpen, onRequestClose, afterAttach, toA
             onRequestClose();
             afterAttach();
             reset();
-        }catch(error) {
+        }catch(error: any) {
             showErrors(error, toast);
 
             if(error.response.data.access){
@@ -86,7 +87,7 @@ export function AddFilePaymentModal ( { isOpen, onRequestClose, afterAttach, toA
 
 
     const [fileName, setFileName] = useState("");
-    const [toFormFile, setToFormFile] = useState<File>();
+    const [toFormFile, setToFormFile] = useState<File | "">();
 
     function handleChangeFile(event: any){
         if(event.target.files.length){
@@ -119,8 +120,9 @@ export function AddFilePaymentModal ( { isOpen, onRequestClose, afterAttach, toA
                 
                 <ModalBody pl="10" pr="10">
                     <Stack spacing="6">
+                        <Text>Boleto</Text>
                         <HStack spacing="4" align="baseline">
-                            <HStack spacing="6" display="flex" pos="relative">
+                            {/* <HStack spacing="6" display="flex" pos="relative">
 
                                 <Box as="label" display="flex" borderRadius="full" alignItems="center" h="29px" fontWeight="600" fontSize="12px" pl="6" pr="6" cursor="pointer" border="2px" borderColor="purple.300" color="purple.300">
                                     <Input name="image" type="file" accept="image/png, image/jpeg, application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint,text/plain, application/pdf" display="none" onChange={handleChangeFile}/> 
@@ -129,7 +131,8 @@ export function AddFilePaymentModal ( { isOpen, onRequestClose, afterAttach, toA
 
                                 <Text>{fileName}</Text>
                                 
-                            </HStack>
+                            </HStack> */}
+                            <FileInput label="Selecionar" handleChangeFile={setToFormFile} fileName={fileName} handleChangeFileName={setFileName}/>
                         </HStack>
                     </Stack>
                 </ModalBody>

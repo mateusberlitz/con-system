@@ -8,7 +8,7 @@ interface FormSelectProps extends SelectProps{
     children: ReactNode;
     variant?: string;
     leftIcon?: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
-    value?: string;
+    value?: string | number;
 
     error?: FieldError;
 }
