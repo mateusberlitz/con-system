@@ -59,7 +59,7 @@ export interface PartialPayment{
     value: number;
     payment: number;
     cash_flow: number;
-    pay_date?: Date;
+    pay_date?: string;
     created_at?: Date;
     updated_at?: Date;
 }

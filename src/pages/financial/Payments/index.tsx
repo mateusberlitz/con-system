@@ -18,6 +18,7 @@ import { ReactComponent as TagIcon } from '../../../assets/icons/Tag.svg';
 import { ReactComponent as CheckIcon } from '../../../assets/icons/Check.svg';
 import { ReactComponent as FileIcon } from '../../../assets/icons/File.svg';
 import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
+import { ReactComponent as EditIcon } from '../../../assets/icons/Edit.svg';
 import { ReactComponent as RefreshIcon } from '../../../assets/icons/Refresh.svg';
 
 import { Input } from "../../../components/Forms/Inputs/Input";
@@ -49,6 +50,7 @@ import { AddProofPaymentModal } from "./AddProofPaymentModal";
 import { AddInvoicePaymentFormData, AddInvoicePaymentModal } from "./AddInvoicePaymentModal";
 import { ConfirmPartialRemoveModal } from "./ConfirmPartialRemoveModal";
 import { ExportDocumentsModal } from "./ExportDocumentsModal";
+import { EditPartialPaymentFormData, EditPartialPaymentModal } from "./EditPartialPaymentModal";
 
 interface RemovePaymentData{
     id: number;
@@ -208,6 +210,26 @@ export default function Payments(){
     }
     function CloseConfirmPartialRemoveModal(){
         setisConfirmPartialRemoveModalOpen(false);
+    }
+
+    const [isPartialEditModalOpen, setIsPartialEditModalOpen] = useState(false);
+    const [EditPartialData, setEditPartialData] = useState<EditPartialPaymentFormData>(() => {
+
+        const data: EditPartialPaymentFormData = {
+            id: 0,
+            value: '',
+            pay_date: '',
+        };
+        
+        return data;
+    });
+
+    function OpenPartialEditModal(partialData: EditPartialPaymentFormData){
+        setEditPartialData(partialData);
+        setIsPartialEditModalOpen(true);
+    }
+    function ClosePartialEditModal(){
+        setIsPartialEditModalOpen(false);
     }
 
     const [isPayPaymentModalOpen, setIsPayPaymentModalOpen] = useState(false);
@@ -438,12 +460,17 @@ export default function Payments(){
             <PayPaymentModal afterPay={payments.refetch} toPayPaymentData={toPayPaymentData} isOpen={isPayPaymentModalOpen} onRequestClose={ClosePayPaymentModal}/>
             <PayAllPaymentsModal afterPay={payments.refetch} dayToPayPayments={dayToPayPayments} isOpen={isPayAllPaymentsModalOpen} onRequestClose={ClosePayAllPaymentsModal}/>
             <EditPaymentModal categories={categories} toEditPaymentData={toEditPaymentData} users={users.data} providers={providers.data} afterEdit={payments.refetch} isOpen={isEditPaymentModalOpen} onRequestClose={CloseEditPaymentModal}/>
+            
             <ConfirmPaymentRemoveModal afterRemove={payments.refetch} toRemovePaymentData={removePaymentData} isOpen={isConfirmPaymentRemoveModalOpen} onRequestClose={CloseConfirmPaymentRemoveModal}/>
             <ConfirmPartialRemoveModal afterRemove={payments.refetch} toRemovePaymentData={removePartialData} isOpen={isConfirmPartialRemoveModalOpen} onRequestClose={CloseConfirmPartialRemoveModal}/>
+            <EditPartialPaymentModal toEditPartialPaymentData={EditPartialData} afterEdit={payments.refetch} isOpen={isPartialEditModalOpen} onRequestClose={ClosePartialEditModal}/>
+
             <AddFilePaymentModal afterAttach={payments.refetch} toAddFilePaymentData={addFilePaymentData} isOpen={isAddFilePaymentModalOpen} onRequestClose={CloseAddFilePaymentModal}/>
             <AddProofPaymentModal afterAttach={payments.refetch} toAddProofPaymentData={addProofPaymentData} isOpen={isAddProofPaymentModalOpen} onRequestClose={CloseAddProofPaymentModal}/>
             <AddInvoicePaymentModal afterAttach={payments.refetch} toAddInvoiceData={addInvoicePaymentData} isOpen={isAddInvoicePaymentModalOpen} onRequestClose={CloseAddInvoicePaymentModal}/>
+            
             <ExportDocumentsModal isOpen={isExportDocumentsModalOpen} onRequestClose={CloseExportDocumentsModal}/>
+            
 
             <Flex justify="space-between" alignItems="center" mb="10">
                 <SolidButton onClick={OpenNewPaymentModal} color="white" bg="blue.400" icon={PlusIcon} colorScheme="blue">
@@ -767,7 +794,10 @@ export default function Payments(){
                                                                                     <Tr>
                                                                                         <Td fontSize="12px">{partial.pay_date && formatBRDate(partial.pay_date.toString())}</Td>
                                                                                         <Td color="gray.800" fontWeight="semibold" fontSize="12px">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(partial.value)}</Td>
-                                                                                        <Td><IconButton onClick={() => OpenConfirmPartialRemoveModal({id: partial.id, title: partial.value.toString()})} h="24px" w="23px" p="0" float="right" aria-label="Excluir pagamento parcial" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/></Td>
+                                                                                        <Td>
+                                                                                            <IconButton onClick={() => OpenConfirmPartialRemoveModal({id: partial.id, title: partial.value.toString()})} h="24px" w="23px" p="0" float="right" aria-label="Excluir pagamento parcial" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
+                                                                                            <IconButton onClick={() => OpenPartialEditModal({id: partial.id, value: partial.value.toString(), pay_date: partial.pay_date ? formatYmdDate(partial.pay_date) : ""})} h="24px" w="23px" p="0" float="right" aria-label="Alterar parcial" border="none" icon={ <EditIcon width="20px" stroke="#d69e2e" fill="none"/>} variant="outline"/>
+                                                                                        </Td>
                                                                                     </Tr>
                                                                                 )
                                                                             })

@@ -17,6 +17,7 @@ import { ReactComponent as TagIcon } from '../../../assets/icons/Tag.svg';
 import { ReactComponent as CheckIcon } from '../../../assets/icons/Check.svg';
 import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
 import { ReactComponent as RefreshIcon } from '../../../assets/icons/Refresh.svg';
+import { ReactComponent as EditIcon } from '../../../assets/icons/Edit.svg';
 
 import { Input } from "../../../components/Forms/Inputs/Input";
 import { OutlineButton } from "../../../components/Buttons/OutlineButton";
@@ -43,6 +44,7 @@ import { ReceiveBillFormData, ReceiveBillModal } from "./ReceiveBillModal";
 import { ReceiveAllBillsModal } from "./ReceiveAllBillsModal";
 import { showErrors } from "../../../hooks/useErrors";
 import { ConfirmPartialBillRemoveModal } from "./ConfirmPartialBillRemoveModal";
+import { EditPartialBillFormData, EditPartialBillModal } from "./EditPartialBillModal";
 
 interface RemoveBillData{
     id: number;
@@ -207,6 +209,26 @@ export default function Bills(){
         return data;
     });
 
+    const [isPartialEditModalOpen, setIsPartialEditModalOpen] = useState(false);
+    const [EditPartialData, setEditPartialData] = useState<EditPartialBillFormData>(() => {
+
+        const data: EditPartialBillFormData = {
+            id: 0,
+            value: '',
+            receive_date: '',
+        };
+        
+        return data;
+    });
+
+    function OpenPartialEditModal(partialData: EditPartialBillFormData){
+        setEditPartialData(partialData);
+        setIsPartialEditModalOpen(true);
+    }
+    function ClosePartialEditModal(){
+        setIsPartialEditModalOpen(false);
+    }
+
     function OpenReceiveBillModal(billIdAndName: ReceiveBillFormData){
         setToReceiveBillData(billIdAndName);
         setIsReceiveBillModalOpen(true);
@@ -281,7 +303,10 @@ export default function Bills(){
             <ReceiveBillModal afterReceive={bills.refetch} toReceiveBillData={toReceiveBillData} isOpen={isReceiveBillModalOpen} onRequestClose={CloseReceiveBillModal}/>
             <ReceiveAllBillsModal afterReceive={bills.refetch} dayToReceiveBills={dayToReceiveBills} isOpen={isReceiveAllBillsModalOpen} onRequestClose={CloseReceiveAllBillsModal}/>
             <EditBillModal categories={categories} toEditBillData={toEditBillData} users={users.data} sources={sources.data} afterEdit={bills.refetch} isOpen={isEditBillModalOpen} onRequestClose={CloseEditBillModal}/>
+            
             <ConfirmPartialBillRemoveModal afterRemove={bills.refetch} toRemoveBillData={removePartialData} isOpen={isConfirmPartialRemoveModalOpen} onRequestClose={CloseConfirmPartialRemoveModal}/>
+            <EditPartialBillModal toEditPartialBillData={EditPartialData} afterEdit={bills.refetch} isOpen={isPartialEditModalOpen} onRequestClose={ClosePartialEditModal}/>
+
             <ConfirmBillRemoveModal afterRemove={bills.refetch} toRemoveBillData={removeBillData} isOpen={isConfirmBillRemoveModalOpen} onRequestClose={CloseConfirmBillRemoveModal}/>
 
             <Flex justify="space-between" alignItems="center" mb="10">
@@ -498,7 +523,10 @@ export default function Bills(){
                                                                                     <Tr key={`${partial.id}-${partial.value}`}>
                                                                                         <Td fontSize="12px">{partial.receive_date && formatBRDate(partial.receive_date.toString())}</Td>
                                                                                         <Td color="gray.800" fontWeight="semibold" fontSize="12px">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(partial.value)}</Td>
-                                                                                        <Td><IconButton onClick={() => OpenConfirmPartialRemoveModal({id: partial.id, title: partial.value.toString()})} h="24px" w="23px" p="0" float="right" aria-label="Excluir pagamento parcial" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/></Td>
+                                                                                        <Td>
+                                                                                            <IconButton onClick={() => OpenConfirmPartialRemoveModal({id: partial.id, title: partial.value.toString()})} h="24px" w="23px" p="0" float="right" aria-label="Excluir pagamento parcial" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
+                                                                                            <IconButton onClick={() => OpenPartialEditModal({id: partial.id, value: partial.value.toString(), receive_date: partial.receive_date ? formatYmdDate(partial.receive_date.toString()) : ""})} h="24px" w="23px" p="0" float="right" aria-label="Alterar parcial" border="none" icon={ <EditIcon width="20px" stroke="#d69e2e" fill="none"/>} variant="outline"/>
+                                                                                        </Td>
                                                                                     </Tr>
                                                                                 )
                                                                             })
@@ -514,7 +542,7 @@ export default function Bills(){
                                                                         payment.partial_payments && payment.partial_payments.map((partial: PartialPayment) => {
                                                                             return (
                                                                                 <HStack>
-                                                                                    <Text>{partial.pay_date && formatBRDate(partial.pay_date.toString())}</Text>
+                                                                                    <Text>{partial.receive_date && formatBRDate(partial.receive_date.toString())}</Text>
                                                                                     <Text color="gray.800" fontWeight="semibold"> {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(partial.value)}</Text>
                                                                                 </HStack>
                                                                             )
