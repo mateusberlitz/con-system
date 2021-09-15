@@ -1,0 +1,201 @@
+import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Flex, HStack, IconButton, Spinner, Stack, Text } from "@chakra-ui/react";
+import { Quota } from "../../../types";
+
+import { ReactComponent as PlusIcon } from '../../../assets/icons/Plus.svg';
+import { ReactComponent as MinusIcon } from '../../../assets/icons/Minus.svg';
+import { ReactComponent as StrongPlusIcon } from '../../../assets/icons/StrongPlus.svg';
+import { ReactComponent as EllipseIcon } from '../../../assets/icons/Ellipse.svg';
+import { ReactComponent as TagIcon } from '../../../assets/icons/Tag.svg';
+import { ReactComponent as CheckIcon } from '../../../assets/icons/Check.svg';
+import { ReactComponent as FileIcon } from '../../../assets/icons/File.svg';
+import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
+import { ReactComponent as RefreshIcon } from '../../../assets/icons/Refresh.svg';
+import { ReactComponent as HomeIcon } from '../../../assets/icons/Home.svg';
+import { OutlineButton } from "../../../components/Buttons/OutlineButton";
+import { EditButton } from "../../../components/Buttons/EditButton";
+import { RemoveButton } from "../../../components/Buttons/RemoveButton";
+import { UseQueryResult } from "react-query";
+import { formatBRDate } from "../../../utils/Date/formatBRDate";
+
+
+interface QuotasListProps{
+    quotas: Quota[];
+}
+
+export function QuotasList({quotas}: QuotasListProps){
+    const totalQuotasCount = quotas.reduce((sumAmount:number, quota:Quota) => {
+        return sumAmount + 1;
+    }, 0);
+
+    const totalValue = quotas.reduce((sumAmount:number, quota:Quota) => {
+        return sumAmount + quota.value;
+    }, 0);
+
+    const totalCredit = quotas.reduce((sumAmount:number, quota:Quota) => {
+        return sumAmount + quota.value;
+    }, 0);
+
+    const totalRealtyCount = quotas.reduce((sumAmount:number, quota:Quota) => {
+        if(quota.segment === "Imóvel"){
+            return sumAmount + 1;
+        }
+
+        return sumAmount;
+    }, 0);
+
+    const totalVehicleCount = quotas.reduce((sumAmount:number, quota:Quota) => {
+        if(quota.segment === "Veículo"){
+            return sumAmount + 1;
+        }
+
+        return sumAmount;
+    }, 0);
+
+    return (
+        <Stack fontSize="13px" spacing="12">
+            <Accordion w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" spacing="0" allowMultiple>
+                <HStack spacing="8" justify="space-between" paddingX="8" paddingY="3" bg="gray.200">
+                    <Text fontWeight="extrabold">{totalQuotasCount} COTAS</Text>
+                    
+                    <Text fontWeight="semibold" color="gray.800">{totalRealtyCount} Imóveis</Text>
+                    <Text fontWeight="semibold" color="gray.800">{totalVehicleCount} Veículos</Text>
+                    
+                    <Text float="right">TOTAL em entradas: <strong>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalValue)}</strong></Text>
+                    <Text float="right">TOTAL em crédito: <strong>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalCredit)}</strong></Text>
+                </HStack>
+
+                { quotas.map((quota:Quota) => {
+                        return (
+                            <AccordionItem key={quota.id} display="flex" flexDir="column" paddingX="8" paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
+                                {({ isExpanded }) => (
+                                    <>
+                                        <HStack justify="space-between" mb="3">
+                                            <AccordionButton p="0" height="fit-content" w="auto">
+                                                <Flex alignItems="center" justifyContent="center" h="24px" w="30px" p="0" borderRadius="full" border="2px" borderColor="blue.400" variant="outline">
+                                                { 
+                                                        !isExpanded ? <StrongPlusIcon stroke="#2097ed" fill="none" width="12px"/> :
+                                                        <MinusIcon stroke="#2097ed" fill="none" width="12px"/>
+                                                } 
+                                                </Flex>
+                                            </AccordionButton>
+
+                                            <Text fontWeight="bold" color="gray.800">{formatBRDate(quota.purchase_date)}</Text>
+
+                                            <HStack spacing="4" opacity={quota.sold ? 0.5 : 1}>
+                                                <HomeIcon stroke="#4e4b66" fill="none" width="22px"/>
+
+                                                <Stack spacing="0">
+                                                    <Text fontSize="10px" color="gray.800">Crédito</Text>
+                                                    <Text fontSize="sm" fontWeight="bold" color="gray.800">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quota.credit)}</Text>
+                                                </Stack>
+                                            </HStack>
+
+                                            <Stack spacing="0" opacity={quota.sold ? 0.5 : 1}>
+                                                <Text fontSize="10px" color="gray.800" fontWeight="bold">Entrada</Text>
+                                                <Text fontSize="sm" fontWeight="bold" color="gray.800">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quota.value)}</Text>
+                                            </Stack>
+
+                                            <Stack spacing="0" opacity={quota.sold ? 0.5 : 1}>
+                                                <Text fontSize="12px" color="gray.800">Grupo: <strong>{quota.group}</strong></Text>
+                                                <Text fontSize="12px" color="gray.800">Cota: <strong>{quota.quota}</strong></Text>
+                                            </Stack>
+
+                                            <Stack spacing="0" opacity={quota.sold ? 0.5 : 1}>
+                                                <Text fontSize="10px" color="gray.800">Custo</Text>
+                                                <Text fontSize="sm" fontWeight="normal" color="gray.800">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quota.cost)}</Text>
+                                            </Stack>
+
+                                            <Stack spacing="0" opacity={quota.sold ? 0.5 : 1}>
+                                                <Text fontSize="10px" color="gray.800" fontWeight="bold">Custo Total</Text>
+                                                <Text fontSize="sm" fontWeight="normal" color="gray.800">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quota.total_cost)}</Text>
+                                            </Stack>
+        
+                                            {
+                                                quota.sold ? (
+                                                    <HStack>
+                                                        <Flex fontWeight="bold" alignItems="center" color="green.400">
+                                                            <CheckIcon stroke="#48bb78" fill="none" width="16px"/>
+                                                            <Text ml="2">Pago</Text>
+                                                        </Flex>
+        
+                                                        {/* <IconButton onClick={() => handleReversePayment(payment.id)} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <RefreshIcon width="20px" stroke="#14142b" fill="none"/>} variant="outline"/> */}
+                                                    </HStack>
+                                                ) : (
+                                                    <OutlineButton isDisabled={quota.sold} 
+                                                        h="30px" size="sm" color="green.400" borderColor="green.400" colorScheme="green" fontSize="11">
+                                                        Vender
+                                                    </OutlineButton>
+                                                )
+                                            }
+        
+                                        </HStack>
+        
+                                        <AccordionPanel flexDir="column" borderTop="2px" borderColor="gray.500" px="0" py="5">
+                                            <HStack justifyContent="space-between" marginBottom="4">
+                                                <Stack spacing="0" opacity={quota.sold ? 0.5 : 1}>
+                                                    <Text fontSize="10px" color="gray.800">Custo Parceiro</Text>
+                                                    <Text fontSize="sm" fontWeight="semibold" color="gray.800">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quota.partner_cost ? quota.partner_cost : 0)}</Text>
+                                                </Stack>
+
+                                                <Stack spacing="0" opacity={quota.sold ? 0.5 : 1}>
+                                                    <Text fontSize="10px" color="gray.800">Taxa</Text>
+                                                    <Text fontSize="sm" fontWeight="semibold" color="gray.800">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quota.tax ? quota.tax : 0)}</Text>
+                                                </Stack>
+
+                                                <Stack spacing="0" opacity={quota.sold ? 0.5 : 1}>
+                                                    <Text fontSize="10px" color="gray.800">Comprado de</Text>
+                                                    <Text fontSize="sm" fontWeight="semibold" color="gray.800">{quota.seller && quota.seller}</Text>
+                                                </Stack>
+
+                                                <Stack spacing="0" opacity={quota.sold ? 0.5 : 1}>
+                                                    <Text fontSize="10px" color="gray.800">CPF/CNPJ</Text>
+                                                    <Text fontSize="sm" fontWeight="semibold" color="gray.800">{quota.cpf_cnpj}</Text>
+                                                </Stack>
+
+                                                <Stack spacing="0" opacity={quota.sold ? 0.5 : 1}>
+                                                    <Text fontSize="10px" color="gray.800">% paga pelo crédito</Text>
+                                                    <Text fontSize="sm" fontWeight="semibold" color="gray.800">{quota.paid_percent}</Text>
+                                                </Stack>
+                                            </HStack>
+
+                                            <HStack>
+                                                <Stack spacing="0" opacity={quota.sold ? 0.5 : 1}>
+                                                    <Text fontSize="10px" color="gray.800">Custo Passado</Text>
+                                                    <Text fontSize="sm" fontWeight="semibold" color="gray.800">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quota.passed_cost ? quota.passed_cost : 0)}</Text>
+                                                </Stack>
+                                            </HStack>
+                                            
+
+                                            <HStack justifyContent="space-between" mb="4">
+                                                    <Text>
+                                                        Valor total: 
+                                                        <strong> {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quota.value)}</strong>
+                                                    </Text>
+                                            </HStack>
+        
+                                            <HStack mb="3">
+                                                <Flex alignItems="center">
+                                                    <Text fontWeight="500" mr="2">Descrição: </Text>
+                                                    <Text> {quota.description && quota.description}</Text>
+                                                </Flex>
+                                            </HStack>
+        
+                                                
+        
+                                            <HStack spacing="5" alignItems="center">
+                                                {/* <EditButton onClick={() => OpenEditPaymentModal(paymentToEditData)}/>
+                                                <RemoveButton onClick={() => OpenConfirmPaymentRemoveModal({ id: payment.id, title: payment.title }) }/> */}
+                                            </HStack>
+        
+                                        </AccordionPanel>
+                                    </>
+                                )}
+                            </AccordionItem>
+                        )
+                    })
+                }
+                
+            </Accordion>
+        </Stack>
+    )
+}

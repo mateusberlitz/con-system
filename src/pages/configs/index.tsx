@@ -35,15 +35,20 @@ export default function ConfigHome(){
                         <Text fontWeight="600" ml="2" color="blue.400" lineHeight="25px">Finanças</Text>
                     </Link>
 
-                    <Link color="orange.400" display="flex" direction="row">
-                        <CartIcon stroke="#F24E1E" fill="none" width="20"/>
-                        <Text fontWeight="600" ml="2" color="orange.400" lineHeight="25px">Funil de Vendas</Text>
+                    <Link href="/contempladas" color="blue.800" display="flex" direction="row">
+                        <ChartBarIcon stroke="#2a4365" fill="none" width="20"/>
+                        <Text fontWeight="600" ml="2" color="blue.800" lineHeight="25px">Contempladas</Text>
                     </Link>
 
-                    <Link color="red.400" display="flex" direction="row">
+                    <Link color="orange.400" display="flex" direction="row">
+                        <CartIcon stroke="#F24E1E" fill="none" width="20"/>
+                        <Text fontWeight="600" ml="2" color="orange.400" lineHeight="25px">Comercial</Text>
+                    </Link>
+
+                    {/* <Link color="red.400" display="flex" direction="row">
                         <CommentIcon stroke="#C30052" fill="none" width="20"/>
                         <Text fontWeight="600" ml="2" color="red.400" lineHeight="25px">Atendimento</Text>
-                    </Link>
+                    </Link> */}
                 </HStack>
 
                 <SimpleGrid flex="1" templateColumns="repeat(5, 1fr)" gap="5" minChildWidth="320px" align="flex-start">

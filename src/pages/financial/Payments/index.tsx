@@ -48,7 +48,6 @@ import { showErrors } from "../../../hooks/useErrors";
 import { AddProofPaymentModal } from "./AddProofPaymentModal";
 import { AddInvoicePaymentFormData, AddInvoicePaymentModal } from "./AddInvoicePaymentModal";
 import { ConfirmPartialRemoveModal } from "./ConfirmPartialRemoveModal";
-import { profile } from "node:console";
 import { ExportDocumentsModal } from "./ExportDocumentsModal";
 
 interface RemovePaymentData{

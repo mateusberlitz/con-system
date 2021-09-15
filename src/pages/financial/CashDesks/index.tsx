@@ -35,6 +35,7 @@ import { ConfirmCashDeskRemoveModal } from "./ConfirmCashDeskRemoveModal";
 import { Select } from "../../../components/Forms/Selects/Select";
 import { Pagination } from "../../../components/Pagination";
 import { useHistory } from "react-router-dom";
+import { ExportExcelModal } from "./ExportExcelModal";
 
 interface RemoveCashFlowData{
     id: number;
@@ -164,6 +165,15 @@ export default function CashDesks(){
         setFilter(search);
     }
 
+    const [isExportExcelModalOpen, setIsExportExcelModalOpen] = useState(false);
+
+    function OpenExportExcelModal(){
+        setIsExportExcelModalOpen(true);
+    }
+    function CloseExportExcelModal(){
+        setIsExportExcelModalOpen(false);
+    }
+
     return(
         <MainBoard sidebar="financial" header={ 
             ( ( (permissions && HasPermission(permissions, 'Todas Empresas')) || (profile && profile.companies && profile.companies.length > 1)) && <CompanySelect searchFilter={filter} setFilter={handleChangeFilter}/> )
@@ -172,6 +182,7 @@ export default function CashDesks(){
             <NewCashDesksModal categories={categories} afterCreate={cashDesks.refetch} isOpen={isNewCashDeskModalOpen} onRequestClose={CloseNewCashDeskModal}/>
             <EditCashDeskModal categories={categories} toEditCashDeskData={toEditCashDeskData} afterEdit={cashDesks.refetch} isOpen={isEditCashDeskModalOpen} onRequestClose={CloseEditCashDeskModal}/>
             <ConfirmCashDeskRemoveModal afterRemove={cashDesks.refetch} toRemoveCashDeskData={removeCashFlowData} isOpen={isConfirmCashDeskRemoveModalOpen} onRequestClose={CloseConfirmCashDeskRemoveModal}/>
+            <ExportExcelModal isOpen={isExportExcelModalOpen} onRequestClose={CloseExportExcelModal}/>
 
             <Flex justify="space-between" alignItems="center" mb="10">
                 <SolidButton onClick={OpenNewCashDeskModal} color="white" bg="blue.400" icon={PlusIcon} colorScheme="blue">
@@ -180,6 +191,10 @@ export default function CashDesks(){
 
                 <OutlineButton onClick={() => {history.push('/caixa/categorias')}}>
                     Categorias
+                </OutlineButton>
+
+                <OutlineButton onClick={OpenExportExcelModal} variant="outline" colorScheme="blue" color="blue.400" borderColor="blue.400">
+                    Gerar Relatório
                 </OutlineButton>
 
                 {/* <OutlineButton onClick={OpenExportReportModal} variant="outline" colorScheme="blue" color="blue.400" borderColor="blue.400">

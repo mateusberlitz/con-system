@@ -26,7 +26,7 @@ import { InvoicesFilterData, useInvoices } from "../../../hooks/useInvoices";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { FileInput } from "../../../components/Forms/FileInput";
 
-interface AddFilePaymentModalProps{
+interface AddInvoicePaymentModalProps{
     isOpen: boolean;
     onRequestClose: () => void;
     afterAttach: () => void;
@@ -57,7 +57,7 @@ const UpdateInvoiceFormSchema = yup.object().shape({
     date: yup.string(),
 });
 
-export function AddInvoicePaymentModal ( { isOpen, onRequestClose, afterAttach, toAddInvoiceData } : AddFilePaymentModalProps){
+export function AddInvoicePaymentModal ( { isOpen, onRequestClose, afterAttach, toAddInvoiceData } : AddInvoicePaymentModalProps){
     const history = useHistory();
     const toast = useToast();
     const { showErrors } = useErrors();
@@ -149,6 +149,7 @@ export function AddInvoicePaymentModal ( { isOpen, onRequestClose, afterAttach, 
             setToFormFile("");
 
             invoices.refetch();
+            afterAttach();
         }catch(error:any) {
             showErrors(error, toast);
 
@@ -204,6 +205,7 @@ export function AddInvoicePaymentModal ( { isOpen, onRequestClose, afterAttach, 
             await api.delete(`/invoices/destroy/${invoiceId}`);
             
             invoices.refetch();
+            afterAttach();
 
             toast({
                 title: "Sucesso",
