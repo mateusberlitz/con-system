@@ -1,19 +1,49 @@
-import { Box, Flex, HStack, Modal, ModalBody, Text, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Stack, Select as ChakraInput, ModalFooter, Link } from "@chakra-ui/react"
+import { Box, Flex, HStack, useToast, Modal, ModalBody, Text, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Stack, Select as ChakraInput, ModalFooter, Link } from "@chakra-ui/react"
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
+import { useHistory } from "react-router";
 import * as yup from 'yup';
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { Input } from "../../../components/Forms/Inputs/Input";
 import { ControlledSelect } from "../../../components/Forms/Selects/ControlledSelect";
 import { Select } from "../../../components/Forms/Selects/Select";
+import { useErrors } from "../../../hooks/useErrors";
 import { useProfile } from "../../../hooks/useProfile";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
+import { api } from "../../../services/api";
 import { Company, Quota } from "../../../types";
+import { formatInputDate } from "../../../utils/Date/formatInputDate";
+import moneyToBackend from "../../../utils/moneyToBackend";
 
 interface NewQuotaModalProps{
     isOpen: boolean;
     onRequestClose: () => void;
     afterCreate: () => void;
+}
+
+export interface CreateNewQuota{
+    id: number;
+    sold: boolean;
+    company: number;
+    segment: string;
+    value: string;
+    credit: string;
+    group: string;
+    quota: string;
+    cost: string;
+    partner_cost?: string;
+    passed_cost?: string;
+    total_cost?: string;
+    seller?: string;
+    cpf_cnpj: string;
+    paid_percent: string;
+    partner_commission?: string;
+    tax?: string;
+    contemplated_type: string;
+    description?: string;
+    purchase_date: string;
+    created_at?: Date;
+    updated_at?: Date;
 }
 
 const CreateNewQuotaFormSchema = yup.object().shape({
@@ -22,7 +52,6 @@ const CreateNewQuotaFormSchema = yup.object().shape({
     seller: yup.string(),
     company: yup.number(),
     contemplated_type: yup.string(),
-    pay_to_user: yup.number().transform((v, o) => o === '' ? null : v).nullable(),
     value: yup.string().required("Informe o valor do pagamento"),
     cost: yup.string().required("Informe o custo"),
     cpf_cnpj: yup.string().required("Qual o cpf ou cnpj proprietário?"),
@@ -39,54 +68,123 @@ export function NewQuotaModal({ isOpen, onRequestClose, afterCreate } : NewQuota
     const workingCompany = useWorkingCompany();
     const {profile} = useProfile();
 
-    const { register, handleSubmit, control, reset, formState} = useForm<Quota>({
+    const history = useHistory();
+    const toast = useToast();
+    const { showErrors } = useErrors();
+
+    const { register, handleSubmit, control, reset, formState} = useForm<CreateNewQuota>({
         resolver: yupResolver(CreateNewQuotaFormSchema),
     });
 
-    const handleCreateNewPayment = async (paymentData : Quota) => {
+    function includeAndFormatData(quotaData: CreateNewQuota){
+        quotaData.value = moneyToBackend(quotaData.value);
+        quotaData.credit = moneyToBackend(quotaData.credit);
+        quotaData.cost = moneyToBackend(quotaData.cost);
 
+        quotaData.partner_cost = ((quotaData.partner_cost != null && quotaData.partner_cost != "") ? moneyToBackend(quotaData.value) : '');
+        quotaData.passed_cost = ((quotaData.passed_cost != null && quotaData.passed_cost != "") ? moneyToBackend(quotaData.value) : '');
+
+        quotaData.purchase_date = formatInputDate(quotaData.purchase_date);
+
+        if(!workingCompany.company){
+            return quotaData;
+        }else if(quotaData.company === 0){
+            quotaData.company = workingCompany.company?.id;
+        }
+
+        return quotaData;
+    }
+
+    const handleCreateNewQuota = async (quotaData : CreateNewQuota) => {
+        try{
+            if(!workingCompany.company && quotaData.company === 0){
+                toast({
+                    title: "Ué",
+                    description: `Seleciona uma empresa para trabalhar`,
+                    status: "warning",
+                    duration: 12000,
+                    isClosable: true,
+                });
+
+                return;
+            }
+
+            quotaData = includeAndFormatData(quotaData);
+
+
+            const response = await api.post('/quotas/store', quotaData);
+
+            toast({
+                title: "Sucesso",
+                description: `A Cota ${quotaData.group}-${quotaData.quota} foi cadastrada.`,
+                status: "success",
+                duration: 12000,
+                isClosable: true,
+            });
+
+            onRequestClose();
+            afterCreate();
+            reset();
+        }catch(error:any) {
+            showErrors(error, toast);
+
+            if(error.response.data.access){
+                history.push('/');
+            }
+        }
     }
 
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
             <ModalOverlay />
-            <ModalContent as="form" borderRadius="24px" onSubmit={handleSubmit(handleCreateNewPayment)}>
-                <ModalHeader p="10" fontWeight="700" fontSize="2xl">Cadastrar Pagamento</ModalHeader>
+            <ModalContent as="form" borderRadius="24px" onSubmit={handleSubmit(handleCreateNewQuota)}>
+                <ModalHeader p="10" fontWeight="700" fontSize="2xl">Cadastrar Nova Cota</ModalHeader>
 
                 <ModalCloseButton top="10" right="5"/>
                 
                 <ModalBody pl="10" pr="10">
                     <Stack spacing="6">
-                        
-                        <Input register={register} name="title" type="text" placeholder="Título" variant="outline" error={formState.errors.value} focusBorderColor="blue.800"/>
-
-                        {
-                            ( !profile || !profile.companies ? (
-                                <Flex justify="center">
-                                    <Text>Nenhuma empresa disponível</Text>
-                                </Flex>
-                            ) : (
-                                <ControlledSelect control={control} value={(workingCompany.company && workingCompany.company.id) ? workingCompany.company.id.toString() : "0"}  h="45px" name="company" w="100%" fontSize="sm" focusBorderColor="blue.800" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" error={formState.errors.value}>
-                                    {profile.companies && profile.companies.map((company:Company) => {
-                                        return (
-                                            <option key={company.id} value={company.id}>{company.name}</option>
-                                        )
-                                    })}
-                                </ControlledSelect>
-                            ))
-                        }
-
                         <HStack spacing="4" align="baseline">
-                            <Input register={register} name="expire" type="date" placeholder="Data de Vencimento" variant="outline" error={formState.errors.value} focusBorderColor="blue.800"/>
 
-                            <Input register={register} name="value" type="text" placeholder="Valor" variant="outline" mask="money" error={formState.errors.value} focusBorderColor="blue.800"/>
+                            <Select register={register}  h="45px" name="company" w="100%" fontSize="sm" focusBorderColor="blue.800" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" error={formState.errors.segment}>
+                                <option value="Imóvel" selected>Imóvel</option>
+                                <option value="Veículo">Veículo</option>
+                            </Select>
+
+                            <Input register={register} name="credit" type="text" placeholder="Crédito" variant="outline" mask="money" error={formState.errors.credit} focusBorderColor="blue.800"/>
                         </HStack>
 
                         <HStack spacing="4" align="baseline">
-                            <Input register={register} name="recurrence" type="number" placeholder="Repetir Mensalmente" variant="outline" error={formState.errors.value} focusBorderColor="blue.800"/>
+                            <Input register={register} name="value" type="text" placeholder="Entrada" variant="outline" mask="money" error={formState.errors.value} focusBorderColor="blue.800"/>
+
+                            <Input register={register} name="cost" type="text" placeholder="Custo da Empresa" variant="outline" mask="money" error={formState.errors.cost} focusBorderColor="blue.800"/>
                         </HStack>
 
-                        <Input register={register} name="observation" type="text" placeholder="Observação" variant="outline" error={formState.errors.value} focusBorderColor="blue.800"/>
+                        <HStack spacing="4" align="baseline">
+                            <Input register={register} name="group" type="text" placeholder="Grupo" variant="outline" error={formState.errors.group} focusBorderColor="blue.800"/>
+
+                            <Input register={register} name="quota" type="text" placeholder="Cota" variant="outline" error={formState.errors.quota} focusBorderColor="blue.800"/>
+                        </HStack>
+
+                        <HStack spacing="4" align="baseline">
+                            <Input register={register} name="purchase_date" type="date" placeholder="Data de Compra" variant="outline" error={formState.errors.purchase_date} focusBorderColor="blue.800"/>
+
+                            <Input register={register} name="paid_percent" type="number" placeholder="Percentual pago" variant="outline" error={formState.errors.paid_percent} focusBorderColor="blue.800"/>
+                        </HStack>
+
+                        <HStack spacing="4" align="baseline">
+                            <Input register={register} name="contemplated_type" type="text" placeholder="Tipo de contemplação" variant="outline" error={formState.errors.contemplated_type} focusBorderColor="blue.800"/>
+
+                            <Input register={register} name="cpf_cnpj" type="text" placeholder="CPF/CNPJ" variant="outline" error={formState.errors.cpf_cnpj} focusBorderColor="blue.800"/>
+                        </HStack>
+
+                        <HStack spacing="4" align="baseline">
+                            <Input register={register} name="partner_cost" type="text" placeholder="Custo do parceiro" variant="outline" mask="money" error={formState.errors.partner_cost} focusBorderColor="blue.800"/>
+                            
+                            <Input register={register} name="passed_cost" type="text" placeholder="Custo passado" variant="outline" mask="money" error={formState.errors.passed_cost} focusBorderColor="blue.800"/>
+                        </HStack>
+
+                        <Input register={register} name="description" type="text" placeholder="Descrição" variant="outline" error={formState.errors.description} focusBorderColor="blue.800"/>
 
                     </Stack>
                 </ModalBody>
