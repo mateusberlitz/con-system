@@ -35,10 +35,10 @@ export default function ConfigHome(){
                         <Text fontWeight="600" ml="2" color="blue.400" lineHeight="25px">Finanças</Text>
                     </Link>
 
-                    {/* <Link href="/contempladas" color="blue.800" display="flex" direction="row">
+                    <Link href="/contempladas" color="blue.800" display="flex" direction="row">
                         <ChartBarIcon stroke="#2a4365" fill="none" width="20"/>
                         <Text fontWeight="600" ml="2" color="blue.800" lineHeight="25px">Contempladas</Text>
-                    </Link> */}
+                    </Link>
 
                     <Link color="orange.400" display="flex" direction="row">
                         <CartIcon stroke="#F24E1E" fill="none" width="20"/>

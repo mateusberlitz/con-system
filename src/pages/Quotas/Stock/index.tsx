@@ -4,6 +4,7 @@ import { CompanySelectMaster } from "../../../components/CompanySelect/companySe
 import { MainBoard } from "../../../components/MainBoard";
 import { QuotaFilterData, useQuotas } from "../../../hooks/useQuotas";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
+import { EditQuota } from "./EditQuotaModal";
 import { StockNavBar } from "./NavBar";
 import { NewQuotaModal } from "./NewQuotaModal";
 import { QuotasList } from "./QuotasList";
@@ -62,7 +63,7 @@ export default function Quotas(){
                             <Text>Nenhuma cota encontrada.</Text>
                         </Flex>
                     ) : 
-                        <QuotasList quotas={quotas.data?.data} />
+                        <QuotasList quotas={quotas.data?.data} refetchQuotas={quotas.refetch} />
                     )
             }
             

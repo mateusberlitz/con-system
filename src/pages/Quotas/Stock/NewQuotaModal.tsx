@@ -32,6 +32,7 @@ export interface CreateNewQuota{
     quota: string;
     cost: string;
     partner_cost?: string;
+    partner?: string;
     passed_cost?: string;
     total_cost?: string;
     seller?: string;
@@ -49,19 +50,19 @@ export interface CreateNewQuota{
 const CreateNewQuotaFormSchema = yup.object().shape({
     segment: yup.string().required('Selecione o tipo da carta de crédito'),
     description: yup.string(),
-    seller: yup.string(),
-    company: yup.number(),
-    contemplated_type: yup.string(),
+    seller: yup.string().nullable().required("De quem foi comprada a carta?"),
+    contemplated_type: yup.string().required("Qual o tipo de contemplação?"),
     value: yup.string().required("Informe o valor do pagamento"),
     cost: yup.string().required("Informe o custo"),
     cpf_cnpj: yup.string().required("Qual o cpf ou cnpj proprietário?"),
+    partner: yup.string(),
     partner_cost: yup.string(),
     passed_cost: yup.string(),
     paid_percent: yup.string().required("Diga qual o percentual pago"),
     partner_commission: yup.string(),
     purchase_date: yup.string().required("Selecione a data de compra"),
     group: yup.string().required("Informe o grupo"),
-    quote: yup.string().required("Informe a cota"),
+    quota: yup.string().required("Informe a cota"),
 });
 
 export function NewQuotaModal({ isOpen, onRequestClose, afterCreate } : NewQuotaModalProps){
@@ -81,23 +82,25 @@ export function NewQuotaModal({ isOpen, onRequestClose, afterCreate } : NewQuota
         quotaData.credit = moneyToBackend(quotaData.credit);
         quotaData.cost = moneyToBackend(quotaData.cost);
 
-        quotaData.partner_cost = ((quotaData.partner_cost != null && quotaData.partner_cost != "") ? moneyToBackend(quotaData.value) : '');
-        quotaData.passed_cost = ((quotaData.passed_cost != null && quotaData.passed_cost != "") ? moneyToBackend(quotaData.value) : '');
+        quotaData.partner_cost = ((quotaData.partner_cost != null && quotaData.partner_cost != "") ? moneyToBackend(quotaData.partner_cost) : '');
+        quotaData.passed_cost = ((quotaData.passed_cost != null && quotaData.passed_cost != "") ? moneyToBackend(quotaData.passed_cost) : '');
 
         quotaData.purchase_date = formatInputDate(quotaData.purchase_date);
 
+        quotaData.total_cost = quotaData.cost + moneyToBackend(quotaData.partner_cost);
+
         if(!workingCompany.company){
             return quotaData;
-        }else if(quotaData.company === 0){
-            quotaData.company = workingCompany.company?.id;
         }
+        
+        quotaData.company = workingCompany.company?.id;
 
         return quotaData;
     }
 
     const handleCreateNewQuota = async (quotaData : CreateNewQuota) => {
         try{
-            if(!workingCompany.company && quotaData.company === 0){
+            if(!workingCompany.company){
                 toast({
                     title: "Ué",
                     description: `Seleciona uma empresa para trabalhar`,
@@ -110,7 +113,6 @@ export function NewQuotaModal({ isOpen, onRequestClose, afterCreate } : NewQuota
             }
 
             quotaData = includeAndFormatData(quotaData);
-
 
             const response = await api.post('/quotas/store', quotaData);
 
@@ -146,7 +148,7 @@ export function NewQuotaModal({ isOpen, onRequestClose, afterCreate } : NewQuota
                     <Stack spacing="6">
                         <HStack spacing="4" align="baseline">
 
-                            <Select register={register}  h="45px" name="company" w="100%" fontSize="sm" focusBorderColor="blue.800" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" error={formState.errors.segment}>
+                            <Select register={register}  h="45px" name="segment" w="100%" fontSize="sm" focusBorderColor="blue.800" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" error={formState.errors.segment}>
                                 <option value="Imóvel" selected>Imóvel</option>
                                 <option value="Veículo">Veículo</option>
                             </Select>
@@ -160,6 +162,8 @@ export function NewQuotaModal({ isOpen, onRequestClose, afterCreate } : NewQuota
                             <Input register={register} name="cost" type="text" placeholder="Custo da Empresa" variant="outline" mask="money" error={formState.errors.cost} focusBorderColor="blue.800"/>
                         </HStack>
 
+                        <Input register={register} name="total_cost" type="text" placeholder="Custo Total" variant="outline" mask="money" error={formState.errors.total_cost} focusBorderColor="blue.800"/>
+
                         <HStack spacing="4" align="baseline">
                             <Input register={register} name="group" type="text" placeholder="Grupo" variant="outline" error={formState.errors.group} focusBorderColor="blue.800"/>
 
@@ -172,11 +176,15 @@ export function NewQuotaModal({ isOpen, onRequestClose, afterCreate } : NewQuota
                             <Input register={register} name="paid_percent" type="number" placeholder="Percentual pago" variant="outline" error={formState.errors.paid_percent} focusBorderColor="blue.800"/>
                         </HStack>
 
+                        <Input register={register} name="seller" type="text" placeholder="Comprado de" variant="outline" error={formState.errors.seller} focusBorderColor="blue.800"/>
+
                         <HStack spacing="4" align="baseline">
                             <Input register={register} name="contemplated_type" type="text" placeholder="Tipo de contemplação" variant="outline" error={formState.errors.contemplated_type} focusBorderColor="blue.800"/>
 
                             <Input register={register} name="cpf_cnpj" type="text" placeholder="CPF/CNPJ" variant="outline" error={formState.errors.cpf_cnpj} focusBorderColor="blue.800"/>
                         </HStack>
+
+                        <Input register={register} name="partner" type="text" placeholder="Parceiro" variant="outline" error={formState.errors.partner} focusBorderColor="blue.800"/>
 
                         <HStack spacing="4" align="baseline">
                             <Input register={register} name="partner_cost" type="text" placeholder="Custo do parceiro" variant="outline" mask="money" error={formState.errors.partner_cost} focusBorderColor="blue.800"/>

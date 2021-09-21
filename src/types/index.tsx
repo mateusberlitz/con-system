@@ -218,6 +218,7 @@ export interface Quota{
     group: string;
     quota: string;
     cost: number;
+    partner?: string;
     partner_cost?: number;
     passed_cost?: number;
     total_cost: number;

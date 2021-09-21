@@ -63,7 +63,7 @@ export default function Login(){
             login(response.data.access_token, response.data.expires_in);
 
             loadProfile();
-        }catch(error) {
+        }catch(error:any) {
             if(error.response){
                 toastError(error.response.data.error);
             }else{

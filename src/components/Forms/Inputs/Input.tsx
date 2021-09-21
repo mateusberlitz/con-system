@@ -1,4 +1,4 @@
-import { InputGroup, InputLeftElement, FormControl, InputProps, Icon, Input as ChakraInput, FormErrorMessage } from "@chakra-ui/react";
+import { InputGroup, InputLeftElement, FormControl, InputProps, Icon, Input as ChakraInput, FormErrorMessage, FormLabel } from "@chakra-ui/react";
 import { Ref, useEffect, useState } from "react";
 import { FieldError, UseFormRegister } from "react-hook-form";
 import { mask as applyMask } from "../../../utils/ReMask";
@@ -17,7 +17,7 @@ interface FormInputProps extends InputProps{
     inputRef?: Ref<any>
 }
 
-export function Input({ name, type, icon, variant = "", value = "", mask = "", register = undefined, onChange, inputRef, control, error, maxW, ...rest }: FormInputProps){
+export function Input({ name, type, icon, variant = "", value = "", mask = "", placeholder, register = undefined, onChange, inputRef, control, error, maxW, ...rest }: FormInputProps){
     const [controlledValue, setControlledValue] = useState("");
 
     const handleReturnMaskedInputValue = (value: string = "") => {
@@ -81,10 +81,12 @@ export function Input({ name, type, icon, variant = "", value = "", mask = "", r
 
     return icon ? (
         <FormControl pos="relative" isInvalid={!!error} maxW={maxW}>
+            <FormLabel pos="absolute" left="25" zIndex="2" top={controlledValue ? "4px" : "13px"} fontSize={controlledValue ? "9" : "13"} fontWeight="600" color="gray.600" _focus={{top: "4px", fontSize: "9px"}}>{placeholder}</FormLabel>
+
             <InputGroup>
                 <InputLeftElement w="70px" h="45" pointerEvents="none" children={<Icon as={icon} stroke="#6E7191" fill="none" width="16" strokeWidth="3"/>} />
 
-                <ChakraInput {...getControlledInputAttributes()} name={name} h="45px" pl="60px" type={type} fontSize="sm" borderColor={variant === 'outline' ? "gray.500" : "transparent"} bgColor={variant === 'outline' ? "gray.100" : (variant === 'filled' ? "gray.400" : "")} _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" _placeholder={{color: "gray.600"}} {...rest}/>
+                <ChakraInput {...getControlledInputAttributes()} name={name} pt="8px" h="45px" pl="60px" type={type} fontSize="sm" borderColor={variant === 'outline' ? "gray.500" : "transparent"} bgColor={variant === 'outline' ? "gray.100" : (variant === 'filled' ? "gray.400" : "")} _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" _placeholder={{color: "gray.600"}} {...rest}/>
             </InputGroup>
 
             { !!error && (
@@ -97,11 +99,13 @@ export function Input({ name, type, icon, variant = "", value = "", mask = "", r
     : 
     (
         <FormControl pos="relative" isInvalid={!!error} maxW={maxW}>
+            <FormLabel pos="absolute" left="25" zIndex="2" top={controlledValue || type === "date" ? "4px" : "13px"} fontSize={controlledValue || type === "date"  ? "9" : "13"} fontWeight="600" color="gray.600" _focus={{top: "4px", fontSize: "9px"}}>{placeholder}</FormLabel>
+
             <ChakraInput
 
                 {...getControlledInputAttributes()}
                 
-                name={name} h="45px" pl="6" type={type} fontSize="sm" borderColor={variant === 'outline' ? "gray.500" : "transparent"} bgColor={variant === 'outline' ? "gray.100" : (variant === 'filled' ? "gray.400" : "")} _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" _placeholder={{color: "gray.600"}} {...rest}
+                name={name} h="45px" pt="8px" pl="6" type={type} fontSize="sm" borderColor={variant === 'outline' ? "gray.500" : "transparent"} bgColor={variant === 'outline' ? "gray.100" : (variant === 'filled' ? "gray.400" : "")} _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" _placeholder={{color: "gray.600"}} {...rest}
             />
         
             { !!error && (
