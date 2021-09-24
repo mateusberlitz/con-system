@@ -250,7 +250,7 @@ export interface QuotaSale{
     tax?: number;
     coordinator?: string;
     description?: string;
-    sale_date: Date;
+    sale_date: string;
     created_at?: Date;
     updated_at?: Date;
 }

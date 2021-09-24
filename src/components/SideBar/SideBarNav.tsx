@@ -81,7 +81,7 @@ export function SideBarNav({ desk }: SideBarNavProps){
 
             {/* <NavLink href="/financeiro" icon={ChartPieIcon}>Dashboard</NavLink>  */}
             <NavLink href="/contempladas" icon={FolderIcon} stroke="#ffffff" fill="none">Estoque</NavLink>
-            <NavLink href="/vendas" icon={BagIcon} fill="none">Vendas</NavLink>
+            <NavLink href="/venda-contempladas" icon={BagIcon} fill="none">Vendas</NavLink>
             {
                 (HasPermission(permissions, 'Usuários') || HasPermission(permissions, 'Configurações')) && (
                     <Link mt="30px" position="absolute" bottom="24px" alignItems="center" href="/home" display="flex" h="16" w="100%" px="7" color="white" _hover={{textDecor: 'none'}} >

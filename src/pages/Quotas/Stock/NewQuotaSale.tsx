@@ -36,7 +36,7 @@ interface QuotaSaleFormData{
     buyer: string;
     cpf_cnpj: string;
     profit?: number;
-    tax?: string;
+    tax: string;
     coordinator?: string;
     description?: string;
 
@@ -55,8 +55,7 @@ const EditQuotaFormSchema = yup.object().shape({
     seller: yup.string().required("Quem vendeu a cota?"),
     buyer: yup.string().required("Quem foi o comprador?"),
     value: yup.string().required("Informe o valor da venda"),
-    profit: yup.string().required("Informe o lucro"),
-    tax: yup.string().nullable(),
+    tax: yup.string().required("Qual a taxa?"),
     cpf_cnpj: yup.string().required("Qual o cpf ou cnpj proprietário?"),
 
     partner_value: yup.string().nullable(),
@@ -249,7 +248,7 @@ export default function NewQuotaSale(){
                         
                             <Input register={register} name="buyer" type="text" placeholder="Comprador" variant="outline" mask="money" error={formState.errors.buyer} focusBorderColor="blue.800"/>
                         
-                            <Input register={register} name="profit" type="text" placeholder="Lucro" variant="outline" error={formState.errors.profit} focusBorderColor="blue.800"/>
+                            {/* <Input register={register} name="profit" type="text" placeholder="Lucro" variant="outline" error={formState.errors.profit} focusBorderColor="blue.800"/> */}
                         </HStack>
 
                         <HStack spacing="4" align="baseline">
@@ -265,7 +264,7 @@ export default function NewQuotaSale(){
                         <HStack spacing="4" align="baseline">
                             <Input register={register} name="passed_value" type="text" placeholder="Valor passado" variant="outline" mask="money" error={formState.errors.passed_value} focusBorderColor="blue.800"/>
                         
-                            <Input register={register} name="partner_value" type="text" placeholder="Comissão do Parceiro" variant="outline" mask="money" error={formState.errors.partner_value} focusBorderColor="blue.800"/>
+                            {/* <Input register={register} name="partner_value" type="text" placeholder="Comissão do Parceiro" variant="outline" mask="money" error={formState.errors.partner_value} focusBorderColor="blue.800"/> */}
                         </HStack>
 
                         <HStack spacing="4" align="baseline">
@@ -307,7 +306,7 @@ export default function NewQuotaSale(){
                         <HStack>
                             <Input register={paymentsForm.register} name="value" type="text" placeholder="Valor" variant="outline" mask="money" error={paymentsForm.formState.errors.value} focusBorderColor="blue.800"/>
                             
-                            <Input register={paymentsForm.register} name="expire" type="date" placeholder="Data da venda" variant="outline" error={paymentsForm.formState.errors.expire} focusBorderColor="blue.800"/>
+                            <Input register={paymentsForm.register} name="expire" type="date" placeholder="Data do pagamento" variant="outline" error={paymentsForm.formState.errors.expire} focusBorderColor="blue.800"/>
                         </HStack>
 
                         <HStack>
