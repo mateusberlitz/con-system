@@ -58,6 +58,7 @@ const EditQuotaFormSchema = yup.object().shape({
     contemplated_type: yup.string().required("Qual o tipo de contemplação?"),
     value: yup.string().required("Informe o valor do pagamento"),
     cost: yup.string().required("Informe o custo"),
+    total_cost: yup.string().required("Informe o custo total"),
     cpf_cnpj: yup.string().required("Qual o cpf ou cnpj proprietário?"),
     partner: yup.string().nullable(),
     partner_cost: yup.string().nullable(),

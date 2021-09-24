@@ -19,6 +19,7 @@ import { formatBRDate } from "../../../utils/Date/formatBRDate";
 import { useState } from "react";
 import { EditQuota, EditQuotaModal } from "./EditQuotaModal";
 import { ConfirmPaymentRemoveModal, RemoveQuotaData } from "./ConfirmQuotaRemoveModal";
+import { Router, useHistory } from "react-router";
 
 
 interface QuotasListProps{
@@ -27,6 +28,8 @@ interface QuotasListProps{
 }
 
 export function QuotasList({quotas, refetchQuotas}: QuotasListProps){
+    const history = useHistory();
+
     const totalQuotasCount = quotas.reduce((sumAmount:number, quota:Quota) => {
         return sumAmount + 1;
     }, 0);
@@ -208,7 +211,7 @@ export function QuotasList({quotas, refetchQuotas}: QuotasListProps){
                                                         {/* <IconButton onClick={() => handleReversePayment(payment.id)} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <RefreshIcon width="20px" stroke="#14142b" fill="none"/>} variant="outline"/> */}
                                                     </HStack>
                                                 ) : (
-                                                    <OutlineButton isDisabled={quota.sold} 
+                                                    <OutlineButton isDisabled={quota.sold} onClick={() => history.push(`/cadastrar-venda/${quota.id}`)}
                                                         h="30px" size="sm" color="green.400" borderColor="green.400" colorScheme="green" fontSize="11">
                                                         Vender
                                                     </OutlineButton>

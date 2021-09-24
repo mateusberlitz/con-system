@@ -54,6 +54,7 @@ const CreateNewQuotaFormSchema = yup.object().shape({
     contemplated_type: yup.string().required("Qual o tipo de contemplação?"),
     value: yup.string().required("Informe o valor do pagamento"),
     cost: yup.string().required("Informe o custo"),
+    total_cost: yup.string().required("Informe o custo total"),
     cpf_cnpj: yup.string().required("Qual o cpf ou cnpj proprietário?"),
     partner: yup.string(),
     partner_cost: yup.string(),
@@ -85,9 +86,9 @@ export function NewQuotaModal({ isOpen, onRequestClose, afterCreate } : NewQuota
         quotaData.partner_cost = ((quotaData.partner_cost != null && quotaData.partner_cost != "") ? moneyToBackend(quotaData.partner_cost) : '');
         quotaData.passed_cost = ((quotaData.passed_cost != null && quotaData.passed_cost != "") ? moneyToBackend(quotaData.passed_cost) : '');
 
-        quotaData.purchase_date = formatInputDate(quotaData.purchase_date);
+        quotaData.total_cost = ((quotaData.total_cost != null && quotaData.total_cost != "") ? moneyToBackend(quotaData.total_cost) : '');
 
-        quotaData.total_cost = quotaData.cost + moneyToBackend(quotaData.partner_cost);
+        quotaData.purchase_date = formatInputDate(quotaData.purchase_date);
 
         if(!workingCompany.company){
             return quotaData;

@@ -21,6 +21,7 @@ import CashDesks from './pages/Financial/CashDesks';
 import CashDeskCategories from './pages/Financial/CashDesksCategories';
 import Invoices from './pages/Financial/Invoices';
 import Quotas from './pages/Quotas/Stock';
+import NewQuotaSale from './pages/Quotas/Stock/NewQuotaSale';
 
 interface PrivateRouteProps extends RouteProps{
   component: any;
@@ -75,6 +76,7 @@ const Routes = (): JSX.Element => {
         <PrivateRoute path="/relatorios" neededPermission="Financeiro Completo" exact component={Reports} />
 
         <PrivateRoute path="/contempladas" neededPermission="" exact component={Quotas} />
+        <PrivateRoute path="/cadastrar-venda/:quota" neededPermission="" exact component={NewQuotaSale} />
 
         {/* <PrivateRoute path="/empresas" component={Roles} /> */}
       </Switch>
