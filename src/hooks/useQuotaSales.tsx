@@ -16,18 +16,15 @@ export interface QuotaSaleFilterData{
 
 export const getQuotaSales = async (filter?: QuotaSaleFilterData, page: number = 0) => {
     if(filter){
-        const {data, headers} = await api.get('/quotas', {
+        const {data, headers} = await api.get('/quota_sales', {
             params: {
               page: page,
               search: filter.search,
-              segment: filter.segment,
               company: filter.company,
               start_date: filter.start_date,
               end_date: filter.end_date,
-              contemplated_type: filter.contemplated_type,
               group: filter.group,
               quote: filter.quote,
-              status: filter.status,
               group_by: filter.group_by,
             }
         });

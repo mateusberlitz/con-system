@@ -78,6 +78,7 @@ const Routes = (): JSX.Element => {
 
         <PrivateRoute path="/contempladas" neededPermission="" exact component={Quotas} />
         <PrivateRoute path="/cadastrar-venda/:quota" neededPermission="" exact component={NewQuotaSale} />
+        <PrivateRoute path="/editar-venda/:quota/:quotaSale" neededPermission="" exact component={NewQuotaSale} />
 
         <PrivateRoute path="/venda-contempladas" neededPermission="" exact component={Sales} />
 

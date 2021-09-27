@@ -17,7 +17,7 @@ import { RemoveButton } from "../../../components/Buttons/RemoveButton";
 import { UseQueryResult } from "react-query";
 import { formatBRDate } from "../../../utils/Date/formatBRDate";
 import { useState } from "react";
-// import { EditQuota, EditQuotaModal } from "./EditSaleModal";
+// import { EditQuota, EditQuotaSaleModal } from "./EditSaleModal";
 // import { ConfirmPaymentRemoveModal, RemoveQuotaData } from "./ConfirmSaleRemoveModal";
 import { Router, useHistory } from "react-router";
 
@@ -42,7 +42,7 @@ export function SalesList({quotaSales, refetchQuotaSales}: QuotasListProps){
         return sumAmount + quotaSale.value;
     }, 0);
 
-    // const [isEditQuotaModalOpen, setIsEditQuotaModalOpen] = useState(false);
+    // const [isEditQuotaSaleModalOpen, setIsEditQuotaSaleModalOpen] = useState(false);
     // const [editQuotaData, setEditQuotaData] = useState<EditQuota>(() => {
 
     //     const data: EditQuota = {
@@ -71,12 +71,12 @@ export function SalesList({quotaSales, refetchQuotaSales}: QuotasListProps){
     //     return data;
     // });
 
-    // function OpenEditQuotaModal(quotaData: EditQuota){
+    // function OpenEditQuotaSaleModal(quotaData: EditQuota){
     //     setEditQuotaData(quotaData);
-    //     setIsEditQuotaModalOpen(true);
+    //     setIsEditQuotaSaleModalOpen(true);
     // }
-    // function CloseEditQuotaModal(){
-    //     setIsEditQuotaModalOpen(false);
+    // function CloseEditQuotaSaleModal(){
+    //     setIsEditQuotaSaleModalOpen(false);
     // }
 
     // const [isConfirmQuotaRemoveModalOpen, setisConfirmQuotaRemoveModalOpen] = useState(false);
@@ -101,8 +101,7 @@ export function SalesList({quotaSales, refetchQuotaSales}: QuotasListProps){
 
     return (
         <Stack fontSize="13px" spacing="12">
-            {/* <EditQuotaModal toEditQuotaData={editQuotaData} afterEdit={refetchQuotas} isOpen={isEditQuotaModalOpen} onRequestClose={CloseEditQuotaModal}/>
-            <ConfirmPaymentRemoveModal afterRemove={refetchQuotas} toRemoveQuotaData={removeQuotaData} isOpen={isConfirmQuotaRemoveModalOpen} onRequestClose={CloseConfirmQuotaRemoveModal}/> */}
+            {/* <ConfirmPaymentRemoveModal afterRemove={refetchQuotas} toRemoveQuotaData={removeQuotaData} isOpen={isConfirmQuotaRemoveModalOpen} onRequestClose={CloseConfirmQuotaRemoveModal}/> */}
 
             <Accordion w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" spacing="0" allowMultiple>
                 <HStack spacing="8" justify="space-between" paddingX="8" paddingY="3" bg="gray.200">
@@ -135,6 +134,8 @@ export function SalesList({quotaSales, refetchQuotaSales}: QuotasListProps){
                         //     group: quotaSale.group,
                         //     quota: quotaSale.quota,
                         // };
+
+                        console.log(quotaSale.quota);
 
                         return (
                             <AccordionItem key={quotaSale.id} display="flex" flexDir="column" paddingX="8" paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
@@ -170,42 +171,25 @@ export function SalesList({quotaSales, refetchQuotaSales}: QuotasListProps){
                                                 <Text fontSize="12px" color="gray.800">Grupo: <strong>{quotaSale.quota.group}</strong></Text>
                                                 <Text fontSize="12px" color="gray.800">Cota: <strong>{quotaSale.quota.quota}</strong></Text>
                                             </Stack>
-
-                                            <Stack spacing="0">
-                                                <Text fontSize="10px" color="gray.800">Custo</Text>
-                                                <Text fontSize="sm" fontWeight="normal" color="gray.800">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quotaSale.cost)}</Text>
-                                            </Stack>
-
-                                            <Stack spacing="0">
-                                                <Text fontSize="10px" color="gray.800" fontWeight="bold">Custo Total</Text>
-                                                <Text fontSize="sm" fontWeight="normal" color="gray.800">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quotaSale.total_cost)}</Text>
-                                            </Stack>
         
-                                            {
-                                                quotaSale.sold ? (
-                                                    <HStack>
-                                                        <Flex fontWeight="bold" alignItems="center" color="green.400">
-                                                            <CheckIcon stroke="#48bb78" fill="none" width="16px"/>
-                                                            <Text ml="2">Pago</Text>
-                                                        </Flex>
-        
-                                                        {/* <IconButton onClick={() => handleReversePayment(payment.id)} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <RefreshIcon width="20px" stroke="#14142b" fill="none"/>} variant="outline"/> */}
-                                                    </HStack>
-                                                ) : (
-                                                    <OutlineButton isDisabled={quotaSale.sold} onClick={() => history.push(`/cadastrar-venda/${quotaSale.id}`)}
-                                                        h="30px" size="sm" color="green.400" borderColor="green.400" colorScheme="green" fontSize="11">
-                                                        Vender
-                                                    </OutlineButton>
-                                                )
-                                            }
+                                            
+                                            <OutlineButton onClick={() => history.push(`/cadastrar-venda/${quotaSale.id}`)}
+                                                h="30px" size="sm" color="green.400" borderColor="green.400" colorScheme="green" fontSize="11">
+                                                Receber
+                                            </OutlineButton>
         
                                         </HStack>
         
                                         <AccordionPanel flexDir="column" borderTop="2px" borderColor="gray.500" px="0" py="5">
                                             <HStack justifyContent="space-between" marginBottom="4">
                                                 <Stack spacing="0">
-                                                    <Text fontSize="10px" color="gray.800">Custo Parceiro</Text>
-                                                    <Text fontSize="sm" fontWeight="semibold" color="gray.800">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quotaSale.partner_cost ? quotaSale.partner_cost : 0)}</Text>
+                                                    <Text fontSize="10px" color="gray.800">Valor passado</Text>
+                                                    <Text fontSize="sm" fontWeight="semibold" color="gray.800">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quotaSale.passed_value ? quotaSale.passed_value : 0)}</Text>
+                                                </Stack>
+
+                                                <Stack spacing="0">
+                                                    <Text fontSize="10px" color="gray.800">Comissão do parceiro</Text>
+                                                    <Text fontSize="sm" fontWeight="semibold" color="gray.800">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quotaSale.partner_value ? quotaSale.partner_value : 0)}</Text>
                                                 </Stack>
 
                                                 <Stack spacing="0">
@@ -214,40 +198,30 @@ export function SalesList({quotaSales, refetchQuotaSales}: QuotasListProps){
                                                 </Stack>
 
                                                 <Stack spacing="0">
-                                                    <Text fontSize="10px" color="gray.800">Comprado de</Text>
-                                                    <Text fontSize="sm" fontWeight="semibold" color="gray.800">{quotaSale.seller ? quotaSale.seller : ''}</Text>
-                                                </Stack>
-
-                                                <Stack spacing="0">
                                                     <Text fontSize="10px" color="gray.800">CPF/CNPJ</Text>
                                                     <Text fontSize="sm" fontWeight="semibold" color="gray.800">{quotaSale.cpf_cnpj}</Text>
                                                 </Stack>
 
                                                 <Stack spacing="0">
-                                                    <Text fontSize="10px" color="gray.800">% paga pelo crédito</Text>
-                                                    <Text fontSize="sm" fontWeight="semibold" color="gray.800">{quotaSale.paid_percent}</Text>
+                                                    <Text fontSize="10px" color="gray.800">Vendido por</Text>
+                                                    <Text fontSize="sm" fontWeight="semibold" color="gray.800">{quotaSale.seller}</Text>
+                                                </Stack>
+
+                                                <Stack spacing="0">
+                                                    <Text fontSize="10px" color="gray.800">Comprado por</Text>
+                                                    <Text fontSize="sm" fontWeight="semibold" color="gray.800">{quotaSale.buyer}</Text>
                                                 </Stack>
                                             </HStack>
 
                                             <HStack justifyContent="space-between" mb="4">
                                                 <Stack spacing="0">
-                                                    <Text fontSize="10px" color="gray.800">Custo Passado</Text>
-                                                    <Text fontSize="sm" fontWeight="semibold" color="gray.800">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quotaSale.passed_cost ? quotaSale.passed_cost : 0)}</Text>
+                                                    <Text fontSize="10px" color="gray.800">Lucro</Text>
+                                                    <Text fontSize="sm" fontWeight="semibold" color="gray.800">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quotaSale.profit ? quotaSale.profit : 0)}</Text>
                                                 </Stack>
 
                                                 <Stack spacing="0">
-                                                    <Text fontSize="10px" color="gray.800">Parceiro</Text>
-                                                    <Text fontSize="sm" fontWeight="semibold" color="gray.800">{quotaSale.partner}</Text>
-                                                </Stack>
-
-                                                <Stack spacing="0">
-                                                    <Text fontSize="10px" color="gray.800">Custo do Parceiro</Text>
-                                                    <Text fontSize="sm" fontWeight="semibold" color="gray.800">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quotaSale.partner_cost ? quotaSale.partner_cost : 0)}</Text>
-                                                </Stack>
-
-                                                <Stack spacing="0">
-                                                    <Text fontSize="10px" color="gray.800">Contemplado por</Text>
-                                                    <Text fontSize="sm" fontWeight="semibold" color="gray.800">{quotaSale.contemplated_type}</Text>
+                                                    <Text fontSize="10px" color="gray.800">Coordenador</Text>
+                                                    <Text fontSize="sm" fontWeight="semibold" color="gray.800">{quotaSale.coordinator}</Text>
                                                 </Stack>
                                             </HStack>
         
@@ -258,7 +232,7 @@ export function SalesList({quotaSales, refetchQuotaSales}: QuotasListProps){
                                                 </Flex>
 
                                                 <HStack spacing="5" alignItems="center">
-                                                    {/* <EditButton onClick={() => OpenEditQuotaModal(toEditQuotaData)}/>
+                                                    {/* <EditButton onClick={() => OpenEditQuotaSaleModal(toEditQuotaData)}/>
                                                     <RemoveButton onClick={() => OpenConfirmQuotaRemoveModal({ id: quotaSale.id, group: quotaSale.group, quota: quotaSale.quota }) }/> */}
                                                 </HStack>
                                             </HStack>

@@ -50,7 +50,7 @@ interface PaymentOfQuota{
     expire:string;
 }
 
-const NewQuotaSaleFormSchema = yup.object().shape({
+const EditQuotaFormSchema = yup.object().shape({
     description: yup.string().nullable(),
     seller: yup.string().required("Quem vendeu a cota?"),
     buyer: yup.string().required("Quem foi o comprador?"),
@@ -86,7 +86,7 @@ export default function NewQuotaSale(){
     const quota = (quotaQuery?.data ? quotaQuery?.data : null);
 
     const { handleSubmit, register, formState, control} = useForm<QuotaSaleFormData>({
-        resolver: yupResolver(NewQuotaSaleFormSchema),
+        resolver: yupResolver(EditQuotaFormSchema),
         defaultValues: {
             value: quota ? quota.value : null,
         }
