@@ -232,8 +232,8 @@ export function SalesList({quotaSales, refetchQuotaSales}: QuotasListProps){
                                                 </Flex>
 
                                                 <HStack spacing="5" alignItems="center">
-                                                    {/* <EditButton onClick={() => OpenEditQuotaSaleModal(toEditQuotaData)}/>
-                                                    <RemoveButton onClick={() => OpenConfirmQuotaRemoveModal({ id: quotaSale.id, group: quotaSale.group, quota: quotaSale.quota }) }/> */}
+                                                    <EditButton onClick={() => history.push(`editar-venda/${quotaSale.quota.id}/${quotaSale.id}`)}/>
+                                                    {/* <RemoveButton onClick={() => OpenConfirmQuotaRemoveModal({ id: quotaSale.id, group: quotaSale.group, quota: quotaSale.quota }) }/> */}
                                                 </HStack>
                                             </HStack>
         

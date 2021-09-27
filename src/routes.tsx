@@ -23,6 +23,7 @@ import Invoices from './pages/Financial/Invoices';
 import Quotas from './pages/Quotas/Stock';
 import NewQuotaSale from './pages/Quotas/Stock/NewQuotaSale';
 import Sales from './pages/Quotas/Sales';
+import EditQuotaSale from './pages/Quotas/Sales/EditQuotaSale';
 
 interface PrivateRouteProps extends RouteProps{
   component: any;
@@ -77,10 +78,10 @@ const Routes = (): JSX.Element => {
         <PrivateRoute path="/relatorios" neededPermission="Financeiro Completo" exact component={Reports} />
 
         <PrivateRoute path="/contempladas" neededPermission="" exact component={Quotas} />
-        <PrivateRoute path="/cadastrar-venda/:quota" neededPermission="" exact component={NewQuotaSale} />
-        <PrivateRoute path="/editar-venda/:quota/:quotaSale" neededPermission="" exact component={NewQuotaSale} />
 
         <PrivateRoute path="/venda-contempladas" neededPermission="" exact component={Sales} />
+        <PrivateRoute path="/cadastrar-venda/:quota" neededPermission="" exact component={NewQuotaSale} />
+        <PrivateRoute path="/editar-venda/:quota/:quotaSale" neededPermission="" exact component={EditQuotaSale} />
 
         {/* <PrivateRoute path="/empresas" component={Roles} /> */}
       </Switch>

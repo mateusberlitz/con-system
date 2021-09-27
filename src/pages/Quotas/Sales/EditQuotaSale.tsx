@@ -25,6 +25,7 @@ import { formatInputDate } from "../../../utils/Date/formatInputDate";
 
 interface QuotaSaleParams{
     quota: string;
+    quotaSale: string;
 }
 
 interface QuotaSaleFormData{
@@ -72,7 +73,7 @@ const PaymentsOfQuotaSchema = yup.object().shape({
     osbervation: yup.string().nullable(),
 });
 
-export default function NewQuotaSale(){
+export default function EditQuotaSale(){
     const workingCompany = useWorkingCompany();
 
     const history = useHistory();
@@ -82,8 +83,10 @@ export default function NewQuotaSale(){
     const params = useParams<QuotaSaleParams>();
 
     const quotaQuery = useQuota(params.quota);
+    const quotaSaleQuery = useQuota(params.quotaSale);
 
     const quota = (quotaQuery?.data ? quotaQuery?.data : null);
+    const quotaSale = (quotaSaleQuery?.data ? quotaSaleQuery?.data : null);
 
     const { handleSubmit, register, formState, control} = useForm<QuotaSaleFormData>({
         resolver: yupResolver(EditQuotaFormSchema),
@@ -181,7 +184,7 @@ export default function NewQuotaSale(){
         }
     }
 
-    console.log(formState.errors);
+    console.log(quotaSale);
 
     return(
         <MainBoard sidebar="quotas" header={ <CompanySelectMaster/>}>
@@ -248,8 +251,11 @@ export default function NewQuotaSale(){
                 quota && (
                     <Stack id="quotaSale" as="form" spacing="6" mb="14" onSubmit={handleSubmit(handleCreateNewQuotaSale)}>
                         <HStack spacing="4" align="baseline">
-                            <ControlledInput control={control} value={quota.value} name="value" type="text" placeholder="Valor (Entrada)" variant="outline" error={formState.errors.value} focusBorderColor="blue.800"/>
-                        
+                            <ControlledInput control={control} value={quotaSale.value} name="value" type="text" placeholder="Valor (Entrada)" variant="outline" error={formState.errors.value} focusBorderColor="blue.800"/>
+
+                            <ControlledInput control={control} value={quotaSale.sale_date} name="sale_date" type="date" placeholder="Data da venda" variant="outline" error={formState.errors.sale_date} focusBorderColor="blue.800"/>
+
+                            
                             <Input register={register} name="sale_date" type="date" placeholder="Data da venda" variant="outline" error={formState.errors.sale_date} focusBorderColor="blue.800"/>
                         
                             <Input register={register} name="buyer" type="text" placeholder="Comprador" variant="outline" mask="money" error={formState.errors.buyer} focusBorderColor="blue.800"/>
