@@ -68,6 +68,7 @@ const FilterPaymentsFormSchema = yup.object().shape({
     quote: yup.string(),
     status: yup.string(),
     pay_to_user: yup.string(),
+    pendency: yup.string(),
 });
 
 export default function Payments(){
@@ -79,6 +80,7 @@ export default function Payments(){
             search: '',
             company: workingCompany.company?.id,
             status: 0,
+            pendency: 0,
         };
         
         return data;
@@ -521,7 +523,7 @@ export default function Payments(){
                         <Input register={register} name="group" type="text" placeholder="Grupo" variant="filled" error={formState.errors.group}/>
                             
                         <Input register={register} name="quote" type="text" placeholder="Cota" variant="filled" error={formState.errors.quote}/>
-                        <Input register={register} name="contract" type="text" placeholder="Contrato" variant="filled" error={formState.errors.contract}/>
+                        {/* <Input register={register} name="contract" type="text" placeholder="Contrato" variant="filled" error={formState.errors.contract}/> */}
                             
                         <Select register={register} h="45px" name="pay_to_user" error={formState.errors.pay_to_user} w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Pagar para">
                             {users.data && users.data.map((user:User) => {
@@ -531,10 +533,16 @@ export default function Payments(){
                             })}
                         </Select>
 
+                        <Select register={register} defaultValue={0} h="45px" name="pendency" error={formState.errors.pendency} w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
+                            <option value="">Todos</option>
+                            <option value={1}>Pendentes</option>
+                            <option value={0}>Não Pendentes</option>
+                        </Select>
+
                         <Select register={register} defaultValue={0} h="45px" name="status" error={formState.errors.status} w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
                             <option value="">Todos</option>
                             <option value={1}>Pagos</option>
-                            <option value={0}>Pendentes</option>
+                            <option value={0}>Não pagos</option>
                         </Select>
 
                         <OutlineButton type="submit" mb="10" color="blue.400" borderColor="blue.400" colorScheme="blue">

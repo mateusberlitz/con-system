@@ -66,6 +66,7 @@ export interface PartialPayment{
 
 export interface Payment{
     id: number;
+    pendency: boolean;
     title: string;
     value: number;
     paid: number;

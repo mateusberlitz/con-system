@@ -51,21 +51,8 @@ export function ReceiveBillModal ( { isOpen, onRequestClose, afterReceive, toRec
 
     const handleReceiveBill = async (billData : ReceiveBillFormData) => {
         try{
-            if(!workingCompany.company){
-                toast({
-                    title: "Ué",
-                    description: `Seleciona uma empresa para trabalhar`,
-                    status: "warning",
-                    duration: 12000,
-                    isClosable: true,
-                });
-
-                return;
-            }
-
             billData.new_value = (billData.new_value ? moneyToBackend(billData.new_value) : '');
 
-            billData.company = workingCompany.company.id;
             billData.value = toReceiveBillData.value;
 
             await api.post(`/bills/receive/${toReceiveBillData.id}`, billData);
@@ -81,7 +68,7 @@ export function ReceiveBillModal ( { isOpen, onRequestClose, afterReceive, toRec
             onRequestClose();
             afterReceive();
             reset();
-        }catch(error) {
+        }catch(error:any) {
             showErrors(error, toast);
 
             if(error.response.data.access){

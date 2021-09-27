@@ -51,22 +51,7 @@ export function ReceiveAllBillsModal ( { isOpen, onRequestClose, afterReceive, d
     });
 
     const handleReceiveDay = async (billData : ReceiveBillFormData) => {
-        try{
-            if(!workingCompany.company){
-                toast({
-                    title: "Ué",
-                    description: `Seleciona uma empresa para trabalhar`,
-                    status: "warning",
-                    duration: 12000,
-                    isClosable: true,
-                });
-
-                return;
-            }
-
-            billData.company = workingCompany.company.id;
-
-            
+        try{            
             await api.post(`/bills/receiveall/${formatYmdTodmY(dayToReceiveBills)}`, billData);
 
             toast({
@@ -79,7 +64,7 @@ export function ReceiveAllBillsModal ( { isOpen, onRequestClose, afterReceive, d
 
             onRequestClose();
             afterReceive();
-        }catch(error) {
+        }catch(error:any) {
             showErrors(error, toast);
 
             if(error.response.data.access){

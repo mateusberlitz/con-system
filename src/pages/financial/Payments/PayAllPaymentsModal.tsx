@@ -53,31 +53,6 @@ export function PayAllPaymentsModal ( { isOpen, onRequestClose, afterPay, dayToP
 
     const handlePayDay = async (paymentData : PayPaymentFormData) => {
         try{
-            if(workingCompany.company){
-                if(Object.keys(workingCompany.company).length === 0){
-                    toast({
-                        title: "Ué",
-                        description: `Seleciona uma empresa para trabalhar`,
-                        status: "warning",
-                        duration: 12000,
-                        isClosable: true,
-                    });
-    
-                    return;
-                }
-            }else{
-                toast({
-                    title: "Ué",
-                    description: `Seleciona uma empresa para trabalhar`,
-                    status: "warning",
-                    duration: 12000,
-                    isClosable: true,
-                });
-
-                return;
-            }
-
-            paymentData.company = workingCompany.company.id;
             
             await api.post(`/payments/payall/${formatYmdTodmY(dayToPayPayments)}`, paymentData);
 
@@ -91,7 +66,7 @@ export function PayAllPaymentsModal ( { isOpen, onRequestClose, afterPay, dayToP
 
             onRequestClose();
             afterPay();
-        }catch(error) {
+        }catch(error:any) {
             showErrors(error, toast);
 
             if(error.response.data.access){

@@ -51,21 +51,8 @@ export function PayPaymentModal ( { isOpen, onRequestClose, afterPay, toPayPayme
 
     const handlePayPayment = async (paymentData : PayPaymentFormData) => {
         try{
-            if(!workingCompany.company){
-                toast({
-                    title: "Ué",
-                    description: `Seleciona uma empresa`,
-                    status: "warning",
-                    duration: 12000,
-                    isClosable: true,
-                });
-
-                return;
-            }
-
             paymentData.new_value = (paymentData.new_value ? moneyToBackend(paymentData.new_value) : '');
 
-            paymentData.company = workingCompany.company.id;
             paymentData.value = toPayPaymentData.value;
 
             await api.post(`/payments/pay/${toPayPaymentData.id}`, paymentData);
@@ -81,7 +68,7 @@ export function PayPaymentModal ( { isOpen, onRequestClose, afterPay, toPayPayme
             onRequestClose();
             afterPay();
             reset();
-        }catch(error) {
+        }catch(error:any) {
             showErrors(error, toast);
 
             if(error.response.data.access){

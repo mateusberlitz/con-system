@@ -88,7 +88,7 @@ export function EditPaymentCategoryModal( { isOpen, toEditPaymentCategoryData, c
             afterEdit();
             reset();
             onRequestClose();
-        }catch(error) {
+        }catch(error:any) {
             console.log(error);
             showErrors(error, toast);
 

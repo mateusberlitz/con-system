@@ -12,7 +12,8 @@ export interface PaymentFilterData{
     group?: string;
     quote?: string;
     group_by?: string;
-    status?: number
+    status?: number;
+    pendency?: number;
 }
 
 export const getPayments = async (filter?: PaymentFilterData, page: number = 0) => {
@@ -30,6 +31,7 @@ export const getPayments = async (filter?: PaymentFilterData, page: number = 0) 
               group: filter.group,
               quote: filter.quote,
               status: filter.status,
+              pendency: filter.pendency,
               group_by: filter.group_by,
             }
         });

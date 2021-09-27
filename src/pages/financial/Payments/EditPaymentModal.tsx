@@ -17,6 +17,7 @@ import { useProfile } from "../../../hooks/useProfile";
 import { redirectMessages } from "../../../utils/redirectMessages";
 import { isAuthenticated } from "../../../services/auth";
 import { useEffect, useState } from "react";
+import { ControlledCheckbox } from "../../../components/Forms/CheckBox/ControlledCheckbox";
 
 interface EditPaymentModalProps{
     isOpen: boolean;
@@ -44,6 +45,7 @@ export interface EditPaymentFormData{
     group?: string;
     quote?: string;
     recurrence?: number;
+    pendency?: boolean;
     activeRecurrence?: string;
     file: any;
 }
@@ -268,6 +270,9 @@ export function EditPaymentModal( { isOpen, onRequestClose, afterEdit, toEditPay
                         <ControlledInput control={control} value={toEditPaymentData.paid} name="paid" type="text" placeholder="Valor já pago" variant="outline" error={formState.errors.paid} focusBorderColor="blue.400"/>
                         
                         <ControlledInput control={control} value={toEditPaymentData.observation} name="observation" type="text" placeholder="Observação" variant="outline" error={formState.errors.observation} focusBorderColor="blue.400"/>
+
+                        <ControlledCheckbox label="Pendência" control={control} defaultIsChecked={toEditPaymentData.pendency} name="pendency" error={formState.errors.pendency}/>
+
                         
                     </Stack>
                 </ModalBody>
