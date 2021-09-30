@@ -135,7 +135,7 @@ export default function BillCategories(){
 
             reset();
             loadCategories();
-        }catch(error) {
+        }catch(error:any) {
             showErrors(error, toast);
 
             if(error.response.data.access){

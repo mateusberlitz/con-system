@@ -1,3 +1,5 @@
+import { ResumedBill } from "../pages/Quotas/Sales/EditQuotaSale";
+
 export interface Company{
     id: number;
     name: string;
@@ -141,6 +143,7 @@ export interface Bill{
     source?: Source;
     observation: string;
     status?: boolean;
+    quota_sales_id?: number;
     partial_bills?: PartialBill[];
     created_at?: Date;
     updated_at?: Date;
@@ -239,6 +242,7 @@ export interface QuotaSale{
     id: number;
     cancelled: boolean;
     company: Company;
+    bills: ResumedBill[];
     quota: Quota;
     value: number;
     passed_value: number;

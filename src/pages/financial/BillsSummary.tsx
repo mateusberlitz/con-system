@@ -58,14 +58,16 @@ export function BillsSummary({bills, openReceiveBill, filter, handleChangeFilter
 
                     {
                         (!bills.isLoading && !bills.error) && Object.keys(bills.data?.data).map((company:string) => {
-                            const totalDayAmount = bills.data?.data[company].reduce((sumAmount:number, payment:Payment) => {
-                                return sumAmount + payment.value;
+                            const totalDayAmount = bills.data?.data[company].reduce((sumAmount:number, bill:Bill) => {
+                                return sumAmount + bill.value;
                             }, 0);
 
                             const todayFormatedDate = formatDate(formatYmdDate(new Date().toDateString()));
                             const tomorrow = getDay(formatYmdDate(new Date().toDateString())) + 1;
 
                             const companyName = bills.data?.data[company][0].company.name;
+
+                            //console.log(bills.data?.data[company]);
 
                             return (
                                 <Stack key={company} w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" spacing="0">
@@ -85,6 +87,7 @@ export function BillsSummary({bills, openReceiveBill, filter, handleChangeFilter
 
                                     {
                                         bills.data?.data[company].map((bills:Bill) => {
+                                            console.log(bills.id);
 
                                             return (
                                                 <HStack key={bills.id} justifyContent="space-between" borderTop="2px" borderColor="gray.500" px="8" py="4">

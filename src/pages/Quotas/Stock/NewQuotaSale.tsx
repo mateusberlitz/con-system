@@ -45,6 +45,7 @@ interface QuotaSaleFormData{
 }
 
 interface PaymentOfQuota{
+    title: string;
     value: string;
     observation?:string;
     expire:string;
@@ -68,6 +69,7 @@ const NewQuotaSaleFormSchema = yup.object().shape({
 
 const PaymentsOfQuotaSchema = yup.object().shape({
     value: yup.string().required("Informe o valor da venda"),
+    title: yup.string().required("Qual o título desse recebimento"),
     expire: yup.string().required("Selecione a data da venda"),
     osbervation: yup.string().nullable(),
 });

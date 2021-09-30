@@ -10,6 +10,7 @@ export interface BillFilterData{
     source?: number;
     status?: number;
     group_by?: string;
+    quota_sales_id?: number;
 }
 
 export const getBills = async (filter?: BillFilterData, page: number = 0) => {
@@ -24,6 +25,7 @@ export const getBills = async (filter?: BillFilterData, page: number = 0) => {
                 end_date: filter.end_date,
                 source: filter.source,
                 status: filter.status,
+                quota_sales_id: filter.quota_sales_id,
                 group_by: filter.group_by
             }
         });

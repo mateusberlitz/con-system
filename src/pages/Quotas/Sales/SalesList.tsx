@@ -1,4 +1,4 @@
-import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Flex, HStack, IconButton, Spinner, Stack, Text } from "@chakra-ui/react";
+import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Divider, Flex, HStack, IconButton, Spinner, Stack, Tbody, Td, Text, Th, Thead, Table, Tr, Link } from "@chakra-ui/react";
 import { Quota, QuotaSale } from "../../../types";
 
 import { ReactComponent as PlusIcon } from '../../../assets/icons/Plus.svg';
@@ -11,6 +11,8 @@ import { ReactComponent as FileIcon } from '../../../assets/icons/File.svg';
 import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
 import { ReactComponent as RefreshIcon } from '../../../assets/icons/Refresh.svg';
 import { ReactComponent as HomeIcon } from '../../../assets/icons/Home.svg';
+import { ReactComponent as BackArrow } from '../../../assets/icons/Back Arrow.svg';
+
 import { OutlineButton } from "../../../components/Buttons/OutlineButton";
 import { EditButton } from "../../../components/Buttons/EditButton";
 import { RemoveButton } from "../../../components/Buttons/RemoveButton";
@@ -18,8 +20,11 @@ import { UseQueryResult } from "react-query";
 import { formatBRDate } from "../../../utils/Date/formatBRDate";
 import { useState } from "react";
 // import { EditQuota, EditQuotaSaleModal } from "./EditSaleModal";
-// import { ConfirmPaymentRemoveModal, RemoveQuotaData } from "./ConfirmSaleRemoveModal";
+// import { ConfirmPaymentRemoveModal, cancelQuotaSaleData } from "./ConfirmSaleRemoveModal";
 import { Router, useHistory } from "react-router";
+import { CancelQuotaSaleData, ConfirmQuotaSaleCancelModal } from "./ConfirmQuotaSaleCancelModal";
+import { SolidButton } from "../../../components/Buttons/SolidButton";
+import { ResumedBill } from "./EditQuotaSale";
 
 
 interface QuotasListProps{
@@ -79,29 +84,29 @@ export function SalesList({quotaSales, refetchQuotaSales}: QuotasListProps){
     //     setIsEditQuotaSaleModalOpen(false);
     // }
 
-    // const [isConfirmQuotaRemoveModalOpen, setisConfirmQuotaRemoveModalOpen] = useState(false);
-    // const [removeQuotaData, setRemoveQuotaData] = useState<RemoveQuotaData>(() => {
+    const [isConfirmQuotaSaleCancelModalOpen, setisConfirmQuotaSaleCancelModalOpen] = useState(false);
+    const [cancelQuotaSaleData, setCancelQuotaSaleData] = useState<CancelQuotaSaleData>(() => {
 
-    //     const data: RemoveQuotaData = {
-    //         group: '',
-    //         quota: '',
-    //         id: 0,
-    //     };
+        const data: CancelQuotaSaleData = {
+            group: '',
+            quota: '',
+            id: 0,
+        };
         
-    //     return data;
-    // });
+        return data;
+    });
 
-    // function OpenConfirmQuotaRemoveModal(QuotaData: RemoveQuotaData){
-    //     setRemoveQuotaData(QuotaData);
-    //     setisConfirmQuotaRemoveModalOpen(true);
-    // }
-    // function CloseConfirmQuotaRemoveModal(){
-    //     setisConfirmQuotaRemoveModalOpen(false);
-    // }
+    function OpenConfirmQuotaSaleCancelModal(QuotaData: CancelQuotaSaleData){
+        setCancelQuotaSaleData(QuotaData);
+        setisConfirmQuotaSaleCancelModalOpen(true);
+    }
+    function CloseConfirmQuotaSaleCancelModal(){
+        setisConfirmQuotaSaleCancelModalOpen(false);
+    }
 
     return (
         <Stack fontSize="13px" spacing="12">
-            {/* <ConfirmPaymentRemoveModal afterRemove={refetchQuotas} toRemoveQuotaData={removeQuotaData} isOpen={isConfirmQuotaRemoveModalOpen} onRequestClose={CloseConfirmQuotaRemoveModal}/> */}
+            <ConfirmQuotaSaleCancelModal afterCancel={refetchQuotaSales} toCancelQuotaSaleData={cancelQuotaSaleData} isOpen={isConfirmQuotaSaleCancelModalOpen} onRequestClose={CloseConfirmQuotaSaleCancelModal}/>
 
             <Accordion w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" spacing="0" allowMultiple>
                 <HStack spacing="8" justify="space-between" paddingX="8" paddingY="3" bg="gray.200">
@@ -172,11 +177,14 @@ export function SalesList({quotaSales, refetchQuotaSales}: QuotasListProps){
                                                 <Text fontSize="12px" color="gray.800">Cota: <strong>{quotaSale.quota.quota}</strong></Text>
                                             </Stack>
         
-                                            
-                                            <OutlineButton onClick={() => history.push(`/cadastrar-venda/${quotaSale.id}`)}
-                                                h="30px" size="sm" color="green.400" borderColor="green.400" colorScheme="green" fontSize="11">
-                                                Receber
-                                            </OutlineButton>
+                                            <HStack spacing="5">
+                                                <OutlineButton onClick={() => history.push(`/cadastrar-venda/${quotaSale.id}`)}
+                                                    h="29px" size="sm" color="green.400" borderColor="green.400" colorScheme="green" fontSize="11">
+                                                    Receber
+                                                </OutlineButton>
+
+                                                <EditButton onClick={() => history.push(`editar-venda/${quotaSale.quota.id}/${quotaSale.id}`)}/>
+                                            </HStack>
         
                                         </HStack>
         
@@ -232,9 +240,55 @@ export function SalesList({quotaSales, refetchQuotaSales}: QuotasListProps){
                                                 </Flex>
 
                                                 <HStack spacing="5" alignItems="center">
-                                                    <EditButton onClick={() => history.push(`editar-venda/${quotaSale.quota.id}/${quotaSale.id}`)}/>
-                                                    {/* <RemoveButton onClick={() => OpenConfirmQuotaRemoveModal({ id: quotaSale.id, group: quotaSale.group, quota: quotaSale.quota }) }/> */}
+                                                    <SolidButton colorScheme="red" h="29px" pl="5" pr="5" bg="red.400" minWidth="none" onClick={() => OpenConfirmQuotaSaleCancelModal({ id: quotaSale.id, group: quotaSale.quota.group, quota: quotaSale.quota.quota }) }>
+                                                        Cancelar Venda
+                                                    </SolidButton>
+                                                    {/* <RemoveButton onClick={() => OpenConfirmQuotaSaleCancelModal({ id: quotaSale.id, group: quotaSale.quota.group, quota: quotaSale.quota.quota }) }/> */}
                                                 </HStack>
+                                            </HStack>
+
+                                            <Divider mb="3"/>
+
+                                            <HStack justifyContent="space-between" alignItems="center">
+                                                <Table size="sm" variant="simple">
+                                                    <Thead>
+                                                        <Tr>
+                                                            <Th color="gray.900">Valores a receber: </Th>
+                                                            <Th></Th>
+                                                            <Th></Th>
+                                                        </Tr>
+                                                    </Thead>
+                                                    <Tbody>
+                                                        
+                                                        {
+                                                            quotaSale.bills && quotaSale.bills.map((partial: ResumedBill) => {
+                                                                return (
+                                                                    <Tr>
+                                                                        <Td fontSize="12px">{partial.expire && formatBRDate(partial.expire)}</Td>
+                                                                        <Td fontSize="12px">{partial.title}</Td>
+                                                                        <Td color="gray.800" fontWeight="semibold" fontSize="12px">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(partial.value)}</Td>
+                                                                    </Tr>
+                                                                )
+                                                            })
+                                                        }
+                                                    </Tbody>
+
+                                                    {/* <HStack>
+                                                        <Text>Valores pagos: </Text>
+                                                        <strong> {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(payment.paid)}</strong>
+                                                    </HStack>
+
+                                                    {
+                                                        payment.partial_payments && payment.partial_payments.map((partial: PartialPayment) => {
+                                                            return (
+                                                                <HStack>
+                                                                    <Text>{partial.pay_date && formatBRDate(partial.pay_date.toString())}</Text>
+                                                                    <Text color="gray.800" fontWeight="semibold"> {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(partial.value)}</Text>
+                                                                </HStack>
+                                                            )
+                                                        })
+                                                    } */}
+                                                </Table>
                                             </HStack>
         
                                         </AccordionPanel>

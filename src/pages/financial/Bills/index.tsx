@@ -123,7 +123,7 @@ export default function Bills(){
     useEffect(() => {
         loadCategories();
         
-    }, [])
+    }, []);
 
     const usersFilter: UserFilterData = {
         search: ''
