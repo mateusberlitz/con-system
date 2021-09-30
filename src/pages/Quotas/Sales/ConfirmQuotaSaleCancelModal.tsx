@@ -30,7 +30,7 @@ export function ConfirmQuotaSaleCancelModal( { isOpen, toCancelQuotaSaleData, af
 
     const handleCancelPayment = async () => {
         try{
-            await api.delete(`/quotas/cancel/${toCancelQuotaSaleData.id}`);
+            await api.delete(`/quota_sales/cancel/${toCancelQuotaSaleData.id}`);
 
             toast({
                 title: "Sucesso",
