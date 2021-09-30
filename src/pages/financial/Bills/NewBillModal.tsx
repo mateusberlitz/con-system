@@ -150,7 +150,7 @@ export function NewBillModal( { isOpen, onRequestClose, afterCreate, categories,
                                     <Text>Nenhuma empresa disponível</Text>
                                 </Flex>
                             ) : (
-                                <ControlledSelect control={control} value={(workingCompany.company && workingCompany.company.id) ? workingCompany.company.id.toString() : "0"}  h="45px" name="company" w="100%" fontSize="sm" focusBorderColor="blue.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" error={formState.errors.company}>
+                                <ControlledSelect control={control} value={(workingCompany.company && workingCompany.company.id) ? workingCompany.company.id.toString() : ""}  h="45px" name="company" placeholder="Empresa" w="100%" fontSize="sm" focusBorderColor="blue.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" error={formState.errors.company}>
                                     {profile.companies && profile.companies.map((company:Company) => {
                                         return (
                                             <option key={company.id} value={company.id}>{company.name}</option>

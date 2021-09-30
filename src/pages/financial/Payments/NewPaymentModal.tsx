@@ -52,8 +52,8 @@ interface CreateNewPaymentFormData{
 const CreateNewPaymentFormSchema = yup.object().shape({
     title: yup.string().required('Título do pagamento obrigatório'),
     observation: yup.string(),
-    company: yup.number(),
-    category: yup.number(),
+    company: yup.number().required('Selecione a empresa'),
+    category: yup.number().required('Seleciona a categoria'),
     provider: yup.number().transform((v, o) => o === '' ? null : v).nullable(),
     status: yup.boolean(),
     pay_to_user: yup.number().transform((v, o) => o === '' ? null : v).nullable(),
@@ -115,6 +115,8 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
         try{
             const paymentFormedData = new FormData();
             const invoiceFormedData = new FormData();
+
+            console.log(paymentData.company);
 
             if(!workingCompany.company && paymentData.company === 0){
                 toast({
@@ -253,7 +255,7 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
                                     <Text>Nenhuma empresa disponível</Text>
                                 </Flex>
                             ) : (
-                                <ControlledSelect control={control} value={(workingCompany.company && workingCompany.company.id) ? workingCompany.company.id.toString() : "0"}  h="45px" name="company" w="100%" fontSize="sm" focusBorderColor="blue.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" error={formState.errors.company}>
+                                <ControlledSelect control={control} value={(workingCompany.company && workingCompany.company.id) ? workingCompany.company.id : ""}  h="45px" name="company" placeholder="Empresa" w="100%" fontSize="sm" focusBorderColor="blue.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" error={formState.errors.company}>
                                     {profile.companies && profile.companies.map((company:Company) => {
                                         return (
                                             <option key={company.id} value={company.id}>{company.name}</option>
