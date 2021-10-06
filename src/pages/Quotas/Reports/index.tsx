@@ -10,8 +10,20 @@ import { api } from "../../../services/api";
 import { newMonthsAmountArray } from "../../Financial/Reports/populateMonthAmountArray";
 
 interface purchaseReport{
-    value: number;
+    cost: number;
     purchase_date: string;
+}
+
+interface saleReport{
+    value: number;
+    sale_date: string;
+}
+
+interface cancelReport{
+    quotaSale: {
+        value: number;
+    };
+    cancel_date: string;
 }
 
 export default function QuotasReport(){
@@ -118,29 +130,56 @@ export default function QuotasReport(){
                             <Tr>
                                 <Th></Th>
                             </Tr>
+                           
                             <Tr>
-                                <Th color="gray.900" fontSize="sm" position="sticky" left="0">SAÍDAS</Th>
+                                <Th fontWeight="bold" color="gray.800" textTransform="capitalize" position="sticky" left="0" bg="white">COMPRAS</Th>
+                                {
+                                    Object.keys(quotaReports.data.purchases).map((month:string, index:number) => {
+                                        let monthTotal = 0;
+
+                                        if(quotaReports.data.purchases[month] !== 0){
+                                            monthTotal = quotaReports.data.purchases[month].reduce((sumAmount:number, purchase:purchaseReport) => {
+                                                return sumAmount + purchase.cost;
+                                            }, 0);
+                                        }
+
+                                        console.log(quotaReports.data.cancels[(parseInt(month) - 1).toString()]);
+
+                                        // if(quotaReports.data.cancels[(parseInt(month) - 1).toString()] !== 0){
+                                        //     monthTotal = monthTotal + quotaReports.data.cancels[(parseInt(month) - 1).toString()].reduce((sumAmount:number, cancel:cancelReport) => {
+                                        //         return sumAmount + cancel.quotaSale.value;
+                                        //     }, 0);
+                                        // }
+
+                                        totalByMonths[index + 1] += monthTotal;
+
+                                        return <Th whiteSpace="nowrap" fontWeight="500" color={monthTotal === 0 ? 'gray.800' : 'red.400'} key={`${month}-${monthTotal}`}>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(monthTotal)}</Th>
+                                    })
+                                }
+                            </Tr>
+
+                            <Tr>
+                                <Th></Th>
                             </Tr>
                            
-                                <Tr>
-                                    {/* <Th fontWeight="bold" color="gray.800" textTransform="capitalize" key={category} position="sticky" left="0" bg="white">{category}</Th> */}
+                            <Tr>
+                                <Th fontWeight="bold" color="gray.800" textTransform="capitalize" position="sticky" left="0" bg="white">VENDAS</Th>
+                                {
+                                    Object.keys(quotaReports.data.sales).map((month:string, index:number) => {
+                                        let monthTotal = 0;
 
-                                    {
-                                        Object.keys(quotaReports.data.purchases).map((month:string, index:number) => {
-                                            let monthTotal = 0;
+                                        if(quotaReports.data.sales[month] !== 0){
+                                            monthTotal = quotaReports.data.sales[month].reduce((sumAmount:number, sale:saleReport) => {
+                                                return sumAmount + sale.value;
+                                            }, 0);
+                                        }
 
-                                            if(quotaReports.data.purchases[month] !== 0){
-                                                monthTotal = quotaReports.data.purchases[month].reduce((sumAmount:number, purchase:purchaseReport) => {
-                                                    return sumAmount + purchase.value;
-                                                }, 0);
-                                            }
+                                        totalByMonths[index + 1] += monthTotal;
 
-                                            totalByMonths[index + 1] += monthTotal;
-
-                                            return <Th whiteSpace="nowrap" fontWeight="500" color={monthTotal === 0 ? 'gray.800' : 'red.400'} key={`${month}-${monthTotal}`}>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(monthTotal)}</Th>
-                                        })
-                                    }
-                                </Tr>
+                                        return <Th whiteSpace="nowrap" fontWeight="500" color={monthTotal === 0 ? 'gray.800' : 'green.400'} key={`${month}-${monthTotal}`}>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(monthTotal)}</Th>
+                                    })
+                                }
+                            </Tr>
 
                             {/* <Tr>
                                 <Th position="sticky" left="0" bg="white">Total de Saídas</Th>
