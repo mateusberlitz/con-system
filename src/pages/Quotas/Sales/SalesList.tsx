@@ -1,4 +1,4 @@
-import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Divider, Flex, HStack, IconButton, Spinner, Stack, Tbody, Td, Text, Th, Thead, Table, Tr, Link } from "@chakra-ui/react";
+import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Divider, Flex, HStack, IconButton, Spinner, Stack, Tbody, Td, Text, Th, Thead, Table, Tr, Link, useToast } from "@chakra-ui/react";
 import { Quota, QuotaSale } from "../../../types";
 
 import { ReactComponent as PlusIcon } from '../../../assets/icons/Plus.svg';
@@ -25,6 +25,11 @@ import { Router, useHistory } from "react-router";
 import { CancelQuotaSaleData, ConfirmQuotaSaleCancelModal } from "./ConfirmQuotaSaleCancelModal";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { ResumedBill } from "./EditQuotaSale";
+import { ConfirmQuotaSaleRemoveModal, RemoveQuotaSaleData } from "./ConfirmQuotaSaleRemoveModal";
+import { PayPaymentFormData, PayPaymentModal } from "../../Financial/Payments/PayPaymentModal";
+import { ReceiveBillFormData, ReceiveBillModal } from "../../Financial/Bills/ReceiveBillModal";
+import { api } from "../../../services/api";
+import { showErrors } from "../../../hooks/useErrors";
 
 
 interface QuotasListProps{
@@ -104,9 +109,77 @@ export function SalesList({quotaSales, refetchQuotaSales}: QuotasListProps){
         setisConfirmQuotaSaleCancelModalOpen(false);
     }
 
+    const [isConfirmQuotaSaleRemoveModalOpen, setisConfirmQuotaSaleRemoveModalOpen] = useState(false);
+    const [removeQuotaSaleData, setRemoveQuotaSaleData] = useState<RemoveQuotaSaleData>(() => {
+
+        const data: RemoveQuotaSaleData = {
+            group: '',
+            quota: '',
+            id: 0,
+        };
+        
+        return data;
+    });
+
+    function OpenConfirmQuotaSaleRemoveModal(QuotaData: RemoveQuotaSaleData){
+        setRemoveQuotaSaleData(QuotaData);
+        setisConfirmQuotaSaleRemoveModalOpen(true);
+    }
+    function CloseConfirmQuotaSaleRemoveModal(){
+        setisConfirmQuotaSaleRemoveModalOpen(false);
+    }
+
+    const [isReceiveBillModalOpen, setIsReceiveBillModalOpen] = useState(false);
+    const [toReceiveBillData, setToReceiveBillData] = useState<ReceiveBillFormData>(() => {
+
+        const data: ReceiveBillFormData = {
+            id: 0,
+            value: '',
+            new_value: '',
+            title: '',
+        };
+        
+        return data;
+    });
+
+    function OpenReceiveBillModal(billIdAndName: ReceiveBillFormData){
+        setToReceiveBillData(billIdAndName);
+        setIsReceiveBillModalOpen(true);
+    }
+    function CloseReceiveBillModal(){
+        setIsReceiveBillModalOpen(false);
+    }
+
+    const toast = useToast();
+
+    const handleReverseBill = async (billId : number) => {
+        try{
+            await api.post(`/bills/unreceive/${billId}`);
+
+            toast({
+                title: "Sucesso",
+                description: `Conta a receber redefinda como não recebida.`,
+                status: "success",
+                duration: 12000,
+                isClosable: true,
+            });
+
+            refetchQuotaSales();
+        }catch(error: any) {
+            showErrors(error, toast);
+
+            if(error.response.data.access){
+                history.push('/');
+            }
+        }
+    }
+
     return (
         <Stack fontSize="13px" spacing="12">
             <ConfirmQuotaSaleCancelModal afterCancel={refetchQuotaSales} toCancelQuotaSaleData={cancelQuotaSaleData} isOpen={isConfirmQuotaSaleCancelModalOpen} onRequestClose={CloseConfirmQuotaSaleCancelModal}/>
+            <ConfirmQuotaSaleRemoveModal afterRemove={refetchQuotaSales} toRemoveQuotaSaleData={removeQuotaSaleData} isOpen={isConfirmQuotaSaleRemoveModalOpen} onRequestClose={CloseConfirmQuotaSaleRemoveModal}/>
+
+            <ReceiveBillModal afterReceive={refetchQuotaSales} toReceiveBillData={toReceiveBillData} isOpen={isReceiveBillModalOpen} onRequestClose={CloseReceiveBillModal}/>
 
             <Accordion w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" spacing="0" allowMultiple>
                 <HStack spacing="8" justify="space-between" paddingX="8" paddingY="3" bg="gray.200">
@@ -117,36 +190,12 @@ export function SalesList({quotaSales, refetchQuotaSales}: QuotasListProps){
                 </HStack>
 
                 { quotaSales.map((quotaSale:QuotaSale) => {
-                        // const toEditQuotaData:EditQuota = {
-                        //     id: quotaSale.id,
-                        //     sold: quotaSale.sold,
-                        //     credit: quotaSale.credit.toString().replace('.', ','),
-                        //     value: quotaSale.value.toString().replace('.', ','),
-                        //     segment: quotaSale.segment,
-                        //     company: quotaSale.company.id,
-                        //     seller: quotaSale.seller,
-                        //     contemplated_type: quotaSale.contemplated_type,
-                        //     cost: quotaSale.cost.toString().replace('.', ','),
-                        //     total_cost: quotaSale.total_cost.toString().replace('.', ','),
-                        //     cpf_cnpj: quotaSale.cpf_cnpj,
-                        //     partner: quotaSale.partner,
-                        //     partner_commission: quotaSale.partner_commission,
-                        //     partner_cost: quotaSale.partner_cost ? quotaSale.partner_cost.toString().replace('.', ',') : '',
-                        //     passed_cost: quotaSale.passed_cost ? quotaSale.passed_cost.toString().replace('.', ',') : '',
-                        //     purchase_date: quotaSale.purchase_date,
-                        //     paid_percent: quotaSale.paid_percent,
-                        //     description: quotaSale.description,
-                        //     group: quotaSale.group,
-                        //     quota: quotaSale.quota,
-                        // };
-
-                        console.log(quotaSale.quota);
 
                         return (
                             <AccordionItem key={quotaSale.id} display="flex" flexDir="column" paddingX="8" paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
                                 {({ isExpanded }) => (
                                     <>
-                                        <HStack justify="space-between" mb="3">
+                                        <HStack justify="space-between" mb="3" opacity={quotaSale.cancelled ? 0.5 : 1}>
                                             <AccordionButton p="0" height="fit-content" w="auto">
                                                 <Flex alignItems="center" justifyContent="center" h="24px" w="30px" p="0" borderRadius="full" border="2px" borderColor="blue.800" variant="outline">
                                                 { 
@@ -178,17 +227,29 @@ export function SalesList({quotaSales, refetchQuotaSales}: QuotasListProps){
                                             </Stack>
         
                                             <HStack spacing="5">
-                                                <OutlineButton onClick={() => history.push(`/cadastrar-venda/${quotaSale.id}`)}
-                                                    h="29px" size="sm" color="green.400" borderColor="green.400" colorScheme="green" fontSize="11">
-                                                    Receber
-                                                </OutlineButton>
+                                                {
+                                                    quotaSale.cancelled && (
+                                                        <HStack>
+                                                            <Flex fontWeight="bold" alignItems="center" color="red.400">
+                                                                <CloseIcon stroke="#c30052" fill="none" width="16px"/>
+                                                                <Text ml="2">Cancelada</Text>
+                                                            </Flex>
+                                                        </HStack>
+                                                    )
+                                                    // :(
+                                                    //     <OutlineButton disabled={!!quotaSale.cancelled} onClick={() => history.push(`/cadastrar-venda/${quotaSale.id}`)}
+                                                    //         h="29px" size="sm" color="green.400" borderColor="green.400" colorScheme="green" fontSize="11">
+                                                    //         Receber
+                                                    //     </OutlineButton>
+                                                    // )
+                                                }
 
-                                                <EditButton onClick={() => history.push(`editar-venda/${quotaSale.quota.id}/${quotaSale.id}`)}/>
+                                                <EditButton disabled={!!quotaSale.cancelled} onClick={() => history.push(`editar-venda/${quotaSale.quota.id}/${quotaSale.id}`)}/>
                                             </HStack>
         
                                         </HStack>
         
-                                        <AccordionPanel flexDir="column" borderTop="2px" borderColor="gray.500" px="0" py="5">
+                                        <AccordionPanel flexDir="column" borderTop="2px" borderColor="gray.500" px="0" py="5" opacity={quotaSale.cancelled ? 0.5 : 1}>
                                             <HStack justifyContent="space-between" marginBottom="4">
                                                 <Stack spacing="0">
                                                     <Text fontSize="10px" color="gray.800">Valor passado</Text>
@@ -240,10 +301,10 @@ export function SalesList({quotaSales, refetchQuotaSales}: QuotasListProps){
                                                 </Flex>
 
                                                 <HStack spacing="5" alignItems="center">
-                                                    <SolidButton colorScheme="red" h="29px" pl="5" pr="5" bg="red.400" minWidth="none" onClick={() => OpenConfirmQuotaSaleCancelModal({ id: quotaSale.id, group: quotaSale.quota.group, quota: quotaSale.quota.quota }) }>
+                                                    <SolidButton disabled={!!quotaSale.cancelled} colorScheme="red" h="29px" pl="5" pr="5" bg="red.400" minWidth="none" onClick={() => OpenConfirmQuotaSaleCancelModal({ id: quotaSale.id, group: quotaSale.quota.group, quota: quotaSale.quota.quota }) }>
                                                         Cancelar Venda
                                                     </SolidButton>
-                                                    {/* <RemoveButton onClick={() => OpenConfirmQuotaSaleCancelModal({ id: quotaSale.id, group: quotaSale.quota.group, quota: quotaSale.quota.quota }) }/> */}
+                                                    <RemoveButton onClick={() => OpenConfirmQuotaSaleRemoveModal({ id: quotaSale.id, group: quotaSale.quota.group, quota: quotaSale.quota.quota }) }/>
                                                 </HStack>
                                             </HStack>
 
@@ -254,6 +315,7 @@ export function SalesList({quotaSales, refetchQuotaSales}: QuotasListProps){
                                                     <Thead>
                                                         <Tr>
                                                             <Th color="gray.900">Valores a receber: </Th>
+                                                            <Th></Th>
                                                             <Th></Th>
                                                             <Th></Th>
                                                         </Tr>
@@ -267,6 +329,26 @@ export function SalesList({quotaSales, refetchQuotaSales}: QuotasListProps){
                                                                         <Td fontSize="12px">{partial.expire && formatBRDate(partial.expire)}</Td>
                                                                         <Td fontSize="12px">{partial.title}</Td>
                                                                         <Td color="gray.800" fontWeight="semibold" fontSize="12px">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(partial.value)}</Td>
+                                                                        <Td color="gray.800" fontWeight="semibold" fontSize="12px">
+                                                                            {
+                                                                                partial.status ? (
+                                                                                    <HStack>
+                                                                                        <Flex fontWeight="bold" alignItems="center" color="green.400">
+                                                                                            <CheckIcon stroke="#48bb78" fill="none" width="16px"/>
+                                                                                            <Text ml="2">Recebido</Text>
+                                                                                        </Flex>
+
+                                                                                        <IconButton onClick={() => handleReverseBill(partial.id)} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <RefreshIcon width="20px" stroke="#14142b" fill="none"/>} variant="outline"/>
+                                                                                    </HStack>
+                                                                                ) : (
+                                                                                    <OutlineButton disabled={!!quotaSale.cancelled}
+                                                                                        h="29px" size="sm" color="green.400" borderColor="green.400" colorScheme="green" fontSize="11" 
+                                                                                        onClick={() => OpenReceiveBillModal({ id: partial.id, title: partial.title , value: partial.value.toString(), new_value: ''})}>
+                                                                                        Receber
+                                                                                    </OutlineButton>
+                                                                                )
+                                                                            }
+                                                                        </Td>
                                                                     </Tr>
                                                                 )
                                                             })

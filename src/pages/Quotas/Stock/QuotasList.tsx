@@ -39,7 +39,7 @@ export function QuotasList({quotas, refetchQuotas}: QuotasListProps){
     }, 0);
 
     const totalCredit = quotas.reduce((sumAmount:number, quota:Quota) => {
-        return sumAmount + quota.value;
+        return sumAmount + quota.credit;
     }, 0);
 
     const totalRealtyCount = quotas.reduce((sumAmount:number, quota:Quota) => {
@@ -205,7 +205,7 @@ export function QuotasList({quotas, refetchQuotas}: QuotasListProps){
                                                     <HStack>
                                                         <Flex fontWeight="bold" alignItems="center" color="green.400">
                                                             <CheckIcon stroke="#48bb78" fill="none" width="16px"/>
-                                                            <Text ml="2">Pago</Text>
+                                                            <Text ml="2">Vendida</Text>
                                                         </Flex>
         
                                                         {/* <IconButton onClick={() => handleReversePayment(payment.id)} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <RefreshIcon width="20px" stroke="#14142b" fill="none"/>} variant="outline"/> */}

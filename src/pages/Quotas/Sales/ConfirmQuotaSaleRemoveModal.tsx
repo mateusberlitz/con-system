@@ -1,4 +1,4 @@
-import { Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useToast, Text } from "@chakra-ui/react";
+import { Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useToast } from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 
 import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
@@ -11,30 +11,30 @@ import { useHistory } from "react-router-dom";
 
 interface ConfirmQuotaRemoveModalProps{
     isOpen: boolean;
-    toRemoveQuotaData: RemoveQuotaData;
+    toRemoveQuotaSaleData: RemoveQuotaSaleData;
     onRequestClose: () => void;
     afterRemove: () => void;
 }
 
-export interface RemoveQuotaData{
+export interface RemoveQuotaSaleData{
     group: string;
     quota: string;
     id: number;
 }
 
 
-export function ConfirmPaymentRemoveModal( { isOpen, toRemoveQuotaData, afterRemove, onRequestClose } : ConfirmQuotaRemoveModalProps){
+export function ConfirmQuotaSaleRemoveModal( { isOpen, toRemoveQuotaSaleData, afterRemove, onRequestClose } : ConfirmQuotaRemoveModalProps){
     const toast = useToast();
 
     const history = useHistory();
 
     const handleRemovePayment = async () => {
         try{
-            await api.delete(`/quotas/destroy/${toRemoveQuotaData.id}`);
+            await api.delete(`/quota_sales/destroy/${toRemoveQuotaSaleData.id}`);
 
             toast({
                 title: "Sucesso",
-                description: `A Cota ${toRemoveQuotaData.group}-${toRemoveQuotaData.quota} foi removida`,
+                description: `A venda da cota ${toRemoveQuotaSaleData.group}-${toRemoveQuotaSaleData.quota} foi removida`,
                 status: "success",
                 duration: 12000,
                 isClosable: true,
@@ -60,10 +60,7 @@ export function ConfirmPaymentRemoveModal( { isOpen, toRemoveQuotaData, afterRem
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
             <ModalOverlay />
             <ModalContent borderRadius="24px">
-                <ModalHeader p="10" fontWeight="700" fontSize="2xl">
-                    <Text mb="6">Remover {toRemoveQuotaData.group}-{toRemoveQuotaData.quota}?</Text>
-                    <Text fontSize="sm" color="gray.800" fontWeight="normal">Essa ação removerá a venda e cancelamentos atrelados a essa cota e poderá alterar o resultado dos relatórios.</Text>
-                </ModalHeader>
+                <ModalHeader p="10" fontWeight="700" fontSize="2xl">Remover {toRemoveQuotaSaleData.group}-{toRemoveQuotaSaleData.quota}?</ModalHeader>
 
                 <ModalCloseButton top="10" right="5"/>
                 

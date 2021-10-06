@@ -209,6 +209,14 @@ export default function Bills(){
         return data;
     });
 
+    function OpenReceiveBillModal(billIdAndName: ReceiveBillFormData){
+        setToReceiveBillData(billIdAndName);
+        setIsReceiveBillModalOpen(true);
+    }
+    function CloseReceiveBillModal(){
+        setIsReceiveBillModalOpen(false);
+    }
+
     const [isPartialEditModalOpen, setIsPartialEditModalOpen] = useState(false);
     const [EditPartialData, setEditPartialData] = useState<EditPartialBillFormData>(() => {
 
@@ -227,14 +235,6 @@ export default function Bills(){
     }
     function ClosePartialEditModal(){
         setIsPartialEditModalOpen(false);
-    }
-
-    function OpenReceiveBillModal(billIdAndName: ReceiveBillFormData){
-        setToReceiveBillData(billIdAndName);
-        setIsReceiveBillModalOpen(true);
-    }
-    function CloseReceiveBillModal(){
-        setIsReceiveBillModalOpen(false);
     }
 
     const [isReceiveAllBillsModalOpen, setIsReceiveAllBillsModalOpen] = useState(false);

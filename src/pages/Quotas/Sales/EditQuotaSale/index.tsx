@@ -139,7 +139,7 @@ export default function EditQuotaSale(){
 
     const [paymentsOfQuota, setPaymentOfQuota] = useState<PaymentOfQuota[]>([]);
 
-    if(quotaSale && paymentsOfQuota.length === 0){
+    if((quotaSale && paymentsOfQuota.length === 0) && quotaSale.bills.length > 0){
         let currentPayments:PaymentOfQuota[] = [];
         
         quotaSale.bills.map((bill:ResumedBill) => {
@@ -164,6 +164,7 @@ export default function EditQuotaSale(){
             }
 
             payment.value = moneyToBackend(payment.value);
+            payment.title = `[${quotaSale.quota.group}-${quotaSale.quota.quota}] ${payment.title}`;
 
             const expireDateToShow = payment.expire;
             payment.expire = formatInputDate(payment.expire);
@@ -278,13 +279,13 @@ export default function EditQuotaSale(){
         const { data } = await api.get('/bill_categories');
 
         setCategories(data);
-
-
     }
 
     useEffect(() => {
         loadCategories();
     }, []);
+
+    console.log(quotaSale);
 
     return(
         <MainBoard sidebar="quotas" header={ <CompanySelectMaster/>}>
