@@ -18,6 +18,7 @@ export default function Quotas(){
             search: '',
             company: workingCompany.company?.id,
             status: 0,
+            sold: 'false',
         };
         
         return data;

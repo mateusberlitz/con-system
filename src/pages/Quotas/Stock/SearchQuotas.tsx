@@ -24,6 +24,7 @@ const FilterQuotasFormSchema = yup.object().shape({
     quote: yup.string(),
     status: yup.string(),
     pay_to_user: yup.string(),
+    sold: yup.string(),
 });
 
 export function SearchQuotas({filter, handleSearchQuotas}: SearchQuotasProps){
@@ -55,6 +56,12 @@ export function SearchQuotas({filter, handleSearchQuotas}: SearchQuotasProps){
                         
                     <Input register={register} name="quote" type="text" placeholder="Cota" variant="filled" error={formState.errors.quote} focusBorderColor="blue.800"/>
                     <Input register={register} name="contemplated_type" type="text" placeholder="Contrato" variant="filled" error={formState.errors.contemplated_type} focusBorderColor="blue.800"/>
+
+                    <Select register={register} defaultValue="false" h="45px" name="sold" error={formState.errors.sold} w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.800" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
+                        <option value="">Todos</option>
+                        <option value="false">Disponíveis</option>
+                        <option value="true">Vendidas</option>
+                    </Select>
 
                     <OutlineButton type="submit" mb="10" color="blue.800" borderColor="blue.800" colorScheme="blue">
                         Filtrar

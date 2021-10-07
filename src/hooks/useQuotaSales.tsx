@@ -11,7 +11,8 @@ export interface QuotaSaleFilterData{
     group?: string;
     quote?: string;
     group_by?: string;
-    status?: number
+    status?: number;
+    cancelled?: number;
 }
 
 export const getQuotaSales = async (filter?: QuotaSaleFilterData, page: number = 0) => {
@@ -26,6 +27,7 @@ export const getQuotaSales = async (filter?: QuotaSaleFilterData, page: number =
               group: filter.group,
               quote: filter.quote,
               group_by: filter.group_by,
+              cancelled: filter.cancelled,
             }
         });
 

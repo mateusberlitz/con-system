@@ -190,7 +190,7 @@ export default function NewQuotaSale(){
                 isClosable: true,
             });
 
-            history.replace('/vendas-contempladas');
+            history.replace('/venda-contempladas');
 
         }catch(error:any) {
             showErrors(error, toast);

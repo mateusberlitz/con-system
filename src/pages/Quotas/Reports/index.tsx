@@ -20,7 +20,7 @@ interface saleReport{
 }
 
 interface cancelReport{
-    quotaSale: {
+    quota_sale: {
         value: number;
     };
     cancel_date: string;
@@ -70,8 +70,9 @@ export default function QuotasReport(){
 
     const quotaReports = useQuotaReport(filter, page);
 
-    const totalExitsByMonths = newMonthsAmountArray();
-    const totalEntriesByMonths = newMonthsAmountArray();
+    let totalPurchases = 0;
+    let totalSales = 0;
+    let total = 0;
     const totalByMonths = newMonthsAmountArray();
 
     return (
@@ -113,6 +114,7 @@ export default function QuotasReport(){
                 {
                     (!quotaReports.isLoading && !quotaReports.error) && (
                         <Table header={[
+                            {text: ''},
                             {text: 'Janeiro'},
                             {text: 'Fevereiro'},
                             {text: 'Março'},
@@ -139,23 +141,24 @@ export default function QuotasReport(){
 
                                         if(quotaReports.data.purchases[month] !== 0){
                                             monthTotal = quotaReports.data.purchases[month].reduce((sumAmount:number, purchase:purchaseReport) => {
-                                                return sumAmount + purchase.cost;
+                                                return sumAmount - purchase.cost;
                                             }, 0);
                                         }
 
-                                        console.log(quotaReports.data.cancels[(parseInt(month) - 1).toString()]);
+                                        if(quotaReports.data.cancels[month] !== 0){
+                                            monthTotal = quotaReports.data.cancels[month].reduce((sumAmount:number, cancel:cancelReport) => {
+                                                return sumAmount - (cancel.quota_sale ? cancel.quota_sale.value : 0);
+                                            }, monthTotal);
+                                        }
 
-                                        // if(quotaReports.data.cancels[(parseInt(month) - 1).toString()] !== 0){
-                                        //     monthTotal = monthTotal + quotaReports.data.cancels[(parseInt(month) - 1).toString()].reduce((sumAmount:number, cancel:cancelReport) => {
-                                        //         return sumAmount + cancel.quotaSale.value;
-                                        //     }, 0);
-                                        // }
-
+                                        totalPurchases += monthTotal;
                                         totalByMonths[index + 1] += monthTotal;
+                                        console.log(totalByMonths[index + 1]);
 
                                         return <Th whiteSpace="nowrap" fontWeight="500" color={monthTotal === 0 ? 'gray.800' : 'red.400'} key={`${month}-${monthTotal}`}>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(monthTotal)}</Th>
                                     })
                                 }
+                                <Th whiteSpace="nowrap" fontWeight="500" color={totalPurchases === 0 ? 'gray.800' : 'red.400'}>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalPurchases)}</Th>
                             </Tr>
 
                             <Tr>
@@ -175,61 +178,12 @@ export default function QuotasReport(){
                                         }
 
                                         totalByMonths[index + 1] += monthTotal;
+                                        totalSales += monthTotal;
 
                                         return <Th whiteSpace="nowrap" fontWeight="500" color={monthTotal === 0 ? 'gray.800' : 'green.400'} key={`${month}-${monthTotal}`}>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(monthTotal)}</Th>
                                     })
                                 }
-                            </Tr>
-
-                            {/* <Tr>
-                                <Th position="sticky" left="0" bg="white">Total de Saídas</Th>
-                                {
-
-                                    totalExitsByMonths.map((value:number, index:number) => {
-                                        if(index === 14){return;};
-                                        return <Th whiteSpace="nowrap" color={value > 0 ? 'green.400' : (value < 0 ? 'red.400' : 'gray.800')} key={`exits-${index}-${value}}`}>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(value)}</Th>
-                                    })
-                                }
-                            </Tr>
-
-                            <Tr>
-                                <Th></Th>
-                            </Tr>
-                            <Tr>
-                                <Th color="gray.900" fontSize="sm" position="sticky" left="0" bg="white">ENTRADAS</Th>
-                            </Tr>
-
-                            {
-                                Object.keys(entryTransactions.data?.data).map((category:string) => {
-                                    return (
-                                        <Tr key={`entries-${category}`}>
-                                            <Th fontWeight="bold" color="gray.800" textTransform="capitalize" position="sticky" left="0" bg="white">{category}</Th>
-
-                                            {
-                                                Object.keys(entryTransactions.data?.data[category]).map((month:string, index: number) => {
-                                                    totalEntriesByMonths[index + 1] += entryTransactions.data?.data[category][month];
-                                                    totalByMonths[index + 1] += entryTransactions.data?.data[category][month];
-
-                                                    return <Th whiteSpace="nowrap" fontWeight="500" color={entryTransactions.data?.data[category][month] > 0 ? 'green.400' : (entryTransactions.data?.data[category][month] < 0 ? 'red.400' : 'gray.800')} key={`${category}-${month}-${entryTransactions.data?.data[category][month]}`}>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(entryTransactions.data?.data[category][month])}</Th>
-                                                })
-                                            }
-                                        </Tr>
-                                    )
-                                })
-                            }
-                            <Tr>
-                                <Th position="sticky" left="0" bg="white">Total de Entradas</Th>
-                                {
-
-                                    totalEntriesByMonths.map((value:number, index:number) => {
-                                        if(index === 14){return;};
-                                        return <Th whiteSpace="nowrap" color={value > 0 ? 'green.400' : (value < 0 ? 'red.400' : 'gray.800')} key={`exits-${index}-${value}}`}>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(value)}</Th>
-                                    })
-                                }
-                            </Tr>
-
-                            <Tr>
-                                <Th></Th>
+                                <Th whiteSpace="nowrap" fontWeight="500" color={totalSales === 0 ? 'gray.800' : 'green.400'}>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalSales)}</Th>
                             </Tr>
 
                             <Tr>
@@ -238,10 +192,13 @@ export default function QuotasReport(){
 
                                     totalByMonths.map((value:number, index:number) => {
                                         if(index === 14){return;};
+                                        if(index === 13){
+                                            value = totalSales + totalPurchases
+                                        }
                                         return <Th whiteSpace="nowrap" color={value > 0 ? 'green.400' : (value < 0 ? 'red.400' : 'gray.800')} key={`exits-${index}-${value}}`}>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(value)}</Th>
                                     })
                                 }
-                            </Tr> */}
+                            </Tr>
             
                         </Table>
                     )
