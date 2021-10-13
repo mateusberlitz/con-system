@@ -122,7 +122,7 @@ export function EditPaymentModal( { isOpen, onRequestClose, afterEdit, toEditPay
         if(paymentData.file === null || paymentData.file === "" || paymentData.file.length === 0){
             delete paymentData.file;
         }
-        console.log(paymentData.expire);
+        
         paymentData.expire = formatInputDate(paymentData.expire);
 
         if(!workingCompany.company){
@@ -149,7 +149,6 @@ export function EditPaymentModal( { isOpen, onRequestClose, afterEdit, toEditPay
             }
 
             paymentData = includeAndFormatData(paymentData);
-            console.log(paymentData);
 
             await api.post(`/payments/update/${toEditPaymentData.id}`, paymentData);
 
@@ -187,8 +186,6 @@ export function EditPaymentModal( { isOpen, onRequestClose, afterEdit, toEditPay
     const changeIsDisabledRecurrence = () => {
         setIsDisabledRecurrence(!isDisabledRecurrence);
     }
-
-    console.log(toEditPaymentData);
 
     return (
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">

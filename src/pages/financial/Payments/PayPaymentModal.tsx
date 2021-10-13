@@ -26,7 +26,9 @@ interface PayPaymentModalProps{
 
 export interface PayPaymentFormData{
     id: number,
-    value: string,
+    value: number,
+    paid: number,
+    status?: boolean,
     title: string,
     new_value?: string,
     payment_paid_day?: string,
@@ -53,7 +55,7 @@ export function PayPaymentModal ( { isOpen, onRequestClose, afterPay, toPayPayme
         try{
             paymentData.new_value = (paymentData.new_value ? moneyToBackend(paymentData.new_value) : '');
 
-            paymentData.value = toPayPaymentData.value;
+            paymentData.value = toPayPaymentData.value - toPayPaymentData.paid;
 
             await api.post(`/payments/pay/${toPayPaymentData.id}`, paymentData);
 
@@ -99,7 +101,7 @@ export function PayPaymentModal ( { isOpen, onRequestClose, afterPay, toPayPayme
                 <ModalBody pl="10" pr="10">
                     <Stack spacing="6">
                         <HStack spacing="4" align="baseline">
-                            <ControlledInput isDisabled={true} control={control} value={Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(Number(toPayPaymentData.value))} name="value" type="text" placeholder="Valor" variant="outline" error={formState.errors.value} mask="money" focusBorderColor="blue.400"/>
+                            <ControlledInput isDisabled={true} control={control} value={Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(toPayPaymentData.status ? (toPayPaymentData.paid > 0 ? toPayPaymentData.paid : toPayPaymentData.value) : toPayPaymentData.value - toPayPaymentData.paid)} name="value" type="text" placeholder="Valor" variant="outline" error={formState.errors.value} mask="money" focusBorderColor="blue.400"/>
                             <ControlledInput control={control} value={toPayPaymentData.new_value} name="new_value" type="text" placeholder="Novo Valor" variant="outline" mask="money" error={formState.errors.new_value} focusBorderColor="blue.400"/>
                         </HStack>
 

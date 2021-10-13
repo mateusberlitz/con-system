@@ -52,6 +52,8 @@ export function ReceiveAllBillsModal ( { isOpen, onRequestClose, afterReceive, d
 
     const handleReceiveDay = async (billData : ReceiveBillFormData) => {
         try{            
+            billData.company = workingCompany.company && workingCompany.company.id;
+
             await api.post(`/bills/receiveall/${formatYmdTodmY(dayToReceiveBills)}`, billData);
 
             toast({

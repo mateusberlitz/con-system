@@ -110,7 +110,7 @@ export function BillsSummary({bills, openReceiveBill, filter, handleChangeFilter
                                                                         <Text ml="2">Pago</Text>
                                                                     </Flex>
                                                                 ) : (
-                                                                    <SolidButton isDisabled={bills.status}  onClick={() => openReceiveBill({ id: bills.id, title: bills.title , value: bills.value.toString(), new_value: ''}) }
+                                                                    <SolidButton isDisabled={bills.status}  onClick={() => openReceiveBill({ id: bills.id, title: bills.title , value: bills.value, paid: bills.paid, new_value: '', status: bills.status}) }
                                                                         h="30px" size="sm" color="white" bg="green.400" colorScheme="green" fontSize="11">
                                                                         Receber
                                                                     </SolidButton>

@@ -134,7 +134,8 @@ export function SalesList({quotaSales, refetchQuotaSales}: QuotasListProps){
 
         const data: ReceiveBillFormData = {
             id: 0,
-            value: '',
+            value: 0,
+            paid: 0,
             new_value: '',
             title: '',
         };
@@ -358,7 +359,7 @@ export function SalesList({quotaSales, refetchQuotaSales}: QuotasListProps){
                                                                                 ) : (
                                                                                     <OutlineButton disabled={!!quotaSale.cancelled}
                                                                                         h="29px" size="sm" color="green.400" borderColor="green.400" colorScheme="green" fontSize="11" 
-                                                                                        onClick={() => OpenReceiveBillModal({ id: partial.id, title: partial.title , value: partial.value.toString(), new_value: ''})}>
+                                                                                        onClick={() => OpenReceiveBillModal({ id: partial.id, title: partial.title , value: partial.value, paid: partial.paid, status: partial.status, new_value: ''})}>
                                                                                         Receber
                                                                                     </OutlineButton>
                                                                                 )

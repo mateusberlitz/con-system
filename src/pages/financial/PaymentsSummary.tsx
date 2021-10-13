@@ -106,7 +106,7 @@ export function PaymentsSummary({payments, openPayPayment, filter, handleChangeF
                                                                         <Text ml="2">Pago</Text>
                                                                     </Flex>
                                                                 ) : (
-                                                                    <SolidButton isDisabled={payment.status}  onClick={() => openPayPayment({ id: payment.id, title: payment.title , value: payment.value.toString(), new_value: ''}) }
+                                                                    <SolidButton isDisabled={payment.status}  onClick={() => openPayPayment({ id: payment.id, title: payment.title , value: payment.value, paid: payment.paid, status: payment.status, new_value: ''}) }
                                                                         h="30px" size="sm" color="white" bg="green.400" colorScheme="green" fontSize="11">
                                                                         Pagar
                                                                     </SolidButton>

@@ -239,7 +239,8 @@ export default function Payments(){
 
         const data: PayPaymentFormData = {
             id: 0,
-            value: '',
+            value: 0,
+            paid: 0,
             new_value: '',
             title: '',
             company: workingCompany.company?.id,
@@ -738,7 +739,7 @@ export default function Payments(){
                                                                         <IconButton onClick={() => handleReversePayment(payment.id)} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <RefreshIcon width="20px" stroke="#14142b" fill="none"/>} variant="outline"/>
                                                                     </HStack>
                                                                 ) : (
-                                                                    <OutlineButton isDisabled={payment.status}  onClick={() => OpenPayPaymentModal({ id: payment.id, title: payment.title , value: payment.value.toString(), new_value: ''}) }
+                                                                    <OutlineButton isDisabled={payment.status}  onClick={() => OpenPayPaymentModal({ id: payment.id, title: payment.title , value: payment.value, paid: payment.paid, status: payment.status, new_value: ''}) }
                                                                         h="30px" size="sm" color="green.400" borderColor="green.400" colorScheme="green" fontSize="11">
                                                                         Pagar
                                                                     </OutlineButton>

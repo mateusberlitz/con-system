@@ -51,7 +51,8 @@ export default function Financial(){
 
         const data: PayPaymentFormData = {
             id: 0,
-            value: '',
+            value: 0,
+            paid: 0,
             new_value: '',
             title: '',
             company: workingCompany.company?.id,
@@ -95,9 +96,10 @@ export default function Financial(){
 
         const data: ReceiveBillFormData = {
             id: 0,
-            value: '',
+            value: 0,
+            paid: 0,
             new_value: '',
-            title: '',
+            title: '', 
             company: workingCompany.company?.id,
         };
         

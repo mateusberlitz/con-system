@@ -53,6 +53,7 @@ export function PayAllPaymentsModal ( { isOpen, onRequestClose, afterPay, dayToP
 
     const handlePayDay = async (paymentData : PayPaymentFormData) => {
         try{
+            paymentData.company = workingCompany.company && workingCompany.company.id;
             
             await api.post(`/payments/payall/${formatYmdTodmY(dayToPayPayments)}`, paymentData);
 

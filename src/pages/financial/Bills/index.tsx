@@ -200,7 +200,8 @@ export default function Bills(){
 
         const data: ReceiveBillFormData = {
             id: 0,
-            value: '',
+            value: 0,
+            paid: 0,
             new_value: '',
             title: '',
             company: workingCompany.company?.id,
@@ -475,7 +476,7 @@ export default function Bills(){
                                                                         <IconButton onClick={() => handleReverseBill(bill.id)} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <RefreshIcon width="20px" stroke="#14142b" fill="none"/>} variant="outline"/>
                                                                     </HStack>
                                                                 ) : (
-                                                                    <OutlineButton onClick={() => OpenReceiveBillModal({ id: bill.id, title: bill.title , value: bill.value.toString(), new_value: ''})}
+                                                                    <OutlineButton onClick={() => OpenReceiveBillModal({ id: bill.id, title: bill.title , value: bill.value, paid: bill.paid, status: bill.status, new_value: ''})}
                                                                         h="30px" size="sm" color="green.400" borderColor="green.400" colorScheme="green" fontSize="11">
                                                                         Receber
                                                                     </OutlineButton>

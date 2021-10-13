@@ -22,7 +22,7 @@ export function SaleListReportMonthItem({open = false, month, quotaSales} : Sale
     return (
         <>
             <Tr cursor="pointer" transition="all ease 2s" alignItems="center" _hover={{transition: "all ease 2s"}} borderLeft="1px solid" borderColor="gray.400">
-                <Th color="gray.900" onClick={handleOpen}>
+                <Th color="gray.900" onClick={handleOpen} alignItems="center" display="flex">
                         {
                             isOpen ? 
                             <MinusIcon stroke="#14142b" fill="none" width="12px"/>
