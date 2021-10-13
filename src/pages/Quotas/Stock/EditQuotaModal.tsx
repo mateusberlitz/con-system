@@ -217,14 +217,17 @@ export function EditQuotaModal( { isOpen, onRequestClose, afterEdit, toEditQuota
                             <ControlledInput control={control} value={toEditQuotaData.paid_percent} name="paid_percent" type="text" placeholder="Percentual Pago" variant="outline" error={formState.errors.paid_percent} focusBorderColor="blue.800"/>
                         </HStack>
 
-                        <ControlledInput control={control} value={toEditQuotaData.seller} name="seller" type="text" placeholder="Percentual Pago" variant="outline" error={formState.errors.seller} focusBorderColor="blue.800"/>
+                        <ControlledInput control={control} value={toEditQuotaData.seller} name="seller" type="text" placeholder="Comprado de" variant="outline" error={formState.errors.seller} focusBorderColor="blue.800"/>
 
                         <HStack spacing="4" align="baseline">
                             <ControlledInput control={control} value={toEditQuotaData.contemplated_type} name="contemplated_type" type="text" placeholder="Data da compra" variant="outline" error={formState.errors.contemplated_type} focusBorderColor="blue.800"/>
                             <ControlledInput control={control} value={toEditQuotaData.cpf_cnpj} name="cpf_cnpj" type="text" placeholder="CPF/CNPJ" variant="outline" error={formState.errors.cpf_cnpj} focusBorderColor="blue.800"/>
                         </HStack>
 
-                        <ControlledInput control={control} value={toEditQuotaData.partner} name="partner" type="text" placeholder="Parceiro" variant="outline" error={formState.errors.partner} focusBorderColor="blue.800"/>
+                        <HStack spacing="4" align="baseline">
+                            <ControlledInput control={control} value={toEditQuotaData.partner} name="partner" type="text" placeholder="Parceiro" variant="outline" error={formState.errors.partner} focusBorderColor="blue.800"/>
+                            <ControlledInput control={control} value={toEditQuotaData.partner_commission} name="partner_commission" min="0" max="100" type="number" placeholder="Percentual do parceiro" variant="outline" error={formState.errors.partner_commission} focusBorderColor="blue.800"/>
+                        </HStack>
 
                         <HStack spacing="4" align="baseline">
                             <ControlledInput control={control} value={toEditQuotaData.partner_cost} name="partner_cost" type="text" placeholder="Custo do parceiro" variant="outline" error={formState.errors.partner_cost} focusBorderColor="blue.800"/>

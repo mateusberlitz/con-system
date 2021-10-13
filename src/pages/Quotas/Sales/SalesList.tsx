@@ -284,13 +284,28 @@ export function SalesList({quotaSales, refetchQuotaSales}: QuotasListProps){
 
                                             <HStack justifyContent="space-between" mb="4">
                                                 <Stack spacing="0">
-                                                    <Text fontSize="10px" color="gray.800">Lucro</Text>
-                                                    <Text fontSize="sm" fontWeight="semibold" color="gray.800">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quotaSale.profit ? quotaSale.profit : 0)}</Text>
+                                                    <Text fontSize="10px" color="gray.800">Coordenador</Text>
+                                                    <Text fontSize="sm" fontWeight="semibold" color="gray.800">{quotaSale.coordinator ? quotaSale.coordinator : '--'}</Text>
                                                 </Stack>
 
                                                 <Stack spacing="0">
-                                                    <Text fontSize="10px" color="gray.800">Coordenador</Text>
-                                                    <Text fontSize="sm" fontWeight="semibold" color="gray.800">{quotaSale.coordinator}</Text>
+                                                    <Text fontSize="10px" color="gray.800">Comissão do coordenador</Text>
+                                                    <Text fontSize="sm" fontWeight="semibold" color="gray.800">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quotaSale.coordinator_value ? quotaSale.coordinator_value : 0)}</Text>
+                                                </Stack>
+
+                                                <Stack spacing="0">
+                                                    <Text fontSize="10px" color="gray.800">Supervisor</Text>
+                                                    <Text fontSize="sm" fontWeight="semibold" color="gray.800">{quotaSale.supervisor  ? quotaSale.supervisor : '--'}</Text>
+                                                </Stack>
+
+                                                <Stack spacing="0">
+                                                    <Text fontSize="10px" color="gray.800">Comissão supervisor</Text>
+                                                    <Text fontSize="sm" fontWeight="semibold" color="gray.800">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quotaSale.supervisor_value ? quotaSale.supervisor_value : 0)}</Text>
+                                                </Stack>
+
+                                                <Stack spacing="0">
+                                                    <Text fontSize="10px" color="gray.800">Lucro</Text>
+                                                    <Text fontSize="sm" fontWeight="semibold" color="gray.800">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quotaSale.value - quotaSale.quota.cost - quotaSale.partner_value - (quotaSale.coordinator_value ? quotaSale.coordinator_value : 0) - (quotaSale.supervisor_value ? quotaSale.supervisor_value : 0))}</Text>
                                                 </Stack>
                                             </HStack>
         

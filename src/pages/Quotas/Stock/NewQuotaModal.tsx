@@ -185,7 +185,11 @@ export function NewQuotaModal({ isOpen, onRequestClose, afterCreate } : NewQuota
                             <Input register={register} name="cpf_cnpj" type="text" placeholder="CPF/CNPJ" variant="outline" error={formState.errors.cpf_cnpj} focusBorderColor="blue.800"/>
                         </HStack>
 
-                        <Input register={register} name="partner" type="text" placeholder="Parceiro" variant="outline" error={formState.errors.partner} focusBorderColor="blue.800"/>
+                        <HStack spacing="4" align="baseline">
+                            <Input register={register} name="partner" type="text" placeholder="Parceiro" variant="outline" error={formState.errors.partner} focusBorderColor="blue.800"/>
+                            
+                            <Input register={register} name="partner_commission" min="0" max="100" type="number" placeholder="Comissão parceiro(%)" variant="outline" mask="money" error={formState.errors.partner_commission} focusBorderColor="blue.800"/>
+                        </HStack>
 
                         <HStack spacing="4" align="baseline">
                             <Input register={register} name="partner_cost" type="text" placeholder="Custo do parceiro" variant="outline" mask="money" error={formState.errors.partner_cost} focusBorderColor="blue.800"/>

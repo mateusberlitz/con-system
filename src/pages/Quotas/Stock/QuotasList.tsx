@@ -256,7 +256,12 @@ export function QuotasList({quotas, refetchQuotas}: QuotasListProps){
 
                                                 <Stack spacing="0" opacity={quota.sold ? 0.5 : 1}>
                                                     <Text fontSize="10px" color="gray.800">Parceiro</Text>
-                                                    <Text fontSize="sm" fontWeight="semibold" color="gray.800">{quota.partner}</Text>
+                                                    <Text fontSize="sm" fontWeight="semibold" color="gray.800">{quota.partner ? quota.partner : '--'}</Text>
+                                                </Stack>
+
+                                                <Stack spacing="0" opacity={quota.sold ? 0.5 : 1}>
+                                                    <Text fontSize="10px" color="gray.800">Percentual do parceiro</Text>
+                                                    <Text fontSize="sm" fontWeight="semibold" color="gray.800">{quota.partner_commission ? `${quota.partner_commission}%` : '--'}</Text>
                                                 </Stack>
 
                                                 <Stack spacing="0" opacity={quota.sold ? 0.5 : 1}>

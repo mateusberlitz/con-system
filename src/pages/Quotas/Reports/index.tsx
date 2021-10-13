@@ -1,4 +1,4 @@
-import { Divider, Flex, FormControl, HStack, Select as ChakraSelect, Spinner, Text, Th, Tr } from "@chakra-ui/react";
+import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Divider, Flex, FormControl, HStack, Select as ChakraSelect, Spinner, Text, Th, Tr } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Board } from "../../../components/Board";
 import { CompanySelectMaster } from "../../../components/CompanySelect/companySelectMaster";
@@ -8,6 +8,7 @@ import { quotaReportFilterData, useQuotaReport } from "../../../hooks/useQuotaRe
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { api } from "../../../services/api";
 import { newMonthsAmountArray } from "../../Financial/Reports/populateMonthAmountArray";
+import SaleListReport from "./SaleListReport";
 
 interface purchaseReport{
     cost: number;
@@ -77,7 +78,7 @@ export default function QuotasReport(){
 
     return (
         <MainBoard sidebar="quotas" header={ <CompanySelectMaster/>}>
-            <Board>
+            <Board mb="14">
                 <HStack as="form" spacing="12" w="100%" mb="6" justifyContent="left">
                     <FormControl display="flex" w="fit-content" minW="150px">
                         <ChakraSelect onChange={handleChangeYear} defaultValue={workingCompany.company?.id} h="45px" name="selected_company" maxW="200px" fontSize="sm" focusBorderColor="purple.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
@@ -204,6 +205,67 @@ export default function QuotasReport(){
                     )
                 }
             </Board>
+            
+            {/* <Board>
+                <HStack as="form" spacing="12" w="100%" mb="6" justifyContent="left">
+                    <FormControl display="flex" w="fit-content" minW="150px">
+                        <ChakraSelect onChange={handleChangeYear} defaultValue={workingCompany.company?.id} h="45px" name="selected_company" maxW="200px" fontSize="sm" focusBorderColor="purple.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
+                            {
+                                years.map((year:Number) => {
+                                    return (
+                                        <option key={year.toString()} value={year.toString()}>{year}</option>
+                                    )
+                                })
+                            }
+                        </ChakraSelect>
+                    </FormControl>
+
+                    <Text fontWeight="bold">RELATÓRIO DE VENDAS</Text>
+                </HStack>
+
+                <Accordion allowMultiple>
+                    <Table header={[
+                            {text: 'Data', bold: true},
+                            {text: 'Cota'},
+                            {text: 'Lucro'},
+                            {text: 'Valor da venda'},
+                            {text: 'Segmento'},
+                            {text: 'Crédito'},
+                            {text: 'Custo Total'},
+                            {text: 'Custo do parceiro'},
+                            {text: 'Ganho do parceiro'},
+                            {text: 'Coordenador'},
+                            {text: 'Vendedor'},
+                            {text: 'Comprador'},
+                        ]}>
+
+                        <Tr>
+                            <Th></Th>
+                        </Tr>
+
+                        <AccordionItem>
+                            <AccordionButton p="0" height="fit-content" w="auto">
+                                <Tr>
+                                    <Th color="gray.900">Janeiro</Th>
+                                </Tr>
+                            </AccordionButton>
+
+                            <AccordionPanel>
+                                <Tr>
+                                    <Th>Janeiro</Th>
+                                </Tr><Tr>
+                                    <Th>Janeiro</Th>
+                                </Tr>
+                            </AccordionPanel>
+                        </AccordionItem>
+                                
+                    </Table>
+                </Accordion>
+
+                <Divider mb="6"/>
+            </Board> */}
+
+            <SaleListReport />
         </MainBoard>
     )
 }

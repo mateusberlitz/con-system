@@ -42,6 +42,9 @@ interface QuotaSaleFormData{
     profit?: number;
     tax: string;
     coordinator?: string;
+    coordinator_value?: string;
+    supervisor?: string;
+    supervisor_value?: string;
     description?: string;
 
     passed_value?: string;
@@ -172,12 +175,12 @@ export default function NewQuotaSale(){
 
             const response = await api.post('/quota_sales/store', quotaSaleData);
 
-            paymentsOfQuota.map((payment: PaymentOfQuota) => {
+            paymentsOfQuota.map(async (payment: PaymentOfQuota) => {
                 payment.expire = formatInputDate(payment.expire);
                 payment.company = workingCompany.company?.id;
                 payment.quota_sales_id = response.data.id;
 
-                api.post('/bills/store', payment);
+                await api.post('/bills/store', payment);
             })
 
             //console.log(paymentsOfQuota);
@@ -291,8 +294,16 @@ export default function NewQuotaSale(){
                                                 <Input register={register} name="cpf_cnpj" type="text" placeholder="CPF/CNPJ" variant="outline" error={formState.errors.cpf_cnpj} focusBorderColor="blue.800"/>
 
                                                 <Input register={register} name="seller" type="text" placeholder="Vendedor" variant="outline" error={formState.errors.seller} focusBorderColor="blue.800"/>
-                                            
+                                            </HStack>
+
+                                            <HStack spacing="4" align="baseline">
                                                 <Input register={register} name="coordinator" type="text" placeholder="Coordenador" variant="outline" mask="money" error={formState.errors.coordinator} focusBorderColor="blue.800"/>
+
+                                                <Input register={register} name="coordinator_value" type="text" placeholder="Comissão coordenador" variant="outline" error={formState.errors.coordinator_value} focusBorderColor="blue.800"/>
+
+                                                <Input register={register} name="supervisor" type="text" placeholder="Supervisor" variant="outline" error={formState.errors.supervisor} focusBorderColor="blue.800"/>
+
+                                                <Input register={register} name="supervisor_value" type="text" placeholder="Comissão do supervisor" variant="outline" error={formState.errors.supervisor_value} focusBorderColor="blue.800"/>
                                             </HStack>
 
                                             <HStack spacing="4" align="baseline">

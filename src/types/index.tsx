@@ -254,6 +254,9 @@ export interface QuotaSale{
     profit: number;
     tax?: number;
     coordinator?: string;
+    coordinator_value?: number;
+    supervisor?: string;
+    supervisor_value?: number;
     description?: string;
     sale_date: string;
     created_at?: Date;

@@ -48,6 +48,9 @@ interface QuotaSaleFormData{
     profit?: number;
     tax: string;
     coordinator?: string;
+    coordinator_value?: string;
+    supervisor?: string;
+    supervisor_value?: string;
     description?: string;
 
     passed_value?: string;
@@ -262,7 +265,7 @@ export default function EditQuotaSale(){
                 isClosable: true,
             });
 
-            //history.push('vendas');
+            //history.replace('/venda-contempladas');
 
         }catch(error:any) {
             showErrors(error, toast);
@@ -362,12 +365,22 @@ export default function EditQuotaSale(){
                                         <ControlledInput control={control} value={quotaSale.cpf_cnpj} name="cpf_cnpj" type="text" placeholder="Comprador" variant="outline" error={formState.errors.cpf_cnpj} focusBorderColor="blue.800"/>
 
                                         <ControlledInput control={control} value={quotaSale.seller} name="seller" type="text" placeholder="Vendedor" variant="outline" error={formState.errors.seller} focusBorderColor="blue.800"/>
+                                    </HStack>
 
+                                    <HStack spacing="4" align="baseline">
                                         <ControlledInput control={control} value={quotaSale.coordinator} name="coordinator" type="text" placeholder="Coordenador" variant="outline" error={formState.errors.coordinator} focusBorderColor="blue.800"/>
+
+                                        <ControlledInput control={control} value={quotaSale.coordinator_value ? quotaSale.coordinator_value.toString().replace('.', ',') : ''} name="coordinator_value" type="text" placeholder="Comissão do coordenador" variant="outline" error={formState.errors.coordinator_value} focusBorderColor="blue.800"/>
+
+                                        <ControlledInput control={control} value={quotaSale.supervisor} name="supervisor" type="text" placeholder="Supervisor" variant="outline" error={formState.errors.supervisor} focusBorderColor="blue.800"/>
+
+                                        <ControlledInput control={control} value={quotaSale.supervisor_value ? quotaSale.supervisor_value.toString().replace('.', ',') : ''} name="supervisor_value" type="text" placeholder="Comissão do supervisor" variant="outline" error={formState.errors.supervisor_value} focusBorderColor="blue.800"/>
                                     </HStack>
 
                                     <HStack spacing="4" align="baseline">
                                         <ControlledInput control={control} value={quotaSale.passed_value ? quotaSale.passed_value.toString().replace('.', ',') : ''} name="passed_value" type="text" placeholder="Valor passado" mask="money" variant="outline" error={formState.errors.passed_value} focusBorderColor="blue.800"/>
+
+                                        <ControlledInput control={control} value={quotaSale.partner_value ? quotaSale.partner_value.toString().replace('.', ',') : ''} name="partner_value" type="text" placeholder="Valor de comissão do parceiro" mask="money" variant="outline" error={formState.errors.partner_value} focusBorderColor="blue.800"/>
                                     </HStack>
 
                                     <HStack spacing="4" align="baseline">
