@@ -67,7 +67,7 @@ export function SideBarNav({ desk }: SideBarNavProps){
             }
 
             {
-                (HasPermission(permissions, 'Usuários') || HasPermission(permissions, 'Configurações')) && (
+                (HasPermission(permissions, 'Usuários') || HasPermission(permissions, 'Configurações') || HasPermission(permissions, 'Contempladas')) && (
                     <Link mt="30px" position="absolute" bottom="24px" alignItems="center" href="/home" display="flex" h="16" w="100%" px="7" color="white" _hover={{textDecor: 'none'}} >
                         <Icon as={SettingsIcon} fontSize="20" stroke="#ffffff" fill="none"/>
                         <Text ml="4" fontWeight="medium">Configurações</Text>
@@ -84,7 +84,7 @@ export function SideBarNav({ desk }: SideBarNavProps){
             <NavLink href="/venda-contempladas" icon={BagIcon} fill="none">Vendas</NavLink>
             <NavLink href="/relatorio-contempladas" icon={ScrollIcon} fill="none">Relatório</NavLink>
             {
-                (HasPermission(permissions, 'Usuários') || HasPermission(permissions, 'Configurações')) && (
+                (HasPermission(permissions, 'Usuários') || HasPermission(permissions, 'Configurações') || HasPermission(permissions, 'Contempladas')) && (
                     <Link mt="30px" position="absolute" bottom="24px" alignItems="center" href="/home" display="flex" h="16" w="100%" px="7" color="white" _hover={{textDecor: 'none'}} >
                         <Icon as={SettingsIcon} fontSize="20" stroke="#ffffff" fill="none"/>
                         <Text ml="4" fontWeight="medium">Configurações</Text>

@@ -1,6 +1,7 @@
-import { Box, Flex, HStack, useToast, Modal, ModalBody, Text, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Stack, Select as ChakraInput, ModalFooter, Link } from "@chakra-ui/react"
+import { Box, Flex, HStack, useToast, Modal, ModalBody, Text, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Stack, Select as ChakraSelect, Input as ChakraInput, ModalFooter, Link, FormControl, FormLabel, FormErrorMessage } from "@chakra-ui/react"
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm } from "react-hook-form";
+import { useEffect } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { useHistory } from "react-router";
 import * as yup from 'yup';
 import { SolidButton } from "../../../components/Buttons/SolidButton";
@@ -26,7 +27,7 @@ export interface CreateNewQuota{
     sold: boolean;
     company: number;
     segment: string;
-    value: string;
+    value?: string;
     credit: string;
     group: string;
     quota: string;
@@ -52,7 +53,8 @@ const CreateNewQuotaFormSchema = yup.object().shape({
     description: yup.string(),
     seller: yup.string().nullable().required("De quem foi comprada a carta?"),
     contemplated_type: yup.string().required("Qual o tipo de contemplação?"),
-    value: yup.string().required("Informe o valor do pagamento"),
+    credit: yup.string().required("Informe o valor do crédito"),
+    value: yup.string(),
     cost: yup.string().required("Informe o custo"),
     total_cost: yup.string().required("Informe o custo total"),
     cpf_cnpj: yup.string().required("Qual o cpf ou cnpj proprietário?"),
@@ -74,12 +76,60 @@ export function NewQuotaModal({ isOpen, onRequestClose, afterCreate } : NewQuota
     const toast = useToast();
     const { showErrors } = useErrors();
 
-    const { register, handleSubmit, control, reset, formState} = useForm<CreateNewQuota>({
+    const { register, handleSubmit, control, watch, reset, formState, setValue} = useForm<CreateNewQuota>({
         resolver: yupResolver(CreateNewQuotaFormSchema),
     });
 
-    function includeAndFormatData(quotaData: CreateNewQuota){
-        quotaData.value = moneyToBackend(quotaData.value);
+    //const watchCost = watch('cost');
+
+    const watchCost = useWatch({
+        control,
+        name: 'cost',
+    });
+
+    const watchCredit = useWatch({
+        control,
+        name: 'credit',
+    });
+
+    const watchPaidPercent = useWatch({
+        control,
+        name: 'paid_percent',
+    });
+
+    const watchPartnerCost = useWatch({
+        control,
+        name: 'partner_cost',
+    });
+
+    const watchTotalCost = useWatch({
+        control,
+        name: 'total_cost',
+    });
+
+    useEffect(() => {
+        if(parseInt(watchCost) && parseInt(watchCredit)){
+            const paidParcent = (parseInt(watchCost) * 100) / parseInt(watchCredit);
+            setValue('paid_percent', paidParcent.toString(), { shouldValidate: true });
+        }
+    }, [watchCost, watchCredit]);
+
+    useEffect(() => {
+        if(parseInt(watchCost)){
+            if(watchPartnerCost && parseInt(watchPartnerCost)){
+                const totalCost = (parseInt(watchCost) + parseInt(watchPartnerCost));
+                setValue('total_cost', totalCost.toString(), { shouldValidate: true });
+
+                return;
+            }
+
+            setValue('total_cost', watchCost, { shouldValidate: true });
+        }
+    }, [watchCost, watchPartnerCost]);
+    
+
+    function includeAndFormatData(quotaData: CreateNewQuota): CreateNewQuota{
+        quotaData.value = ((quotaData.value != null && quotaData.value != "") ? moneyToBackend(quotaData.value) : '');
         quotaData.credit = moneyToBackend(quotaData.credit);
         quotaData.cost = moneyToBackend(quotaData.cost);
 
@@ -137,6 +187,8 @@ export function NewQuotaModal({ isOpen, onRequestClose, afterCreate } : NewQuota
         }
     }
 
+    console.log(formState.errors);
+
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
             <ModalOverlay />
@@ -154,16 +206,58 @@ export function NewQuotaModal({ isOpen, onRequestClose, afterCreate } : NewQuota
                                 <option value="Veículo">Veículo</option>
                             </Select>
 
-                            <Input register={register} name="credit" type="text" placeholder="Crédito" variant="outline" mask="money" error={formState.errors.credit} focusBorderColor="blue.800"/>
+                            {/* <Input register={register} name="credit" type="text" placeholder="Crédito" variant="outline" mask="money" error={formState.errors.credit} focusBorderColor="blue.800"/>
+                         */}
+                            <FormControl pos="relative" isInvalid={!!formState.errors.credit}>
+                                <FormLabel pos="absolute" left="25" zIndex="2" top={watchCredit ? "4px" : "13px"} fontSize={watchCredit  ? "9" : "13"} fontWeight="500" color="gray.700" _focus={{top: "4px", fontSize: "9px"}}>Crédito</FormLabel>
+
+                                <ChakraInput {...register('credit')} type={'text'} 
+                                        h="45px" pt="8px" pl="6"  fontSize="sm" borderColor={"gray.500"} bgColor={"gray.100"} _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" _placeholder={{color: "gray.600"}} focusBorderColor="blue.800"
+                                />
+                            
+                                { !!formState.errors.credit && (
+                                    <FormErrorMessage>
+                                        {formState.errors.credit.message}
+                                    </FormErrorMessage>   
+                                )}
+                            </FormControl>
                         </HStack>
 
                         <HStack spacing="4" align="baseline">
                             <Input register={register} name="value" type="text" placeholder="Entrada" variant="outline" mask="money" error={formState.errors.value} focusBorderColor="blue.800"/>
 
-                            <Input register={register} name="cost" type="text" placeholder="Custo da Empresa" variant="outline" mask="money" error={formState.errors.cost} focusBorderColor="blue.800"/>
+                            {/* <Input name="cost" type="text" placeholder="Custo da Empresa" variant="outline" mask="money" error={formState.errors.cost} focusBorderColor="blue.800"/> */}
+                        
+                            <FormControl pos="relative" isInvalid={!!formState.errors.cost}>
+                                <FormLabel pos="absolute" left="25" zIndex="2" top={watchCost ? "4px" : "13px"} fontSize={watchCost  ? "9" : "13"} fontWeight="500" color="gray.700" _focus={{top: "4px", fontSize: "9px"}}>Custo da empresa</FormLabel>
+
+                                <ChakraInput {...register('cost')} type={'text'} 
+                                        h="45px" pt="8px" pl="6"  fontSize="sm" borderColor={"gray.500"} bgColor={"gray.100"} _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" _placeholder={{color: "gray.600"}} focusBorderColor="blue.800"
+                                />
+                            
+                                { !!formState.errors.cost && (
+                                    <FormErrorMessage>
+                                        {formState.errors.cost.message}
+                                    </FormErrorMessage>   
+                                )}
+                            </FormControl>
                         </HStack>
 
-                        <Input register={register} name="total_cost" type="text" placeholder="Custo Total" variant="outline" mask="money" error={formState.errors.total_cost} focusBorderColor="blue.800"/>
+                        {/* <Input register={register} name="total_cost" type="text" placeholder="Custo Total" variant="outline" mask="money" error={formState.errors.total_cost} focusBorderColor="blue.800"/> */}
+
+                        <FormControl pos="relative" isInvalid={!!formState.errors.total_cost}>
+                                <FormLabel pos="absolute" left="25" zIndex="2" top={watchTotalCost ? "4px" : "13px"} fontSize={watchTotalCost  ? "9" : "13"} fontWeight="500" color="gray.700" _focus={{top: "4px", fontSize: "9px"}}>Custo total</FormLabel>
+
+                                <ChakraInput {...register('total_cost')} type={'text'} 
+                                        h="45px" pt="8px" pl="6"  fontSize="sm" borderColor={"gray.500"} bgColor={"gray.100"} _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" _placeholder={{color: "gray.600"}} focusBorderColor="blue.800"
+                                />
+                            
+                                { !!formState.errors.total_cost && (
+                                    <FormErrorMessage>
+                                        {formState.errors.total_cost.message}
+                                    </FormErrorMessage>   
+                                )}
+                            </FormControl>
 
                         <HStack spacing="4" align="baseline">
                             <Input register={register} name="group" type="text" placeholder="Grupo" variant="outline" error={formState.errors.group} focusBorderColor="blue.800"/>
@@ -174,7 +268,21 @@ export function NewQuotaModal({ isOpen, onRequestClose, afterCreate } : NewQuota
                         <HStack spacing="4" align="baseline">
                             <Input register={register} name="purchase_date" type="date" placeholder="Data de Compra" variant="outline" error={formState.errors.purchase_date} focusBorderColor="blue.800"/>
 
-                            <Input register={register} name="paid_percent" type="number" placeholder="Percentual pago" variant="outline" error={formState.errors.paid_percent} focusBorderColor="blue.800"/>
+                            {/* <Input register={register} name="paid_percent" type="number" placeholder="Percentual pago" variant="outline" error={formState.errors.paid_percent} focusBorderColor="blue.800"/> */}
+                        
+                            <FormControl pos="relative" isInvalid={!!formState.errors.paid_percent}>
+                                <FormLabel pos="absolute" left="25" zIndex="2" top={watchPaidPercent ? "4px" : "13px"} fontSize={watchPaidPercent  ? "9" : "13"} fontWeight="500" color="gray.700" _focus={{top: "4px", fontSize: "9px"}}>Percentual pago</FormLabel>
+
+                                <ChakraInput {...register('paid_percent')} type={'text'} 
+                                        h="45px" pt="8px" pl="6"  fontSize="sm" borderColor={"gray.500"} bgColor={"gray.100"} _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" _placeholder={{color: "gray.600"}} focusBorderColor="blue.800"
+                                />
+                            
+                                { !!formState.errors.paid_percent && (
+                                    <FormErrorMessage>
+                                        {formState.errors.paid_percent.message}
+                                    </FormErrorMessage>   
+                                )}
+                            </FormControl>
                         </HStack>
 
                         <Input register={register} name="seller" type="text" placeholder="Comprado de" variant="outline" error={formState.errors.seller} focusBorderColor="blue.800"/>
@@ -192,8 +300,22 @@ export function NewQuotaModal({ isOpen, onRequestClose, afterCreate } : NewQuota
                         </HStack>
 
                         <HStack spacing="4" align="baseline">
-                            <Input register={register} name="partner_cost" type="text" placeholder="Custo do parceiro" variant="outline" mask="money" error={formState.errors.partner_cost} focusBorderColor="blue.800"/>
+                            {/* <Input register={register} name="partner_cost" type="text" placeholder="Custo do parceiro" variant="outline" mask="money" error={formState.errors.partner_cost} focusBorderColor="blue.800"/> */}
                             
+                            <FormControl pos="relative" isInvalid={!!formState.errors.partner_cost}>
+                                <FormLabel pos="absolute" left="25" zIndex="2" top={watchPartnerCost ? "4px" : "13px"} fontSize={watchPartnerCost  ? "9" : "13"} fontWeight="500" color="gray.700" _focus={{top: "4px", fontSize: "9px"}}>Custo do Parceiro</FormLabel>
+
+                                <ChakraInput {...register('partner_cost')} type={'text'} 
+                                        h="45px" pt="8px" pl="6"  fontSize="sm" borderColor={"gray.500"} bgColor={"gray.100"} _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" _placeholder={{color: "gray.600"}} focusBorderColor="blue.800"
+                                />
+                            
+                                { !!formState.errors.partner_cost && (
+                                    <FormErrorMessage>
+                                        {formState.errors.partner_cost.message}
+                                    </FormErrorMessage>   
+                                )}
+                            </FormControl>
+
                             <Input register={register} name="passed_cost" type="text" placeholder="Custo passado" variant="outline" mask="money" error={formState.errors.passed_cost} focusBorderColor="blue.800"/>
                         </HStack>
 

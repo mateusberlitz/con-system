@@ -136,7 +136,7 @@ export default function EditQuotaSale(){
     const paymentsForm = useForm<PaymentOfQuota>({
         resolver: yupResolver(PaymentsOfQuotaSchema),
         defaultValues: {
-            value: quotaSale && quotaSale.quota.value.toString().replace('.', ','),
+            value: (quotaSale && quotaSale.quota.value) ? quotaSale.quota.value.toString().replace('.', ',') : '',
         }
     });
 

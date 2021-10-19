@@ -102,14 +102,14 @@ export default function NewQuotaSale(){
     const { handleSubmit, register, formState, control} = useForm<QuotaSaleFormData>({
         resolver: yupResolver(NewQuotaSaleFormSchema),
         defaultValues: {
-            value: quota && quota.value.toString().replace('.', ','),
+            value: (quota && quota.value) ? quota.value.toString().replace('.', ',') : '',
         }
     });
 
     const paymentsForm = useForm<PaymentOfQuota>({
         resolver: yupResolver(PaymentsOfQuotaSchema),
         defaultValues: {
-            value: quota && quota.value.toString().replace('.', ','),
+            value: (quota && quota.value) ? quota.value.toString().replace('.', ',') : '',
         }
     });
 
@@ -279,7 +279,7 @@ export default function NewQuotaSale(){
 
                                         <Stack id="quotaSale" as="form" spacing="6" mb="14" onSubmit={handleSubmit(handleCreateNewQuotaSale)}>
                                             <HStack spacing="4" align="baseline">
-                                                <ControlledInput control={control} value={quota.value.toString().replace('.', ',')} name="value" type="text" placeholder="Valor (Entrada)" variant="outline" error={formState.errors.value} focusBorderColor="blue.800"/>
+                                                <ControlledInput control={control} value={quota.value ? quota.value.toString().replace('.', ',') : ''} name="value" type="text" placeholder="Valor (Entrada)" variant="outline" error={formState.errors.value} focusBorderColor="blue.800"/>
                                             
                                                 <Input register={register} name="sale_date" type="date" placeholder="Data da venda" variant="outline" error={formState.errors.sale_date} focusBorderColor="blue.800"/>
                                             

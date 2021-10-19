@@ -60,7 +60,7 @@ const Routes = (): JSX.Element => {
 
         <Route path="/eu" exact component={Me} />
 
-        <PrivateRoute path="/home" exact neededPermission="Configurações" component={ConfigsHome} />
+        <PrivateRoute path="/home" exact neededPermission="" component={ConfigsHome} />
         <PrivateRoute path="/empresas" neededPermission="Configurações" exact component={Companys} />
         <PrivateRoute path="/usuarios" neededPermission="Usuários" exact component={Users} />
         <PrivateRoute path="/permissoes" neededPermission="Configurações" exact component={Roles} />

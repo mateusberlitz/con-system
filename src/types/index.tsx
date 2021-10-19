@@ -217,7 +217,7 @@ export interface Quota{
     sold: boolean;
     company: Company;
     segment: string;
-    value: number;
+    value?: number;
     credit: number;
     group: string;
     quota: string;

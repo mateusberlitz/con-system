@@ -34,12 +34,36 @@ export function QuotasList({quotas, refetchQuotas}: QuotasListProps){
         return sumAmount + 1;
     }, 0);
 
-    const totalValue = quotas.reduce((sumAmount:number, quota:Quota) => {
-        return sumAmount + quota.value;
+    const totalRealtyCost = quotas.reduce((sumAmount:number, quota:Quota) => {
+        if(quota.segment === "Imóvel"){
+            return sumAmount + quota.cost;
+        }
+
+        return sumAmount;
     }, 0);
 
-    const totalCredit = quotas.reduce((sumAmount:number, quota:Quota) => {
-        return sumAmount + quota.credit;
+    const totalVehicleCost = quotas.reduce((sumAmount:number, quota:Quota) => {
+        if(quota.segment === "Veículo"){
+            return sumAmount + quota.cost;
+        }
+
+        return sumAmount;
+    }, 0);
+
+    const totalRealtyCredit = quotas.reduce((sumAmount:number, quota:Quota) => {
+        if(quota.segment === "Imóvel"){
+            return sumAmount + quota.credit;
+        }
+
+        return sumAmount;
+    }, 0);
+
+    const totalVehicleCredit = quotas.reduce((sumAmount:number, quota:Quota) => {
+        if(quota.segment === "Veículo"){
+            return sumAmount + quota.credit;
+        }
+
+        return sumAmount;
     }, 0);
 
     const totalRealtyCount = quotas.reduce((sumAmount:number, quota:Quota) => {
@@ -123,12 +147,35 @@ export function QuotasList({quotas, refetchQuotas}: QuotasListProps){
             <Accordion w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" spacing="0" allowMultiple>
                 <HStack spacing="8" justify="space-between" paddingX="8" paddingY="3" bg="gray.200">
                     <Text fontWeight="extrabold">{totalQuotasCount} COTAS</Text>
-                    
-                    <Text fontWeight="semibold" color="gray.800">{totalRealtyCount} Imóveis</Text>
-                    <Text fontWeight="semibold" color="gray.800">{totalVehicleCount} Veículos</Text>
-                    
-                    <Text float="right">TOTAL em entradas: <strong>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalValue)}</strong></Text>
-                    <Text float="right">TOTAL em crédito: <strong>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalCredit)}</strong></Text>
+
+                    <HStack spacing="6">
+                        <Text fontWeight="semibold" color="gray.800">{totalRealtyCount} Imóveis</Text>
+                        <Text fontWeight="semibold" color="gray.800">{totalVehicleCount} Veículos</Text>
+                    </HStack>
+
+                    <HStack spacing="7">
+                        <Stack spacing="1">
+                            <Text fontSize="10px" fontWeight="semibold">CUSTO total de Imóveis:</Text>
+                            <Text float="right" fontWeight="bold">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalRealtyCost)}</Text>
+                        </Stack>
+
+                        <Stack spacing="1">
+                            <Text fontSize="10px" fontWeight="semibold">CUSTO total de Veículos:</Text>
+                            <Text float="right" fontWeight="bold">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalVehicleCost)}</Text>
+                        </Stack>
+                    </HStack>
+
+                    <HStack spacing="7">
+                        <Stack spacing="1">
+                            <Text fontSize="10px" fontWeight="semibold">Total em CRÉDITO de Imóveis:</Text>
+                            <Text float="right" fontWeight="bold">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalRealtyCredit)}</Text>
+                        </Stack>
+
+                        <Stack spacing="1">
+                            <Text fontSize="10px" fontWeight="semibold">Total em CRÉDITO de  Veículos:</Text>
+                            <Text float="right" fontWeight="bold">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalVehicleCredit)}</Text>
+                        </Stack>
+                    </HStack>
                 </HStack>
 
                 { quotas.map((quota:Quota) => {
@@ -136,7 +183,7 @@ export function QuotasList({quotas, refetchQuotas}: QuotasListProps){
                             id: quota.id,
                             sold: quota.sold,
                             credit: quota.credit.toString().replace('.', ','),
-                            value: quota.value.toString().replace('.', ','),
+                            value: quota.value ? quota.value.toString().replace('.', ',') : '',
                             segment: quota.segment,
                             company: quota.company.id,
                             seller: quota.seller,
@@ -182,7 +229,7 @@ export function QuotasList({quotas, refetchQuotas}: QuotasListProps){
 
                                             <Stack spacing="0" opacity={quota.sold ? 0.5 : 1}>
                                                 <Text fontSize="10px" color="gray.800" fontWeight="bold">Entrada</Text>
-                                                <Text fontSize="sm" fontWeight="bold" color="gray.800">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quota.value)}</Text>
+                                                <Text fontSize="sm" fontWeight="bold" color="gray.800">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quota.value ? quota.value : 0)}</Text>
                                             </Stack>
 
                                             <Stack spacing="0" opacity={quota.sold ? 0.5 : 1}>
