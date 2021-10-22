@@ -84,15 +84,13 @@ export function ProfileProvider({ children } : ProfileProviderProps){
     }, [permissions, permissionsPreviousValue]);
 
 
-
-    //const {changeCompany} = useWorkingCompany();
     //LOADERS
     const loadProfile = async () => {
         const loadedProfile = await getMe();
 
         loadPermissions(loadedProfile.role.id);
 
-        localStorage.setItem('@lance/company', JSON.stringify(loadedProfile.companies[0]));
+        localStorage.setItem('@lance/company', JSON.stringify(loadedProfile.companies[0] ? loadedProfile.companies[0] : ''));
 
         setProfile(loadedProfile);
     }

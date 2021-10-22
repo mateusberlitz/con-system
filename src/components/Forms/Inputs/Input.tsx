@@ -81,7 +81,7 @@ export function Input({ name, type, icon, variant = "", value = "", mask = "", p
 
     return icon ? (
         <FormControl pos="relative" isInvalid={!!error} maxW={maxW}>
-            <FormLabel pos="absolute" left="25" zIndex="2" top={controlledValue ? "4px" : "13px"} fontSize={controlledValue ? "9" : "13"} fontWeight="500" color="gray.700" _focus={{top: "4px", fontSize: "9px"}}>{placeholder}</FormLabel>
+            <FormLabel pos="absolute" left="60px" zIndex="2" top={controlledValue ? "4px" : "13px"} fontSize={controlledValue ? "9" : "13"} fontWeight="500" color="gray.700" _focus={{top: "4px", fontSize: "9px"}}>{placeholder}</FormLabel>
 
             <InputGroup>
                 <InputLeftElement w="70px" h="45" pointerEvents="none" children={<Icon as={icon} stroke="#6E7191" fill="none" width="16" strokeWidth="3"/>} />

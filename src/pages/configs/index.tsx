@@ -40,7 +40,7 @@ export default function ConfigHome(){
                         <Text fontWeight="600" ml="2" color="blue.800" lineHeight="25px">Contempladas</Text>
                     </Link>
 
-                    <Link color="orange.400" display="flex" direction="row">
+                    <Link href="/comercial" color="orange.400" display="flex" direction="row">
                         <CartIcon stroke="#F24E1E" fill="none" width="20"/>
                         <Text fontWeight="600" ml="2" color="orange.400" lineHeight="25px">Comercial</Text>
                     </Link>
