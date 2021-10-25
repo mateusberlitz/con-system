@@ -154,10 +154,10 @@ export default function Sellers(){
                             text: 'Conversão',
                             icon: HomeIcon
                         },
-                        {
-                            text: 'Metas',
-                            icon: PasteIcon
-                        },
+                        // {
+                        //     text: 'Metas',
+                        //     icon: PasteIcon
+                        // },
                         {
                             text: 'Último acesso',
                         },
@@ -178,7 +178,7 @@ export default function Sellers(){
                                     <Text display="flex" fontSize="sm" color="gray.700" fontWeight="600">{user.name} {user.last_name && user.last_name}</Text>
                                 </Td>
                                 <Td fontSize="sm" color="gray.800">12%</Td>
-                                <Td fontSize="sm" color="gray.800">12-35</Td>
+                                {/* <Td fontSize="sm" color="gray.800">12-35</Td> */}
                                 <Td fontSize="sm" color="gray.800">12/07/2021</Td>
                                 <Td>
                                     <HStack spacing="4">

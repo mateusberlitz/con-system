@@ -269,8 +269,6 @@ export function EditPaymentModal( { isOpen, onRequestClose, afterEdit, toEditPay
                         <ControlledInput control={control} value={toEditPaymentData.observation} name="observation" type="text" placeholder="Observação" variant="outline" error={formState.errors.observation} focusBorderColor="blue.400"/>
 
                         <ControlledCheckbox label="Pendência" control={control} defaultIsChecked={toEditPaymentData.pendency} name="pendency" error={formState.errors.pendency}/>
-
-                        
                     </Stack>
                 </ModalBody>
 

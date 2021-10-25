@@ -13,13 +13,13 @@ interface TableProps{
     header: ThProps[];
 }
 
-export function Table({ header, children } : TableProps){
+export function SchedulesTable({ header, children } : TableProps){
 
     return (
         <Flex overflow="auto" w="100%" h="400px">
             <ChakraTable size="md" height="fit-content">
                 <Thead>
-                    <Tr>
+                    <Tr borderBottom="1px solid" borderTop="1px solid" borderColor="gray.200">
                         {
                             header.map(th => {
                                 const whiteSpace = th.wrap === true ? 'nowrap' : 'normal';

@@ -71,8 +71,8 @@ export function SideBarNav({ desk }: SideBarNavProps){
             {
                 (HasPermission(permissions, 'Usuários') || HasPermission(permissions, 'Configurações') || HasPermission(permissions, 'Contempladas')) && (
                     <Link mt="30px" position="absolute" bottom="24px" alignItems="center" href="/home" display="flex" h="16" w="100%" px="7" color="white" _hover={{textDecor: 'none'}} >
-                        <Icon as={SettingsIcon} fontSize="20" stroke="#ffffff" fill="none"/>
-                        <Text ml="4" fontWeight="medium">Configurações</Text>
+                        <Icon as={BackArrowIcon} fontSize="20" stroke="#ffffff" fill="none"/>
+                        <Text ml="4" fontWeight="medium">Tela inicial</Text>
                     </Link>
                 )
             }
@@ -85,11 +85,11 @@ export function SideBarNav({ desk }: SideBarNavProps){
             <NavLink href="/meusleads" icon={AtsignIcon}>Leads</NavLink>
 
             {
-                HasPermission(permissions, 'Comercial completo') && (
-                    <>
-                        <NavLink href="/leads" icon={AtsignIcon}>Novos Leads</NavLink>
-                    </>
-                )
+                // HasPermission(permissions, 'Vendas Completo') && (
+                //     <>
+                //         <NavLink href="/leads" icon={AtsignIcon}>Novos Leads</NavLink>
+                //     </>
+                // )
             }
 
             <NavLink href="/agenda" icon={CalendarIcon}>Agendamentos</NavLink>
@@ -99,8 +99,8 @@ export function SideBarNav({ desk }: SideBarNavProps){
             {
                 (HasPermission(permissions, 'Usuários') || HasPermission(permissions, 'Configurações') || HasPermission(permissions, 'Contempladas')) && (
                     <Link mt="30px" position="absolute" bottom="24px" alignItems="center" href="/home" display="flex" h="16" w="100%" px="7" color="white" _hover={{textDecor: 'none'}} >
-                        <Icon as={SettingsIcon} fontSize="20" stroke="#ffffff" fill="none"/>
-                        <Text ml="4" fontWeight="medium">Configurações</Text>
+                        <Icon as={BackArrowIcon} fontSize="20" stroke="#ffffff" fill="none"/>
+                        <Text ml="4" fontWeight="medium">Tela inicial</Text>
                     </Link>
                 )
             }
@@ -116,8 +116,8 @@ export function SideBarNav({ desk }: SideBarNavProps){
             {
                 (HasPermission(permissions, 'Usuários') || HasPermission(permissions, 'Configurações') || HasPermission(permissions, 'Contempladas')) && (
                     <Link mt="30px" position="absolute" bottom="24px" alignItems="center" href="/home" display="flex" h="16" w="100%" px="7" color="white" _hover={{textDecor: 'none'}} >
-                        <Icon as={SettingsIcon} fontSize="20" stroke="#ffffff" fill="none"/>
-                        <Text ml="4" fontWeight="medium">Configurações</Text>
+                        <Icon as={BackArrowIcon} fontSize="20" stroke="#ffffff" fill="none"/>
+                        <Text ml="4" fontWeight="medium">Tela inicial</Text>
                     </Link>
                 )
             }
