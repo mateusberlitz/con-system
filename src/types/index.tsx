@@ -262,3 +262,8 @@ export interface QuotaSale{
     created_at?: Date;
     updated_at?: Date;
 }
+
+export interface LeadStatus{
+    id: number;
+    name: string;
+}

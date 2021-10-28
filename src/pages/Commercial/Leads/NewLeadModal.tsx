@@ -11,7 +11,7 @@ import { useErrors } from "../../../hooks/useErrors";
 
 import { Input } from "../../../components/Forms/Inputs/Input";
 import { Select } from "../../../components/Forms/Selects/Select";
-import { PaymentCategory, User, Provider, Company } from "../../../types";
+import { PaymentCategory, User, Provider, Company, LeadStatus } from "../../../types";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { formatInputDate } from "../../../utils/Date/formatInputDate";
 import moneyToBackend from "../../../utils/moneyToBackend";
@@ -26,9 +26,7 @@ interface NewLeadModalProps{
     isOpen: boolean;
     onRequestClose: () => void;
     afterCreate: () => void;
-    categories: PaymentCategory[];
-    providers: Provider[];
-    users: User[];
+    statuses: LeadStatus[];
 }
 
 interface CreateNewLeadFormData{
@@ -72,7 +70,7 @@ const CreateNewLeadFormSchema = yup.object().shape({
     address_number: yup.string(),
 });
 
-export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categories, users, providers } : NewLeadModalProps){
+export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, statuses } : NewLeadModalProps){
     const workingCompany = useWorkingCompany();
     const {profile} = useProfile();
 
