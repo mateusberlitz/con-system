@@ -171,7 +171,7 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
 
                             <Input register={register} name="phone" type="text" placeholder="Número de telefone" variant="outline" mask="phone" error={formState.errors.phone}/>
                         </HStack>
-
+{/* 
                         {
                             ( !profile || !profile.companies ? (
                                 <Flex justify="center">
@@ -254,7 +254,7 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
                             </Flex>
 
                             <Input register={register} name="invoice_date" type="date" placeholder="Data da nota" variant="outline" error={formState.errors.invoice_date}/>
-                        </HStack>
+                        </HStack> */}
 
                     </Stack>
                 </ModalBody>
