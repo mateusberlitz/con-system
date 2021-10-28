@@ -74,7 +74,7 @@ export function NewUserModal( { isOpen, onRequestClose, afterCreate } : NewUserM
             onRequestClose();
             afterCreate();
             reset();
-        }catch(error) {
+        }catch(error:any) {
             showErrors(error, toast);
 
             if(error.response.data.access){

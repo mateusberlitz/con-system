@@ -151,7 +151,7 @@ export function EditPaymentCategoryModal( { isOpen, toEditPaymentCategoryData, c
                                         </Checkbox>
                                 }
                             /> */}
-                            <ControlledCheckbox label="Categoria Individual" control={control} defaultIsChecked={toEditPaymentCategoryData.individual} name="individual" error={formState.errors.individual}/>
+                            <ControlledCheckbox label="Desabilitar no resultado" control={control} defaultIsChecked={toEditPaymentCategoryData.individual} name="individual" error={formState.errors.individual}/>
                         </Flex>
                     
                     </Stack>

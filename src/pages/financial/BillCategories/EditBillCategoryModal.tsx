@@ -84,7 +84,7 @@ export function EditBillCategoryModal( { isOpen, toEditBillCategoryData, color, 
 
             afterEdit();
             onRequestClose();
-        }catch(error) {
+        }catch(error:any) {
             console.log(error);
             showErrors(error, toast);
 
@@ -120,7 +120,7 @@ export function EditBillCategoryModal( { isOpen, toEditBillCategoryData, color, 
                         </HStack>
 
                         <Flex as="div">
-                            <ControlledCheckbox label="Categoria Individual" control={control} defaultIsChecked={toEditBillCategoryData.individual} name="individual" error={formState.errors.individual}/>
+                            <ControlledCheckbox label="Desabilitar no resultado" control={control} defaultIsChecked={toEditBillCategoryData.individual} name="individual" error={formState.errors.individual}/>
                         </Flex>
                     
                     </Stack>

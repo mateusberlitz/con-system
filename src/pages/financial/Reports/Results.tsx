@@ -8,18 +8,15 @@ import { Table } from "../../../components/Table";
 import { useCompanies } from "../../../hooks/useCompanies";
 import { PaymentFilterData } from "../../../hooks/usePayments";
 import { HasPermission, useProfile } from "../../../hooks/useProfile";
+import { useResults } from "../../../hooks/useResults";
 import { TransactionsByAccountFilterData, useTransactionsByAccount } from "../../../hooks/useTransactionsByAccount";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { api } from "../../../services/api";
 import { Company } from "../../../types";
 import { newMonthsAmountArray } from "./populateMonthAmountArray";
-import Results from "./Results";
 
-export default function Reports(){
-    const {permissions, profile} = useProfile();
+export default function Results(){
     const workingCompany = useWorkingCompany();
-
-    const history = useHistory();
 
     const [years, setYears] = useState<Number[]>([]);
     const [selectedYear, setSelectedYear] = useState<string>('');
@@ -77,24 +74,10 @@ export default function Reports(){
     
     const companies = useCompanies();
 
-    function handleChangeCompany(event:any){
-        const selectedCompanyId = (event?.target.value ? event?.target.value : 1);
-        const selectedCompanyData = companies.data.filter((company:Company) => Number(company.id) === Number(selectedCompanyId))[0]
-        workingCompany.changeCompany(selectedCompanyData);
-
-        const newExitFilter = filterExitTransactions;
-        newExitFilter.company = selectedCompanyId
-        setFilterExitTransactions(newExitFilter);
-
-        const newEntryFilter = filterEntryTransactions;
-        newEntryFilter.company = selectedCompanyId
-        setFilterEntryTransactions(newEntryFilter);
-    }
-
     const [page, setPage] = useState(1);
 
-    const exitTransactions = useTransactionsByAccount(filterExitTransactions, page);
-    const entryTransactions = useTransactionsByAccount(filterEntryTransactions, page);
+    const exitTransactions = useResults(filterExitTransactions, page);
+    const entryTransactions = useResults(filterEntryTransactions, page);
 
     const totalExitsByMonths = newMonthsAmountArray();
     const totalEntriesByMonths = newMonthsAmountArray();
@@ -103,32 +86,7 @@ export default function Reports(){
     console.log();
 
     return(
-        <MainBoard sidebar="financial" header={
-            ( ((permissions && HasPermission(permissions, 'Todas Empresas'))  || (profile && profile.companies && profile.companies.length > 1)) ?
-                ( !profile || !profile.companies ? (
-                    <Flex justify="center">
-                        <Text>Nenhuma empresa disponível</Text>
-                    </Flex>
-                ) : (
-                        <HStack as="form" spacing="10" w="100%" mb="10">
-                            <FormControl pos="relative">
-                                <ChakraSelect onChange={handleChangeCompany} defaultValue={workingCompany.company?.id} h="45px" name="selected_company" w="100%" maxW="200px" fontSize="sm" focusBorderColor="purple.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
-                                {profile.companies && profile.companies.map((company:Company) => {
-                                    return (
-                                        <option key={company.id} value={company.id}>{company.name}</option>
-                                    )
-                                })}
-                                </ChakraSelect>
-                            </FormControl>
-                        </HStack>
-                    ))
-                :
-                <div></div>
-            )
-        }
-        >
-
-        <Board mb="12">
+        <Board>
             <HStack as="form" spacing="12" w="100%" mb="6" justifyContent="left">
                 <FormControl display="flex" w="fit-content" minW="150px">
                     <ChakraSelect onChange={handleChangeYear} defaultValue={workingCompany.company?.id} h="45px" name="selected_company" maxW="200px" fontSize="sm" focusBorderColor="purple.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
@@ -142,7 +100,7 @@ export default function Reports(){
                     </ChakraSelect>
                 </FormControl>
 
-                <Text fontWeight="bold">RELATÓRIO DE FLUXO DE CAIXA</Text>
+                <Text fontWeight="bold">RELATÓRIO RESULTADO</Text>
             </HStack>
 
             <Divider mb="6"/>
@@ -274,9 +232,5 @@ export default function Reports(){
 
             
         </Board>
-
-        <Results />
-
-        </MainBoard>
     );
 }

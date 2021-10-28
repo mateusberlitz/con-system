@@ -11,11 +11,35 @@ import { HasPermission, useProfile } from "../../../hooks/useProfile";
 import { EditButton } from "../../../components/Buttons/EditButton";
 import { RemoveButton } from "../../../components/Buttons/RemoveButton";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
+import { useState } from "react";
+import { formatYmdDate } from "../../../utils/Date/formatYmdDate";
+import { LeadsFilterData, useLeads } from "../../../hooks/useLeads";
 
 export default function Leads(){
-    const { permissions } = useProfile();
+    const { permissions, profile } = useProfile();
 
     const isManager = HasPermission(permissions, 'Vendas Completo');
+
+    const [filter, setFilter] = useState<LeadsFilterData>(() => {
+        const data: LeadsFilterData = {
+            search: '',
+            start_date: formatYmdDate(new Date().toString()),
+            end_date: formatYmdDate(new Date().toString()),
+            status: 0,
+            user: profile?.id,
+            group_by: '',
+        };
+        
+        return data;
+    })
+
+    function handleChangeFilter(newFilter: LeadsFilterData){
+        setFilter(newFilter);
+    }
+
+    const leads = useLeads(filter, 1);
+
+    console.log(leads);
 
     return (
         <MainBoard sidebar="commercial" header={<CompanySelectMaster />}>

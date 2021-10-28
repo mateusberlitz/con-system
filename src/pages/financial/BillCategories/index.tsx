@@ -164,7 +164,7 @@ export default function BillCategories(){
                 <Input name="name" register={register} type="text" placeholder="Categoria" variant="outline" maxW="200px" error={formState.errors.name}/>
 
                 <Flex as="div">
-                    <ControlledCheckbox label="Categoria Individual" control={control} defaultIsChecked={false} name="individual" error={formState.errors.individual}/>
+                    <ControlledCheckbox label="Desabilitar no resultado" control={control} defaultIsChecked={false} name="individual" error={formState.errors.individual}/>
                 </Flex>
 
                 <SolidButton type="submit" mb="10" color="white" bg="blue.400" icon={PlusIcon} colorScheme="blue">

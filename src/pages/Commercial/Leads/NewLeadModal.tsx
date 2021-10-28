@@ -1,4 +1,4 @@
-import { Box, Flex, HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, Text, useToast, Input as ChakraInput } from "@chakra-ui/react";
+import { Box, Flex, HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, Text, useToast, Input as ChakraInput, Divider } from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 
 
@@ -31,40 +31,45 @@ interface NewLeadModalProps{
     users: User[];
 }
 
-interface CreateNewPaymentFormData{
-    title: string;
-    observation?: string;
+interface CreateNewLeadFormData{
+    name: string;
+    email: string;
+    phone: string;
+    accept_newsletter: number;
     company: number;
-    category: number;
-    provider?: number;
-    status?: boolean;
-    pay_to_user?: number;
-    value: string;
-    expire: string;
-    invoice_date?: string;
-    contract?: string;
-    group?: string;
-    quote?: string;
-    recurrence?: number;
-    file: any;
+    birthday?: string;
+    status?: number;
+    cpf?: string;
+    cnpj?: string;
+
+    address?: string;
+    address_code?: string;
+    address_country?: string;
+    address_uf?: string;
+    address_city?: string;
+    address_number?: string;
 }
 
-const CreateNewPaymentFormSchema = yup.object().shape({
-    title: yup.string().required('Título do pagamento obrigatório'),
-    observation: yup.string(),
+const CreateNewLeadFormSchema = yup.object().shape({
+    name: yup.string().required('Nome do lead é obrigatório'),
+    email: yup.string().required('E-mail obrigatório').email("Informe um e-mail válido"),
+    phone: yup.string().min(9, "Existe Telefone com menos de 9 dígitos?"),//51991090700
+
+    accept_newsletter: yup.number(),
     company: yup.number().required('Selecione a empresa'),
-    category: yup.number().required('Seleciona a categoria'),
-    provider: yup.number().transform((v, o) => o === '' ? null : v).nullable(),
-    status: yup.boolean(),
-    pay_to_user: yup.number().transform((v, o) => o === '' ? null : v).nullable(),
-    value: yup.string().required("Informe o valor do pagamento"),
-    expire: yup.string().required("Selecione a data de vencimento"),
-    invoice_date: yup.string(),
-    contract: yup.string(),
-    group: yup.string(),
-    quote: yup.string(),
-    recurrence: yup.number().transform((v, o) => o === '' ? null : v).nullable(),
-    file: yup.array(),
+    status: yup.number(),
+
+    birthday: yup.string(),
+
+    cpf: yup.string(),
+    cnpj: yup.string(),
+
+    address: yup.string(),
+    address_code: yup.string(),
+    address_country: yup.string(),
+    address_uf: yup.string(),
+    address_city: yup.string(),
+    address_number: yup.string(),
 });
 
 export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categories, users, providers } : NewLeadModalProps){
@@ -75,50 +80,13 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
     const toast = useToast();
     const { showErrors } = useErrors();
 
-    const { register, handleSubmit, control, reset, formState} = useForm<CreateNewPaymentFormData>({
-        resolver: yupResolver(CreateNewPaymentFormSchema),
+    const { register, handleSubmit, control, reset, formState} = useForm<CreateNewLeadFormData>({
+        resolver: yupResolver(CreateNewLeadFormSchema),
     });
 
-    function includeAndFormatData(paymentData: CreateNewPaymentFormData){
-        paymentData.value = moneyToBackend(paymentData.value);
-
-        if(paymentData.recurrence === null){
-            delete paymentData.recurrence;
-        }
-
-        if(paymentData.provider === null){
-            delete paymentData.provider;
-        }
-
-        if(paymentData.pay_to_user === null){
-            delete paymentData.pay_to_user;
-        }
-
-        paymentData.expire = formatInputDate(paymentData.expire);
-
-        // if(paymentData.invoice_date != null && paymentData.invoice_date != ""){
-        //     paymentData.invoice_date = formatInputDate(paymentData.invoice_date);
-        // }else{
-        //     delete paymentData.invoice_date;
-        // }
-
-        if(!workingCompany.company){
-            return paymentData;
-        }else if(paymentData.company === 0){
-            paymentData.company = workingCompany.company?.id;
-        }
-
-        return paymentData;
-    }
-
-    const handleCreateNewPayment = async (paymentData : CreateNewPaymentFormData) => {
+    const handleCreateNewPayment = async (leadData : CreateNewLeadFormData) => {
         try{
-            const paymentFormedData = new FormData();
-            const invoiceFormedData = new FormData();
-
-            console.log(paymentData.company);
-
-            if(!workingCompany.company && paymentData.company === 0){
+            if(!workingCompany.company && leadData.company === 0){
                 toast({
                     title: "Ué",
                     description: `Seleciona uma empresa para trabalhar`,
@@ -130,59 +98,15 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
                 return;
             }
 
-            paymentData = includeAndFormatData(paymentData);
-
-            if(paymentData.invoice_date !== undefined && paymentData.invoice_date !== ""){
-                paymentData.invoice_date = formatInputDate(paymentData.invoice_date);
-                invoiceFormedData.append('date', paymentData.invoice_date);
-            }else{
-                if(toFormInvoice !== undefined && toFormInvoice !== ""){
-                    toast({
-                        title: "Ops",
-                        description: `Selecione a data da nota`,
-                        status: "warning",
-                        duration: 12000,
-                        isClosable: true,
-                    });
-    
-                    return;
-                }
-            }
-
-            delete paymentData.invoice_date;
-
-            const response = await api.post('/payments/store', paymentData);
-
-            if(toFormFile !== undefined && toFormFile !== ""){
-                paymentFormedData.append('file', toFormFile);
-            }
-
-            await api.post(`/payments/update/${response.data.id}`, paymentFormedData);
-
-            if(toFormInvoice !== undefined && toFormInvoice !== ""){
-                invoiceFormedData.append('file', toFormInvoice);
-                invoiceFormedData.append('payment', response.data.id);
-
-                await api.post(`/invoices/store`, invoiceFormedData, {
-                    headers: {
-                        'content-type': 'multipart/form-data'
-                    }
-                });
-            }
+            const response = await api.post('/leads/store', leadData);
 
             toast({
                 title: "Sucesso",
-                description: `O pagamento ${paymentData.title} foi cadastrado.`,
+                description: `O lead ${leadData.name} foi cadastrado.`,
                 status: "success",
                 duration: 12000,
                 isClosable: true,
             });
-
-            setFileName("");
-            setToFormFile("");
-
-            setInvoiceName("");
-            setToFormInvoice("");
 
             onRequestClose();
             afterCreate();
@@ -205,37 +129,6 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
         }
     }, [isOpen])
 
-
-    const [fileName, setFileName] = useState("");
-    const [toFormFile, setToFormFile] = useState<File | "">();
-
-    function handleChangeFile(event: any){
-        if(event.target.files.length){
-            setFileName(event.target.files[0].name);
-
-            setToFormFile(event.target.files[0]);
-        }else{
-            setFileName("");
-
-            setToFormFile(event.target);
-        }
-    }
-
-    const [invoiceName, setInvoiceName] = useState("");
-    const [toFormInvoice, setToFormInvoice] = useState<File | "">();
-
-    function handleChangeInvoice(event: any){
-        if(event.target.files.length){
-            setInvoiceName(event.target.files[0].name);
-
-            setToFormInvoice(event.target.files[0]);
-        }else{
-            setInvoiceName("");
-
-            setToFormInvoice(event.target);
-        }
-    }
-
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
             <ModalOverlay />
@@ -247,7 +140,37 @@ export function NewPaymentModal( { isOpen, onRequestClose, afterCreate, categori
                 <ModalBody pl="10" pr="10">
                     <Stack spacing="6">
                         
-                        <Input register={register} name="title" type="text" placeholder="Título" variant="outline" error={formState.errors.title}/>
+                        <Input register={register} name="name" type="text" placeholder="Nome" variant="outline" error={formState.errors.name}/>
+
+                        <HStack spacing="4" align="baseline">
+                            <Input register={register} name="email" type="date" placeholder="E-mail" variant="outline" error={formState.errors.email}/>
+
+                            <Input register={register} name="phone" type="text" placeholder="Número de telefone" variant="outline" mask="phone" error={formState.errors.phone}/>
+                        </HStack>
+
+                        {
+                            ( !profile || !profile.companies ? (
+                                <Flex justify="center">
+                                    <Text>Nenhuma empresa disponível</Text>
+                                </Flex>
+                            ) : (
+                                <ControlledSelect control={control} value={(workingCompany.company && workingCompany.company.id) ? workingCompany.company.id : ""}  h="45px" name="company" placeholder="Empresa" w="100%" fontSize="sm" focusBorderColor="blue.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" error={formState.errors.company}>
+                                    {profile.companies && profile.companies.map((company:Company) => {
+                                        return (
+                                            <option key={company.id} value={company.id}>{company.name}</option>
+                                        )
+                                    })}
+                                </ControlledSelect>
+                            ))
+                        }
+
+                        <Divider/>
+
+                        <HStack spacing="4" align="baseline">
+                            <Input register={register} name="email" type="date" placeholder="E-mail" variant="outline" error={formState.errors.email}/>
+
+                            <Input register={register} name="phone" type="text" placeholder="Número de telefone" variant="outline" mask="phone" error={formState.errors.phone}/>
+                        </HStack>
 
                         {
                             ( !profile || !profile.companies ? (

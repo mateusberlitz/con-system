@@ -136,7 +136,7 @@ export default function PaymentCategories(){
 
             reset();
             loadCategories();
-        }catch(error) {
+        }catch(error:any) {
             showErrors(error, toast);
 
             if(error.response.data.access){
@@ -166,7 +166,7 @@ export default function PaymentCategories(){
 
                 <Flex as="div">
                     <Checkbox {...register("individual")} colorScheme="blue" size="md" mr="15" borderRadius="full" fontSize="sm" color="gray.800" value={1}>
-                        Individual
+                        Desabilitar no resultado
                     </Checkbox>
                 </Flex>
 
