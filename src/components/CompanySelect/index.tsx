@@ -8,12 +8,21 @@ import { useProfile } from "../../hooks/useProfile";
 import { useWorkingCompany } from "../../hooks/useWorkingCompany";
 import { Company } from "../../types";
 
-interface CompanySelectProps extends ChakraProps{
-    searchFilter?: PaymentFilterData | CashFlowsFilterData | BillFilterData;
-    setFilter?: (newFilterValue: any) => void;
+export interface filter{
+    filterData: any;
+    setFilter: (newFilterValue: any) => void;
 }
 
-export function CompanySelect({searchFilter, setFilter, ...rest}: CompanySelectProps){
+// interface CompanySelectProps extends ChakraProps{
+//     searchFilter?: PaymentFilterData | CashFlowsFilterData | BillFilterData;
+//     setFilter?: (newFilterValue: any) => void;
+// }
+
+interface CompanySelectProps extends ChakraProps{
+    filters?: filter[];
+}
+
+export function CompanySelect({filters, ...rest}: CompanySelectProps){
     const workingCompany = useWorkingCompany();
 
     const companies = useCompanies();
@@ -25,11 +34,13 @@ export function CompanySelect({searchFilter, setFilter, ...rest}: CompanySelectP
         if(event.target.value === ''){
             workingCompany.changeCompany(event.target.value);
 
-            if(searchFilter && setFilter){
-                const updatedFilter = searchFilter;
-                updatedFilter.company = event.target.value;
+            if(filters){
+                filters.map((filter) => {
+                    const updatedFilter = filter.filterData;
+                    updatedFilter.company = event.target.value;
 
-                setFilter(updatedFilter);
+                    filter.setFilter(updatedFilter);
+                })
             }
 
         }else{
@@ -37,11 +48,13 @@ export function CompanySelect({searchFilter, setFilter, ...rest}: CompanySelectP
             const selectedCompanyData = companies.data.filter((company:Company) => Number(company.id) === Number(selectedCompanyId))[0]
             workingCompany.changeCompany(selectedCompanyData);
 
-            if(searchFilter && setFilter){
-                const updatedFilter = searchFilter;
-                updatedFilter.company = selectedCompanyId;
+            if(filters){
+                filters.map((filter) => {
+                    const updatedFilter = filter.filterData;
+                    updatedFilter.company = event.target.value;
 
-                setFilter(updatedFilter);
+                    filter.setFilter(updatedFilter);
+                })
             }
         }
     }

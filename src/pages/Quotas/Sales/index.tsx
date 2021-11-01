@@ -40,7 +40,7 @@ export default function Sales(){
     }
 
     return (
-        <MainBoard sidebar="quotas" header={ <CompanySelectMaster/>}
+        <MainBoard sidebar="quotas" header={ <CompanySelectMaster filters={[{filterData: filter, setFilter: handleChangeFilter}]}/>}
         >
             <SalesNavBar OpenNewSaleModal={OpenNewQuotaModal} />
 

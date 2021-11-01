@@ -38,6 +38,7 @@ import { ReactComponent as BackArrow } from '../../../assets/icons/Back Arrow.sv
 import { api } from "../../../services/api";
 import { UserFilterData, useUsers } from "../../../hooks/useUsers";
 import { InvoicesFilterData, useInvoices } from "../../../hooks/useInvoices";
+import { CompanySelectMaster } from "../../../components/CompanySelect/companySelectMaster";
 
 interface RemovePaymentData{
     id: number;
@@ -129,7 +130,7 @@ export default function Invoices(){
         <MainBoard sidebar="financial" header={
             <HStack>
                 <Link href="/pagamentos"><BackArrow width="20px" stroke="#4e4b66" fill="none"/></Link> 
-                {( ( (permissions && HasPermission(permissions, 'Todas Empresas')) || (profile && profile.companies && profile.companies.length > 1)) && <CompanySelect searchFilter={filter} setFilter={handleChangeFilter}/> )}
+                <CompanySelectMaster filters={[{filterData: filter, setFilter: handleChangeFilter}]} />
             </HStack>
         }
         >

@@ -51,6 +51,7 @@ import { AddInvoicePaymentFormData, AddInvoicePaymentModal } from "./AddInvoiceP
 import { ConfirmPartialRemoveModal } from "./ConfirmPartialRemoveModal";
 import { ExportDocumentsModal } from "./ExportDocumentsModal";
 import { EditPartialPaymentFormData, EditPartialPaymentModal } from "./EditPartialPaymentModal";
+import { CompanySelectMaster } from "../../../components/CompanySelect/companySelectMaster";
 
 interface RemovePaymentData{
     id: number;
@@ -455,9 +456,7 @@ export default function Payments(){
     }
 
     return(
-        <MainBoard sidebar="financial" header={ 
-            ( ( (permissions && HasPermission(permissions, 'Todas Empresas')) || (profile && profile.companies && profile.companies.length > 1)) && <CompanySelect searchFilter={filter} setFilter={handleChangeFilter}/> )
-        }
+        <MainBoard sidebar="financial" header={ <CompanySelectMaster filters={[{filterData: filter, setFilter: handleChangeFilter}]}/>}
         >
             <NewPaymentModal categories={categories} users={users.data} providers={providers.data} afterCreate={payments.refetch} isOpen={isNewPaymentModalOpen} onRequestClose={CloseNewPaymentModal}/>
             <PayPaymentModal afterPay={payments.refetch} toPayPaymentData={toPayPaymentData} isOpen={isPayPaymentModalOpen} onRequestClose={ClosePayPaymentModal}/>

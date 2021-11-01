@@ -33,44 +33,7 @@ export default function Results(){
 
     const dateObject = new Date;
 
-    const [filterExitTransactions, setFilterExitTransactions] = useState<TransactionsByAccountFilterData>(() => {
-        const data: TransactionsByAccountFilterData = {
-            transaction_type: 'payments',
-            company: workingCompany.company?.id,
-            year: dateObject.getFullYear().toString(),
-        };
-        
-        return data;
-    })
-
-    const [filterEntryTransactions, setFilterEntryTransactions] = useState<TransactionsByAccountFilterData>(() => {
-        const data: TransactionsByAccountFilterData = {
-            transaction_type: 'bills',
-            company: workingCompany.company?.id,
-            year: dateObject.getFullYear().toString(),
-        };
-        
-        return data;
-    })
-
-    function handleChangeFilter(newFilter: TransactionsByAccountFilterData){
-        setFilterExitTransactions(newFilter);
-        setFilterEntryTransactions(newFilter);
-    }
-
-    function handleChangeYear(event:any){
-        const newYear = (event?.target.value ? event?.target.value : selectedYear);
-
-        setSelectedYear(newYear);
-
-        const newExitFilter = filterExitTransactions;
-        newExitFilter.year = newYear
-        setFilterExitTransactions(newExitFilter);
-
-        const newEntryFilter = filterEntryTransactions;
-        newEntryFilter.year = newYear
-        setFilterEntryTransactions(newEntryFilter);
-    }
+    //
     
     const companies = useCompanies();
 

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Board } from "../../../components/Board";
 import { CompanySelect } from "../../../components/CompanySelect";
+import { CompanySelectMaster } from "../../../components/CompanySelect/companySelectMaster";
 import { MainBoard } from "../../../components/MainBoard";
 import { Table } from "../../../components/Table";
 import { useCompanies } from "../../../hooks/useCompanies";
@@ -102,31 +103,54 @@ export default function Reports(){
 
     console.log();
 
+    
+
+
+
+
+    //filter of results
+
+    const [filterExitTransactions, setFilterExitTransactions] = useState<TransactionsByAccountFilterData>(() => {
+        const data: TransactionsByAccountFilterData = {
+            transaction_type: 'payments',
+            company: workingCompany.company?.id,
+            year: dateObject.getFullYear().toString(),
+        };
+        
+        return data;
+    })
+
+    const [filterEntryTransactions, setFilterEntryTransactions] = useState<TransactionsByAccountFilterData>(() => {
+        const data: TransactionsByAccountFilterData = {
+            transaction_type: 'bills',
+            company: workingCompany.company?.id,
+            year: dateObject.getFullYear().toString(),
+        };
+        
+        return data;
+    })
+
+    function handleChangeFilter(newFilter: TransactionsByAccountFilterData){
+        setFilterExitTransactions(newFilter);
+        setFilterEntryTransactions(newFilter);
+    }
+
+    function handleChangeYear(event:any){
+        const newYear = (event?.target.value ? event?.target.value : selectedYear);
+
+        setSelectedYear(newYear);
+
+        const newExitFilter = filterExitTransactions;
+        newExitFilter.year = newYear
+        setFilterExitTransactions(newExitFilter);
+
+        const newEntryFilter = filterEntryTransactions;
+        newEntryFilter.year = newYear
+        setFilterEntryTransactions(newEntryFilter);
+    }
+
     return(
-        <MainBoard sidebar="financial" header={
-            ( ((permissions && HasPermission(permissions, 'Todas Empresas'))  || (profile && profile.companies && profile.companies.length > 1)) ?
-                ( !profile || !profile.companies ? (
-                    <Flex justify="center">
-                        <Text>Nenhuma empresa disponível</Text>
-                    </Flex>
-                ) : (
-                        <HStack as="form" spacing="10" w="100%" mb="10">
-                            <FormControl pos="relative">
-                                <ChakraSelect onChange={handleChangeCompany} defaultValue={workingCompany.company?.id} h="45px" name="selected_company" w="100%" maxW="200px" fontSize="sm" focusBorderColor="purple.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
-                                {profile.companies && profile.companies.map((company:Company) => {
-                                    return (
-                                        <option key={company.id} value={company.id}>{company.name}</option>
-                                    )
-                                })}
-                                </ChakraSelect>
-                            </FormControl>
-                        </HStack>
-                    ))
-                :
-                <div></div>
-            )
-        }
-        >
+        <MainBoard sidebar="financial" header={<CompanySelectMaster filters={[{filterData: filterExitTransactions, setFilter: handleChangeFilter}, {filterData: filterExitTransactions, setFilter: handleChangeFilter}]}/> }>
 
         <Board mb="12">
             <HStack as="form" spacing="12" w="100%" mb="6" justifyContent="left">

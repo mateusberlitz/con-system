@@ -36,6 +36,7 @@ import { Select } from "../../../components/Forms/Selects/Select";
 import { Pagination } from "../../../components/Pagination";
 import { useHistory } from "react-router-dom";
 import { ExportExcelModal } from "./ExportExcelModal";
+import { CompanySelectMaster } from "../../../components/CompanySelect/companySelectMaster";
 
 interface RemoveCashFlowData{
     id: number;
@@ -176,7 +177,7 @@ export default function CashDesks(){
 
     return(
         <MainBoard sidebar="financial" header={ 
-            ( ( (permissions && HasPermission(permissions, 'Todas Empresas')) || (profile && profile.companies && profile.companies.length > 1)) && <CompanySelect searchFilter={filter} setFilter={handleChangeFilter}/> )
+            ( ( (permissions && HasPermission(permissions, 'Todas Empresas')) || (profile && profile.companies && profile.companies.length > 1)) && <CompanySelectMaster filters={[{filterData: filter, setFilter: handleChangeFilter}]}/> )
         }
         >
             <NewCashDesksModal categories={categories} afterCreate={cashDesks.refetch} isOpen={isNewCashDeskModalOpen} onRequestClose={CloseNewCashDeskModal}/>
