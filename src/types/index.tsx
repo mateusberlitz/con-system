@@ -263,7 +263,48 @@ export interface QuotaSale{
     updated_at?: Date;
 }
 
+export interface Lead{
+    id: number;
+    name: string;
+    email: string;
+    phone: string;
+    accept_newsletter: number;
+    company: Company;
+    notes: LeadNote[];
+    user?: User;
+    birthday?: string;
+    status?: LeadStatus;
+    origin?: DataOrigin;
+    cpf?: string;
+    cnpj?: string;
+
+    address?: string;
+    address_code?: string;
+    address_country?: string;
+    address_uf?: string;
+    address_city?: string;
+    address_number?: string;
+
+    created_at: string;
+    updated_at: string;
+
+}
+
+export interface LeadNote{
+    id: number;
+    text: string;
+
+    created_at: string;
+    updated_at: string;
+}
+
 export interface LeadStatus{
+    id: number;
+    name: string;
+    color?: string;
+}
+
+export interface DataOrigin{
     id: number;
     name: string;
 }
