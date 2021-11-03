@@ -26,6 +26,9 @@ import { Spinner } from "@chakra-ui/spinner";
 import { EditBillCategoryModal } from "./EditBillCategoryModal";
 import { ConfirmBillCategoryRemoveModal } from "./ConfirmBillCategoryRemoveModal";
 import { ControlledCheckbox } from "../../../components/Forms/CheckBox/ControlledCheckbox";
+import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
+import { Stack } from "@chakra-ui/react";
+import { CompanySelectMaster } from "../../../components/CompanySelect/companySelectMaster";
 
 interface CreateNewBillCategoryFormData{
     name: string;
@@ -40,6 +43,8 @@ const CreateNewBillCategoryFormSchema = yup.object().shape({
 });
 
 export default function BillCategories(){
+    const workingCompany = useWorkingCompany();
+
     const [categories, setCategories] = useState<BillCategory[]>([]);
     const [color, setColor] = useState('#ffffff');
     const toast = useToast();
@@ -97,15 +102,18 @@ export default function BillCategories(){
     });
 
     const loadCategories = async () => {
-        const { data } = await api.get('/bill_categories');
+        const { data } = await api.get('/bill_categories', {
+            params: {
+                company: workingCompany.company?.id
+            }
+        });
 
         setCategories(data);
     }
 
     useEffect(() => {
         loadCategories();
-        
-    }, [])
+    }, [workingCompany])
 
     const handleCreateCategory = async (BillCategoryData: CreateNewBillCategoryFormData) => {
         BillCategoryData.color = color;
@@ -147,12 +155,17 @@ export default function BillCategories(){
     return (
         <MainBoard sidebar="financial" header={
             (
-                <>
-                    <Link href="/receber"><BackArrow width="20px" stroke="#4e4b66" fill="none"/></Link>
-                    <Text color="gray.800" ml="4">
-                        / Categorias de Contas a Receber
-                    </Text>
-                </>
+                <Stack>
+                    <CompanySelectMaster />
+
+                    <HStack>
+                        <Link href="/receber"><BackArrow width="20px" stroke="#4e4b66" fill="none"/></Link>
+                        <Text color="gray.800" ml="4">
+                            / Categorias de Contas a Receber
+                        </Text>
+                    </HStack>
+                    
+                </Stack>
             )
         }>
             <EditBillCategoryModal afterEdit={loadCategories} color={toEditcolor} changeColor={changeColor} toEditBillCategoryData={editBillCategoryData} isOpen={isEditBillCategoryModalOpen} onRequestClose={CloseEditBillCategoryModal}/>

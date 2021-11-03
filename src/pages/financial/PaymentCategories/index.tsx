@@ -9,7 +9,7 @@ import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
 import { ReactComponent as BackArrow } from '../../../assets/icons/Back Arrow.svg';
 import { ReactComponent as LinkIcon } from '../../../assets/icons/Link.svg';
 
-import { Flex, HStack, Link, SimpleGrid, Text } from "@chakra-ui/layout";
+import { Flex, HStack, Link, SimpleGrid, Text, Stack } from "@chakra-ui/layout";
 import { IconButton } from "@chakra-ui/button";
 import { Input } from "../../../components/Forms/Inputs/Input";
 import { ColorPicker } from "../../../components/Forms/ColorPicker";
@@ -26,6 +26,8 @@ import { Spinner } from "@chakra-ui/spinner";
 import { EditPaymentCategoryModal } from "./EditPaymentCategoryModal";
 import { ConfirmPaymentCategoryRemoveModal } from "./ConfirmPaymentCategoryRemoveModal";
 import { Checkbox } from "@chakra-ui/react";
+import { CompanySelectMaster } from "../../../components/CompanySelect/companySelectMaster";
+import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 
 interface CreateNewPaymentCategoryFormData{
     name: string;
@@ -39,6 +41,8 @@ const CreateNewPaymentCategoryFormSchema = yup.object().shape({
 });
 
 export default function PaymentCategories(){
+    const workingCompany = useWorkingCompany();
+
     const [categories, setCategories] = useState<PaymentCategory[]>([]);
     const [color, setColor] = useState('#ffffff');
     const toast = useToast();
@@ -96,15 +100,18 @@ export default function PaymentCategories(){
     });
 
     const loadCategories = async () => {
-        const { data } = await api.get('/payment_categories');
+        const { data } = await api.get('/payment_categories', {
+            params: {
+                company: workingCompany.company?.id
+            }
+        });
 
         setCategories(data);
     }
 
     useEffect(() => {
         loadCategories();
-        
-    }, [])
+    }, [workingCompany])
 
     const handleCreateCategory = async (paymentCategoryData: CreateNewPaymentCategoryFormData) => {
         paymentCategoryData.color = color;
@@ -120,8 +127,6 @@ export default function PaymentCategories(){
 
             return;
         }
-
-        console.log(paymentCategoryData);
 
         try{
             await api.post('/payment_categories/store', paymentCategoryData);
@@ -148,12 +153,16 @@ export default function PaymentCategories(){
     return (
         <MainBoard sidebar="financial" header={
             (
-                <>
-                    <Link href="/pagamentos"><BackArrow width="20px" stroke="#4e4b66" fill="none"/></Link>
-                    <Text color="gray.800" ml="4">
-                        / Categorias de Pagamentos
-                    </Text>
-                </>
+                <Stack>
+                    <CompanySelectMaster />
+
+                    <HStack>
+                        <Link href="/pagamentos"><BackArrow width="20px" stroke="#4e4b66" fill="none"/></Link>
+                        <Text color="gray.800" ml="4">
+                            / Categorias de Pagamentos
+                        </Text>
+                    </HStack>
+                </Stack>
             )
         }>
             <EditPaymentCategoryModal afterEdit={loadCategories} color={toEditcolor} changeColor={changeColor} toEditPaymentCategoryData={editPaymentCategoryData} isOpen={isEditPaymentCategoryModalOpen} onRequestClose={CloseEditPaymentCategoryModal}/>
