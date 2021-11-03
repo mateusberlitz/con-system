@@ -15,7 +15,13 @@ import { api } from "../../../services/api";
 import { Company } from "../../../types";
 import { newMonthsAmountArray } from "./populateMonthAmountArray";
 
-export default function Results(){
+interface ResultsTableProps{
+    filterExitTransactions: TransactionsByAccountFilterData;
+    filterEntryTransactions: TransactionsByAccountFilterData;
+    handleChangeYear: (event:any) => void;
+}
+
+export default function Results({filterExitTransactions, filterEntryTransactions, handleChangeYear}: ResultsTableProps){
     const workingCompany = useWorkingCompany();
 
     const [years, setYears] = useState<Number[]>([]);

@@ -74,6 +74,14 @@ export default function Reports(){
         const newEntryFilter = filterEntryTransactions;
         newEntryFilter.year = newYear
         setFilterEntryTransactions(newEntryFilter);
+
+        const newExitResultFilter = filterResultExitTransactions;
+        newExitResultFilter.year = newYear
+        setFilterResultExitTransactions(newExitResultFilter);
+
+        const newEntryResultFilter = filterResultEntryTransactions;
+        newEntryResultFilter.year = newYear
+        setFilterResultEntryTransactions(newEntryResultFilter);
     }
     
     const companies = useCompanies();
@@ -110,7 +118,7 @@ export default function Reports(){
 
     //filter of results
 
-    const [filterExitTransactions, setFilterExitTransactions] = useState<TransactionsByAccountFilterData>(() => {
+    const [filterResultExitTransactions, setFilterResultExitTransactions] = useState<TransactionsByAccountFilterData>(() => {
         const data: TransactionsByAccountFilterData = {
             transaction_type: 'payments',
             company: workingCompany.company?.id,
@@ -120,7 +128,7 @@ export default function Reports(){
         return data;
     })
 
-    const [filterEntryTransactions, setFilterEntryTransactions] = useState<TransactionsByAccountFilterData>(() => {
+    const [filterResultEntryTransactions, setFilterResultEntryTransactions] = useState<TransactionsByAccountFilterData>(() => {
         const data: TransactionsByAccountFilterData = {
             transaction_type: 'bills',
             company: workingCompany.company?.id,
@@ -130,27 +138,35 @@ export default function Reports(){
         return data;
     })
 
-    function handleChangeFilter(newFilter: TransactionsByAccountFilterData){
-        setFilterExitTransactions(newFilter);
-        setFilterEntryTransactions(newFilter);
+    function handleChangeResultFilter(newFilter: TransactionsByAccountFilterData){
+        setFilterResultExitTransactions(newFilter);
+        setFilterResultEntryTransactions(newFilter);
     }
 
-    function handleChangeYear(event:any){
+    function handleChangeResultYear(event:any){
         const newYear = (event?.target.value ? event?.target.value : selectedYear);
 
         setSelectedYear(newYear);
 
-        const newExitFilter = filterExitTransactions;
-        newExitFilter.year = newYear
-        setFilterExitTransactions(newExitFilter);
+        const newExitResultFilter = filterResultExitTransactions;
+        newExitResultFilter.year = newYear
+        setFilterExitTransactions(newExitResultFilter);
 
-        const newEntryFilter = filterEntryTransactions;
-        newEntryFilter.year = newYear
-        setFilterEntryTransactions(newEntryFilter);
+        const newEntryResultFilter = filterResultEntryTransactions;
+        newEntryResultFilter.year = newYear
+        setFilterEntryTransactions(newEntryResultFilter);
     }
 
     return(
-        <MainBoard sidebar="financial" header={<CompanySelectMaster filters={[{filterData: filterExitTransactions, setFilter: handleChangeFilter}, {filterData: filterExitTransactions, setFilter: handleChangeFilter}]}/> }>
+        <MainBoard sidebar="financial" header={
+                <CompanySelectMaster filters={[
+                    {filterData: filterExitTransactions, setFilter: handleChangeFilter}, 
+                    {filterData: filterExitTransactions, setFilter: handleChangeFilter}, 
+                    {filterData: filterResultExitTransactions, setFilter: handleChangeResultFilter}, 
+                    {filterData: filterResultExitTransactions, setFilter: handleChangeResultFilter}
+                ]}/> 
+            }
+        >
 
         <Board mb="12">
             <HStack as="form" spacing="12" w="100%" mb="6" justifyContent="left">
@@ -299,7 +315,7 @@ export default function Reports(){
             
         </Board>
 
-        <Results />
+        <Results filterEntryTransactions={filterResultEntryTransactions} filterExitTransactions={filterResultExitTransactions} handleChangeYear={handleChangeYear}/>
 
         </MainBoard>
     );
