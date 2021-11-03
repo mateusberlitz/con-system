@@ -51,7 +51,7 @@ export function CompanySelect({filters, ...rest}: CompanySelectProps){
             if(filters){
                 filters.map((filter) => {
                     const updatedFilter = filter.filterData;
-                    updatedFilter.company = event.target.value;
+                    updatedFilter.company = selectedCompanyId;
 
                     filter.setFilter(updatedFilter);
                 })

@@ -160,10 +160,10 @@ export default function Reports(){
     return(
         <MainBoard sidebar="financial" header={
                 <CompanySelectMaster filters={[
-                    {filterData: filterExitTransactions, setFilter: handleChangeFilter}, 
-                    {filterData: filterExitTransactions, setFilter: handleChangeFilter}, 
-                    {filterData: filterResultExitTransactions, setFilter: handleChangeResultFilter}, 
-                    {filterData: filterResultExitTransactions, setFilter: handleChangeResultFilter}
+                    {filterData: filterExitTransactions, setFilter: setFilterExitTransactions}, 
+                    {filterData: filterEntryTransactions, setFilter: setFilterEntryTransactions}, 
+                    {filterData: filterResultExitTransactions, setFilter: setFilterResultExitTransactions}, 
+                    {filterData: filterResultEntryTransactions, setFilter: setFilterResultEntryTransactions}
                 ]}/> 
             }
         >
