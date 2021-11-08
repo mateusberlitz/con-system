@@ -1,4 +1,4 @@
-import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Badge as ChakraBadge, Checkbox, Flex, HStack, Spinner, Stack, Text } from "@chakra-ui/react";
+import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Badge as ChakraBadge, Checkbox, Flex, HStack, IconButton, Spinner, Stack, Text } from "@chakra-ui/react";
 import Badge from "../../../components/Badge";
 import { OutlineButton } from "../../../components/Buttons/OutlineButton";
 import { CompanySelectMaster } from "../../../components/CompanySelect/companySelectMaster";
@@ -7,6 +7,9 @@ import { MainBoard } from "../../../components/MainBoard";
 import { ReactComponent as PlusIcon } from '../../../assets/icons/Plus.svg';
 import { ReactComponent as MinusIcon } from '../../../assets/icons/Minus.svg';
 import { ReactComponent as StrongPlusIcon } from '../../../assets/icons/StrongPlus.svg';
+import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
+
+
 import { HasPermission, useProfile } from "../../../hooks/useProfile";
 import { EditButton } from "../../../components/Buttons/EditButton";
 import { RemoveButton } from "../../../components/Buttons/RemoveButton";
@@ -20,6 +23,7 @@ import { useEffect } from "react";
 import { NewLeadModal } from "./NewLeadModal";
 import { formatBRDate } from "../../../utils/Date/formatBRDate";
 import { getHour } from "../../../utils/Date/getHour";
+import { EditLeadFormData, EditLeadModal } from "./EditLeadModal";
 
 export default function Leads(){
     const { permissions, profile } = useProfile();
@@ -79,11 +83,48 @@ export default function Leads(){
 
     const leads = useLeads(filter, 1);
 
-    console.log(leads);
+    const [isEditLeadModalOpen, setIsEditLeadModalOpen] = useState(false);
+
+    const [toEditLeadData, setToEditLeadData] = useState<EditLeadFormData>(() => {
+
+        const data: EditLeadFormData = {
+            id: 0,
+            name: '',
+            email: '',
+            phone: '',
+            company: 0,
+            accept_newsletter: 0,
+            user: 0,
+            status: 0,
+            birthday: '',
+            cnpj: '',
+            cpf: '',
+            origin: 0,
+            address: '',
+            address_code: '',
+            address_country: '',
+            address_uf: '',
+            address_city: '',
+            address_number: '',
+        };
+        
+        return data;
+    });
+
+    function OpenEditLeadModal(leadData : EditLeadFormData){
+        setToEditLeadData(leadData);
+        setIsEditLeadModalOpen(true);
+    }
+    function CloseEditLeadModal(){
+        setIsEditLeadModalOpen(false);
+    }
+
+    console.log(statuses);
 
     return (
         <MainBoard sidebar="commercial" header={<CompanySelectMaster />}>
             <NewLeadModal statuses={statuses} origins={origins} afterCreate={leads.refetch} isOpen={isNewLeadModalOpen} onRequestClose={CloseNewPaymentModal}/>
+            <EditLeadModal toEditLeadData={toEditLeadData} statuses={statuses} origins={origins} afterEdit={leads.refetch} isOpen={isEditLeadModalOpen} onRequestClose={CloseEditLeadModal}/>
 
             <SolidButton color="white" bg="orange.400" icon={PlusIcon} colorScheme="orange" mb="10" onClick={OpenNewPaymentModal}>
                 Adicionar Lead
@@ -122,6 +163,28 @@ export default function Leads(){
 
                         {
                             leads.data?.data.map((lead: Lead) => {
+                                const leadToEditData:EditLeadFormData = {
+                                    id: lead.id,
+                                    name: lead.name,
+                                    email: lead.email,
+                                    phone: lead.phone,
+                                    company: lead.company.id,
+                                    accept_newsletter: lead.accept_newsletter,
+                                    user: lead.user?.id,
+                                    status: lead.status?.id,
+                                    birthday: lead.birthday,
+                                    cnpj: lead.cnpj,
+                                    cpf: lead.cpf,
+                                    origin: lead.origin?.id,
+
+                                    address: lead.address,
+                                    address_code: lead.address_code,
+                                    address_country: lead.address_country,
+                                    address_uf: lead.address_uf,
+                                    address_city: lead.address_city,
+                                    address_number: lead.address_number,
+                                }
+
                                 return (
                                     <AccordionItem key={lead.id} display="flex" flexDir="column" paddingX="8" paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
                                         {({ isExpanded }) => (
@@ -167,13 +230,22 @@ export default function Leads(){
                                                         <Text fontSize="sm" fontWeight="normal" color="gray.800">{lead.origin?.name}</Text>
                                                     </Stack>
 
-                                                    <Badge colorScheme="purple" color="white" bg={`${lead.status?.color}.500`} display="flex" borderRadius="full" px="5" py="0" h="29px" alignItems="center"><Text>{lead.status?.name}</Text></Badge>
+                                                    <Badge colorScheme={lead.status?.color} color="white" bg={`${lead.status?.color}.500`} display="flex" borderRadius="full" px="5" py="0" h="29px" alignItems="center"><Text>{lead.status?.name}</Text></Badge>
 
                                                     {
                                                         (isManager && !lead.user) && (
                                                             <OutlineButton h="30px" size="sm" fontSize="11" color="orange.400" borderColor="orange.400" colorScheme="orange">
                                                                 Delegar
                                                             </OutlineButton>
+                                                        )
+                                                    }
+
+                                                    {
+                                                        (lead.user && isManager) && (
+                                                            <HStack>
+                                                                <Text fontSize="sm" fontWeight="normal" color="gray.800">{lead.user?.name}</Text>
+                                                                <IconButton onClick={() => console.log('excluir')} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
+                                                            </HStack>
                                                         )
                                                     }
                                                 </HStack>
@@ -196,7 +268,7 @@ export default function Leads(){
                                                         </Stack>
 
                                                         <HStack spacing="5" alignItems="center">
-                                                            <EditButton/>
+                                                            <EditButton onClick={() => OpenEditLeadModal(leadToEditData)}/>
                                                             <RemoveButton/>
                                                         </HStack>
                                                     </HStack>

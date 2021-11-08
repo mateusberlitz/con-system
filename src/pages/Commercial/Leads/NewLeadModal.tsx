@@ -68,12 +68,12 @@ const CreateNewLeadFormSchema = yup.object().shape({
     cpf: yup.string(),
     cnpj: yup.string(),
 
-    address: yup.string(),
-    address_code: yup.string(),
-    address_country: yup.string(),
-    address_uf: yup.string(),
-    address_city: yup.string(),
-    address_number: yup.string(),
+    address: yup.string().nullable(),
+    address_code: yup.string().nullable(),
+    address_country: yup.string().nullable(),
+    address_uf: yup.string().nullable(),
+    address_city: yup.string().nullable(),
+    address_number: yup.string().nullable(),
 });
 
 export function NewLeadModal( { isOpen, onRequestClose, afterCreate, statuses, origins } : NewLeadModalProps){
