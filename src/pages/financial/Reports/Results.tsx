@@ -2,6 +2,7 @@ import { Divider, Flex, FormControl, HStack, Select as ChakraSelect, Spinner, Te
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Board } from "../../../components/Board";
+import { OutlineButton } from "../../../components/Buttons/OutlineButton";
 import { CompanySelect } from "../../../components/CompanySelect";
 import { MainBoard } from "../../../components/MainBoard";
 import { Table } from "../../../components/Table";
@@ -54,22 +55,43 @@ export default function Results({filterExitTransactions, filterEntryTransactions
 
     console.log();
 
+    const [loadingExcel, setLoadingExcel] = useState(false);
+
+    const handleDownloadResults = async () => {
+        setLoadingExcel(true);
+
+        const {data, headers} = await api.get(`/resultsExport`, {params: {
+            year: filterEntryTransactions.year,
+            company: filterEntryTransactions.company,
+        }});
+
+        const win = window.open(`${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_STORAGE : process.env.REACT_APP_API_LOCAL_STORAGE}${data.file}`, "_blank");
+    
+        setLoadingExcel(false);
+    }
+
     return(
         <Board>
-            <HStack as="form" spacing="12" w="100%" mb="6" justifyContent="left">
-                <FormControl display="flex" w="fit-content" minW="150px">
-                    <ChakraSelect onChange={handleChangeYear} defaultValue={workingCompany.company?.id} h="45px" name="selected_company" maxW="200px" fontSize="sm" focusBorderColor="purple.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
-                        {
-                            years.map((year:Number) => {
-                                return (
-                                    <option key={year.toString()} value={year.toString()}>{year}</option>
-                                )
-                            })
-                        }
-                    </ChakraSelect>
-                </FormControl>
+            <HStack as="form" spacing="12" w="100%" mb="6" justifyContent="space-between">
+                <HStack spacing="12">
+                    <FormControl display="flex" w="fit-content" minW="150px">
+                        <ChakraSelect onChange={(event) => {handleChangeYear(event); setSelectedYear((event?.target.value ? event?.target.value : selectedYear))}} defaultValue={workingCompany.company?.id} h="45px" name="selected_company" maxW="200px" fontSize="sm" focusBorderColor="purple.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
+                            {
+                                years.map((year:Number) => {
+                                    return (
+                                        <option key={year.toString()} value={year.toString()}>{year}</option>
+                                    )
+                                })
+                            }
+                        </ChakraSelect>
+                    </FormControl>
 
-                <Text fontWeight="bold">RELATÓRIO RESULTADO</Text>
+                    <Text fontWeight="bold">RELATÓRIO RESULTADO</Text>
+                </HStack>
+
+                <OutlineButton onClick={handleDownloadResults} isLoading={loadingExcel} variant="outline" colorScheme="blue" color="blue.400" borderColor="blue.400">
+                    Baixar Tabela
+                </OutlineButton>
             </HStack>
 
             <Divider mb="6"/>
