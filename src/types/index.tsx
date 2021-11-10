@@ -308,3 +308,11 @@ export interface DataOrigin{
     id: number;
     name: string;
 }
+
+export interface Log{
+    user: User;
+    action: string;
+    company: Company;
+    created_at: string;
+    updated_at: string;
+}
