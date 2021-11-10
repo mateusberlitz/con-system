@@ -6,7 +6,7 @@ import { RemoveButton } from "../../../components/Buttons/RemoveButton";
 import { EditButton } from "../../../components/Buttons/EditButton";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { MainBoard } from "../../../components/MainBoard";
-import { Table as ProTable } from "../../../components/Table";
+import { Table } from "../../../components/Table";
 import { Input } from "../../../components/Forms/Inputs/Input";
 import { Select } from "../../../components/Forms/Selects/Select";
 
@@ -26,11 +26,12 @@ import { useState } from "react";
 import { useCompanies } from "../../../hooks/useCompanies";
 import { useRoles } from "../../../hooks/useRoles";
 import { EditUserModal } from "../../configs/Users/EditUserModal";
+import { ConfirmUserRemoveModal } from "../../configs/Users/ConfirmUserRemoveModal";
 
 const SearchUserFormSchema = yup.object().shape({
-    search: yup.string(),
-    company: yup.string(),
-    role: yup.string(),
+    search: yup.string().nullable(),
+    company: yup.string().nullable(),
+    role: yup.string().nullable(),
 });
 
 interface EditUserFormData{
@@ -52,7 +53,9 @@ export default function Sellers(){
 
     const [filter, setFilter] = useState<UserFilterData>(() => {
         const data: UserFilterData = {
-            search: ''
+            search: '',
+            company: undefined,
+            role: 3
         };
         
         return data;
@@ -117,13 +120,15 @@ export default function Sellers(){
 
     const handleSearchUser = async (search : UserFilterData) => {
         console.log(search);
+        search.role = 3;
         setFilter(search);
     }
 
     return (
         <MainBoard sidebar="commercial" header={<CompanySelectMaster/>}>
             <EditUserModal afterEdit={refetch} toEditUserData={editUserData} isOpen={isEditModalOpen} onRequestClose={CloseEditModal}/>
-                
+            <ConfirmUserRemoveModal afterRemove={refetch} toRemoveUserData={removeUserData} isOpen={isConfirmUserRemoveModalOpen} onRequestClose={CloseConfirmUserRemoveModal}/>
+
             <HStack as="form" spacing="24px" w="100%" onSubmit={handleSubmit(handleSearchUser)}>
 
                 <Input register={register} name="search" variant="filled" type="text" icon={SearchIcon} error={formState.errors.search} focusBorderColor="orange.400" placeholder="Procurar"/>
@@ -144,68 +149,78 @@ export default function Sellers(){
             </HStack>
 
             <Board mt="50px">
-                <ProTable header={
-                    [
-                        {
-                            text: 'Vendedores',
-                            icon: ProfileIcon
-                        },
-                        {
-                            text: 'Conversão',
-                            icon: HomeIcon
-                        },
-                        // {
-                        //     text: 'Metas',
-                        //     icon: PasteIcon
-                        // },
-                        {
-                            text: 'Último acesso',
-                        },
-                        {
-                            text: '',
-                        },
-                    ]
-                }>
-                    {/* ITEMS */}
-                    { (!isLoading &&!error) && data.map((user:User) => {
-                        console.log(user.companies);
-                        return(
-                            <Tr key={user.id}>
-                                <Td alignItems="center" display="flex">
-                                    <Flex mr="4" borderRadius="full" h="fit-content" w="fit-content" bgGradient="linear(to-r, purple.600, blue.300)" p="2px">
-                                        <Avatar borderColor="gray.600" border="2px" size="md" name={`${user.name} ${user.last_name}`} src={user.image ? `${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_STORAGE : process.env.REACT_APP_API_LOCAL_STORAGE}${user.image}` : ""}/>
-                                    </Flex>
-                                    <Text display="flex" fontSize="sm" color="gray.700" fontWeight="600">{user.name} {user.last_name && user.last_name}</Text>
-                                </Td>
-                                <Td fontSize="sm" color="gray.800">12%</Td>
-                                {/* <Td fontSize="sm" color="gray.800">12-35</Td> */}
-                                <Td fontSize="sm" color="gray.800">12/07/2021</Td>
-                                <Td>
-                                    <HStack spacing="4">
-                                        <Link>
-                                            <HStack>
-                                                <Icon as={PasteIcon} stroke="#4e4b66" fill="none" width="11" strokeWidth="3"/>
-                                                <Text fontSize="12px" color="gray.800">Histórico</Text>
-                                            </HStack>
-                                        </Link>
-                                        {/* <EditButton onClick={() => OpenEditModal({id: user.id, name: user.name, phone: user.phone, email: user.email, role: user.role.id }) }/> */}
-                                    </HStack>
-                                </Td>
-                            </Tr>
-                        )
-                    })}
-                </ProTable>
-
-                { isLoading ? (
+                {   isLoading ? (
                         <Flex justify="center">
                             <Spinner/>
                         </Flex>
-                    ) : error && (
+                    ) : ( error ? (
                         <Flex justify="center" mt="4" mb="4">
-                            <Text>Erro ao obter os dados dos usuários</Text>
+                            <Text>Erro listar os leads</Text>
                         </Flex>
-                    )
+                    ) : (data.length === 0) && (
+                        <Flex justify="center">
+                            <Text>Nenhuma lead encontrado.</Text>
+                        </Flex>
+                    ) ) 
                 }
+
+                {
+                    (!isLoading && !error && data.length !== 0) && (
+                        <Table header={
+                            [
+                                {
+                                    text: 'Vendedores',
+                                    icon: ProfileIcon
+                                },
+                                {
+                                    text: 'Conversão',
+                                    icon: HomeIcon
+                                },
+                                // {
+                                //     text: 'Metas',
+                                //     icon: PasteIcon
+                                // },
+                                {
+                                    text: 'Último acesso',
+                                },
+                                {
+                                    text: '',
+                                },
+                            ]
+                        }>
+                            {/* ITEMS */}
+                            { (!isLoading &&!error) && data.map((user:User) => {
+
+                                return(
+                                    <Tr key={user.id}>
+                                        <Td alignItems="center" display="flex">
+                                            <Flex mr="4" borderRadius="full" h="fit-content" w="fit-content" bgGradient="linear(to-r, purple.600, blue.300)" p="2px">
+                                                <Avatar borderColor="gray.600" border="2px" size="md" name={`${user.name} ${user.last_name}`} src={user.image ? `${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_STORAGE : process.env.REACT_APP_API_LOCAL_STORAGE}${user.image}` : ""}/>
+                                            </Flex>
+                                            <Text display="flex" fontSize="sm" color="gray.700" fontWeight="600">{user.name} {user.last_name && user.last_name}</Text>
+                                        </Td>
+                                        <Td fontSize="sm" color="gray.800">12%</Td>
+                                        {/* <Td fontSize="sm" color="gray.800">12-35</Td> */}
+                                        <Td fontSize="sm" color="gray.800">12/07/2021</Td>
+                                        <Td>
+                                            <HStack spacing="4">
+                                                <Link href={`/historico/${user.id}`}>
+                                                    <HStack>
+                                                        <Icon as={PasteIcon} stroke="#4e4b66" fill="none" width="11" strokeWidth="3"/>
+                                                        <Text fontSize="12px" color="gray.800">Histórico</Text>
+                                                    </HStack>
+                                                </Link>
+                                                {/* <EditButton onClick={() => OpenEditModal({id: user.id, name: user.name, phone: user.phone, email: user.email, role: user.role.id }) }/> */}
+                                            
+                                                
+                                            </HStack>
+                                        </Td>
+                                        <Td><RemoveButton onClick={() => OpenConfirmUserRemoveModal({ id: user.id, name: user.name }) }/></Td>
+                                    </Tr>
+                                )
+                            })}
+                        </Table>
+                )}
             </Board>
         </MainBoard>
     )
