@@ -16,7 +16,7 @@ import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { formatInputDate } from "../../../utils/Date/formatInputDate";
 import moneyToBackend from "../../../utils/moneyToBackend";
 import { profile } from "console";
-import { useProfile } from "../../../hooks/useProfile";
+import { HasPermission, useProfile } from "../../../hooks/useProfile";
 import { ControlledSelect } from "../../../components/Forms/Selects/ControlledSelect";
 import { useEffect, useState } from "react";
 import { isAuthenticated } from "../../../services/auth";
@@ -53,6 +53,8 @@ interface CreateNewLeadFormData{
     address_uf?: string;
     address_city?: string;
     address_number?: string;
+
+    own?: boolean;
 }
 
 const CreateNewLeadFormSchema = yup.object().shape({
@@ -78,7 +80,7 @@ const CreateNewLeadFormSchema = yup.object().shape({
 
 export function NewLeadModal( { isOpen, onRequestClose, afterCreate, statuses, origins } : NewLeadModalProps){
     const workingCompany = useWorkingCompany();
-    const {profile} = useProfile();
+    const {profile, permissions} = useProfile();
 
     const history = useHistory();
     const toast = useToast();
@@ -104,6 +106,12 @@ export function NewLeadModal( { isOpen, onRequestClose, afterCreate, statuses, o
 
             if(!profile){
                 return;
+            }
+
+            const isManager = HasPermission(permissions, 'Vendas Completo');
+
+            if(!isManager){
+                leadData.own = true;
             }
 
             if(leadData.cpf === ''){

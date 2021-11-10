@@ -1,4 +1,4 @@
-import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Badge as ChakraBadge, Checkbox, Flex, HStack, IconButton, Spinner, Stack, Text } from "@chakra-ui/react";
+import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Badge as ChakraBadge, Checkbox, Flex, HStack, IconButton, Spinner, Stack, Text, useToast } from "@chakra-ui/react";
 import Badge from "../../../components/Badge";
 import { OutlineButton } from "../../../components/Buttons/OutlineButton";
 import { CompanySelectMaster } from "../../../components/CompanySelect/companySelectMaster";
@@ -14,7 +14,7 @@ import { HasPermission, useProfile } from "../../../hooks/useProfile";
 import { EditButton } from "../../../components/Buttons/EditButton";
 import { RemoveButton } from "../../../components/Buttons/RemoveButton";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { formatYmdDate } from "../../../utils/Date/formatYmdDate";
 import { LeadsFilterData, useLeads } from "../../../hooks/useLeads";
 import { DataOrigin, Lead, LeadStatus } from "../../../types";
@@ -24,8 +24,13 @@ import { NewLeadModal } from "./NewLeadModal";
 import { formatBRDate } from "../../../utils/Date/formatBRDate";
 import { getHour } from "../../../utils/Date/getHour";
 import { EditLeadFormData, EditLeadModal } from "./EditLeadModal";
+import { ConfirmLeadRemoveModal, RemoveLeadData } from "./ConfirmLeadRemoveModal";
+import { useUsers } from "../../../hooks/useUsers";
+import { DelegateLeadModal } from "./DelegateLeadModal";
+import { ConfirmRemoveUserOfLead } from "./ConfirmRemoveUserOfLead";
 
 export default function Leads(){
+    const toast = useToast();
     const { permissions, profile } = useProfile();
 
     const isManager = HasPermission(permissions, 'Vendas Completo');
@@ -119,12 +124,93 @@ export default function Leads(){
         setIsEditLeadModalOpen(false);
     }
 
-    console.log(statuses);
+    const [isRemoveLeadModalOpen, setIsRemoveLeadModalOpen] = useState(false);
+    const [removeLeadData, setRemoveLeadData] = useState<RemoveLeadData>(() => {
+
+        const data: RemoveLeadData = {
+            name: '',
+            id: 0,
+        };
+        
+        return data;
+    });
+
+    function OpenRemoveLeadModal(leadData : RemoveLeadData){
+        setRemoveLeadData(leadData);
+        setIsRemoveLeadModalOpen(true);
+    }
+    function CloseRemoveLeadModal(){
+        setIsRemoveLeadModalOpen(false);
+    }
+
+    const users = useUsers({role: 1});
+
+    const [delegateList, setDelegateList] = useState<number[]>([]);
+    const [delegate, setDelegate] = useState(0);
+    const [isDelegateLeadModalOpen, setIsDelegateLeadModalOpen] = useState(false);
+
+    function CloseDelegateLeadModal(){
+        setIsDelegateLeadModalOpen(false);
+        setDelegate(0);
+    }
+
+    const handleSelect = (event: ChangeEvent<HTMLInputElement>) => {
+        console.log(event.target?.value, event.target?.checked);
+        if(event.target?.checked){
+            setDelegateList([...delegateList, parseInt(event.target?.value)]);
+        }else{
+            setDelegateList(delegateList.filter((leadId) => leadId !== parseInt(event.target?.value)));
+        }
+    }
+
+    const delegateSelected = () => {
+        if(delegateList.length > 0){
+            setIsDelegateLeadModalOpen(true);
+            return;
+        }
+
+        toast({
+            title: "Ops",
+            description: `Nenhum lead selecionado.`,
+            status: "warning",
+            duration: 12000,
+            isClosable: true,
+        });
+
+        console.log(delegateList);
+    }
+
+    const delegateOne = (id: number) => {
+        setDelegate(id);
+        setIsDelegateLeadModalOpen(true);
+    }
+
+    const [isRemoveUserOfLeadModalOpen, setIsRemoveUserOfLeadModalOpen] = useState(false);
+    const [removeUserOfLeadData, setRemoveUserOfLeadData] = useState<RemoveLeadData>(() => {
+
+        const data: RemoveLeadData = {
+            name: '',
+            id: 0,
+        };
+        
+        return data;
+    });
+
+    function OpenRemoveUserOfLeadModal(leadData : RemoveLeadData){
+        setRemoveUserOfLeadData(leadData);
+        setIsRemoveUserOfLeadModalOpen(true);
+    }
+    function CloseRemoveUserOfLeadModal(){
+        setIsRemoveUserOfLeadModalOpen(false);
+    }
 
     return (
         <MainBoard sidebar="commercial" header={<CompanySelectMaster />}>
             <NewLeadModal statuses={statuses} origins={origins} afterCreate={leads.refetch} isOpen={isNewLeadModalOpen} onRequestClose={CloseNewPaymentModal}/>
             <EditLeadModal toEditLeadData={toEditLeadData} statuses={statuses} origins={origins} afterEdit={leads.refetch} isOpen={isEditLeadModalOpen} onRequestClose={CloseEditLeadModal}/>
+            <DelegateLeadModal toDelegateLeadList={delegateList} toDelegate={delegate} users={users.data} afterDelegate={leads.refetch} isOpen={isDelegateLeadModalOpen} onRequestClose={CloseDelegateLeadModal}/>
+            <ConfirmRemoveUserOfLead toRemoveLeadData={removeUserOfLeadData} afterRemove={leads.refetch} isOpen={isRemoveUserOfLeadModalOpen} onRequestClose={CloseRemoveUserOfLeadModal}/>
+            <ConfirmLeadRemoveModal toRemoveLeadData={removeLeadData} afterRemove={leads.refetch} isOpen={isRemoveLeadModalOpen} onRequestClose={CloseRemoveLeadModal}/>
 
             <SolidButton color="white" bg="orange.400" icon={PlusIcon} colorScheme="orange" mb="10" onClick={OpenNewPaymentModal}>
                 Adicionar Lead
@@ -154,7 +240,7 @@ export default function Leads(){
 
                             {
                                 isManager && (
-                                    <OutlineButton h="30px" size="sm" fontSize="11" color="orange.400" borderColor="orange.400" colorScheme="orange">
+                                    <OutlineButton onClick={() => delegateSelected()} h="30px" size="sm" fontSize="11" color="orange.400" borderColor="orange.400" colorScheme="orange">
                                         Delegar selecionados
                                     </OutlineButton>
                                 )
@@ -201,9 +287,9 @@ export default function Leads(){
 
                                                     {/* <ControlledCheckbox label="Pendência" control={control} defaultIsChecked={toEditPaymentData.pendency} name="pendency" error={formState.errors.pendency}/> */}
                                                     {
-                                                        isManager && (
+                                                        (isManager && !lead.user) && (
                                                             <>
-                                                                <Checkbox label="" name="delegate"/>
+                                                                <Checkbox label="" name="delegate" checked={delegateList.includes(lead.id)} value={lead.id} onChange={handleSelect}/>
                                                             </>
                                                         )
                                                     }
@@ -234,17 +320,17 @@ export default function Leads(){
 
                                                     {
                                                         (isManager && !lead.user) && (
-                                                            <OutlineButton h="30px" size="sm" fontSize="11" color="orange.400" borderColor="orange.400" colorScheme="orange">
+                                                            <OutlineButton onClick={() => delegateOne(lead.id)} h="30px" size="sm" fontSize="11" color="orange.400" borderColor="orange.400" colorScheme="orange">
                                                                 Delegar
                                                             </OutlineButton>
                                                         )
                                                     }
 
                                                     {
-                                                        (lead.user && isManager) && (
+                                                        (lead.user && isManager && !lead.own) && (
                                                             <HStack>
                                                                 <Text fontSize="sm" fontWeight="normal" color="gray.800">{lead.user?.name}</Text>
-                                                                <IconButton onClick={() => console.log('excluir')} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
+                                                                <IconButton onClick={() => OpenRemoveUserOfLeadModal({id:lead.id, name: lead.name})} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
                                                             </HStack>
                                                         )
                                                     }
@@ -269,7 +355,12 @@ export default function Leads(){
 
                                                         <HStack spacing="5" alignItems="center">
                                                             <EditButton onClick={() => OpenEditLeadModal(leadToEditData)}/>
-                                                            <RemoveButton/>
+
+                                                            {
+                                                                (isManager || lead.user) && (
+                                                                    <RemoveButton onClick={() => OpenRemoveLeadModal({name: lead.name, id: lead.id})}/>
+                                                                )
+                                                            }
                                                         </HStack>
                                                     </HStack>
                                                 </AccordionPanel>

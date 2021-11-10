@@ -9,17 +9,19 @@ import { useEffect } from "react";
 import { redirectMessages } from "../../../utils/redirectMessages";
 import { useHistory } from "react-router-dom";
 
-interface ConfirmPaymentLeadModalProps{
+export interface RemoveLeadData{
+    id: number;
+    name: string;
+}
+
+interface ConfirmLeadRemoveModalProps{
     isOpen: boolean;
-    toRemoveLeadData: {
-        title: string;
-        id: number;
-    };
+    toRemoveLeadData: RemoveLeadData;
     onRequestClose: () => void;
     afterRemove: () => void;
 }
 
-export function ConfirmPaymentRemoveModal( { isOpen, toRemoveLeadData, afterRemove, onRequestClose } : ConfirmPaymentLeadModalProps){
+export function ConfirmLeadRemoveModal( { isOpen, toRemoveLeadData, afterRemove, onRequestClose } : ConfirmLeadRemoveModalProps){
     const toast = useToast();
 
     const history = useHistory();
@@ -30,7 +32,7 @@ export function ConfirmPaymentRemoveModal( { isOpen, toRemoveLeadData, afterRemo
 
             toast({
                 title: "Sucesso",
-                description: `O lead ${toRemoveLeadData.title} foi removido`,
+                description: `O lead ${toRemoveLeadData.name} foi removido`,
                 status: "success",
                 duration: 12000,
                 isClosable: true,
@@ -56,7 +58,7 @@ export function ConfirmPaymentRemoveModal( { isOpen, toRemoveLeadData, afterRemo
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
             <ModalOverlay />
             <ModalContent borderRadius="24px">
-                <ModalHeader p="10" fontWeight="700" fontSize="2xl">Remover {toRemoveLeadData.title}?</ModalHeader>
+                <ModalHeader p="10" fontWeight="700" fontSize="2xl">Remover o lead {toRemoveLeadData.name}?</ModalHeader>
 
                 <ModalCloseButton top="10" right="5"/>
                 

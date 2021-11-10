@@ -287,7 +287,7 @@ export interface Lead{
 
     created_at: string;
     updated_at: string;
-
+    own: boolean;
 }
 
 export interface LeadNote{

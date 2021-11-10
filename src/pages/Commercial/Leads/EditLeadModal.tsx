@@ -16,7 +16,7 @@ import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { formatInputDate } from "../../../utils/Date/formatInputDate";
 import moneyToBackend from "../../../utils/moneyToBackend";
 import { profile } from "console";
-import { useProfile } from "../../../hooks/useProfile";
+import { HasPermission, useProfile } from "../../../hooks/useProfile";
 import { ControlledSelect } from "../../../components/Forms/Selects/ControlledSelect";
 import { useEffect, useState } from "react";
 import { isAuthenticated } from "../../../services/auth";
@@ -56,6 +56,8 @@ export interface EditLeadFormData{
     address_uf?: string;
     address_city?: string;
     address_number?: string;
+
+    own?: boolean;
 }
 
 const EditLeadFormSchema = yup.object().shape({
@@ -81,7 +83,7 @@ const EditLeadFormSchema = yup.object().shape({
 
 export function EditLeadModal( { isOpen, onRequestClose, afterEdit, toEditLeadData, statuses, origins } : NewLeadModalProps){
     const workingCompany = useWorkingCompany();
-    const {profile} = useProfile();
+    const {profile, permissions} = useProfile();
 
     const history = useHistory();
     const toast = useToast();
@@ -90,7 +92,24 @@ export function EditLeadModal( { isOpen, onRequestClose, afterEdit, toEditLeadDa
     const { register, handleSubmit, control, reset, formState} = useForm<EditLeadFormData>({
         resolver: yupResolver(EditLeadFormSchema),
         defaultValues: {
-
+            id: toEditLeadData.id,
+            name: toEditLeadData.name,
+            email: toEditLeadData.email,
+            phone: toEditLeadData.phone,
+            company: toEditLeadData.company,
+            accept_newsletter: toEditLeadData.accept_newsletter,
+            user: toEditLeadData.user,
+            status: toEditLeadData.status,
+            birthday: toEditLeadData.birthday,
+            cnpj: toEditLeadData.cnpj,
+            cpf: toEditLeadData.cpf,
+            origin: toEditLeadData.origin,
+            address: toEditLeadData.address,
+            address_code: toEditLeadData.address_code,
+            address_country: toEditLeadData.address_country,
+            address_uf: toEditLeadData.address_uf,
+            address_city: toEditLeadData.address_city,
+            address_number: toEditLeadData.address_number,
         }
     });
 
@@ -111,7 +130,7 @@ export function EditLeadModal( { isOpen, onRequestClose, afterEdit, toEditLeadDa
             if(!profile){
                 return;
             }
-
+            
             if(leadData.cpf === ''){
                 delete leadData.cpf;
             }
@@ -154,8 +173,6 @@ export function EditLeadModal( { isOpen, onRequestClose, afterEdit, toEditLeadDa
             });
         }
     }, [isOpen]);
-
-    console.log(formState);
 
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
