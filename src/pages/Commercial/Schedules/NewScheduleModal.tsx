@@ -98,6 +98,12 @@ export function NewScheduleModal( { isOpen, onRequestClose, afterCreate, cities,
                 isClosable: true,
             });
 
+            await api.post('/logs/store', {
+                user: profile.id,
+                company: workingCompany.company.id,
+                action: `Criou um novo agendamento.`
+            });
+
             onRequestClose();
             afterCreate();
             reset();

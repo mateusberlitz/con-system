@@ -288,6 +288,9 @@ export interface Lead{
     created_at: string;
     updated_at: string;
     own: boolean;
+
+    recommender?: string;
+    commission?: number;
 }
 
 export interface LeadNote{

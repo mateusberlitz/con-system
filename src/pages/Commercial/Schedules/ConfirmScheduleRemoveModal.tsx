@@ -8,6 +8,8 @@ import { isAuthenticated } from "../../../services/auth";
 import { useEffect } from "react";
 import { redirectMessages } from "../../../utils/redirectMessages";
 import { useHistory } from "react-router-dom";
+import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
+import { useProfile } from "../../../hooks/useProfile";
 
 export interface RemoveScheduleData{
     id: number;
@@ -21,12 +23,26 @@ interface ConfirmLeadRemoveModalProps{
 }
 
 export function ConfirmScheduleRemoveModal( { isOpen, toRemoveScheduleData, afterRemove, onRequestClose } : ConfirmLeadRemoveModalProps){
+    const workingCompany = useWorkingCompany();
+    const {profile, permissions} = useProfile();
     const toast = useToast();
 
     const history = useHistory();
 
     const handleRemoveLead = async () => {
         try{
+            if(!workingCompany.company){
+                toast({
+                    title: "Ué",
+                    description: `Seleciona uma empresa para trabalhar`,
+                    status: "warning",
+                    duration: 12000,
+                    isClosable: true,
+                });
+
+                return;
+            }
+
             await api.delete(`/schedules/destroy/${toRemoveScheduleData.id}`);
 
             toast({
@@ -35,6 +51,16 @@ export function ConfirmScheduleRemoveModal( { isOpen, toRemoveScheduleData, afte
                 status: "success",
                 duration: 12000,
                 isClosable: true,
+            });
+
+            if(!profile){
+                return;
+            }
+
+            await api.post('/logs/store', {
+                user: profile.id,
+                company: workingCompany.company.id,
+                action: `Removeu um agendamento`
             });
 
             onRequestClose();

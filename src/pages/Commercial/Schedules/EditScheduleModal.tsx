@@ -100,6 +100,12 @@ export function EditScheduleModal( { isOpen, onRequestClose, afterEdit, toEditSc
                 duration: 12000,
                 isClosable: true,
             });
+            
+            await api.post('/logs/store', {
+                user: profile.id,
+                company: workingCompany.company.id,
+                action: `Alterou as informações de um agendamento`
+            });
 
             onRequestClose();
             afterEdit();

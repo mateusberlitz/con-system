@@ -58,6 +58,9 @@ export interface EditLeadFormData{
     address_number?: string;
 
     own?: boolean;
+
+    recommender?: string;
+    commission?: number;
 }
 
 const EditLeadFormSchema = yup.object().shape({
@@ -257,6 +260,13 @@ export function EditLeadModal( { isOpen, onRequestClose, afterEdit, toEditLeadDa
 
                                         <AccordionPanel p="1px" mb="6">
                                             <Stack fontSize="sm" spacing="6">
+                                                <HStack spacing="4" align="baseline">
+                                                    <ControlledInput control={control} value={toEditLeadData.recommender} name="recommender" type="text" placeholder="Quem indicou?" focusBorderColor="orange.400" variant="outline" error={formState.errors.recommender}/>
+                                                    <ControlledInput control={control} value={toEditLeadData.commission?.toString()} name="commission" type="text" placeholder="Comissão da indicação" focusBorderColor="orange.400" variant="outline" error={formState.errors.commission}/>
+                                                </HStack>
+
+                                                <Divider/>
+
                                                 <HStack spacing="4" align="baseline">
                                                     <ControlledInput control={control} value={toEditLeadData.cpf} name="cpf" type="text" placeholder="CPF" focusBorderColor="orange.400" variant="outline" mask="cpf" error={formState.errors.cpf}/>
                                                     <ControlledInput control={control} value={toEditLeadData.cnpj} name="cnpj" type="text" placeholder="CNPJ" focusBorderColor="orange.400" variant="outline" mask="cnpj" error={formState.errors.cnpj}/>
