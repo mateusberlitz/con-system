@@ -7,78 +7,233 @@ import { ReactComponent as BackIcon } from '../../../assets/icons/Back.svg';
 import { ReactComponent as ForwardIcon } from '../../../assets/icons/Forward.svg';
 
 import { Board } from "../../../components/Board";
-import { HStack, IconButton, Stack, Text, Th, Tr } from "@chakra-ui/react";
+import { Flex, HStack, IconButton, Spinner, Stack, Text, Th, Tr } from "@chakra-ui/react";
 import { Input } from "../../../components/Forms/Inputs/Input";
 import { Table } from "../../../components/Table";
 import { SchedulesTable } from "../../../components/Table/SchedulesTable";
 import { hours } from "./HoursOfADay";
+import { useEffect, useState } from "react";
+import { NewScheduleModal } from "./NewScheduleModal";
+import { City, Lead } from "../../../types";
+import { useProfile } from "../../../hooks/useProfile";
+import { api } from "../../../services/api";
+import { SchedulesFilterData, useSchedules } from "../../../hooks/useSchedules";
+import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
+import { formatYmdDate } from "../../../utils/Date/formatYmdDate";
+import { ScheduleRow } from "./ScheduleRow";
+import { FormEvent } from "toasted-notes/node_modules/@types/react";
+import { EditScheduleFormData, EditScheduleModal } from "./EditScheduleModal";
+import { ConfirmScheduleRemoveModal, RemoveScheduleData } from "./ConfirmScheduleRemoveModal";
 
 export default function Schedules(){
+    const workingCompany = useWorkingCompany();
+    const [isNewScheduleModalOpen, setIsNewScheduleModalOpen] = useState(false);
+    const {profile, permissions} = useProfile();
+
+    const [leads, setLeads] = useState<Lead[]>([]);
+
+    const loadLeads = async () => {
+        if(profile){
+            const { data } = await api.get('/leads', {params: {
+                user: profile.id
+            }});
+    
+            setLeads(data);
+        }
+    }
+
+    const [cities, setCities] = useState<City[]>([]);
+
+    const loadCities = async () => {
+        if(profile){
+            const { data } = await api.get('/cities', {params: {
+                user: profile.id
+            }});
+    
+            setCities(data);
+        }
+    }
+
+    useEffect(() => {
+        loadCities();
+        loadLeads();
+    }, []);
+
+    function OpenNewScheduleModal(){
+        setIsNewScheduleModalOpen(true);
+    }
+    function CloseNewScheduleModal(){
+        setIsNewScheduleModalOpen(false);
+    }
+
+    const [isEditScheduleModalOpen, setIsEditScheduleModalOpen] = useState(false);
+    const [toEditScheduleData, setToEditScheduleData] = useState<EditScheduleFormData>(() => {
+
+        const data: EditScheduleFormData = {
+            datetime: '',
+            id: 0,
+            city: '',
+            lead: 0,
+        };
+        
+        return data;
+    });
+
+    function OpenEditScheduleModal(scheduleData : EditScheduleFormData){
+        setToEditScheduleData(scheduleData);
+        setIsEditScheduleModalOpen(true);
+    }
+    function CloseEditScheduleModal(){
+        setIsEditScheduleModalOpen(false);
+    }
+
+
+    const [isRemoveScheduleModalOpen, setIsRemoveScheduleModalOpen] = useState(false);
+    const [removeScheduleData, setRemoveScheduleData] = useState<RemoveScheduleData>(() => {
+
+        const data: RemoveScheduleData = {
+            id: 0,
+        };
+        
+        return data;
+    });
+
+    function OpenRemoveScheduleModal(scheduleData : RemoveScheduleData){
+        setRemoveScheduleData(scheduleData);
+        setIsRemoveScheduleModalOpen(true);
+    }
+    function CloseRemoveScheduleModal(){
+        setIsRemoveScheduleModalOpen(false);
+    }
+
+
+
+    const startDate = new Date();
+    const [inputStartDate, setInputStartDate] = useState(formatYmdDate(startDate.toString()));
+
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate() + 7);
+
+    const [inputEndDate, setInputEndDate] = useState(formatYmdDate(endDate.toString()));
+
+    const handleChangeStartDate = (date: string) => {
+        setInputStartDate(date);
+        setFilter({...filter, start_date: date});
+    }
+
+    const handleChangeEndDate = (date: string) => {
+        setInputEndDate(date);
+        setFilter({...filter, end_date: date});
+    }
+
+    const [filter, setFilter] = useState<SchedulesFilterData>(() => {
+        const data: SchedulesFilterData = {
+            company: workingCompany.company?.id,
+            start_date: formatYmdDate(startDate.toString()),
+            end_date: formatYmdDate(endDate.toDateString()),
+            group_by: 'hour',
+        };
+        
+        return data;
+    })
+
+    const handleChangeDay = (toSum: number) => {
+        const newInputStartDate = new Date();
+        const newInputEndDate = new Date();
+
+        newInputStartDate.setDate(new Date(inputStartDate).getDate() + 1 + toSum);
+        newInputEndDate.setDate(new Date(inputEndDate).getDate() + 1 + toSum);
+
+        const formattedNewInputStartDate = formatYmdDate(newInputStartDate.toString());
+        const formattedNewInputEndDate = formatYmdDate(newInputEndDate.toString());
+
+        setInputStartDate(formattedNewInputStartDate);
+        setInputEndDate(formattedNewInputEndDate);
+        
+        setFilter({...filter, end_date: formattedNewInputEndDate, start_date: formattedNewInputStartDate});
+    }
+
+    const handleAddDay = () => {
+        handleChangeDay(+1)
+    }
+
+    const handleRemoveDay = () => {
+        handleChangeDay(-1)
+    }
+
+    const schedules = useSchedules(filter, 1);
+
+    let d = 0;
+    const schedulesDays = [{text: "", wrap: false}];
+    const toRowDays:string[] = [];
+
+    const inputStartDateDay = new Date(inputStartDate).getDate() + 1;
+    const inputEndDateDay = new Date(inputEndDate).getDate() + 1;
+
+    const newDate = new Date(inputStartDate);
+    
+    while((inputStartDateDay + d) <= inputEndDateDay){
+        newDate.setDate(newDate.getDate() + 1);
+
+        schedulesDays.push({text: newDate.toLocaleDateString('pt-BR', {weekday: 'short', day: 'numeric', month: 'numeric'}), wrap: true});
+        toRowDays.push(newDate.toLocaleDateString());
+
+        d++;
+    }
+
     return (
         <MainBoard sidebar="commercial" header={<CompanySelectMaster/>}>
-            <SolidButton color="white" bg="orange.400" icon={PlusIcon} colorScheme="orange" mb="10">
-                Agendar
-            </SolidButton>
+            <NewScheduleModal cities={cities} leads={leads} afterCreate={schedules.refetch} isOpen={isNewScheduleModalOpen} onRequestClose={CloseNewScheduleModal}/>
+            <EditScheduleModal leads={leads} afterEdit={schedules.refetch} isOpen={isEditScheduleModalOpen} onRequestClose={CloseEditScheduleModal} toEditScheduleData={toEditScheduleData}/>
+            <ConfirmScheduleRemoveModal afterRemove={schedules.refetch} isOpen={isRemoveScheduleModalOpen} onRequestClose={CloseRemoveScheduleModal} toRemoveScheduleData={removeScheduleData}/>
 
-            <Board>
-                <HStack mb="10">
-                    <IconButton h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <BackIcon width="20px" stroke="#6e7191" fill="none"/>} variant="outline"/>
-                    <IconButton h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <ForwardIcon width="20px" stroke="#6e7191" fill="none"/>} variant="outline"/>
+            <Board marginTop="-40px">
+                <HStack justifyContent="space-between" mb="7">
+                    <HStack>
+                        <IconButton onClick={() => handleRemoveDay()} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Voltar um dia" border="none" icon={ <BackIcon width="20px" stroke="#6e7191" fill="none"/>} variant="outline"/>
+                        <IconButton onClick={() => handleAddDay()} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Adiantar um dia" border="none" icon={ <ForwardIcon width="20px" stroke="#6e7191" fill="none"/>} variant="outline"/>
 
-                    <Input name="start_date" type="date" placeholder="Data inicial" variant="filled" maxW="240px"/>
-                    <Text>Até</Text>
-                    <Input name="end_date" type="date" placeholder="Data final" variant="filled" maxW="240px"/>
+                        <Input value={inputStartDate} onChange={handleChangeStartDate} name="start_date" type="date" placeholder="Data inicial" variant="filled" maxW="240px"/>
+                        <Text>Até</Text>
+                        <Input value={inputEndDate} onChange={handleChangeEndDate} name="end_date" type="date" placeholder="Data final" variant="filled" maxW="240px"/>
+
+                        
+                    </HStack>
+
+                    <SolidButton color="white" bg="orange.400" icon={PlusIcon} colorScheme="orange" mb="10" 
+                        onClick={() => OpenNewScheduleModal()}>
+                        Agendar
+                    </SolidButton>
                 </HStack>
+                
+                {   schedules.isLoading ? (
+                    <Flex justify="center" mt="4">
+                        <Spinner/>
+                    </Flex>
+                    ) : ( schedules.isError ? (
+                        <Text fontSize="11px">Erro listar os leads</Text>
+                    ) : (schedules.data?.data.length === 0) && (
+                        <Text fontSize="11px">Nenhuma agendamento encontrado.</Text>
+                    ) ) 
+                }
 
-                <SchedulesTable header={[
-                    {text: ''},
-                    {text: 'Seg 18/10', wrap: true},
-                    {text: 'Ter 19/10', wrap: true},
-                    {text: 'Qua 20/10', wrap: true},
-                    {text: 'Março'},
-                    {text: 'Abril'},
-                    {text: 'Maio'},
-                    {text: 'Junho'},
-                    {text: 'Julho'},
-                    {text: 'Agosto'},
-                    {text: 'Setembro'},
-                    {text: 'Outubro'},
-                    {text: 'Novembro'},
-                    {text: 'Dezembro'},
-                    {text: 'Soma', bold:true},
-                ]}>
-                    <Tr borderBottom="1px solid" borderColor="gray.200">
-                        <Th borderBottom="none" borderLeft="1px solid #e2e8f0" borderRight="1px solid #e2e8f0">
-                            01:00
-                        </Th>
-                        <Th minWidth="180px" borderBottom="none" borderLeft="1px solid #e2e8f0" borderRight="1px solid #e2e8f0" p="0">
-                            <Stack spacing="0" bg="green.100" color="green.500" p="2" textTransform="capitalize">
-                                <Text fontWeight="normal">Mateus Berlitz</Text>
-                                <Text fontWeight="bold">Porto Alegre</Text>
-                            </Stack>
-                            <Stack spacing="0" bg="green.100" color="green.500" p="2" textTransform="capitalize">
-                                <Text fontWeight="normal">Mateus Berlitz</Text>
-                                <Text fontWeight="bold">Porto Alegre</Text>
-                            </Stack>
-                        </Th>
-                        <Th minWidth="180px" borderBottom="none" borderLeft="1px solid #e2e8f0" borderRight="1px solid #e2e8f0" p="0">
-                            <Stack spacing="0" bg="orange.100" color="orange.500" p="2" textTransform="capitalize">
-                                <Text fontWeight="normal">Mateus Berlitz</Text>
-                                <Text fontWeight="bold">Porto Alegre</Text>
-                            </Stack>
-                        </Th>
-                        <Th minWidth="180px" borderBottom="none" borderLeft="1px solid #e2e8f0" borderRight="1px solid #e2e8f0" p="0">
-                            <Stack spacing="0" bg="red.100" color="red.500" p="2" textTransform="capitalize">
-                                <Text fontWeight="normal">Mateus Berlitz</Text>
-                                <Text fontWeight="bold">Porto Alegre</Text>
-                            </Stack>
-                        </Th>
-                    </Tr>
+                <SchedulesTable header={schedulesDays}>
                     {
                         hours.map((hour:string, index:number) => {
-                            return (
-                                <Tr borderBottom="1px solid" borderColor="gray.200">
-                                    <Th borderBottom="none" borderLeft="1px solid #e2e8f0" borderRight="1px solid #e2e8f0">
+                            const splitedHour = hour.split(':');
+
+                            return schedules.data?.data[parseInt(splitedHour[0])] ? (
+                                // <Tr borderBottom="1px solid" borderColor="gray.200">
+                                //     <Th p="1" textAlign="center" borderBottom="none" borderLeft="1px solid #e2e8f0" borderRight="1px solid #e2e8f0" fontSize="11px">
+                                //         {hour}
+                                //     </Th>
+
+                                    
+                                // </Tr>
+                                <ScheduleRow handleRemoveSchedule={OpenRemoveScheduleModal} handleEditSchedule={OpenEditScheduleModal} key={hour} hour={hour} days={toRowDays} hourSchedules={schedules.data?.data[parseInt(splitedHour[0])]}/>
+                            ):(
+                                <Tr key={hour} borderBottom="1px solid" borderColor="gray.200">
+                                    <Th p="1" textAlign="center" borderBottom="none" borderLeft="1px solid #e2e8f0" borderRight="1px solid #e2e8f0" fontSize="11px">
                                         {hour}
                                     </Th>
                                 </Tr>

@@ -11,7 +11,7 @@ import { useErrors } from "../../../hooks/useErrors";
 
 import { Input } from "../../../components/Forms/Inputs/Input";
 import { Select } from "../../../components/Forms/Selects/Select";
-import { PaymentCategory, User, Provider, Company, LeadStatus, DataOrigin } from "../../../types";
+import { PaymentCategory, User, Provider, Company, LeadStatus, DataOrigin, City, Lead } from "../../../types";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { formatInputDate } from "../../../utils/Date/formatInputDate";
 import moneyToBackend from "../../../utils/moneyToBackend";
@@ -26,25 +26,31 @@ import { ReactComponent as PlusIcon } from '../../../assets/icons/Plus.svg';
 import { ReactComponent as MinusIcon } from '../../../assets/icons/Minus.svg';
 import { ReactComponent as StrongPlusIcon } from '../../../assets/icons/StrongPlus.svg';
 import { ControlledInput } from "../../../components/Forms/Inputs/ControlledInput";
+import { ReactSelect, SelectOption } from "../../../components/Forms/ReactSelect";
+import { formatInputHourDate } from "../../../utils/Date/formatInputHourDate";
 
-interface DelegateLeadModalProps{
+interface NewLeadModalProps{
     isOpen: boolean;
-    toDelegateLeadList: number[];
-    toDelegate: number;
+    toEditScheduleData: EditScheduleFormData;
     onRequestClose: () => void;
-    afterDelegate: () => void;
-    users: User[];
+    afterEdit: () => void;
+    leads: Lead[];
 }
 
-export interface DelegateLeadFormData{
-    user: number;
+export interface EditScheduleFormData{
+    id: number;
+    city: string;
+    lead?: number;
+    datetime: string;
 }
 
-const DelegateLeadFormSchema = yup.object().shape({
-    user: yup.number()
+const EditScheduleFormSchema = yup.object().shape({
+    datetime: yup.date().required("Informe a data e horário do agendamento"),
+    city: yup.string().required("Para qual cidade você vai?"),
+    lead: yup.lazy((value) => (value === '' ? yup.string() : yup.number())),
 });
 
-export function DelegateLeadModal( { isOpen, onRequestClose, toDelegateLeadList, toDelegate, afterDelegate, users } : DelegateLeadModalProps){
+export function EditScheduleModal( { isOpen, onRequestClose, afterEdit, toEditScheduleData, leads } : NewLeadModalProps){
     const workingCompany = useWorkingCompany();
     const {profile, permissions} = useProfile();
 
@@ -52,14 +58,16 @@ export function DelegateLeadModal( { isOpen, onRequestClose, toDelegateLeadList,
     const toast = useToast();
     const { showErrors } = useErrors();
 
-    const { register, handleSubmit, control, reset, formState} = useForm<DelegateLeadFormData>({
-        resolver: yupResolver(DelegateLeadFormSchema),
+    const { register, handleSubmit, control, reset, formState} = useForm<EditScheduleFormData>({
+        resolver: yupResolver(EditScheduleFormSchema),
         defaultValues: {
-
+            datetime: toEditScheduleData.datetime,
+            city: toEditScheduleData.city,
+            lead: toEditScheduleData.lead,
         }
     });
 
-    const handleCreateNewPayment = async (leadData : DelegateLeadFormData) => {
+    const handleCreateNewPayment = async (scheduleData : EditScheduleFormData) => {
         try{
             if(!workingCompany.company){
                 toast({
@@ -77,39 +85,24 @@ export function DelegateLeadModal( { isOpen, onRequestClose, toDelegateLeadList,
                 return;
             }
 
-            const isManager = HasPermission(permissions, 'Vendas Completo');
+            scheduleData.datetime = formatInputHourDate(scheduleData.datetime);
 
-            if(!isManager){
-                return;
+            if(scheduleData.lead === 0){
+                delete scheduleData.lead
             }
 
-            let response;
-
-            if(toDelegate){
-                response = api.post(`/leads/update/${toDelegate}`, leadData).then(afterDelegate);
-            }else{
-                response = toDelegateLeadList.map((leadId: number) => {
-                    return api.post(`/leads/update/${leadId}`, leadData).then(afterDelegate);
-                })
-            }
+            const response = await api.post(`/schedules/update/${toEditScheduleData.id}`, scheduleData);
 
             toast({
                 title: "Sucesso",
-                description: `O leads foram delegados.`,
+                description: `O agendamento foi atualizado.`,
                 status: "success",
                 duration: 12000,
                 isClosable: true,
             });
 
-            const countOfLeads = toDelegate ? 1 : toDelegateLeadList.length;
-
-            await api.post('/logs/store', {
-                user: profile.id,
-                company: workingCompany.company.id,
-                action: `Delegou ${countOfLeads} leads`
-            });
-
             onRequestClose();
+            afterEdit();
             reset();
         }catch(error:any) {
             showErrors(error, toast);
@@ -129,40 +122,53 @@ export function DelegateLeadModal( { isOpen, onRequestClose, toDelegateLeadList,
         }
     }, [isOpen]);
 
+    const leadOptions:Array<SelectOption> = [
+        {
+            value: "",
+            label: "Selecionar Lead"
+        }
+    ];
+
+    leads.map((lead: Lead) => {
+        leadOptions.push({value: lead.id.toString(), label: lead.name});
+    })
+
+    const datetimeObject = new Date(toEditScheduleData.datetime);
+    const initialDatetime = ( toEditScheduleData.datetime ? datetimeObject.toISOString().split('T')[0] + 'T' + datetimeObject.getHours() + ':' +  datetimeObject.getMinutes() : '')
+
+    console.log(toEditScheduleData);
+
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
             <ModalOverlay />
             <ModalContent as="form" borderRadius="24px" onSubmit={handleSubmit(handleCreateNewPayment)}>
-                <ModalHeader p="10" fontWeight="700" fontSize="2xl">Delegar leads</ModalHeader>
+                <ModalHeader p="10" fontWeight="700" fontSize="2xl">Editar agendamento</ModalHeader>
 
                 <ModalCloseButton top="10" right="5"/>
                 
                 <ModalBody pl="10" pr="10">
                     <Stack spacing="6">
+                        
+                        <ControlledInput control={control} value={initialDatetime} name="datetime" type="datetime-local" placeholder="Data da visita" focusBorderColor="orange.400" variant="outline" error={formState.errors.datetime}/>
+                        
+                        <ControlledInput control={control} value={toEditScheduleData.city} name="city" type="text" placeholder="Cidade" focusBorderColor="orange.400" variant="outline" error={formState.errors.city}/>
 
-                        <HStack spacing="4" align="baseline">
-                            {
-                                ( !users ? (
-                                    <Flex justify="center">
-                                        <Text>Nenhum vendedor disponível</Text>
-                                    </Flex>
-                                ) : (
-                                    <ControlledSelect control={control} value={1} h="45px" name="user" w="100%" fontSize="sm" focusBorderColor="orange.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" error={formState.errors.user}>
-                                        {users && users.map((user:User) => {
-                                            return (
-                                                <option key={user.id} value={user.id}>{user.name}</option>
-                                            )
-                                        })}
-                                    </ControlledSelect>
-                                ))
-                            }
-                        </HStack>
+                        {
+                            ( !leads ? (
+                                <Flex justify="center">
+                                    <Text>Nenhum lead disponível</Text>
+                                </Flex>
+                            ) : (
+                                <ReactSelect value={toEditScheduleData.lead?.toString()} options={leadOptions} control={control} label="Contato" name="lead" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } borderRadius="full" error={formState.errors.lead} />
+                            ))
+                        }
+
                     </Stack>
                 </ModalBody>
 
                 <ModalFooter p="10">
                     <SolidButton mr="6" color="white" bg="orange.400" colorScheme="orange" type="submit" isLoading={formState.isSubmitting}>
-                        Delegar
+                        Atualizar
                     </SolidButton>
 
                     <Link onClick={onRequestClose} color="gray.700" fontSize="14px">Cancelar</Link>

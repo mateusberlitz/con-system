@@ -8,60 +8,33 @@ import { isAuthenticated } from "../../../services/auth";
 import { useEffect } from "react";
 import { redirectMessages } from "../../../utils/redirectMessages";
 import { useHistory } from "react-router-dom";
-import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
-import { useProfile } from "../../../hooks/useProfile";
 
-export interface RemoveLeadData{
+export interface RemoveScheduleData{
     id: number;
-    name: string;
 }
 
 interface ConfirmLeadRemoveModalProps{
     isOpen: boolean;
-    toRemoveLeadData: RemoveLeadData;
+    toRemoveScheduleData: RemoveScheduleData;
     onRequestClose: () => void;
     afterRemove: () => void;
 }
 
-export function ConfirmLeadRemoveModal( { isOpen, toRemoveLeadData, afterRemove, onRequestClose } : ConfirmLeadRemoveModalProps){
-    const workingCompany = useWorkingCompany();
-    const {profile, permissions} = useProfile();
+export function ConfirmScheduleRemoveModal( { isOpen, toRemoveScheduleData, afterRemove, onRequestClose } : ConfirmLeadRemoveModalProps){
     const toast = useToast();
 
     const history = useHistory();
 
     const handleRemoveLead = async () => {
         try{
-            if(!workingCompany.company){
-                toast({
-                    title: "Ué",
-                    description: `Seleciona uma empresa para trabalhar`,
-                    status: "warning",
-                    duration: 12000,
-                    isClosable: true,
-                });
-
-                return;
-            }
-
-            if(!profile){
-                return;
-            }
-
-            await api.delete(`/leads/destroy/${toRemoveLeadData.id}`);
+            await api.delete(`/schedules/destroy/${toRemoveScheduleData.id}`);
 
             toast({
                 title: "Sucesso",
-                description: `O lead ${toRemoveLeadData.name} foi removido`,
+                description: `O agendamento foi removido`,
                 status: "success",
                 duration: 12000,
                 isClosable: true,
-            });
-
-            await api.post('/logs/store', {
-                user: profile.id,
-                company: workingCompany.company.id,
-                action: `Removeu o lead ${toRemoveLeadData.name}`
             });
 
             onRequestClose();
@@ -84,7 +57,7 @@ export function ConfirmLeadRemoveModal( { isOpen, toRemoveLeadData, afterRemove,
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
             <ModalOverlay />
             <ModalContent borderRadius="24px">
-                <ModalHeader p="10" fontWeight="700" fontSize="2xl">Remover o lead {toRemoveLeadData.name}?</ModalHeader>
+                <ModalHeader p="10" fontWeight="700" fontSize="2xl">Remover o agendamento?</ModalHeader>
 
                 <ModalCloseButton top="10" right="5"/>
                 

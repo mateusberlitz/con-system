@@ -8,7 +8,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { api } from "../../../services/api";
 import { useHistory } from "react-router";
 import { useErrors } from "../../../hooks/useErrors";
-import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
 
 import { Input } from "../../../components/Forms/Inputs/Input";
 import { Select } from "../../../components/Forms/Selects/Select";
@@ -27,21 +26,29 @@ import { ReactComponent as PlusIcon } from '../../../assets/icons/Plus.svg';
 import { ReactComponent as MinusIcon } from '../../../assets/icons/Minus.svg';
 import { ReactComponent as StrongPlusIcon } from '../../../assets/icons/StrongPlus.svg';
 import { ControlledInput } from "../../../components/Forms/Inputs/ControlledInput";
-import Leads from ".";
 
-export interface RemoveLeadData{
+interface NewLeadModalProps{
+    isOpen: boolean;
+    toAddLeadNoteData: toAddLeadNoteData;
+    onRequestClose: () => void;
+    afterEdit: () => void;
+}
+
+export interface toAddLeadNoteData{
     id: number;
     name: string;
 }
 
-interface DelegateLeadModalProps{
-    isOpen: boolean;
-    toRemoveLeadData: RemoveLeadData;
-    onRequestClose: () => void;
-    afterRemove: () => void;
+export interface LeadNoteFormData{
+    text?: string;
 }
 
-export function ConfirmRemoveUserOfLead( { isOpen, onRequestClose, toRemoveLeadData, afterRemove } : DelegateLeadModalProps){
+const EditLeadFormSchema = yup.object().shape({
+    status: yup.number(),
+    text: yup.string().required("Por favor, dê detalhes sobre essa alteração"),
+});
+
+export function AddLeadNoteModal( { isOpen, onRequestClose, afterEdit, toAddLeadNoteData } : NewLeadModalProps){
     const workingCompany = useWorkingCompany();
     const {profile, permissions} = useProfile();
 
@@ -49,7 +56,14 @@ export function ConfirmRemoveUserOfLead( { isOpen, onRequestClose, toRemoveLeadD
     const toast = useToast();
     const { showErrors } = useErrors();
 
-    const handleRemoveUserOfLead = async () => {
+    const { register, handleSubmit, control, reset, formState} = useForm<LeadNoteFormData>({
+        resolver: yupResolver(EditLeadFormSchema),
+        defaultValues: {
+            text: "",
+        }
+    });
+
+    const handleCreateNewPayment = async (leadData : LeadNoteFormData) => {
         try{
             if(!workingCompany.company){
                 toast({
@@ -63,34 +77,27 @@ export function ConfirmRemoveUserOfLead( { isOpen, onRequestClose, toRemoveLeadD
                 return;
             }
 
-            const isManager = HasPermission(permissions, 'Vendas Completo');
-
-            if(!isManager){
-                return;
-            }
-
             if(!profile){
                 return;
             }
-            
-            const response = await api.post(`/leads/update/${toRemoveLeadData.id}`, {user: null});
+
+            const response = await api.post(`lead_notes/store`, {
+                lead: toAddLeadNoteData.id,
+                user: profile.id,
+                text: leadData.text,
+            });
 
             toast({
                 title: "Sucesso",
-                description: `O lead foi removido do usuário.`,
+                description: `Anotação criada para o lead ${toAddLeadNoteData.name}.`,
                 status: "success",
                 duration: 12000,
                 isClosable: true,
             });
 
-            await api.post('/logs/store', {
-                user: profile.id,
-                company: workingCompany.company.id,
-                action: `Removeu o ${toRemoveLeadData.name} de um vendedor`
-            });
-
             onRequestClose();
-            afterRemove();
+            afterEdit();
+            reset();
         }catch(error:any) {
             showErrors(error, toast);
 
@@ -112,19 +119,22 @@ export function ConfirmRemoveUserOfLead( { isOpen, onRequestClose, toRemoveLeadD
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
             <ModalOverlay />
-            <ModalContent as="form" borderRadius="24px">
-                <ModalHeader p="10" fontWeight="700" fontSize="2xl">Remover o vendedor do lead {toRemoveLeadData.name}</ModalHeader>
+            <ModalContent as="form" borderRadius="24px" onSubmit={handleSubmit(handleCreateNewPayment)}>
+                <ModalHeader p="10" fontWeight="700" fontSize="2xl">Anotar para o lead {toAddLeadNoteData.name}</ModalHeader>
 
                 <ModalCloseButton top="10" right="5"/>
                 
                 <ModalBody pl="10" pr="10">
-                    <SolidButton onClick={handleRemoveUserOfLead} mr="6" color="white" bg="red.400" _hover={{filter: "brightness(90%)"}} rightIcon={<CloseIcon stroke="#ffffff" fill="none" width="18px" strokeWidth="3px"/>}>
-                        Confirmar e Remover
-                    </SolidButton>
+                    <Stack spacing="6">
+                        <Input as="textarea" value="" register={register} borderRadius="24px" h="100px" name="text" type="text" placeholder="Anotação" focusBorderColor="orange.400" variant="outline" error={formState.errors.text}/>
+                    </Stack>
                 </ModalBody>
 
-
                 <ModalFooter p="10">
+                    <SolidButton mr="6" color="white" bg="orange.400" colorScheme="orange" type="submit" isLoading={formState.isSubmitting}>
+                        Anotar
+                    </SolidButton>
+
                     <Link onClick={onRequestClose} color="gray.700" fontSize="14px">Cancelar</Link>
                 </ModalFooter>
             </ModalContent>

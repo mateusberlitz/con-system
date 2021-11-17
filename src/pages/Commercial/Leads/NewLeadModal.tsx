@@ -135,6 +135,13 @@ export function NewLeadModal( { isOpen, onRequestClose, afterCreate, statuses, o
                 isClosable: true,
             });
 
+
+            await api.post('/logs/store', {
+                user: profile.id,
+                company: workingCompany.company.id,
+                action: `Adicionou o lead ${leadData.name}`
+            });
+
             onRequestClose();
             afterCreate();
             reset();

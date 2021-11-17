@@ -16,7 +16,7 @@ interface TableProps{
 export function SchedulesTable({ header, children } : TableProps){
 
     return (
-        <Flex overflow="auto" w="100%" h="400px">
+        <Flex overflow="auto" w="100%" h="800px">
             <ChakraTable size="md" height="fit-content">
                 <Thead>
                     <Tr borderBottom="1px solid" borderTop="1px solid" borderColor="gray.200">

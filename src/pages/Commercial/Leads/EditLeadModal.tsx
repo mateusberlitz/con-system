@@ -153,6 +153,12 @@ export function EditLeadModal( { isOpen, onRequestClose, afterEdit, toEditLeadDa
                 isClosable: true,
             });
 
+            await api.post('/logs/store', {
+                user: profile.id,
+                company: workingCompany.company.id,
+                action: `Alterou as informações do lead ${toEditLeadData.name}`
+            });
+
             onRequestClose();
             afterEdit();
             reset();

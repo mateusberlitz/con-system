@@ -1,4 +1,4 @@
-import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Badge as ChakraBadge, Checkbox, Flex, HStack, IconButton, Spinner, Stack, Text, useToast } from "@chakra-ui/react";
+import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Badge as ChakraBadge, Checkbox, Divider, Flex, HStack, IconButton, Spinner, Stack, Text, useToast } from "@chakra-ui/react";
 import Badge from "../../../components/Badge";
 import { OutlineButton } from "../../../components/Buttons/OutlineButton";
 import { CompanySelectMaster } from "../../../components/CompanySelect/companySelectMaster";
@@ -8,6 +8,7 @@ import { ReactComponent as PlusIcon } from '../../../assets/icons/Plus.svg';
 import { ReactComponent as MinusIcon } from '../../../assets/icons/Minus.svg';
 import { ReactComponent as StrongPlusIcon } from '../../../assets/icons/StrongPlus.svg';
 import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
+import { ReactComponent as EditIcon } from '../../../assets/icons/Edit.svg';
 
 
 import { HasPermission, useProfile } from "../../../hooks/useProfile";
@@ -28,6 +29,8 @@ import { ConfirmLeadRemoveModal, RemoveLeadData } from "./ConfirmLeadRemoveModal
 import { useUsers } from "../../../hooks/useUsers";
 import { DelegateLeadModal } from "./DelegateLeadModal";
 import { ConfirmRemoveUserOfLead } from "./ConfirmRemoveUserOfLead";
+import { ChangeLeadStatusModal, EditLeadStatusFormData } from "./ChangeLeadStatusModal";
+import { AddLeadNoteModal, toAddLeadNoteData } from "./AddLeadNoteModal";
 
 export default function Leads(){
     const toast = useToast();
@@ -204,10 +207,51 @@ export default function Leads(){
         setIsRemoveUserOfLeadModalOpen(false);
     }
 
+    const [isEditLeadStatusModalOpen, setIsEditLeadStatusModalOpen] = useState(false);
+    const [toEditLeadStatusData, setToEditLeadStatusData] = useState<EditLeadStatusFormData>(() => {
+
+        const data: EditLeadStatusFormData = {
+            name: '',
+            id: 0,
+            status: 0,
+        };
+        
+        return data;
+    });
+
+    function OpenEditLeadStatusOfLeadModal(leadData : EditLeadStatusFormData){
+        setToEditLeadStatusData(leadData);
+        setIsEditLeadStatusModalOpen(true);
+    }
+    function CloseEditLeadStatusOfLeadModal(){
+        setIsEditLeadStatusModalOpen(false);
+    }
+
+    const [isAddLeadNoteModalOpen, setIsAddLeadNoteModalOpen] = useState(false);
+    const [toAddLeadNoteData, setToAddLeadNoteData] = useState<toAddLeadNoteData>(() => {
+
+        const data: toAddLeadNoteData = {
+            name: '',
+            id: 0,
+        };
+        
+        return data;
+    });
+
+    function OpenAddLeadNoteModal(leadData : toAddLeadNoteData){
+        setToAddLeadNoteData(leadData);
+        setIsAddLeadNoteModalOpen(true);
+    }
+    function CloseAddLeadNoteModal(){
+        setIsAddLeadNoteModalOpen(false);
+    }
+
     return (
         <MainBoard sidebar="commercial" header={<CompanySelectMaster />}>
             <NewLeadModal statuses={statuses} origins={origins} afterCreate={leads.refetch} isOpen={isNewLeadModalOpen} onRequestClose={CloseNewPaymentModal}/>
             <EditLeadModal toEditLeadData={toEditLeadData} statuses={statuses} origins={origins} afterEdit={leads.refetch} isOpen={isEditLeadModalOpen} onRequestClose={CloseEditLeadModal}/>
+            <ChangeLeadStatusModal toEditLeadStatusData={toEditLeadStatusData} statuses={statuses} afterEdit={leads.refetch} isOpen={isEditLeadStatusModalOpen} onRequestClose={CloseEditLeadStatusOfLeadModal}/>
+            <AddLeadNoteModal toAddLeadNoteData={toAddLeadNoteData} afterEdit={leads.refetch} isOpen={isAddLeadNoteModalOpen} onRequestClose={CloseAddLeadNoteModal}/>
             <DelegateLeadModal toDelegateLeadList={delegateList} toDelegate={delegate} users={users.data} afterDelegate={leads.refetch} isOpen={isDelegateLeadModalOpen} onRequestClose={CloseDelegateLeadModal}/>
             <ConfirmRemoveUserOfLead toRemoveLeadData={removeUserOfLeadData} afterRemove={leads.refetch} isOpen={isRemoveUserOfLeadModalOpen} onRequestClose={CloseRemoveUserOfLeadModal}/>
             <ConfirmLeadRemoveModal toRemoveLeadData={removeLeadData} afterRemove={leads.refetch} isOpen={isRemoveLeadModalOpen} onRequestClose={CloseRemoveLeadModal}/>
@@ -316,7 +360,9 @@ export default function Leads(){
                                                         <Text fontSize="sm" fontWeight="normal" color="gray.800">{lead.origin?.name}</Text>
                                                     </Stack>
 
-                                                    <Badge colorScheme={lead.status?.color} color="white" bg={`${lead.status?.color}.500`} display="flex" borderRadius="full" px="5" py="0" h="29px" alignItems="center"><Text>{lead.status?.name}</Text></Badge>
+                                                    <Badge cursor="pointer" colorScheme={lead.status?.color} color="white" bg={`${lead.status?.color}.500`} display="flex" borderRadius="full" px="5" py="0" h="29px" alignItems="center"
+                                                        onClick={() => OpenEditLeadStatusOfLeadModal({id:lead.id, status: lead.status ? lead.status.id : 0, name:lead.name})}
+                                                        ><Text>{lead.status?.name}</Text></Badge>
 
                                                     {
                                                         (isManager && !lead.user) && (
@@ -327,10 +373,15 @@ export default function Leads(){
                                                     }
 
                                                     {
-                                                        (lead.user && isManager && !lead.own) && (
+                                                        (lead.user && isManager) && (
                                                             <HStack>
                                                                 <Text fontSize="sm" fontWeight="normal" color="gray.800">{lead.user?.name}</Text>
-                                                                <IconButton onClick={() => OpenRemoveUserOfLeadModal({id:lead.id, name: lead.name})} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
+
+                                                                {
+                                                                    !lead.own && (
+                                                                        <IconButton onClick={() => OpenRemoveUserOfLeadModal({id:lead.id, name: lead.name})} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
+                                                                    )
+                                                                }
                                                             </HStack>
                                                         )
                                                     }
@@ -343,17 +394,24 @@ export default function Leads(){
 
                                                             {
                                                                 lead.notes.map((note) => {
+                                                                    console.log(note);
                                                                     return(
-                                                                        <HStack>
-                                                                            <Text color="gray.800" fontWeight="semibold">{formatBRDate(note.created_at)} -</Text>
+                                                                        <HStack key={note.id}>
+                                                                            <Text color="gray.800" fontWeight="semibold">{formatBRDate(note.created_at)} - {note.status ? `${note.status.name} - ` : ''}</Text>
                                                                             <Text color="gray.800">{note.text}</Text>
                                                                         </HStack>
                                                                     )
                                                                 })
                                                             }
+
+                                                            <OutlineButton onClick={() => {OpenAddLeadNoteModal({id: lead.id, name: lead.name})}} icon={EditIcon} h="30px" px="3" variant="outline" size="sm" fontSize="11" color="orange.400" border="none" colorScheme="orange">
+                                                                Anotar
+                                                            </OutlineButton>
                                                         </Stack>
 
-                                                        <HStack spacing="5" alignItems="center">
+                                                        <HStack spacing="5" alignItems="center" h="40px">
+                                                            <Divider orientation="vertical"/> 
+
                                                             <EditButton onClick={() => OpenEditLeadModal(leadToEditData)}/>
 
                                                             {

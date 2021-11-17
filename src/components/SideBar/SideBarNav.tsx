@@ -82,19 +82,16 @@ export function SideBarNav({ desk }: SideBarNavProps){
             <Img src={LogoBranco} px="7" mt="9" mb="14" />
 
             <NavLink href="/comercial" icon={ChartPieIcon}>Dashboard</NavLink> 
-            <NavLink href="/meusleads" icon={AtsignIcon}>Leads</NavLink>
+            <NavLink href="/leads" icon={AtsignIcon}>Leads</NavLink>
+            <NavLink href="/agenda" icon={CalendarIcon}>Agendamentos</NavLink>
+            {/* <NavLink href="/calculadora" icon={ConfigureIcon}>Calculadora</NavLink> */}
+            
 
             {
-                // HasPermission(permissions, 'Vendas Completo') && (
-                //     <>
-                //         <NavLink href="/leads" icon={AtsignIcon}>Novos Leads</NavLink>
-                //     </>
-                // )
+                (HasPermission(permissions, 'Vendas Completo')) && (
+                    <NavLink href="/vendedores" icon={ProfileIcon}>Vendedores</NavLink>
+                )
             }
-
-            <NavLink href="/agenda" icon={CalendarIcon}>Agendamentos</NavLink>
-            <NavLink href="/calculadora" icon={ConfigureIcon}>Calculadora</NavLink>
-            <NavLink href="/vendedores" icon={ProfileIcon}>Vendedores</NavLink>
 
             {
                 (HasPermission(permissions, 'Usuários') || HasPermission(permissions, 'Configurações') || HasPermission(permissions, 'Contempladas')) && (

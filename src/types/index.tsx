@@ -293,6 +293,7 @@ export interface Lead{
 export interface LeadNote{
     id: number;
     text: string;
+    status: LeadStatus;
 
     created_at: string;
     updated_at: string;
@@ -313,6 +314,28 @@ export interface Log{
     user: User;
     action: string;
     company: Company;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface State{
+    id: number;
+    name: string;
+    uf: string;
+}
+
+export interface City{
+    id: number;
+    name: string;
+    state: State;
+}
+
+export interface Schedule{
+    id: number;
+    datetime: string;
+    city: string;
+    user: User;
+    lead?: Lead;
     created_at: string;
     updated_at: string;
 }

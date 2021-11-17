@@ -187,6 +187,8 @@ export function EditPaymentModal( { isOpen, onRequestClose, afterEdit, toEditPay
         setIsDisabledRecurrence(!isDisabledRecurrence);
     }
 
+    console.log(toEditPaymentData);
+
     return (
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
             <ModalOverlay />
