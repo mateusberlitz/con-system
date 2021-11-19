@@ -63,7 +63,7 @@ export interface EditLeadFormData{
     commission?: number;
 
     segment?: string;
-    value?: number;
+    value?: string;
 }
 
 const EditLeadFormSchema = yup.object().shape({
@@ -196,7 +196,7 @@ export function EditLeadModal( { isOpen, onRequestClose, afterEdit, toEditLeadDa
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
             <ModalOverlay />
             <ModalContent as="form" borderRadius="24px" onSubmit={handleSubmit(handleCreateNewPayment)}>
-                <ModalHeader p="10" fontWeight="700" fontSize="2xl">Cadastrar Lead</ModalHeader>
+                <ModalHeader p="10" fontWeight="700" fontSize="2xl">Alterar lead {toEditLeadData.name}</ModalHeader>
 
                 <ModalCloseButton top="10" right="5"/>
                 
@@ -244,6 +244,15 @@ export function EditLeadModal( { isOpen, onRequestClose, afterEdit, toEditLeadDa
                                     </ControlledSelect>
                                 ))
                             }
+                        </HStack>
+
+                        <HStack spacing="4" align="baseline">
+                            <ControlledSelect control={control} value={toEditLeadData.segment ? toEditLeadData.segment.toString() : ""} placeholder="Segmento pretendido"  h="45px" name="segment" w="100%" fontSize="sm" focusBorderColor="orange.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" error={formState.errors.segment}>
+                                <option value="Imóvel">Imóvel</option>
+                                <option value="Veículo">Veículo</option>
+                            </ControlledSelect>
+
+                            <ControlledInput control={control} value={toEditLeadData.value} name="value" type="text" placeholder="Valor" focusBorderColor="orange.400" variant="outline" error={formState.errors.value}/>
                         </HStack>
 
                         

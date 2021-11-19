@@ -156,7 +156,7 @@ export function EditSaleModal( { isOpen, onRequestClose, afterEdit, toEditSaleDa
                         <ControlledInput control={control} value={toEditSaleData.date} name="date" type="date" placeholder="Data da venda" focusBorderColor="orange.400" variant="outline" error={formState.errors.date}/>
 
                         <HStack spacing="4" align="baseline">
-                        <ControlledSelect control={control} value={toEditSaleData.segment.toString()}  h="45px" name="segment" w="100%" fontSize="sm" focusBorderColor="orange.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" error={formState.errors.segment}>
+                            <ControlledSelect control={control} value={toEditSaleData.segment.toString()}  h="45px" name="segment" w="100%" fontSize="sm" focusBorderColor="orange.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" error={formState.errors.segment}>
                                 <option value="Imóvel">Imóvel</option>
                                 <option value="Veículo">Veículo</option>
                             </ControlledSelect>

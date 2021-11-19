@@ -63,7 +63,6 @@ export function NewScheduleModal( { isOpen, onRequestClose, afterCreate, cities,
     });
 
     const handleCreateNewSchedule = async (scheduleData : CreateNewScheduleFormData) => {
-        console.log(scheduleData);
         //return;
         try{
             if(!workingCompany.company){

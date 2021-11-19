@@ -142,8 +142,6 @@ export function EditScheduleModal( { isOpen, onRequestClose, afterEdit, toEditSc
     const datetimeObject = new Date(toEditScheduleData.datetime);
     const initialDatetime = ( toEditScheduleData.datetime ? datetimeObject.toISOString().split('T')[0] + 'T' + datetimeObject.getHours() + ':' +  datetimeObject.getMinutes() : '')
 
-    console.log(toEditScheduleData);
-
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
             <ModalOverlay />

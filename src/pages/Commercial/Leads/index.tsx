@@ -33,6 +33,7 @@ import { ChangeLeadStatusModal, EditLeadStatusFormData } from "./ChangeLeadStatu
 import { AddLeadNoteModal, toAddLeadNoteData } from "./AddLeadNoteModal";
 import { NewSaleModal, toAddSaleLeadData } from "../Sales/NewSaleModal";
 import { EditSaleFormData, EditSaleModal } from "../Sales/EditSaleModal";
+import { ConfirmSaleRemoveModal, RemoveSaleData } from "../Sales/ConfirmSaleRemoveModal";
 
 export default function Leads(){
     const toast = useToast();
@@ -292,6 +293,26 @@ export default function Leads(){
         setIsEditSaleModalOpen(false);
     }
 
+    const [isConfirmSaleRemoveModalOpen, setIsConfirmSaleRemoveModalOpen] = useState(false);
+    const [removeSaleFormData, setRemoveSaleFormData] = useState<RemoveSaleData>(() => {
+
+        const data: RemoveSaleData = {
+            id: 0,
+            group: '',
+            quota: '',
+        };
+        
+        return data;
+    });
+
+    function OpenRemoveSaleModal(leadData : RemoveSaleData){
+        setRemoveSaleFormData(leadData);
+        setIsConfirmSaleRemoveModalOpen(true);
+    }
+    function CloseRemoveEditModal(){
+        setIsConfirmSaleRemoveModalOpen(false);
+    }
+
     return (
         <MainBoard sidebar="commercial" header={<CompanySelectMaster />}>
             <NewLeadModal statuses={statuses} origins={origins} afterCreate={leads.refetch} isOpen={isNewLeadModalOpen} onRequestClose={CloseNewPaymentModal}/>
@@ -304,6 +325,8 @@ export default function Leads(){
             
             <NewSaleModal toAddLeadData={addSaleToLeadData} afterCreate={leads.refetch} isOpen={isNewSaleModalOpen} onRequestClose={CloseNewSaleModal}/>
             <EditSaleModal toEditSaleData={editSaleFormData} afterEdit={leads.refetch} isOpen={isEditSaleModalOpen} onRequestClose={CloseNewEditModal}/>
+            <ConfirmSaleRemoveModal toRemoveSaleData={removeSaleFormData} afterRemove={leads.refetch} isOpen={isConfirmSaleRemoveModalOpen} onRequestClose={CloseRemoveEditModal}/>
+
 
             <SolidButton color="white" bg="orange.400" icon={PlusIcon} colorScheme="orange" mb="10" onClick={OpenNewPaymentModal}>
                 Adicionar Lead
@@ -362,6 +385,12 @@ export default function Leads(){
                                     address_uf: lead.address_uf,
                                     address_city: lead.address_city,
                                     address_number: lead.address_number,
+
+                                    recommender: lead.recommender,
+                                    commission: lead.commission,
+
+                                    value: lead.value ? lead.value.toString().replace('.', ',') : '',
+                                    segment: lead.segment,
                                 }
 
                                 return (
@@ -405,6 +434,11 @@ export default function Leads(){
                                                     {/* <Text fontSize="sm" fontWeight="normal" color="gray.800">Veículo - R$50.000,00</Text> */}
 
                                                     <Stack spacing="0">
+                                                        <Text fontSize="10px" color="gray.800">Pretensão</Text>
+                                                        <Text fontSize="sm" fontWeight="normal" color="gray.800">{lead?.segment} - {lead.value ? Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(lead.value) : ''}</Text>
+                                                    </Stack>
+
+                                                    <Stack spacing="0">
                                                         <Text fontSize="10px" color="gray.800">origem</Text>
                                                         <Text fontSize="sm" fontWeight="normal" color="gray.800">{lead.origin?.name}</Text>
                                                     </Stack>
@@ -436,7 +470,7 @@ export default function Leads(){
                                                     }
                                                 </HStack>
 
-                                                <AccordionPanel flexDir="column" borderTop="2px" borderColor="gray.500" px="0" py="5">
+                                                <AccordionPanel flexDir="column" borderTop="2px" borderColor="gray.500" px="1" py="5">
                                                     <HStack justifyContent="space-between" mb="4">
                                                         <Stack fontSize="sm" spacing="3">
                                                             <Text fontWeight="bold">Anotações</Text>
@@ -473,9 +507,14 @@ export default function Leads(){
 
                                                                     return(
                                                                         <HStack key={sale.id}>
-                                                                            <Text color="gray.800" fontWeight="semibold">{formatBRDate(sale.date)}: {sale.group}-{sale.quota} | {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(sale.value)}</Text>
+                                                                            <Text color="gray.800" fontWeight="normal">{formatBRDate(sale.date)}: </Text>
+                                                                            <Text>{sale.group}-{sale.quota} | </Text>
+                                                                            <Text fontWeight="semibold">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(sale.value)}</Text>
+                                                                            <Text fontWeight="normal">Comissão esperada: <strong>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(sale.commission)}</strong></Text>
                                                                             
-                                                                            <EditButton onClick={() => OpenEditSaleModal(leadSalesData)}/>
+                                                                            <IconButton onClick={() => OpenEditSaleModal(leadSalesData)} h="24px" w="23px" p="0" float="right" aria-label="Alterar venda" border="none" icon={ <EditIcon width="20px" stroke="#d69e2e" fill="none"/>} variant="outline"/>
+                                                                            <IconButton onClick={() => OpenRemoveSaleModal({id: sale.id, group: sale.group, quota: sale.quota})} h="24px" w="23px" p="0" float="right" aria-label="Excluir venda" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
+                                                                            {/* <EditButton onClick={() => OpenEditSaleModal(leadSalesData)}/> */}
                                                                         </HStack>
                                                                     )
                                                                 })

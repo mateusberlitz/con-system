@@ -230,7 +230,7 @@ export function NewLeadModal( { isOpen, onRequestClose, afterCreate, statuses, o
                         </HStack>
 
                         <HStack spacing="4" align="baseline">
-                            <Select register={register}  h="45px" name="segment" w="100%" fontSize="sm" focusBorderColor="blue.800" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" error={formState.errors.segment}>
+                            <Select register={register}  h="45px" name="segment" w="100%" fontSize="sm" placeholder="Segmento pretendido" focusBorderColor="orange.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" error={formState.errors.segment}>
                                 <option value="Imóvel" selected>Imóvel</option>
                                 <option value="Veículo">Veículo</option>
                             </Select>
@@ -295,93 +295,6 @@ export function NewLeadModal( { isOpen, onRequestClose, afterCreate, statuses, o
 
                             </AccordionItem>
                         </Accordion>
-
-                        
-{/* 
-                        {
-                            ( !profile || !profile.companies ? (
-                                <Flex justify="center">
-                                    <Text>Nenhuma empresa disponível</Text>
-                                </Flex>
-                            ) : (
-                                <ControlledSelect control={control} value={(workingCompany.company && workingCompany.company.id) ? workingCompany.company.id : ""}  h="45px" name="company" placeholder="Empresa" w="100%" fontSize="sm" focusBorderColor="blue.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" error={formState.errors.company}>
-                                    {profile.companies && profile.companies.map((company:Company) => {
-                                        return (
-                                            <option key={company.id} value={company.id}>{company.name}</option>
-                                        )
-                                    })}
-                                </ControlledSelect>
-                            ))
-                        }
-
-                        <HStack spacing="4" align="baseline">
-                            <Input register={register} name="expire" type="date" placeholder="Data de Vencimento" variant="outline" error={formState.errors.expire}/>
-
-                            <Input register={register} name="value" type="text" placeholder="Valor" variant="outline" mask="money" error={formState.errors.value}/>
-                        </HStack>
-
-                        <HStack spacing="4" align="baseline">
-                            <Select register={register} h="45px" value="0" name="category" w="100%" fontSize="sm" focusBorderColor="blue.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Categoria" error={formState.errors.category}>
-                                {categories && categories.map((category:PaymentCategory) => {
-                                    return (
-                                        <option key={category.id} value={category.id}>{category.name}</option>
-                                    )
-                                })}
-                            </Select>
-
-                            <Select register={register} h="45px" value="0" name="provider" w="100%" fontSize="sm" focusBorderColor="blue.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Fornecedor" error={formState.errors.pay_to_user}>
-                                {providers && providers.map((provider:Provider) => {
-                                    return (
-                                        <option key={provider.id} value={provider.id}>{provider.name}</option>
-                                    )
-                                })}
-                            </Select>
-                        </HStack>
-
-                        <HStack spacing="4" align="baseline">
-                            <Input register={register} name="contract" type="text" placeholder="Contrato" variant="outline" error={formState.errors.contract}/>
-
-                            <Select register={register} h="45px" name="pay_to_user" value="0" w="100%" fontSize="sm" focusBorderColor="blue.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Pagar para" error={formState.errors.pay_to_user}>
-                                {users && users.map((user:User) => {
-                                    return (
-                                        <option key={user.id} value={user.id}>{user.name}</option>
-                                    )
-                                })}
-                            </Select>
-                        </HStack>
-
-                        <HStack spacing="4" align="baseline">
-                            <Input register={register} name="recurrence" type="number" placeholder="Repetir Mensalmente" variant="outline" error={formState.errors.recurrence}/>
-                        </HStack>
-
-                        <HStack spacing="4" align="baseline">
-
-                            <Flex alignSelf="center">
-                                <Box as="label" mr="10px" display="flex" borderRadius="full" alignItems="center" h="29px" fontWeight="600" fontSize="10px" pl="6" pr="6" cursor="pointer" border="2px" borderColor="purple.300" color="purple.300">
-                                    <ChakraInput name="file" type="file" accept="image/png, image/jpeg, application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint,text/plain, application/pdf" display="none" onChange={handleChangeFile}/> 
-                                    Selecionar Boleto
-                                </Box>
-
-                                <Text>{fileName}</Text>
-                            </Flex>
-                        </HStack>
-
-                        <Input register={register} name="observation" type="text" placeholder="Observação" variant="outline" error={formState.errors.observation}/>
-
-                        <HStack spacing="4" align="baseline">
-
-                            <Flex alignSelf="center">
-                                <Box as="label" mr="10px" display="flex" borderRadius="full" alignItems="center" h="29px" fontWeight="600" fontSize="10px" pl="6" pr="6" cursor="pointer" border="2px" borderColor="purple.300" color="purple.300">
-                                    <ChakraInput name="invoice" type="file" accept="image/png, image/jpeg, application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint,text/plain, application/pdf" display="none" onChange={handleChangeInvoice}/> 
-                                    Selecionar Nota
-                                </Box>
-
-                                <Text>{invoiceName}</Text>
-                            </Flex>
-
-                            <Input register={register} name="invoice_date" type="date" placeholder="Data da nota" variant="outline" error={formState.errors.invoice_date}/>
-                        </HStack> */}
-
                     </Stack>
                 </ModalBody>
 

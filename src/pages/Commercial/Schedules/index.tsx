@@ -167,19 +167,25 @@ export default function Schedules(){
     const schedulesDays = [{text: "", wrap: false}];
     const toRowDays:string[] = [];
 
-    const inputStartDateDay = new Date(inputStartDate).getDate() + 1;
-    const inputEndDateDay = new Date(inputEndDate).getDate() + 1;
+    // const inputStartDateDay = new Date(inputStartDate).getDate() + 1;
+    // const inputEndDateDay = new Date(inputEndDate).getDate() + 1;
+
+    const inputStartDateDay = new Date(inputStartDate);
+    const inputEndDateDay = new Date(inputEndDate);
 
     const newDate = new Date(inputStartDate);
     
-    while((inputStartDateDay + d) <= inputEndDateDay){
+    while(inputStartDateDay <= inputEndDateDay){
         newDate.setDate(newDate.getDate() + 1);
 
         schedulesDays.push({text: newDate.toLocaleDateString('pt-BR', {weekday: 'short', day: 'numeric', month: 'numeric'}), wrap: true});
         toRowDays.push(newDate.toLocaleDateString());
 
+        inputStartDateDay.setDate(inputStartDateDay.getDate() + 1);
         d++;
     }
+
+    //console.log(inputStartDateDay, inputEndDateDay);
 
     return (
         <MainBoard sidebar="commercial" header={<CompanySelectMaster/>}>

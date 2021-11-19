@@ -292,6 +292,9 @@ export interface Lead{
     recommender?: string;
     commission?: number;
 
+    segment?: string;
+    value?: number;
+
     sales?: Sales[];
 }
 
