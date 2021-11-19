@@ -291,6 +291,8 @@ export interface Lead{
 
     recommender?: string;
     commission?: number;
+
+    sales?: Sales[];
 }
 
 export interface LeadNote{
@@ -341,4 +343,19 @@ export interface Schedule{
     lead?: Lead;
     created_at: string;
     updated_at: string;
+}
+
+export interface Sales{
+    id: number;
+    value: number;
+    lead: Lead;
+    company: Company;
+    user: User;
+    segment: string;
+    contract: string;
+    group: string;
+    quota: string;
+    recommender_commission: number;
+    commission: number;
+    date: string;
 }

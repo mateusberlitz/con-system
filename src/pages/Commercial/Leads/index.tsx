@@ -31,6 +31,8 @@ import { DelegateLeadModal } from "./DelegateLeadModal";
 import { ConfirmRemoveUserOfLead } from "./ConfirmRemoveUserOfLead";
 import { ChangeLeadStatusModal, EditLeadStatusFormData } from "./ChangeLeadStatusModal";
 import { AddLeadNoteModal, toAddLeadNoteData } from "./AddLeadNoteModal";
+import { NewSaleModal, toAddSaleLeadData } from "../Sales/NewSaleModal";
+import { EditSaleFormData, EditSaleModal } from "../Sales/EditSaleModal";
 
 export default function Leads(){
     const toast = useToast();
@@ -246,6 +248,50 @@ export default function Leads(){
         setIsAddLeadNoteModalOpen(false);
     }
 
+
+    const [isNewSaleModalOpen, setIsNewSaleModalOpen] = useState(false);
+    const [addSaleToLeadData, setAddSaleToLeadData] = useState<toAddSaleLeadData>(() => {
+
+        const data: toAddSaleLeadData = {
+            name: '',
+            id: 0,
+        };
+        
+        return data;
+    });
+
+    function OpenNewSaleModal(leadData : toAddSaleLeadData){
+        setAddSaleToLeadData(leadData);
+        setIsNewSaleModalOpen(true);
+    }
+    function CloseNewSaleModal(){
+        setIsNewSaleModalOpen(false);
+    }
+
+    const [isEditSaleModalOpen, setIsEditSaleModalOpen] = useState(false);
+    const [editSaleFormData, setEditSaleFormData] = useState<EditSaleFormData>(() => {
+
+        const data: EditSaleFormData = {
+            id: 0,
+            value: '',
+            group: '',
+            quota: '',
+            contract: '',
+            segment: '',
+            date: '',
+        };
+        
+        return data;
+    });
+
+    function OpenEditSaleModal(leadData : EditSaleFormData){
+        setEditSaleFormData(leadData);
+        setIsEditSaleModalOpen(true);
+    }
+    function CloseNewEditModal(){
+        setIsEditSaleModalOpen(false);
+    }
+
     return (
         <MainBoard sidebar="commercial" header={<CompanySelectMaster />}>
             <NewLeadModal statuses={statuses} origins={origins} afterCreate={leads.refetch} isOpen={isNewLeadModalOpen} onRequestClose={CloseNewPaymentModal}/>
@@ -255,6 +301,9 @@ export default function Leads(){
             <DelegateLeadModal toDelegateLeadList={delegateList} toDelegate={delegate} users={users.data} afterDelegate={leads.refetch} isOpen={isDelegateLeadModalOpen} onRequestClose={CloseDelegateLeadModal}/>
             <ConfirmRemoveUserOfLead toRemoveLeadData={removeUserOfLeadData} afterRemove={leads.refetch} isOpen={isRemoveUserOfLeadModalOpen} onRequestClose={CloseRemoveUserOfLeadModal}/>
             <ConfirmLeadRemoveModal toRemoveLeadData={removeLeadData} afterRemove={leads.refetch} isOpen={isRemoveLeadModalOpen} onRequestClose={CloseRemoveLeadModal}/>
+            
+            <NewSaleModal toAddLeadData={addSaleToLeadData} afterCreate={leads.refetch} isOpen={isNewSaleModalOpen} onRequestClose={CloseNewSaleModal}/>
+            <EditSaleModal toEditSaleData={editSaleFormData} afterEdit={leads.refetch} isOpen={isEditSaleModalOpen} onRequestClose={CloseNewEditModal}/>
 
             <SolidButton color="white" bg="orange.400" icon={PlusIcon} colorScheme="orange" mb="10" onClick={OpenNewPaymentModal}>
                 Adicionar Lead
@@ -406,6 +455,34 @@ export default function Leads(){
 
                                                             <OutlineButton onClick={() => {OpenAddLeadNoteModal({id: lead.id, name: lead.name})}} icon={EditIcon} h="30px" px="3" variant="outline" size="sm" fontSize="11" color="orange.400" border="none" colorScheme="orange">
                                                                 Anotar
+                                                            </OutlineButton>
+
+                                                            <Text fontWeight="bold">Vendas</Text>
+
+                                                            {
+                                                                lead.sales && lead.sales.map((sale) => {
+                                                                    const leadSalesData:EditSaleFormData = {
+                                                                        id: sale.id,
+                                                                        value: sale.value.toString().replace('.', ','),
+                                                                        contract: sale.contract,
+                                                                        group: sale.group,
+                                                                        quota: sale.quota,
+                                                                        segment: sale.segment,
+                                                                        date: sale.date,
+                                                                    }
+
+                                                                    return(
+                                                                        <HStack key={sale.id}>
+                                                                            <Text color="gray.800" fontWeight="semibold">{formatBRDate(sale.date)}: {sale.group}-{sale.quota} | {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(sale.value)}</Text>
+                                                                            
+                                                                            <EditButton onClick={() => OpenEditSaleModal(leadSalesData)}/>
+                                                                        </HStack>
+                                                                    )
+                                                                })
+                                                            }
+
+                                                            <OutlineButton onClick={() => {OpenNewSaleModal({id: lead.id, name: lead.name})}} icon={PlusIcon} h="30px" px="3" variant="outline" size="sm" fontSize="11" color="green.400" border="none" colorScheme="green">
+                                                                Cadastrar venda
                                                             </OutlineButton>
                                                         </Stack>
 

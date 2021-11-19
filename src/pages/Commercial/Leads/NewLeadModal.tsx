@@ -58,6 +58,9 @@ interface CreateNewLeadFormData{
 
     recommender?: string;
     commission?: number;
+
+    segment?: string;
+    value?: number;
 }
 
 const CreateNewLeadFormSchema = yup.object().shape({
@@ -79,6 +82,12 @@ const CreateNewLeadFormSchema = yup.object().shape({
     address_uf: yup.string().nullable(),
     address_city: yup.string().nullable(),
     address_number: yup.string().nullable(),
+
+    recommender: yup.string().nullable(),
+    commission: yup.string().nullable(),
+
+    segment: yup.string().nullable(),
+    value: yup.string().nullable(),
 });
 
 export function NewLeadModal( { isOpen, onRequestClose, afterCreate, statuses, origins } : NewLeadModalProps){
@@ -203,7 +212,7 @@ export function NewLeadModal( { isOpen, onRequestClose, afterCreate, statuses, o
                                 ))
                             }
 
-{
+                            {
                                 ( !origins ? (
                                     <Flex justify="center">
                                         <Text>Nenhuma empresa disponível</Text>
@@ -218,6 +227,15 @@ export function NewLeadModal( { isOpen, onRequestClose, afterCreate, statuses, o
                                     </ControlledSelect>
                                 ))
                             }
+                        </HStack>
+
+                        <HStack spacing="4" align="baseline">
+                            <Select register={register}  h="45px" name="segment" w="100%" fontSize="sm" focusBorderColor="blue.800" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" error={formState.errors.segment}>
+                                <option value="Imóvel" selected>Imóvel</option>
+                                <option value="Veículo">Veículo</option>
+                            </Select>
+
+                            <Input register={register} name="value" type="text" placeholder="Valor pretendido" focusBorderColor="orange.400" variant="outline" mask="money" error={formState.errors.value}/>
                         </HStack>
 
                         

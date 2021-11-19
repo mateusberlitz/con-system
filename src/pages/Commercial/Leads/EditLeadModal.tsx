@@ -61,6 +61,9 @@ export interface EditLeadFormData{
 
     recommender?: string;
     commission?: number;
+
+    segment?: string;
+    value?: number;
 }
 
 const EditLeadFormSchema = yup.object().shape({
@@ -82,6 +85,12 @@ const EditLeadFormSchema = yup.object().shape({
     address_uf: yup.string().nullable(),
     address_city: yup.string().nullable(),
     address_number: yup.string().nullable(),
+
+    recommender: yup.string().nullable(),
+    commission: yup.string().nullable(),
+
+    segment: yup.string().nullable(),
+    value: yup.string().nullable(),
 });
 
 export function EditLeadModal( { isOpen, onRequestClose, afterEdit, toEditLeadData, statuses, origins } : NewLeadModalProps){
