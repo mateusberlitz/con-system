@@ -73,7 +73,7 @@ export function ConfirmRemoveUserOfLead( { isOpen, onRequestClose, toRemoveLeadD
                 return;
             }
             
-            const response = await api.post(`/leads/update/${toRemoveLeadData.id}`, {user: null});
+            const response = await api.post(`/leads/update/${toRemoveLeadData.id}`, {user: null, status: 7});
 
             toast({
                 title: "Sucesso",

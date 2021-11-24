@@ -31,6 +31,17 @@ export interface User{
     created_at?: Date;
     updated_at?: Date;
     companies: Company[];
+    goals: Goal[];
+}
+
+export interface Goal{
+    id: number;
+    user: number;
+    value: number;
+    company: Company;
+    month: number;
+    created_at: string;
+    updated_at:string;
 }
 
 export interface Permission{
