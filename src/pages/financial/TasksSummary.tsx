@@ -9,7 +9,7 @@ import { useWorkingCompany } from "../../hooks/useWorkingCompany";
 import { useState } from "react";
 import { TaskFilterData, useTasks } from "../../hooks/useTasks";
 import { formatYmdDate } from "../../utils/Date/formatYmdDate";
-import { NewTaskModal } from "../../pages/Tasks/NewTaskModal";
+import { NewTaskModal } from "../Tasks/NewTaskModal";
 import { Company, Task } from "../../types";
 import { formatDate } from "../../utils/Date/formatDate";
 import { getDay } from "../../utils/Date/getDay";

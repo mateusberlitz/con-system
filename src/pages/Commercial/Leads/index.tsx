@@ -393,6 +393,8 @@ export default function Leads(){
                                     segment: lead.segment,
                                 }
 
+                                console.log(lead.status);
+
                                 return (
                                     <AccordionItem key={lead.id} display="flex" flexDir="column" paddingX="8" paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
                                         {({ isExpanded }) => (
