@@ -49,8 +49,13 @@ export default function Leads(){
         setStatuses(data);
     }
 
+    const checkPendingLeads = async () => {
+        await api.post('/leads/check');
+    }
+
     useEffect(() => {
         loadStatuses();
+        checkPendingLeads();
     }, []);
 
 

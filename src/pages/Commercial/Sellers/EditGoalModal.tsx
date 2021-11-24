@@ -27,25 +27,25 @@ import { ReactComponent as MinusIcon } from '../../../assets/icons/Minus.svg';
 import { ReactComponent as StrongPlusIcon } from '../../../assets/icons/StrongPlus.svg';
 import { ControlledInput } from "../../../components/Forms/Inputs/ControlledInput";
 
-interface DelegateLeadModalProps{
+interface NewLeadModalProps{
     isOpen: boolean;
-    toDelegateLeadList: number[];
-    toDelegate: number;
+    toEditGoalData: EditGoalFormData;
     onRequestClose: () => void;
-    afterDelegate: () => void;
-    users: User[];
+    afterEdit: () => void;
 }
 
-export interface DelegateLeadFormData{
-    user: number;
-    status: number;
+export interface EditGoalFormData{
+    id: number;
+    name: string;
+    value: string;
+    month: number;
 }
 
-const DelegateLeadFormSchema = yup.object().shape({
-    user: yup.number()
+const EditGoalFormSchema = yup.object().shape({
+    value: yup.string().required('Qual o valor da venda?'),
 });
 
-export function DelegateLeadModal( { isOpen, onRequestClose, toDelegateLeadList, toDelegate, afterDelegate, users } : DelegateLeadModalProps){
+export function EditGoalModal( { isOpen, onRequestClose, afterEdit, toEditGoalData } : NewLeadModalProps){
     const workingCompany = useWorkingCompany();
     const {profile, permissions} = useProfile();
 
@@ -53,14 +53,16 @@ export function DelegateLeadModal( { isOpen, onRequestClose, toDelegateLeadList,
     const toast = useToast();
     const { showErrors } = useErrors();
 
-    const { register, handleSubmit, control, reset, formState} = useForm<DelegateLeadFormData>({
-        resolver: yupResolver(DelegateLeadFormSchema),
+    const { register, handleSubmit, control, reset, formState} = useForm<EditGoalFormData>({
+        resolver: yupResolver(EditGoalFormSchema),
         defaultValues: {
-
+            id: toEditGoalData.id,
+            value: toEditGoalData.value,
+            month: toEditGoalData.month,
         }
     });
 
-    const handleCreateNewPayment = async (leadData : DelegateLeadFormData) => {
+    const handleCreateNewPayment = async (saleData : EditGoalFormData) => {
         try{
             if(!workingCompany.company){
                 toast({
@@ -78,41 +80,24 @@ export function DelegateLeadModal( { isOpen, onRequestClose, toDelegateLeadList,
                 return;
             }
 
-            const isManager = HasPermission(permissions, 'Vendas Completo');
-
-            if(!isManager){
-                return;
-            }
-
-            let response;
-
-            leadData.status = 3;
-
-            if(toDelegate){
-                response = api.post(`/leads/update/${toDelegate}`, leadData).then(afterDelegate);
-            }else{
-                response = toDelegateLeadList.map((leadId: number) => {
-                    return api.post(`/leads/update/${leadId}`, leadData).then(afterDelegate);
-                })
-            }
+            const response = await api.post(`/goals/update/${toEditGoalData.id}`, saleData);
 
             toast({
                 title: "Sucesso",
-                description: `O leads foram delegados.`,
+                description: `Venda atualizada`,
                 status: "success",
                 duration: 12000,
                 isClosable: true,
             });
 
-            const countOfLeads = toDelegate ? 1 : toDelegateLeadList.length;
-
             await api.post('/logs/store', {
                 user: profile.id,
                 company: workingCompany.company.id,
-                action: `Delegou ${countOfLeads} leads`
+                action: `Alterou as informações de uma venda`
             });
 
             onRequestClose();
+            afterEdit();
             reset();
         }catch(error:any) {
             showErrors(error, toast);
@@ -136,36 +121,28 @@ export function DelegateLeadModal( { isOpen, onRequestClose, toDelegateLeadList,
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
             <ModalOverlay />
             <ModalContent as="form" borderRadius="24px" onSubmit={handleSubmit(handleCreateNewPayment)}>
-                <ModalHeader p="10" fontWeight="700" fontSize="2xl">Delegar leads</ModalHeader>
+                <ModalHeader p="10" fontWeight="700" fontSize="2xl">Alterar meta do vendedor(a) {toEditGoalData.name}</ModalHeader>
 
                 <ModalCloseButton top="10" right="5"/>
                 
                 <ModalBody pl="10" pr="10">
                     <Stack spacing="6">
+                        
+                        <ControlledInput control={control} value={toEditGoalData.value} name="value" type="text" placeholder="Nome" focusBorderColor="orange.400" variant="outline" error={formState.errors.value}/>
 
-                        <HStack spacing="4" align="baseline">
-                            {
-                                ( !users ? (
-                                    <Flex justify="center">
-                                        <Text>Nenhum vendedor disponível</Text>
-                                    </Flex>
-                                ) : (
-                                    <ControlledSelect control={control} value={1} h="45px" name="user" w="100%" fontSize="sm" focusBorderColor="orange.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" error={formState.errors.user}>
-                                        {users && users.map((user:User) => {
-                                            return (
-                                                <option key={user.id} value={user.id}>{user.name}</option>
-                                            )
-                                        })}
-                                    </ControlledSelect>
-                                ))
-                            }
-                        </HStack>
+                        {/* <HStack spacing="4" align="baseline">
+                            <ControlledSelect control={control} value={toEditGoalData.segment.toString()}  h="45px" name="segment" w="100%" fontSize="sm" focusBorderColor="orange.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" error={formState.errors.segment}>
+                                <option value="Imóvel">Imóvel</option>
+                                <option value="Veículo">Veículo</option>
+                            </ControlledSelect>
+                        </HStack> */}
+
                     </Stack>
                 </ModalBody>
 
                 <ModalFooter p="10">
                     <SolidButton mr="6" color="white" bg="orange.400" colorScheme="orange" type="submit" isLoading={formState.isSubmitting}>
-                        Delegar
+                        Atualizar
                     </SolidButton>
 
                     <Link onClick={onRequestClose} color="gray.700" fontSize="14px">Cancelar</Link>

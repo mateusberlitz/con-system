@@ -27,6 +27,8 @@ import { useCompanies } from "../../../hooks/useCompanies";
 import { useRoles } from "../../../hooks/useRoles";
 import { EditUserModal } from "../../configs/Users/EditUserModal";
 import { ConfirmUserRemoveModal } from "../../configs/Users/ConfirmUserRemoveModal";
+import { getMonth } from "../../../utils/Date/getMonth";
+import { NewGoalModal, toAddGoalData } from "./NewGoalModal";
 
 const SearchUserFormSchema = yup.object().shape({
     search: yup.string().nullable(),
@@ -113,6 +115,25 @@ export default function Sellers(){
     }
 
 
+    const [isNewGoalModalOpen, setIsNewGoalModalOpen] = useState(false);
+    const [toAddGoalUserData, setToAddGoalUserData] = useState<toAddGoalData>(() => {
+
+        const data: toAddGoalData = {
+            name: '',
+            id: 0,
+        };
+        
+        return data;
+    });
+
+    function OpenNewGoalModal(userData: toAddGoalData){
+        setIsNewGoalModalOpen(true);
+        setToAddGoalUserData(userData);
+    }
+    function CloseNewGoalModal(){
+        setIsNewGoalModalOpen(false);
+    }
+
 
     const { register, handleSubmit, formState} = useForm<UserFilterData>({
         resolver: yupResolver(SearchUserFormSchema),
@@ -124,10 +145,15 @@ export default function Sellers(){
         setFilter(search);
     }
 
+    const month = new Date().getMonth() + 1;
+
     return (
         <MainBoard sidebar="commercial" header={<CompanySelectMaster/>}>
             <EditUserModal afterEdit={refetch} toEditUserData={editUserData} isOpen={isEditModalOpen} onRequestClose={CloseEditModal}/>
             <ConfirmUserRemoveModal afterRemove={refetch} toRemoveUserData={removeUserData} isOpen={isConfirmUserRemoveModalOpen} onRequestClose={CloseConfirmUserRemoveModal}/>
+
+            <NewGoalModal toAddUserData={toAddGoalUserData} afterCreate={refetch} isOpen={isNewGoalModalOpen} onRequestClose={CloseNewGoalModal}/>
+
 
             <HStack as="form" spacing="24px" w="100%" onSubmit={handleSubmit(handleSearchUser)}>
 
@@ -169,17 +195,18 @@ export default function Sellers(){
                         <Table header={
                             [
                                 {
-                                    text: 'Vendedores',
+                                    text: '',
                                     icon: ProfileIcon
                                 },
                                 {
                                     text: 'Conversão',
-                                    icon: HomeIcon
                                 },
-                                // {
-                                //     text: 'Metas',
-                                //     icon: PasteIcon
-                                // },
+                                {
+                                    text: 'Metas',
+                                },
+                                {
+                                    text: 'Meta atual',
+                                },
                                 {
                                     text: 'Último acesso',
                                 },
@@ -191,6 +218,13 @@ export default function Sellers(){
                             {/* ITEMS */}
                             { (!isLoading &&!error) && data.map((user:User) => {
 
+                                console.log(user.goals);
+                                //const goal = 0;
+
+                                const goal = user.goals.find((goal) => {
+                                    return goal.month == month;
+                                });
+
                                 return(
                                     <Tr key={user.id}>
                                         <Td alignItems="center" display="flex">
@@ -200,7 +234,18 @@ export default function Sellers(){
                                             <Text display="flex" fontSize="sm" color="gray.700" fontWeight="600">{user.name} {user.last_name && user.last_name}</Text>
                                         </Td>
                                         <Td fontSize="sm" color="gray.800">12%</Td>
-                                        {/* <Td fontSize="sm" color="gray.800">12-35</Td> */}
+                                        <Td fontSize="sm" color="gray.800"><Text fontSize="">12-35</Text></Td>
+                                        <Td fontSize="sm" color="gray.800">
+                                            {goal ? (
+                                                    <Text cursor="pointer" fontWeight="bold" _hover={{textDecoration: "underline"}}>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(goal.value)}</Text>
+                                                ) 
+                                                : (
+                                                    <OutlineButton onClick={() => OpenNewGoalModal({id: user.id, name: user.name})} icon={PlusIcon} h="30px" px="3" variant="outline" size="sm" fontSize="11" color="green.400" colorScheme="green">
+                                                        Adicionar
+                                                    </OutlineButton>
+                                                )
+                                            }
+                                        </Td>
                                         <Td fontSize="sm" color="gray.800">12/07/2021</Td>
                                         <Td>
                                             <HStack spacing="4">
@@ -211,8 +256,6 @@ export default function Sellers(){
                                                     </HStack>
                                                 </Link>
                                                 {/* <EditButton onClick={() => OpenEditModal({id: user.id, name: user.name, phone: user.phone, email: user.email, role: user.role.id }) }/> */}
-                                            
-                                                
                                             </HStack>
                                         </Td>
                                         <Td><RemoveButton onClick={() => OpenConfirmUserRemoveModal({ id: user.id, name: user.name }) }/></Td>
