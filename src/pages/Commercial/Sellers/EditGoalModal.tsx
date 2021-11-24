@@ -38,7 +38,7 @@ export interface EditGoalFormData{
     id: number;
     name: string;
     value: string;
-    month: number;
+    month?: number;
 }
 
 const EditGoalFormSchema = yup.object().shape({
@@ -58,7 +58,6 @@ export function EditGoalModal( { isOpen, onRequestClose, afterEdit, toEditGoalDa
         defaultValues: {
             id: toEditGoalData.id,
             value: toEditGoalData.value,
-            month: toEditGoalData.month,
         }
     });
 
@@ -93,7 +92,7 @@ export function EditGoalModal( { isOpen, onRequestClose, afterEdit, toEditGoalDa
             await api.post('/logs/store', {
                 user: profile.id,
                 company: workingCompany.company.id,
-                action: `Alterou as informações de uma venda`
+                action: `Alterou a meta do vendedor(a) ${toEditGoalData.name}`
             });
 
             onRequestClose();

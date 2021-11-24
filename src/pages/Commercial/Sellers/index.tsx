@@ -29,6 +29,7 @@ import { EditUserModal } from "../../configs/Users/EditUserModal";
 import { ConfirmUserRemoveModal } from "../../configs/Users/ConfirmUserRemoveModal";
 import { getMonth } from "../../../utils/Date/getMonth";
 import { NewGoalModal, toAddGoalData } from "./NewGoalModal";
+import { EditGoalFormData, EditGoalModal } from "./EditGoalModal";
 
 const SearchUserFormSchema = yup.object().shape({
     search: yup.string().nullable(),
@@ -134,6 +135,26 @@ export default function Sellers(){
         setIsNewGoalModalOpen(false);
     }
 
+    const [isEditGoalModalOpen, setIsEditGoalModalOpen] = useState(false);
+    const [toEditGoalUserData, setToEditGoalUserData] = useState<EditGoalFormData>(() => {
+
+        const data: EditGoalFormData = {
+            name: '',
+            id: 0,
+            value: '',
+            month: 0,
+        };
+        
+        return data;
+    });
+
+    function OpenEditGoalModal(userData: EditGoalFormData){
+        setIsEditGoalModalOpen(true);
+        setToEditGoalUserData(userData);
+    }
+    function CloseEditGoalModal(){
+        setIsEditGoalModalOpen(false);
+    }
 
     const { register, handleSubmit, formState} = useForm<UserFilterData>({
         resolver: yupResolver(SearchUserFormSchema),
@@ -153,7 +174,7 @@ export default function Sellers(){
             <ConfirmUserRemoveModal afterRemove={refetch} toRemoveUserData={removeUserData} isOpen={isConfirmUserRemoveModalOpen} onRequestClose={CloseConfirmUserRemoveModal}/>
 
             <NewGoalModal toAddUserData={toAddGoalUserData} afterCreate={refetch} isOpen={isNewGoalModalOpen} onRequestClose={CloseNewGoalModal}/>
-
+            <EditGoalModal toEditGoalData={toEditGoalUserData} afterEdit={refetch} isOpen={isEditGoalModalOpen} onRequestClose={CloseEditGoalModal}/>
 
             <HStack as="form" spacing="24px" w="100%" onSubmit={handleSubmit(handleSearchUser)}>
 
@@ -237,7 +258,9 @@ export default function Sellers(){
                                         <Td fontSize="sm" color="gray.800"><Text fontSize="">12-35</Text></Td>
                                         <Td fontSize="sm" color="gray.800">
                                             {goal ? (
-                                                    <Text cursor="pointer" fontWeight="bold" _hover={{textDecoration: "underline"}}>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(goal.value)}</Text>
+                                                    <Text onClick={() => OpenEditGoalModal({id: goal.id, month: goal.month, name: user.name, value: goal.value.toString().replace('.', ',')})} cursor="pointer" fontWeight="bold" _hover={{textDecoration: "underline"}}>
+                                                        {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(goal.value)}
+                                                    </Text>
                                                 ) 
                                                 : (
                                                     <OutlineButton onClick={() => OpenNewGoalModal({id: user.id, name: user.name})} icon={PlusIcon} h="30px" px="3" variant="outline" size="sm" fontSize="11" color="green.400" colorScheme="green">
