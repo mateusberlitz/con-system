@@ -34,6 +34,7 @@ import { AddLeadNoteModal, toAddLeadNoteData } from "./AddLeadNoteModal";
 import { NewSaleModal, toAddSaleLeadData } from "../Sales/NewSaleModal";
 import { EditSaleFormData, EditSaleModal } from "../Sales/EditSaleModal";
 import { ConfirmSaleRemoveModal, RemoveSaleData } from "../Sales/ConfirmSaleRemoveModal";
+import { SearchLeads } from "./SearchLeads";
 
 export default function Leads(){
     const toast = useToast();
@@ -333,9 +334,12 @@ export default function Leads(){
             <ConfirmSaleRemoveModal toRemoveSaleData={removeSaleFormData} afterRemove={leads.refetch} isOpen={isConfirmSaleRemoveModalOpen} onRequestClose={CloseRemoveEditModal}/>
 
 
+
             <SolidButton color="white" bg="orange.400" icon={PlusIcon} colorScheme="orange" mb="10" onClick={OpenNewPaymentModal}>
                 Adicionar Lead
             </SolidButton>
+
+            <SearchLeads filter={filter} handleSearchLeads={handleChangeFilter}/>
 
             {   leads.isLoading ? (
                     <Flex justify="center">

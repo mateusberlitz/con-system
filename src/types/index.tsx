@@ -32,6 +32,8 @@ export interface User{
     updated_at?: Date;
     companies: Company[];
     goals: Goal[];
+    goal_amount?: number;
+    conversion_percent?: number;
 }
 
 export interface Goal{
@@ -40,6 +42,7 @@ export interface Goal{
     value: number;
     company: Company;
     month: number;
+    year: number;
     created_at: string;
     updated_at:string;
 }

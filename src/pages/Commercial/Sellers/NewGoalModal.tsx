@@ -1,4 +1,4 @@
-import { Box, Flex, HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, Text, useToast, Input as ChakraInput, Divider, Accordion, AccordionItem, AccordionButton, AccordionPanel } from "@chakra-ui/react";
+import { HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, useToast } from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 
 
@@ -11,20 +11,12 @@ import { useErrors } from "../../../hooks/useErrors";
 
 import { Input } from "../../../components/Forms/Inputs/Input";
 import { Select } from "../../../components/Forms/Selects/Select";
-import { PaymentCategory, User, Provider, Company, LeadStatus, DataOrigin } from "../../../types";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
-import { formatInputDate } from "../../../utils/Date/formatInputDate";
-import moneyToBackend from "../../../utils/moneyToBackend";
-import { profile } from "console";
-import { HasPermission, useProfile } from "../../../hooks/useProfile";
-import { ControlledSelect } from "../../../components/Forms/Selects/ControlledSelect";
-import { useEffect, useState } from "react";
+import { useProfile } from "../../../hooks/useProfile";
+import { useEffect } from "react";
 import { isAuthenticated } from "../../../services/auth";
 import { redirectMessages } from "../../../utils/redirectMessages";
 
-import { ReactComponent as PlusIcon } from '../../../assets/icons/Plus.svg';
-import { ReactComponent as MinusIcon } from '../../../assets/icons/Minus.svg';
-import { ReactComponent as StrongPlusIcon } from '../../../assets/icons/StrongPlus.svg';
 
 interface NewGoalModalProps{
     isOpen: boolean;
@@ -125,8 +117,7 @@ export function NewGoalModal( { isOpen, onRequestClose, afterCreate, toAddUserDa
     }, [isOpen])
 
     const month = new Date().getMonth() + 1;
-
-    console.log(month);
+    const year = new Date().getFullYear();
 
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
@@ -143,18 +134,18 @@ export function NewGoalModal( { isOpen, onRequestClose, afterCreate, toAddUserDa
 
                         <HStack spacing="4" align="baseline">
                             <Select register={register} h="45px" name="month" w="100%" fontSize="sm" focusBorderColor="orange.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" error={formState.errors.month}>
-                                <option value={1} selected={month === 1 ? true : false}>Janeiro</option>
-                                <option value={2} selected={month === 2 ? true : false}>Fevereiro</option>
-                                <option value={3} selected={month === 3 ? true : false}>Março</option>
-                                <option value={4} selected={month === 4 ? true : false}>Abril</option>
-                                <option value={5} selected={month === 5 ? true : false}>Maio</option>
-                                <option value={6} selected={month === 6 ? true : false}>Junho</option>
-                                <option value={7} selected={month === 7 ? true : false}>Julho</option>
-                                <option value={8} selected={month === 8 ? true : false}>Agosto</option>
-                                <option value={9} selected={month === 9 ? true : false}>Setembro</option>
-                                <option value={10} selected={month === 10 ? true : false}>Outubro</option>
-                                <option value={11} selected={month === 11 ? true : false}>Novembro</option>
-                                <option value={12} selected={month === 12 ? true : false}>Dezembro</option>
+                                <option value={1} selected={month === 1 ? true : false}>Janeiro/{month <= 1 ? year : year + 1}</option>
+                                <option value={2} selected={month === 2 ? true : false}>Fevereiro/{month <= 2 ? year : year + 1}</option>
+                                <option value={3} selected={month === 3 ? true : false}>Março/{month <= 3 ? year : year + 1}</option>
+                                <option value={4} selected={month === 4 ? true : false}>Abril/{month <= 4 ? year : year + 1}</option>
+                                <option value={5} selected={month === 5 ? true : false}>Maio/{month <= 5 ? year : year + 1}</option>
+                                <option value={6} selected={month === 6 ? true : false}>Junho/{month <= 6 ? year : year + 1}</option>
+                                <option value={7} selected={month === 7 ? true : false}>Julho/{month <= 7 ? year : year + 1}</option>
+                                <option value={8} selected={month === 8 ? true : false}>Agosto/{month <= 8 ? year : year + 1}</option>
+                                <option value={9} selected={month === 9 ? true : false}>Setembro/{month <= 9 ? year : year + 1}</option>
+                                <option value={10} selected={month === 10 ? true : false}>Outubro/{month <= 10 ? year : year + 1}</option>
+                                <option value={11} selected={month === 11 ? true : false}>Novembro/{month <= 11 ? year : year + 1}</option>
+                                <option value={12} selected={month === 12 ? true : false}>Dezembro/{month <= 12 ? year : year + 1}</option>
                             </Select>
                         </HStack>
 

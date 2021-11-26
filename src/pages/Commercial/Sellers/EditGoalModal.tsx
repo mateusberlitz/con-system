@@ -1,4 +1,4 @@
-import { Box, Flex, HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, Text, useToast, Input as ChakraInput, Divider, Accordion, AccordionItem, AccordionButton, AccordionPanel } from "@chakra-ui/react";
+import { Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, useToast } from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 
 
@@ -9,22 +9,12 @@ import { api } from "../../../services/api";
 import { useHistory } from "react-router";
 import { useErrors } from "../../../hooks/useErrors";
 
-import { Input } from "../../../components/Forms/Inputs/Input";
-import { Select } from "../../../components/Forms/Selects/Select";
-import { PaymentCategory, User, Provider, Company, LeadStatus, DataOrigin } from "../../../types";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
-import { formatInputDate } from "../../../utils/Date/formatInputDate";
-import moneyToBackend from "../../../utils/moneyToBackend";
-import { profile } from "console";
-import { HasPermission, useProfile } from "../../../hooks/useProfile";
-import { ControlledSelect } from "../../../components/Forms/Selects/ControlledSelect";
-import { useEffect, useState } from "react";
+import { useProfile } from "../../../hooks/useProfile";
+import { useEffect } from "react";
 import { isAuthenticated } from "../../../services/auth";
 import { redirectMessages } from "../../../utils/redirectMessages";
 
-import { ReactComponent as PlusIcon } from '../../../assets/icons/Plus.svg';
-import { ReactComponent as MinusIcon } from '../../../assets/icons/Minus.svg';
-import { ReactComponent as StrongPlusIcon } from '../../../assets/icons/StrongPlus.svg';
 import { ControlledInput } from "../../../components/Forms/Inputs/ControlledInput";
 
 interface NewLeadModalProps{

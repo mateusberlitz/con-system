@@ -5,6 +5,7 @@ export interface UserFilterData{
     search?: string;
     company?: number;
     role?: number;
+    goals?: boolean;
 }
 
 export const getUsers = async (filter?: UserFilterData) => {
@@ -13,7 +14,8 @@ export const getUsers = async (filter?: UserFilterData) => {
             params: {
               search: filter.search,
               role: filter.role,
-              company: filter.company
+              company: filter.company,
+              goals: filter.goals
             }
         });
 

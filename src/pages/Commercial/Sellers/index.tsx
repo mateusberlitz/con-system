@@ -1,10 +1,8 @@
 import { CompanySelectMaster } from "../../../components/CompanySelect/companySelectMaster";
-import { Avatar, Flex, HStack, Icon, Link, Spinner, Td, Text, Tr } from "@chakra-ui/react";
+import { Avatar, Flex, HStack, Icon, IconButton, Link, Spinner, Stack, Td, Text, Tr } from "@chakra-ui/react";
 import { OutlineButton } from "../../../components/Buttons/OutlineButton";
 import { Board } from "../../../components/Board";
 import { RemoveButton } from "../../../components/Buttons/RemoveButton";
-import { EditButton } from "../../../components/Buttons/EditButton";
-import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { MainBoard } from "../../../components/MainBoard";
 import { Table } from "../../../components/Table";
 import { Input } from "../../../components/Forms/Inputs/Input";
@@ -12,24 +10,26 @@ import { Select } from "../../../components/Forms/Selects/Select";
 
 import { ReactComponent as PlusIcon } from '../../../assets/icons/Plus.svg';
 import { ReactComponent as SearchIcon } from "../../../assets/icons/Search.svg";
-import { ReactComponent as HomeIcon } from '../../../assets/icons/Home.svg';
 import { ReactComponent as PasteIcon } from '../../../assets/icons/Paste.svg';
 import { ReactComponent as ProfileIcon } from '../../../assets/icons/Profile.svg';
+import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
+
 
 import { useForm } from "react-hook-form";
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { UserFilterData, useUsers } from "../../../hooks/useUsers";
 
-import { Company, Role, User } from "../../../types";
+import { Company, Goal, User } from "../../../types";
 import { useState } from "react";
 import { useCompanies } from "../../../hooks/useCompanies";
 import { useRoles } from "../../../hooks/useRoles";
 import { EditUserModal } from "../../configs/Users/EditUserModal";
 import { ConfirmUserRemoveModal } from "../../configs/Users/ConfirmUserRemoveModal";
-import { getMonth } from "../../../utils/Date/getMonth";
 import { NewGoalModal, toAddGoalData } from "./NewGoalModal";
 import { EditGoalFormData, EditGoalModal } from "./EditGoalModal";
+import { ConfirmGoalRemoveModal, RemoveGoalData } from "./ConfirmGoalRemoveModal";
+import { ListGoalsModal } from "./ListGoalsModal";
 
 const SearchUserFormSchema = yup.object().shape({
     search: yup.string().nullable(),
@@ -58,7 +58,8 @@ export default function Sellers(){
         const data: UserFilterData = {
             search: '',
             company: undefined,
-            role: 3
+            role: 3,
+            goals: true,
         };
         
         return data;
@@ -156,13 +157,59 @@ export default function Sellers(){
         setIsEditGoalModalOpen(false);
     }
 
+    const [isConfirmGoalRemoveModalOpen, setIsConfirmGoalRemoveModalOpen] = useState(false);
+    const [toRemoveGoalData, setToRemoveGoalData] = useState<RemoveGoalData>(() => {
+
+        const data: RemoveGoalData = {
+            name: '',
+            id: 0,
+            month: 1,
+        };
+        
+        return data;
+    });
+
+    function OpenConfirmRemoveGoalModal(userData: RemoveGoalData){
+        setIsConfirmGoalRemoveModalOpen(true);
+        setToRemoveGoalData(userData);
+    }
+    function CloseConfirmRemoveGoalModal(){
+        setIsConfirmGoalRemoveModalOpen(false);
+    }
+
+    const [isListGoalsModalOpen, setIsListGoalsModalOpen] = useState(false);
+    const [listGoals, setListGoals] = useState<Goal[]>([]);
+
+    function OpenListGoalsModal(listGoals: Goal[], userData: toAddGoalData){
+        setListGoals(listGoals);
+        setToAddGoalUserData(userData);
+
+        setIsListGoalsModalOpen(true);
+    }
+    function CloseListGoalsModal(){
+        setIsListGoalsModalOpen(false);
+    }
+
+    function refetchGoals(){
+        refetch().then((response) => {
+            const userGoals = response.data.filter((user:User) => {
+                return user.id === toAddGoalUserData.id
+            });
+
+            console.log(userGoals[0]);
+    
+            setListGoals(userGoals[0].goals);
+        });
+    }
+
     const { register, handleSubmit, formState} = useForm<UserFilterData>({
         resolver: yupResolver(SearchUserFormSchema),
     });
 
     const handleSearchUser = async (search : UserFilterData) => {
-        console.log(search);
         search.role = 3;
+        search.goals = true;
+
         setFilter(search);
     }
 
@@ -173,8 +220,11 @@ export default function Sellers(){
             <EditUserModal afterEdit={refetch} toEditUserData={editUserData} isOpen={isEditModalOpen} onRequestClose={CloseEditModal}/>
             <ConfirmUserRemoveModal afterRemove={refetch} toRemoveUserData={removeUserData} isOpen={isConfirmUserRemoveModalOpen} onRequestClose={CloseConfirmUserRemoveModal}/>
 
-            <NewGoalModal toAddUserData={toAddGoalUserData} afterCreate={refetch} isOpen={isNewGoalModalOpen} onRequestClose={CloseNewGoalModal}/>
+            <NewGoalModal toAddUserData={toAddGoalUserData} afterCreate={refetchGoals} isOpen={isNewGoalModalOpen} onRequestClose={CloseNewGoalModal}/>
             <EditGoalModal toEditGoalData={toEditGoalUserData} afterEdit={refetch} isOpen={isEditGoalModalOpen} onRequestClose={CloseEditGoalModal}/>
+            <ConfirmGoalRemoveModal toRemoveGoalData={toRemoveGoalData} afterRemove={refetchGoals} isOpen={isConfirmGoalRemoveModalOpen} onRequestClose={CloseConfirmRemoveGoalModal}/>
+
+            <ListGoalsModal toAddUserData={toAddGoalUserData} goals={listGoals} afterEdit={refetch} isOpen={isListGoalsModalOpen} onRequestClose={CloseListGoalsModal} openNewGoalModal={OpenNewGoalModal} openConfirmRemoveGoalModal={OpenConfirmRemoveGoalModal}/>
 
             <HStack as="form" spacing="24px" w="100%" onSubmit={handleSubmit(handleSearchUser)}>
 
@@ -202,11 +252,11 @@ export default function Sellers(){
                         </Flex>
                     ) : ( error ? (
                         <Flex justify="center" mt="4" mb="4">
-                            <Text>Erro listar os leads</Text>
+                            <Text>Erro listar os vendedores</Text>
                         </Flex>
                     ) : (data.length === 0) && (
                         <Flex justify="center">
-                            <Text>Nenhuma lead encontrado.</Text>
+                            <Text>Nenhum vendedor(a) encontrado.</Text>
                         </Flex>
                     ) ) 
                 }
@@ -238,10 +288,6 @@ export default function Sellers(){
                         }>
                             {/* ITEMS */}
                             { (!isLoading &&!error) && data.map((user:User) => {
-
-                                console.log(user.goals);
-                                //const goal = 0;
-
                                 const goal = user.goals.find((goal) => {
                                     return goal.month == month;
                                 });
@@ -249,23 +295,35 @@ export default function Sellers(){
                                 return(
                                     <Tr key={user.id}>
                                         <Td alignItems="center" display="flex">
-                                            <Flex mr="4" borderRadius="full" h="fit-content" w="fit-content" bgGradient="linear(to-r, purple.600, blue.300)" p="2px">
-                                                <Avatar borderColor="gray.600" border="2px" size="md" name={`${user.name} ${user.last_name}`} src={user.image ? `${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_STORAGE : process.env.REACT_APP_API_LOCAL_STORAGE}${user.image}` : ""}/>
-                                            </Flex>
                                             <Text display="flex" fontSize="sm" color="gray.700" fontWeight="600">{user.name} {user.last_name && user.last_name}</Text>
                                         </Td>
-                                        <Td fontSize="sm" color="gray.800">12%</Td>
-                                        <Td fontSize="sm" color="gray.800"><Text fontSize="">12-35</Text></Td>
+                                        <Td fontSize="sm" color="gray.800">{user.conversion_percent}%</Td>
+                                        <Td fontSize="sm" color="gray.800"><Text fontSize="">{user.goal_amount ? user.goal_amount : 0}-{user.goals.length}</Text></Td>
                                         <Td fontSize="sm" color="gray.800">
                                             {goal ? (
-                                                    <Text onClick={() => OpenEditGoalModal({id: goal.id, month: goal.month, name: user.name, value: goal.value.toString().replace('.', ',')})} cursor="pointer" fontWeight="bold" _hover={{textDecoration: "underline"}}>
-                                                        {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(goal.value)}
-                                                    </Text>
+                                                    <Stack>
+                                                        <HStack>
+                                                            <Text onClick={() => OpenEditGoalModal({id: goal.id, month: goal.month, name: user.name, value: goal.value.toString().replace('.', ',')})} cursor="pointer" fontWeight="bold" _hover={{textDecoration: "underline"}}>
+                                                                {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(goal.value)}
+                                                            </Text>
+                                                            <IconButton onClick={() => OpenConfirmRemoveGoalModal({id: goal.id, name: user.name, month: goal.month})} h="24px" w="23px" p="0" float="right" aria-label="Excluir venda" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
+                                                            <IconButton onClick={() => OpenListGoalsModal(user.goals, {id: user.id, name: user.name})} h="24px" w="23px" p="0" float="right" aria-label="Excluir venda" border="none" icon={ <PasteIcon width="17px" stroke="#4e4b66" fill="none"/>} variant="outline"/>
+                                                        </HStack>
+
+                                                        {/* <HStack>
+                                                            <Text>Lista</Text>
+                                                            <IconButton onClick={() => OpenListGoalsModal(user.goals, {id: user.id, name: user.name})} h="24px" w="23px" p="0" float="right" aria-label="Excluir venda" border="none" icon={ <PasteIcon width="17px" stroke="#4e4b66" fill="none"/>} variant="outline"/>
+                                                        </HStack> */}
+                                                    </Stack>
                                                 ) 
                                                 : (
-                                                    <OutlineButton onClick={() => OpenNewGoalModal({id: user.id, name: user.name})} icon={PlusIcon} h="30px" px="3" variant="outline" size="sm" fontSize="11" color="green.400" colorScheme="green">
-                                                        Adicionar
-                                                    </OutlineButton>
+                                                    <HStack>
+                                                        <OutlineButton onClick={() => OpenNewGoalModal({id: user.id, name: user.name})} icon={PlusIcon} h="30px" px="3" variant="outline" size="sm" fontSize="11" color="green.400" colorScheme="green">
+                                                            Adicionar
+                                                        </OutlineButton>
+                                                        
+                                                        <IconButton onClick={() => OpenListGoalsModal(user.goals, {id: user.id, name: user.name})} h="24px" w="23px" p="0" float="right" aria-label="Excluir venda" border="none" icon={ <PasteIcon width="17px" stroke="#4e4b66" fill="none"/>} variant="outline"/>
+                                                    </HStack>
                                                 )
                                             }
                                         </Td>
