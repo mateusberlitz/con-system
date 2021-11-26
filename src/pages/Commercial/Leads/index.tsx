@@ -95,6 +95,7 @@ export default function Leads(){
     })
 
     function handleChangeFilter(newFilter: LeadsFilterData){
+        newFilter.user = (isManager ? undefined : profile?.id);
         setFilter(newFilter);
     }
 
@@ -155,7 +156,7 @@ export default function Leads(){
         setIsRemoveLeadModalOpen(false);
     }
 
-    const users = useUsers({role: 1});
+    const users = useUsers({role: 5});
 
     const [delegateList, setDelegateList] = useState<number[]>([]);
     const [delegate, setDelegate] = useState(0);
@@ -319,6 +320,14 @@ export default function Leads(){
         setIsConfirmSaleRemoveModalOpen(false);
     }
 
+    const pendingLeadsCount = leads.data?.data.reduce((sumAmount:number, lead: Lead) => {
+        if(lead.status && lead.status.name === "Pendente"){
+            return sumAmount + 1;
+        }
+    }, 0)
+
+    console.log(pendingLeadsCount);
+
     return (
         <MainBoard sidebar="commercial" header={<CompanySelectMaster />}>
             <NewLeadModal statuses={statuses} origins={origins} afterCreate={leads.refetch} isOpen={isNewLeadModalOpen} onRequestClose={CloseNewPaymentModal}/>
@@ -339,7 +348,7 @@ export default function Leads(){
                 Adicionar Lead
             </SolidButton>
 
-            <SearchLeads filter={filter} handleSearchLeads={handleChangeFilter}/>
+            <SearchLeads filter={filter} handleSearchLeads={handleChangeFilter} origins={origins} statuses={statuses}/>
 
             {   leads.isLoading ? (
                     <Flex justify="center">
@@ -361,7 +370,10 @@ export default function Leads(){
                     <Accordion w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" spacing="0" allowMultiple>
                 
                         <HStack spacing="8" justify="space-between" paddingX="8" paddingY="3" bg="gray.200">
-                            <Text>25 pendentes</Text>
+                            <HStack fontSize="sm" spacing="4">
+                                <Text>{leads.data?.data.length} leads</Text>
+                                <Text fontWeight="bold">{pendingLeadsCount ? pendingLeadsCount : 0} pendentes</Text>
+                            </HStack>
 
                             {
                                 isManager && (
@@ -401,8 +413,6 @@ export default function Leads(){
                                     value: lead.value ? lead.value.toString().replace('.', ',') : '',
                                     segment: lead.segment,
                                 }
-
-                                console.log(lead.status);
 
                                 return (
                                     <AccordionItem key={lead.id} display="flex" flexDir="column" paddingX="8" paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">

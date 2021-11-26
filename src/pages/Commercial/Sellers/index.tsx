@@ -58,7 +58,7 @@ export default function Sellers(){
         const data: UserFilterData = {
             search: '',
             company: undefined,
-            role: 3,
+            role: 5,
             goals: true,
         };
         
@@ -72,7 +72,7 @@ export default function Sellers(){
             id: 0,
             email: '',
             phone: '',
-            role: 3,
+            role: 5,
         };
         
         return data;
@@ -207,7 +207,7 @@ export default function Sellers(){
     });
 
     const handleSearchUser = async (search : UserFilterData) => {
-        search.role = 3;
+        search.role = 5;
         search.goals = true;
 
         setFilter(search);
@@ -309,11 +309,6 @@ export default function Sellers(){
                                                             <IconButton onClick={() => OpenConfirmRemoveGoalModal({id: goal.id, name: user.name, month: goal.month})} h="24px" w="23px" p="0" float="right" aria-label="Excluir venda" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
                                                             <IconButton onClick={() => OpenListGoalsModal(user.goals, {id: user.id, name: user.name})} h="24px" w="23px" p="0" float="right" aria-label="Excluir venda" border="none" icon={ <PasteIcon width="17px" stroke="#4e4b66" fill="none"/>} variant="outline"/>
                                                         </HStack>
-
-                                                        {/* <HStack>
-                                                            <Text>Lista</Text>
-                                                            <IconButton onClick={() => OpenListGoalsModal(user.goals, {id: user.id, name: user.name})} h="24px" w="23px" p="0" float="right" aria-label="Excluir venda" border="none" icon={ <PasteIcon width="17px" stroke="#4e4b66" fill="none"/>} variant="outline"/>
-                                                        </HStack> */}
                                                     </Stack>
                                                 ) 
                                                 : (

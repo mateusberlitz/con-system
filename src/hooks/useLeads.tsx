@@ -9,6 +9,7 @@ export interface LeadsFilterData{
     user?: number;
     value?: string;
     status?: number;
+    origin?: number;
     group_by?: string;
 }
 
@@ -19,6 +20,7 @@ export const getLeads = async (filter?: LeadsFilterData, page: number = 0) => {
               page: page,
               search: filter.search,
               status: filter.status,
+              origin: filter.origin,
               company: filter.company,
               start_date: filter.start_date,
               end_date: filter.end_date,

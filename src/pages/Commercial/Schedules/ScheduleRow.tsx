@@ -46,7 +46,7 @@ export function ScheduleRow({hourSchedules, hour, days, handleEditSchedule, hand
                                         return profile && profile.id === schedule.user.id ? (
                                             <Popover>
                                                 <PopoverTrigger>
-                                                    <Stack cursor={profile && profile.id === schedule.user.id ? 'pointer' : 'alias'} key={`${schedule.city}-${schedule.user.name}-${day}-${hour}`} spacing="0" bg={`${scheduleColor}.100`} color={`${scheduleColor}.500`} p="1" textTransform="capitalize" borderRadius="4px" fontSize="11px" mb="3px">
+                                                    <Stack border="1px solid" cursor={profile && profile.id === schedule.user.id ? 'pointer' : 'alias'} key={`${schedule.city}-${schedule.user.name}-${day}-${hour}`} spacing="0" bg={`${scheduleColor}.100`} color={`${scheduleColor}.500`} p="1" textTransform="capitalize" borderRadius="4px" fontSize="11px" mb="3px">
                                                         <Text fontWeight="normal">{schedule.user.name} {schedule.user.last_name ? schedule.user.last_name.slice(0, 1) : ''}</Text>
                                                         <Text fontWeight="bold">{schedule.city}</Text>
                                                     </Stack>
@@ -65,7 +65,7 @@ export function ScheduleRow({hourSchedules, hour, days, handleEditSchedule, hand
                                                 </Portal>
                                             </Popover>
                                         ):(
-                                            <Stack onClick={() => handleEditSchedule({id: schedule.id, city: schedule.city, datetime: schedule.datetime, lead: schedule.lead ? schedule.lead.id : 0})} cursor={profile && profile.id === schedule.user.id ? 'pointer' : 'default'} key={`${schedule.city}-${schedule.user.name}-${day}-${hour}`} spacing="0" bg={`${scheduleColor}.100`} color={`${scheduleColor}.500`} p="1" textTransform="capitalize" borderRadius="4px" fontSize="11px" mb="3px">
+                                            <Stack cursor={profile && profile.id === schedule.user.id ? 'pointer' : 'default'} key={`${schedule.city}-${schedule.user.name}-${day}-${hour}`} spacing="0" bg={`${scheduleColor}.100`} color={`${scheduleColor}.500`} p="1" textTransform="capitalize" borderRadius="4px" fontSize="11px" mb="3px">
                                                 <Text fontWeight="normal">{schedule.user.name} {schedule.user.last_name ? schedule.user.last_name.slice(0, 1) : ''}</Text>
                                                 <Text fontWeight="bold">{schedule.city}</Text>
                                             </Stack>

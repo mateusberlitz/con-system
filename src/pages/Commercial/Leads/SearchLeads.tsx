@@ -7,12 +7,16 @@ import { Flex, Stack, HStack } from "@chakra-ui/react";
 import { Input } from "../../../components/Forms/Inputs/Input";
 import { Select } from "../../../components/Forms/Selects/Select";
 import { OutlineButton } from "../../../components/Buttons/OutlineButton";
-import { QuotaSaleFilterData } from "../../../hooks/useQuotaSales";
 import { LeadsFilterData } from "../../../hooks/useLeads";
+import { DataOrigin, LeadStatus, User } from "../../../types";
+import { useState, useEffect } from "react";
+import { api } from "../../../services/api";
 
 interface SearchLeadsProps{
     filter: LeadsFilterData;
     handleSearchLeads: (filter: LeadsFilterData) => void;
+    origins: DataOrigin[];
+    statuses: LeadStatus[];
 }
 
 const FilterLeadsFormSchema = yup.object().shape({
@@ -29,11 +33,27 @@ const FilterLeadsFormSchema = yup.object().shape({
     cancelled: yup.string(),
 });
 
-export function SearchLeads({filter, handleSearchLeads}: SearchLeadsProps){
+export function SearchLeads({filter, handleSearchLeads, statuses, origins}: SearchLeadsProps){
 
-    const { register, handleSubmit, control, reset, formState} = useForm<QuotaSaleFilterData>({
+    const { register, handleSubmit, control, reset, formState} = useForm<LeadsFilterData>({
         resolver: yupResolver(FilterLeadsFormSchema),
     });
+
+    const [users, setUsers] = useState<User[]>([]);
+
+    const loadUsers = async () => {
+        const { data } = await api.get('/users', {
+            params: {
+                role: 5
+            }
+        });
+
+        setUsers(data);
+    }
+
+    useEffect(() => {
+        loadUsers();
+    }, [])
 
     return (
         <Flex as="form" mb="20" onSubmit={handleSubmit(handleSearchLeads)}>
@@ -45,24 +65,37 @@ export function SearchLeads({filter, handleSearchLeads}: SearchLeadsProps){
                     <Input register={register} name="start_date" type="date" placeholder="Data Inicial" variant="filled" error={formState.errors.start_date} focusBorderColor="orange.400"/>
                     <Input register={register} name="end_date" type="date" placeholder="Data Final" variant="filled" error={formState.errors.end_date} focusBorderColor="orange.400"/>
 
-                    <Select register={register} defaultValue={0} h="45px" name="segment" error={formState.errors.segment} w="100%" maxW="200px" fontSize="sm" focusBorderColor="orange.400" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
-                        <option value="">Todos</option>
-                        <option value="Imóvel">Imóvel</option>
-                        <option value="Veículo">Veículo</option>
-                    </Select>
-
                 </HStack>
 
                 <HStack spacing="6">
-                    <Input register={register} name="group" type="text" placeholder="Grupo" variant="filled" error={formState.errors.group} focusBorderColor="orange.400"/>
-                        
-                    <Input register={register} name="quote" type="text" placeholder="Cota" variant="filled" error={formState.errors.quote} focusBorderColor="orange.400"/>
-                    <Input register={register} name="contemplated_type" type="text" placeholder="Contrato" variant="filled" error={formState.errors.contemplated_type} focusBorderColor="orange.400"/>
+                    <Select register={register} defaultValue="true" h="45px" name="status" error={formState.errors.status} w="100%" maxW="200px" fontSize="sm" placeholder="Status" focusBorderColor="orange.400" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
+                        {
+                            statuses.map((status: LeadStatus) => {
+                                return (
+                                    <option value={status.id}>{status.name}</option>
+                                )
+                            })
+                        }
+                    </Select>
 
-                    <Select register={register} defaultValue="true" h="45px" name="cancelled" error={formState.errors.cancelled} w="100%" maxW="200px" fontSize="sm" focusBorderColor="orange.400" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
-                        <option value="">Todos</option>
-                        <option value="true">Concluídas</option>
-                        <option value="false">Canceladas</option>
+                    <Select register={register} defaultValue="true" h="45px" name="origin" error={formState.errors.origin} w="100%"  placeholder="Origem do lead" maxW="200px" fontSize="sm" focusBorderColor="orange.400" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
+                        {
+                            origins.map((origin: DataOrigin) => {
+                                return (
+                                    <option value={origin.id}>{origin.name}</option>
+                                )
+                            })
+                        }
+                    </Select>
+
+                    <Select register={register} defaultValue="true" h="45px" name="user" error={formState.errors.user} w="100%"  placeholder="Vendedor(a)" maxW="200px" fontSize="sm" focusBorderColor="orange.400" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
+                        {
+                            users.map((user: User) => {
+                                return (
+                                    <option value={user.id}>{user.name}</option>
+                                )
+                            })
+                        }
                     </Select>
 
                     <OutlineButton type="submit" mb="10" color="orange.400" borderColor="orange.400" colorScheme="orange">

@@ -86,6 +86,8 @@ export function DelegateLeadModal( { isOpen, onRequestClose, toDelegateLeadList,
 
             let response;
 
+            console.log(leadData);
+
             leadData.status = 3;
 
             if(toDelegate){
@@ -150,7 +152,7 @@ export function DelegateLeadModal( { isOpen, onRequestClose, toDelegateLeadList,
                                         <Text>Nenhum vendedor disponível</Text>
                                     </Flex>
                                 ) : (
-                                    <ControlledSelect control={control} value={1} h="45px" name="user" w="100%" fontSize="sm" focusBorderColor="orange.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" error={formState.errors.user}>
+                                    <ControlledSelect control={control} value={0} placeholder="Selecionar Vendedor(a)" h="45px" name="user" w="100%" fontSize="sm" focusBorderColor="orange.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" error={formState.errors.user}>
                                         {users && users.map((user:User) => {
                                             return (
                                                 <option key={user.id} value={user.id}>{user.name}</option>

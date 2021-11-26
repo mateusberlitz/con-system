@@ -87,17 +87,17 @@ const Routes = (): JSX.Element => {
 
         <PrivateRoute path="/contempladas" neededPermission="" exact component={Quotas} />
 
-        <PrivateRoute path="/venda-contempladas" neededPermission="" exact component={Sales} />
-        <PrivateRoute path="/cadastrar-venda/:quota" neededPermission="" exact component={NewQuotaSale} />
-        <PrivateRoute path="/editar-venda/:quota/:quotaSale" neededPermission="" exact component={EditQuotaSale} />
-        <PrivateRoute path="/relatorio-contempladas" neededPermission="" exact component={QuotasReport} />
+        <PrivateRoute path="/venda-contempladas" neededPermission="Contempladas" exact component={Sales} />
+        <PrivateRoute path="/cadastrar-venda/:quota" neededPermission="Contempladas" exact component={NewQuotaSale} />
+        <PrivateRoute path="/editar-venda/:quota/:quotaSale" neededPermission="Contempladas" exact component={EditQuotaSale} />
+        <PrivateRoute path="/relatorio-contempladas" neededPermission="Contempladas" exact component={QuotasReport} />
 
-        <PrivateRoute path="/comercial" neededPermission="" exact component={Commercial} />
-        <PrivateRoute path="/vendedores" neededPermission="" exact component={Sellers} />
-        <PrivateRoute path="/historico/:user" neededPermission="" exact component={Logs} />
-        <PrivateRoute path="/leads" neededPermission="" exact component={Leads} />
-        <PrivateRoute path="/meusleads" neededPermission="" exact component={Leads} />
-        <PrivateRoute path="/agenda" neededPermission="" exact component={Schedules} />
+        <PrivateRoute path="/comercial" neededPermission="Vendas Limitado" exact component={Commercial} />
+        <PrivateRoute path="/vendedores" neededPermission="Vendas Completo" exact component={Sellers} />
+        <PrivateRoute path="/historico/:user" neededPermission="Vendas Completo" exact component={Logs} />
+        <PrivateRoute path="/leads" neededPermission="Vendas Limitado" exact component={Leads} />
+        <PrivateRoute path="/meusleads" neededPermission="Vendas Limitado" exact component={Leads} />
+        <PrivateRoute path="/agenda" neededPermission="Vendas Limitado" exact component={Schedules} />
 
         {/* <PrivateRoute path="/empresas" component={Roles} /> */}
       </Switch>
