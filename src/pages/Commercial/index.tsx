@@ -6,6 +6,8 @@ import { useProfile } from "../../hooks/useProfile";
 import { TaskFilterData, useTasks } from "../../hooks/useTasks";
 import { useWorkingCompany } from "../../hooks/useWorkingCompany";
 import { TasksSummary } from "../Financial/TasksSummary";
+import { LeadsSummary } from "./LeadsSummary";
+import { SchedulesSummary } from "./SchedulesSummary";
 
 export default function Commercial(){
     const { profile, permissions } = useProfile();
@@ -35,13 +37,26 @@ export default function Commercial(){
                 <HStack spacing="8" alignItems="flex-start">
                     {/* PAGAMENTOS */}
                     <Stack spacing="8" w="55%">
-                        {/* <PaymentsSummary payments={payments} openPayPayment={OpenPayPaymentModal} filter={filter} handleChangeFilter={handleChangeFilter}/> */}
+                        <LeadsSummary />
                     </Stack>
                     
 
                     {/* TAREFAS */}
                     <Stack spacing="8" w="45%">
                         <TasksSummary tasks={tasks} page={page} setPage={handleChangePage}/>
+                    </Stack>
+                </HStack>
+
+                <HStack spacing="8" alignItems="flex-start">
+                    {/* PAGAMENTOS */}
+                    <Stack spacing="8" w="65%">
+                        <SchedulesSummary />
+                    </Stack>
+                    
+
+                    {/* TAREFAS */}
+                    <Stack spacing="8" w="35%">
+                        {/* <TasksSummary tasks={tasks} page={page} setPage={handleChangePage}/> */}
                     </Stack>
                 </HStack>
 

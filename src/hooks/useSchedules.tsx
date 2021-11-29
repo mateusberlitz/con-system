@@ -6,6 +6,7 @@ export interface SchedulesFilterData{
     start_date?: string;
     end_date?: string;
     company?: number;
+    user?: number;
     group_by?: string;
     status?: number;
 }
@@ -17,6 +18,7 @@ export const getSchedules = async (filter?: SchedulesFilterData, page: number = 
               page: page,
               search: filter.search,
               company: filter.company,
+              user: filter.user,
               start_date: filter.start_date,
               end_date: filter.end_date,
               group_by: filter.group_by,
