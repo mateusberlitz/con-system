@@ -30,6 +30,7 @@ import { NewGoalModal, toAddGoalData } from "./NewGoalModal";
 import { EditGoalFormData, EditGoalModal } from "./EditGoalModal";
 import { ConfirmGoalRemoveModal, RemoveGoalData } from "./ConfirmGoalRemoveModal";
 import { ListGoalsModal } from "./ListGoalsModal";
+import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 
 const SearchUserFormSchema = yup.object().shape({
     search: yup.string().nullable(),
@@ -51,13 +52,14 @@ interface RemoveUserData{
 }
 
 export default function Sellers(){
+    const workingCompany = useWorkingCompany();
     const companies = useCompanies();
     const roles = useRoles();
 
     const [filter, setFilter] = useState<UserFilterData>(() => {
         const data: UserFilterData = {
             search: '',
-            company: undefined,
+            company: workingCompany.company?.id,
             role: 5,
             goals: true,
         };
@@ -230,14 +232,14 @@ export default function Sellers(){
 
                 <Input register={register} name="search" variant="filled" type="text" icon={SearchIcon} error={formState.errors.search} focusBorderColor="orange.400" placeholder="Procurar"/>
 
-                <Select register={register} name="company" error={formState.errors.company} focusBorderColor="orange.400">
+                {/* <Select register={register} name="company" error={formState.errors.company} focusBorderColor="orange.400">
                         <option value="0">Empresa</option>
                         {companies.data && companies.data.map((company:Company) => {
                             return (
                                 <option key={company.id} value={company.id}>{company.name}</option>
                             )
                         })}
-                </Select>
+                </Select> */}
 
                 <OutlineButton type="submit" colorScheme="orange" color="orange.400" borderColor="orange.400" h="45px" size="sm" borderRadius="full" variant="outline">
                     Filtrar

@@ -142,6 +142,8 @@ export default function Schedules(){
         const newInputEndDate = new Date();
 
         newInputStartDate.setDate(new Date(inputStartDate).getDate() + 1 + toSum);
+
+        newInputEndDate.setMonth(new Date(inputEndDate).getMonth());
         newInputEndDate.setDate(new Date(inputEndDate).getDate() + 1 + toSum);
 
         const formattedNewInputStartDate = formatYmdDate(newInputStartDate.toString());
@@ -184,8 +186,6 @@ export default function Schedules(){
         inputStartDateDay.setDate(inputStartDateDay.getDate() + 1);
         d++;
     }
-
-    //console.log(inputStartDateDay, inputEndDateDay);
 
     return (
         <MainBoard sidebar="commercial" header={<CompanySelectMaster/>}>
