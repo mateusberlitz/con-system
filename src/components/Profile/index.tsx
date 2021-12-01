@@ -29,7 +29,7 @@ export function Profile(){
             )}
 
             <Link href="/eu" display="flex" borderRadius="full" height="fit-content" bgGradient="linear(to-r, purple.600, blue.300)" p="2px">
-                <Avatar borderColor="gray.600" border="2px" size="md" name={profile && `${profile.name} ${profile.last_name}`} src={profile && profile.image ? `${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_STORAGE : process.env.REACT_APP_API_LOCAL_STORAGE}${profile.image}` : ""}/>
+                <Avatar borderColor="gray.600" border="2px" size="md" name={profile && `${profile.name} ${profile ? profile.last_name : ''}`} src={profile && profile.image ? `${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_STORAGE : process.env.REACT_APP_API_LOCAL_STORAGE}${profile.image}` : ""}/>
             </Link>
 
             <Link mt="3" ml="6" title="Sair e fazer logout do sistema" onClick={OpenLogoutModal}>
