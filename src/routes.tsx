@@ -7,7 +7,7 @@ import Companys from './pages/configs/Companys';
 import Users from './pages/configs/Users';
 import Roles from './pages/configs/Roles';
 import { isAuthenticated } from './services/auth';
-import { HasPermission, useProfile } from './hooks/useProfile';
+import { getInitialPage, HasPermission, useProfile } from './hooks/useProfile';
 import Financial from './pages/Financial';
 import Payments from './pages/Financial/Payments';
 import PaymentCategories from './pages/Financial/PaymentCategories';
@@ -40,15 +40,14 @@ interface PrivateRouteProps extends RouteProps{
 const PrivateRoute = ({component: Component, neededPermission = "", ...rest} : PrivateRouteProps) => {
   const { permissions } = useProfile();
 
+  const initialPage = getInitialPage(permissions);
+
   return <Route {...rest} render={props => (
                 !isAuthenticated() ? (
                     <Redirect to={{ pathname: '/' , state: "Por favor, acesse sua conta."}}/>
                     
                 ) : ( neededPermission !== "" && !HasPermission(permissions, neededPermission) ? (
-                      HasPermission(permissions, "Financeiro Limitado") || HasPermission(permissions, "Financeiro Completo") ?
-                        <Redirect to={{ pathname: '/financeiro' , state: "Você não tem permissão para essa página"}}/>
-
-                        : <Redirect to={{ pathname: '/home' , state: "Você não tem permissão para essa página"}}/>
+                        <Redirect to={{ pathname: initialPage , state: "Você não tem permissão para essa página"}}/>
                       )
                       : (
                           <Component {...props} />

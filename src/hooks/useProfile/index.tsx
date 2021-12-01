@@ -134,4 +134,21 @@ export function HasPermission(permissions: SimplePermission[] | undefined, neede
     return false;
 }
 
+export function getInitialPage(permissions: SimplePermission[] | undefined){
+
+    if(HasPermission(permissions, "Financeiro Limitado") || HasPermission(permissions, "Financeiro Completo")){
+        return '/financeiro'
+    }
+
+    if(HasPermission(permissions, "Contempladas")){
+        return '/contempladas'
+    }
+
+    if(HasPermission(permissions, "Vendas Limitado") || HasPermission(permissions, "Vendas Completo")){
+        return '/comercial'
+    }
+
+    return '/home';
+}
+
 export const useProfile = () => useContext(ProfileContext);
