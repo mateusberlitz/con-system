@@ -97,6 +97,7 @@ export default function Sellers(){
     function OpenNewUserModal(){
         setIsNewUserModalOpen(true);
     }
+    
     function CloseNewUserModal(){
         setIsNewUserModalOpen(false);
     }

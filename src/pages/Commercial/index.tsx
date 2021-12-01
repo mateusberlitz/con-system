@@ -6,7 +6,9 @@ import { useProfile } from "../../hooks/useProfile";
 import { TaskFilterData, useTasks } from "../../hooks/useTasks";
 import { useWorkingCompany } from "../../hooks/useWorkingCompany";
 import { TasksSummary } from "../Financial/TasksSummary";
+import { LeadsReport } from "./LeadsReport";
 import { LeadsSummary } from "./LeadsSummary";
+import { SalesSummary } from "./SalesSummary";
 import { SchedulesSummary } from "./SchedulesSummary";
 
 export default function Commercial(){
@@ -56,7 +58,14 @@ export default function Commercial(){
 
                     {/* TAREFAS */}
                     <Stack spacing="8" w="35%">
-                        {/* <TasksSummary tasks={tasks} page={page} setPage={handleChangePage}/> */}
+                        <SalesSummary />
+                    </Stack>
+                </HStack>
+
+                <HStack spacing="8" alignItems="flex-start">
+                    {/* PAGAMENTOS */}
+                    <Stack spacing="8" w="100%">
+                        <LeadsReport />
                     </Stack>
                 </HStack>
 

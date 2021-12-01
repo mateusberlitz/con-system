@@ -30,6 +30,8 @@ import { ConfirmScheduleRemoveModal, RemoveScheduleData } from "./Schedules/Conf
 import { NewScheduleModal } from "./Schedules/NewScheduleModal";
 import { SchedulesFilterData, useSchedules } from "../../hooks/useSchedules";
 import { useWorkingCompany } from "../../hooks/useWorkingCompany";
+import { EditButton } from "../../components/Buttons/EditButton";
+import { RemoveButton } from "../../components/Buttons/RemoveButton";
 
 interface BillsSummaryProps{
     bills?: UseQueryResult<{
@@ -208,6 +210,12 @@ export function SchedulesSummary(){
                                                     <Text fontWeight="normal">{schedule.lead ? schedule.lead.name : ""}</Text>
                                                     <Text fontWeight="bold">{schedule.city}</Text>
                                                 </Stack>
+
+                                                <HStack>
+                                                    <EditButton onClick={() => OpenEditScheduleModal({id: schedule.id, city: schedule.city, datetime: schedule.datetime, lead: schedule.lead ? schedule.lead.id : 0})}/>
+                                                
+                                                    <RemoveButton onClick={() => OpenRemoveScheduleModal({id: schedule.id})}/>
+                                                </HStack>
                                             </HStack>
                                         )
                                     })
