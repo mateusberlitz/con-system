@@ -60,7 +60,7 @@ interface CreateNewLeadFormData{
     commission?: number;
 
     segment?: string;
-    value?: number;
+    value?: string;
 }
 
 const CreateNewLeadFormSchema = yup.object().shape({
@@ -136,6 +136,10 @@ export function NewLeadModal( { isOpen, onRequestClose, afterCreate, statuses, o
 
             leadData.company = workingCompany.company.id;
             leadData.user = profile.id;
+
+            if(leadData.value){
+                leadData.value = moneyToBackend(leadData.value);
+            }
 
             const response = await api.post('/leads/store', leadData);
 
@@ -231,7 +235,7 @@ export function NewLeadModal( { isOpen, onRequestClose, afterCreate, statuses, o
 
                         <HStack spacing="4" align="baseline">
                             <Select register={register}  h="45px" name="segment" w="100%" fontSize="sm" placeholder="Segmento pretendido" focusBorderColor="orange.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" error={formState.errors.segment}>
-                                <option value="Imóvel" selected>Imóvel</option>
+                                <option value="Imóvel">Imóvel</option>
                                 <option value="Veículo">Veículo</option>
                             </Select>
 

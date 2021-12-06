@@ -1,8 +1,8 @@
-import { FormControl, Link, Flex, HStack, Stack, Spinner, IconButton, Text, Accordion, Select as ChakraSelect, AccordionItem, AccordionButton, AccordionPanel, useToast, Divider, Table, Thead, Th, Td, Tbody, Tr } from "@chakra-ui/react";
+import { Link, Flex, HStack, Stack, Spinner, IconButton, Text, Accordion, AccordionItem, AccordionButton, AccordionPanel, useToast, Divider, Table, Thead, Th, Td, Tbody, Tr } from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { MainBoard } from "../../../components/MainBoard";
 import { useCompanies } from "../../../hooks/useCompanies";
-import { HasPermission, useProfile } from "../../../hooks/useProfile";
+import { useProfile } from "../../../hooks/useProfile";
 import { Company, PartialPayment, Payment, PaymentCategory, User } from "../../../types";
 
 import { useForm } from "react-hook-form";
@@ -28,7 +28,6 @@ import { RemoveButton } from "../../../components/Buttons/RemoveButton";
 import { useEffect, useState } from "react";
 import { NewPaymentModal } from "./NewPaymentModal";
 import { ConfirmPaymentRemoveModal } from "./ConfirmPaymentRemoveModal";
-import { CompanySelect } from "../../../components/CompanySelect";
 import { useHistory } from "react-router";
 import { api } from "../../../services/api";
 import { UserFilterData, useUsers } from "../../../hooks/useUsers";

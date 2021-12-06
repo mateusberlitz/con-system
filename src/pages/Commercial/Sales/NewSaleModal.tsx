@@ -39,7 +39,7 @@ export interface toAddSaleLeadData{
 }
 
 interface CreateNewSaleFormData{
-    value: number;
+    value: string;
     lead: number;
     company: number;
     user: number;
@@ -99,6 +99,7 @@ export function NewSaleModal( { isOpen, onRequestClose, afterCreate, toAddLeadDa
             saleData.lead = toAddLeadData.id;
 
             saleData.date = formatInputDate(saleData.date);
+            saleData.value = moneyToBackend(saleData.value);
 
             const response = await api.post('/sales/store', saleData);
 

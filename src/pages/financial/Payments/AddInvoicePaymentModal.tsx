@@ -1,6 +1,5 @@
-import { Text, Input as ChakraInput, HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, useToast, Box, IconButton, Flex, Spinner, Divider } from "@chakra-ui/react";
+import { Text, HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, useToast, IconButton, Flex, Spinner, Divider } from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
-
 
 import { useForm } from "react-hook-form";
 import * as yup from 'yup';
@@ -12,7 +11,6 @@ import { useErrors } from "../../../hooks/useErrors";
 import { useEffect, useState } from "react";
 import { redirectMessages } from "../../../utils/redirectMessages";
 import { isAuthenticated } from "../../../services/auth";
-import { Input } from "../../../components/Forms/Inputs/Input";
 import { formatYmdDate } from "../../../utils/Date/formatYmdDate";
 import { ControlledInput } from "../../../components/Forms/Inputs/ControlledInput";
 import { formatInputDate } from "../../../utils/Date/formatInputDate";
@@ -20,8 +18,7 @@ import { formatInputDate } from "../../../utils/Date/formatInputDate";
 import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
 import { ReactComponent as FileIcon } from '../../../assets/icons/File.svg';
 
-import { formatBRDate } from "../../../utils/Date/formatBRDate";
-import { Invoice, Payment } from "../../../types";
+import { Invoice } from "../../../types";
 import { InvoicesFilterData, useInvoices } from "../../../hooks/useInvoices";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { FileInput } from "../../../components/Forms/FileInput";

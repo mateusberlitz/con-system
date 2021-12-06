@@ -1,19 +1,13 @@
 import { Divider, Flex, FormControl, HStack, Select as ChakraSelect, Spinner, Text, Th, Tr } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
 import { Board } from "../../../components/Board";
 import { OutlineButton } from "../../../components/Buttons/OutlineButton";
-import { CompanySelect } from "../../../components/CompanySelect";
-import { MainBoard } from "../../../components/MainBoard";
 import { Table } from "../../../components/Table";
 import { useCompanies } from "../../../hooks/useCompanies";
-import { PaymentFilterData } from "../../../hooks/usePayments";
-import { HasPermission, useProfile } from "../../../hooks/useProfile";
 import { useResults } from "../../../hooks/useResults";
-import { TransactionsByAccountFilterData, useTransactionsByAccount } from "../../../hooks/useTransactionsByAccount";
+import { TransactionsByAccountFilterData } from "../../../hooks/useTransactionsByAccount";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { api } from "../../../services/api";
-import { Company } from "../../../types";
 import { newMonthsAmountArray } from "./populateMonthAmountArray";
 
 interface ResultsTableProps{

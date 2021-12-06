@@ -1,5 +1,4 @@
-import { Flex, HStack, IconButton, Link, Spinner, Stack, Text } from "@chakra-ui/react";
-import { ControlledInput } from "../../../components/Forms/Inputs/ControlledInput";
+import { HStack, IconButton, Link, Stack, Text } from "@chakra-ui/react";
 import { dayInvoices, Invoice } from "../../../types";
 
 import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';

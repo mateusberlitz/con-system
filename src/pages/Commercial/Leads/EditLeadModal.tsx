@@ -153,6 +153,10 @@ export function EditLeadModal( { isOpen, onRequestClose, afterEdit, toEditLeadDa
 
             leadData.company = workingCompany.company.id;
             leadData.user = profile.id;
+
+            if(leadData.value){
+                leadData.value = moneyToBackend(leadData.value);
+            }
             //leadData.origin = parseInt(leadData.origin);
 
             const response = await api.post(`/leads/update/${toEditLeadData.id}`, leadData);

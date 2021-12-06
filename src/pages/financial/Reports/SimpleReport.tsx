@@ -2,22 +2,18 @@ import { Divider, Flex, FormControl, HStack, Select as ChakraSelect, Spinner, Te
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Board } from "../../../components/Board";
-import { CompanySelect } from "../../../components/CompanySelect";
 import { CompanySelectMaster } from "../../../components/CompanySelect/companySelectMaster";
 import { MainBoard } from "../../../components/MainBoard";
 import { Table } from "../../../components/Table";
 import { useCompanies } from "../../../hooks/useCompanies";
-import { PaymentFilterData } from "../../../hooks/usePayments";
-import { HasPermission, useProfile } from "../../../hooks/useProfile";
+import { useProfile } from "../../../hooks/useProfile";
 import { useSimpleReport } from "../../../hooks/useSimpleRepor";
-import { TransactionsByAccountFilterData, useTransactionsByAccount } from "../../../hooks/useTransactionsByAccount";
+import { TransactionsByAccountFilterData } from "../../../hooks/useTransactionsByAccount";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { api } from "../../../services/api";
-import { CashFlowInterface, Company } from "../../../types";
-import { getMonth } from "../../../utils/Date/getMonth";
+import { Company } from "../../../types";
 import { newMonthsAmountArray } from "./populateMonthAmountArray";
 import { newMonthsAmountArraySimple } from "./populateMonthAmountArraySimple";
-import Results from "./Results";
 
 export default function SimpleReport(){
     const {permissions, profile} = useProfile();

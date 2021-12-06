@@ -58,7 +58,7 @@ export default function ConfigHome(){
                     }
 
                     {
-                        HasPermission(permissions, "Financeiro Limitado") && (
+                        (HasPermission(permissions, "Vendas Limitado") || HasPermission(permissions, "Vendas Completo")) && (
                             <Link href="/comercial" w="200px" borderRadius="4px" borderLeft="3px solid" borderColor="orange.400" fontSize="md" bg="white" _hover={{textDecor: 'none', boxShadow: 'md'}} px="6" py="3" boxShadow="sm" color="orange.400" display="flex" direction="row">
                                 <CartIcon stroke="#4e4b66" fill="none" width="20"/>
                                 <Text fontWeight="regular" ml="3" color="gray.800" lineHeight="25px">Comercial</Text>

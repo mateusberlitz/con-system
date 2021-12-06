@@ -98,7 +98,7 @@ export default function Sources(){
 
             reset();
             source.refetch();
-        }catch(error) {
+        }catch(error:any) {
             showErrors(error, toast);
 
             if(error.response.data.access){

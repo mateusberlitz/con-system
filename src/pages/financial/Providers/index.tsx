@@ -96,7 +96,7 @@ export default function Providers(){
 
             reset();
             providers.refetch();
-        }catch(error) {
+        }catch(error:any) {
             showErrors(error, toast);
 
             if(error.response.data.access){

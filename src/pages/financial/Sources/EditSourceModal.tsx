@@ -57,7 +57,7 @@ export function EditSourceModal( { isOpen, toEditSourceData, afterEdit, onReques
 
             afterEdit();
             onRequestClose();
-        }catch(error) {
+        }catch(error:any) {
             console.log(error);
             showErrors(error, toast);
 

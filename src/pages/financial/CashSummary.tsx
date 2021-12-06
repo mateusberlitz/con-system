@@ -1,14 +1,9 @@
-import { Text, Stack,Link, useToast, HStack } from "@chakra-ui/react";
-
-
-import { useWorkingCompany } from "../../hooks/useWorkingCompany";
+import { Text, Stack,Link } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { TaskFilterData, useTasks } from "../../hooks/useTasks";
 import { api } from "../../services/api";
-import { showErrors } from "../../hooks/useErrors";
 
 import { ReactComponent as CheckIcon } from '../../assets/icons/Check.svg';
-import Companys from "../configs/Companys";
+import { Company } from "../../types";
 
 interface RemoveTaskData{
     id: number;
@@ -18,29 +13,30 @@ interface CashSummaryFilter{
     company: number | undefined;
 }
 
-export function CashSummary(){
-    const workingCompany = useWorkingCompany();
+interface CashSummaryProps{
+    company: Company | undefined;
+}
+
+export function CashSummary({company}: CashSummaryProps){
+    const workingCompany = company;
+
+    console.log(company);
 
     const [amount, setAmount] = useState(0);
 
     const loadAmount = async () => {
         const filterAmount:CashSummaryFilter = {
-            company: workingCompany.company?.id,
+            company: company?.id,
         };
 
         const { data } = await api.get('/amount', {
             params: {
-                company: (workingCompany.company && workingCompany.company.id ? workingCompany.company?.id.toString() : "0")
+                company: (company && company.id ? company?.id.toString() : "0")
             }
         });
 
         setAmount(data.total);
     }
-
-    useEffect(() => {
-        loadAmount();
-    }, [])
-
 
     const [monthAmount, setMonthAmount] = useState(0);
 
@@ -48,7 +44,7 @@ export function CashSummary(){
 
         const { data } = await api.get('/month_amount', {
             params: {
-                company: (workingCompany.company && workingCompany.company.id  ? workingCompany.company?.id.toString() : "0")
+                company: (company && company.id  ? company?.id.toString() : "0")
             }
         });
 
@@ -56,8 +52,9 @@ export function CashSummary(){
     }
 
     useEffect(() => {
+        loadAmount();
         loadMonthAmount();
-    }, [])
+    }, [company])
 
     return(
         <Stack spacing="8" width="100%">

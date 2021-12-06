@@ -5,12 +5,10 @@ import { ReactComponent as CheckIcon } from '../../assets/icons/Check.svg';
 import { ReactComponent as PlusIcon } from '../../assets/icons/Plus.svg';
 
 import { SolidButton } from "../../components/Buttons/SolidButton";
-import { useWorkingCompany } from "../../hooks/useWorkingCompany";
 import { useState } from "react";
-import { TaskFilterData, useTasks } from "../../hooks/useTasks";
 import { formatYmdDate } from "../../utils/Date/formatYmdDate";
 import { NewTaskModal } from "../Tasks/NewTaskModal";
-import { Company, Task } from "../../types";
+import { Task } from "../../types";
 import { formatDate } from "../../utils/Date/formatDate";
 import { getDay } from "../../utils/Date/getDay";
 import { formatBRDate } from "../../utils/Date/formatBRDate";
@@ -20,8 +18,6 @@ import { ConfirmTaskRemoveModal } from "../Tasks/ConfirmTaskRemoveModal";
 import { api } from "../../services/api";
 import { showErrors } from "../../hooks/useErrors";
 import { Pagination } from "../../components/Pagination";
-import { useProfile } from "../../hooks/useProfile";
-import { useEffect } from "react";
 import { UseQueryResult } from "react-query";
 import { CheckSquare } from "react-feather";
 
@@ -39,21 +35,6 @@ interface TasksSummaryProps{
 }
 
 export function TasksSummary({tasks, page, setPage}: TasksSummaryProps){
-    // const workingCompany = useWorkingCompany();
-    // const [page, setPage] = useState(1);
-    // const {profile} = useProfile();
-
-    // const [filter, setFilter] = useState<TaskFilterData>(() => {
-    //     const data: TaskFilterData = {
-    //         search: '',
-    //         company: company?.id,
-    //         author: (profile ? profile.id : 0),
-    //     };
-        
-    //     return data;
-    // })
-
-    // const tasks = useTasks(filter, page);
 
     const [isNewTaskModalOpen, setIsNewTaskModalOpen] = useState(false);
 

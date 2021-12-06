@@ -87,7 +87,7 @@ export default function Me(){
                 loadProfile();
             }
 
-        }catch(error) {
+        }catch(error: any) {
             showErrors(error, toast);
 
             if(error.response && error.response.data.access){

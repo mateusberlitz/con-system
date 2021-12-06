@@ -1,8 +1,6 @@
-import { Flex, Grid, HStack, SimpleGrid, Stack, Text } from "@chakra-ui/layout";
+import { Flex, HStack, Stack, Text } from "@chakra-ui/layout";
 import { Select as ChakraSelect } from "@chakra-ui/react";
-import { Spinner } from "@chakra-ui/spinner";
 import { useState } from "react";
-import { SolidButton } from "../../components/Buttons/SolidButton";
 import { MainBoard } from "../../components/MainBoard";
 import { PaymentFilterData, usePayments } from "../../hooks/usePayments";
 import { useWorkingCompany } from "../../hooks/useWorkingCompany";
@@ -20,13 +18,15 @@ import { BillsSummary } from "./BillsSummary";
 import { PendenciesSummary } from "./PendenciesSummary";
 import { useCompanies } from "../../hooks/useCompanies";
 import { FormControl } from "@chakra-ui/react";
-import { CashFlowsFilterData, useCashFlows } from "../../hooks/useCashFlows";
+import { CashFlowsFilterData } from "../../hooks/useCashFlows";
 import { TaskFilterData, useTasks } from "../../hooks/useTasks";
 
 
 export default function Financial(){
     const { profile, permissions } = useProfile();
     const workingCompany = useWorkingCompany();
+
+    //console.log(workingCompany.company);
 
     const [filter, setFilter] = useState<PaymentFilterData>(() => {
         const data: PaymentFilterData = {
@@ -256,7 +256,7 @@ export default function Financial(){
 
                         {
                             HasPermission(permissions, 'Financeiro Completo') && (
-                                <CashSummary/>
+                                <CashSummary company={workingCompany.company}/>
                             )
                         }
                     </Stack>

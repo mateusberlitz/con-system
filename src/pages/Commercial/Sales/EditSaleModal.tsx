@@ -93,6 +93,7 @@ export function EditSaleModal( { isOpen, onRequestClose, afterEdit, toEditSaleDa
             }
 
             saleData.date = formatInputDate(saleData.date);
+            saleData.value = moneyToBackend(saleData.value);
 
             const response = await api.post(`/sales/update/${toEditSaleData.id}`, saleData);
 

@@ -60,7 +60,7 @@ export function EditProviderModal( { isOpen, toEditProviderData, afterEdit, onRe
 
             afterEdit();
             onRequestClose();
-        }catch(error) {
+        }catch(error:any) {
             console.log(error);
             showErrors(error, toast);
 

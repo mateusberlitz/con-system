@@ -1,23 +1,13 @@
 import { Text, Stack,Flex, Spinner, HStack } from "@chakra-ui/react";
 import { UseQueryResult } from "react-query";
-import { SolidButton } from "../../components/Buttons/SolidButton";
 import { CashFlowInterface, Payment } from "../../types";
 import { formatDate } from "../../utils/Date/formatDate";
 import { formatYmdDate } from "../../utils/Date/formatYmdDate";
 import { getDay } from "../../utils/Date/getDay";
-import { PayPaymentFormData } from "./Payments/PayPaymentModal";
 
 
-import { ReactComponent as EllipseIcon } from '../../assets/icons/Ellipse.svg';
-import { ReactComponent as AttachIcon } from '../../assets/icons/Attach.svg';
-import { ReactComponent as CheckIcon } from '../../assets/icons/Check.svg';
 import { formatBRDate } from "../../utils/Date/formatBRDate";
-import { CashFlowsFilterData, useCashFlows } from "../../hooks/useCashFlows";
-import { useWorkingCompany } from "../../hooks/useWorkingCompany";
-import { useState } from "react";
 import { getHour } from "../../utils/Date/getHour";
-import { HasPermission, useProfile } from "../../hooks/useProfile";
-import { CompanySelect } from "../../components/CompanySelect";
 
 interface CashFlowSummaryProps{
     cashFlows: UseQueryResult<{

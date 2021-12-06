@@ -1,7 +1,6 @@
 import { HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, useToast } from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 
-import { ReactComponent as CheckIcon } from '../../../assets/icons/Check.svg';
 
 import { api } from "../../../services/api";
 import { useHistory } from "react-router";
@@ -9,7 +8,6 @@ import { useErrors } from "../../../hooks/useErrors";
 
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { formatYmdTodmY } from "../../../utils/Date/formatYmdTodmY";
-import { formatDate } from "../../../utils/Date/formatDate";
 import { formatBRDate } from "../../../utils/Date/formatBRDate";
 import { useForm } from "react-hook-form";
 import * as yup from 'yup';

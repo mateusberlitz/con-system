@@ -2,32 +2,15 @@ import { Text, Stack,Flex, Spinner, HStack } from "@chakra-ui/react";
 import { UseQueryResult } from "react-query";
 import { SolidButton } from "../../components/Buttons/SolidButton";
 import { Payment } from "../../types";
-import { formatDate } from "../../utils/Date/formatDate";
-import { formatYmdDate } from "../../utils/Date/formatYmdDate";
-import { getDay } from "../../utils/Date/getDay";
-import { ReceiveBillFormData } from "./Bills/ReceiveBillModal";
 
 
 import { ReactComponent as EllipseIcon } from '../../assets/icons/Ellipse.svg';
 import { ReactComponent as AttachIcon } from '../../assets/icons/Attach.svg';
 import { ReactComponent as CheckIcon } from '../../assets/icons/Check.svg';
-import { formatBRDate } from "../../utils/Date/formatBRDate";
-import { HasPermission, useProfile } from "../../hooks/useProfile";
-import { CompanySelect } from "../../components/CompanySelect";
-import { BillFilterData } from "../../hooks/useBills";
-import { PaymentFilterData, usePayments } from "../../hooks/usePayments";
+import { PaymentFilterData } from "../../hooks/usePayments";
 import { PayPaymentFormData } from "./Payments/PayPaymentModal";
-import { useWorkingCompany } from "../../hooks/useWorkingCompany";
-import { useState } from "react";
 
 interface PendenciesSummaryProps{
-    // bills: UseQueryResult<{
-    //     data: any;
-    //     total: number;
-    // }, unknown>;
-    // billFilter: BillFilterData;
-    // handleChangeBillFilter: (newFilterValue: BillFilterData) => void;
-    // openReceiveBill: (toPayPaymentData: ReceiveBillFormData) => void;
 
     payments: UseQueryResult<{
         data: any;
@@ -39,26 +22,6 @@ interface PendenciesSummaryProps{
 }
 
 export function PendenciesSummary({payments, paymentFilter, openPayPayment, handleChangePaymentFilter}: PendenciesSummaryProps){
-    // const {permissions} = useProfile();
-
-    // const workingCompany = useWorkingCompany();
-
-    // const [filter, setFilter] = useState<PaymentFilterData>(() => {
-    //     const data: PaymentFilterData = {
-    //         search: '',
-    //         company: workingCompany.company?.id,
-    //         end_date: formatYmdDate(new Date().toString()),
-    //         status: 0
-    //     };
-        
-    //     return data;
-    // })
-
-    // function handleChangeFilter(newFilter: PaymentFilterData){
-    //     setFilter(newFilter);
-    // }
-
-    // const payments = usePayments(filter, 1);
 
     return (
         <Stack w="100%" spacing="6" min-width="300px" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8">

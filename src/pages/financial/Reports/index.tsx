@@ -2,13 +2,11 @@ import { Divider, Flex, FormControl, HStack, Select as ChakraSelect, Spinner, Te
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Board } from "../../../components/Board";
-import { CompanySelect } from "../../../components/CompanySelect";
 import { CompanySelectMaster } from "../../../components/CompanySelect/companySelectMaster";
 import { MainBoard } from "../../../components/MainBoard";
 import { Table } from "../../../components/Table";
 import { useCompanies } from "../../../hooks/useCompanies";
-import { PaymentFilterData } from "../../../hooks/usePayments";
-import { HasPermission, useProfile } from "../../../hooks/useProfile";
+import { useProfile } from "../../../hooks/useProfile";
 import { TransactionsByAccountFilterData, useTransactionsByAccount } from "../../../hooks/useTransactionsByAccount";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { api } from "../../../services/api";
