@@ -282,12 +282,6 @@ export function EditLeadModal( { isOpen, onRequestClose, afterEdit, toEditLeadDa
 
                                         <AccordionPanel p="1px" mb="6">
                                             <Stack fontSize="sm" spacing="6">
-                                                <HStack spacing="4" align="baseline">
-                                                    <ControlledInput control={control} value={toEditLeadData.recommender} name="recommender" type="text" placeholder="Quem indicou?" focusBorderColor="orange.400" variant="outline" error={formState.errors.recommender}/>
-                                                    <ControlledInput control={control} value={toEditLeadData.commission?.toString()} name="commission" type="text" placeholder="Comissão da indicação" focusBorderColor="orange.400" variant="outline" error={formState.errors.commission}/>
-                                                </HStack>
-
-                                                <Divider/>
 
                                                 <HStack spacing="4" align="baseline">
                                                     <ControlledInput control={control} value={toEditLeadData.cpf} name="cpf" type="text" placeholder="CPF" focusBorderColor="orange.400" variant="outline" mask="cpf" error={formState.errors.cpf}/>
@@ -307,6 +301,13 @@ export function EditLeadModal( { isOpen, onRequestClose, afterEdit, toEditLeadDa
                                                 <HStack spacing="4" align="baseline">
                                                     <ControlledInput control={control} value={toEditLeadData.address_code} name="address_code" type="text" placeholder="CEP" focusBorderColor="orange.400" variant="outline" mask="" error={formState.errors.address_code}/>
                                                     <ControlledInput control={control} value={toEditLeadData.address_number} name="address_number" type="text" placeholder="Estado" focusBorderColor="orange.400" variant="outline" mask="" error={formState.errors.address_number}/>
+                                                </HStack>
+
+                                                <Divider/>
+
+                                                <HStack spacing="4" align="baseline">
+                                                    <ControlledInput control={control} value={toEditLeadData.recommender} name="recommender" type="text" placeholder="Quem indicou?" focusBorderColor="orange.400" variant="outline" error={formState.errors.recommender}/>
+                                                    <ControlledInput control={control} value={toEditLeadData.commission?.toString()} name="commission" type="text" placeholder="Comissão da indicação" focusBorderColor="orange.400" variant="outline" error={formState.errors.commission}/>
                                                 </HStack>
                                             </Stack>
                                         </AccordionPanel>

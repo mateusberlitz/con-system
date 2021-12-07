@@ -100,11 +100,17 @@ export function LeadsReport(){
                             ]}>
                                 {
                                     Object.keys(leads.data?.data).map((origin:string, index: number) => {
-
                                         return(
                                             <Tr>
                                                 {
                                                     Object.keys(leads.data?.data[origin]).map((column:string, index:number) => {
+                                                        // if(index === 1 || index === 2){
+                                                        //     console.log(parseFloat(leads.data?.data[origin][column]));
+                                                        //     if(leads.data){
+                                                        //         leads.data.data[origin][column] = parseFloat(leads.data?.data[origin][column]).toFixed(2);
+                                                        //     }
+                                                        // }
+
                                                         return index === 0 ?  (
                                                             <Th color="gray.900" fontSize="sm" position="sticky" left="0" key={`${origin}-${column}-${leads.data?.data[origin][column]}`}>{leads.data?.data[origin][column]}</Th>
                                                         )

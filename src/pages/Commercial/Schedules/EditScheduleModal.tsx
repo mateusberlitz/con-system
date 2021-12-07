@@ -58,10 +58,15 @@ export function EditScheduleModal( { isOpen, onRequestClose, afterEdit, toEditSc
     const toast = useToast();
     const { showErrors } = useErrors();
 
+    const datetimeObject = new Date(toEditScheduleData.datetime);
+    const initialDatetime = ( toEditScheduleData.datetime ? datetimeObject.toISOString().split('T')[0] + 'T' + (datetimeObject.getHours() < 10 ? '0' + datetimeObject.getHours() : datetimeObject.getHours()) + ':' +  datetimeObject.getMinutes() : '')
+
+    console.log(initialDatetime);
+
     const { register, handleSubmit, control, reset, formState} = useForm<EditScheduleFormData>({
         resolver: yupResolver(EditScheduleFormSchema),
         defaultValues: {
-            datetime: toEditScheduleData.datetime,
+            datetime: initialDatetime,
             city: toEditScheduleData.city,
             lead: toEditScheduleData.lead,
         }
@@ -138,9 +143,6 @@ export function EditScheduleModal( { isOpen, onRequestClose, afterEdit, toEditSc
     leads.map((lead: Lead) => {
         leadOptions.push({value: lead.id.toString(), label: lead.name});
     })
-
-    const datetimeObject = new Date(toEditScheduleData.datetime);
-    const initialDatetime = ( toEditScheduleData.datetime ? datetimeObject.toISOString().split('T')[0] + 'T' + datetimeObject.getHours() + ':' +  datetimeObject.getMinutes() : '')
 
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">

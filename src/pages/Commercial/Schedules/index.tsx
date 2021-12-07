@@ -228,7 +228,7 @@ export default function Schedules(){
                         hours.map((hour:string, index:number) => {
                             const splitedHour = hour.split(':');
 
-                            return schedules.data?.data[parseInt(splitedHour[0])] ? (
+                            return schedules.data?.data[splitedHour[0]] ? (
                                 // <Tr borderBottom="1px solid" borderColor="gray.200">
                                 //     <Th p="1" textAlign="center" borderBottom="none" borderLeft="1px solid #e2e8f0" borderRight="1px solid #e2e8f0" fontSize="11px">
                                 //         {hour}
@@ -236,7 +236,7 @@ export default function Schedules(){
 
                                     
                                 // </Tr>
-                                <ScheduleRow handleRemoveSchedule={OpenRemoveScheduleModal} handleEditSchedule={OpenEditScheduleModal} key={hour} hour={hour} days={toRowDays} hourSchedules={schedules.data?.data[parseInt(splitedHour[0])]}/>
+                                <ScheduleRow handleRemoveSchedule={OpenRemoveScheduleModal} handleEditSchedule={OpenEditScheduleModal} key={hour} hour={hour} days={toRowDays} hourSchedules={schedules.data?.data[splitedHour[0]]}/>
                             ):(
                                 <Tr key={hour} borderBottom="1px solid" borderColor="gray.200">
                                     <Th p="1" textAlign="center" borderBottom="none" borderLeft="1px solid #e2e8f0" borderRight="1px solid #e2e8f0" fontSize="11px">

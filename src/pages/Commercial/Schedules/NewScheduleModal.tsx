@@ -45,7 +45,7 @@ interface CreateNewScheduleFormData{
 }
 
 const CreateNewScheduleFormSchema = yup.object().shape({
-    datetime: yup.date().required("Informe a data e horário do agendamento"),
+    datetime: yup.string().required("Informe a data e horário do agendamento"),
     city: yup.string().required("Para qual cidade você vai?"),
     lead: yup.lazy((value) => (value === '' ? yup.string() : yup.number())),
 });

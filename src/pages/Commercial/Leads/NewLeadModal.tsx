@@ -266,13 +266,6 @@ export function NewLeadModal( { isOpen, onRequestClose, afterCreate, statuses, o
                                         <AccordionPanel p="1px" mb="6">
                                             <Stack fontSize="sm" spacing="6">
                                                 <HStack spacing="4" align="baseline">
-                                                    <Input register={register} name="recommender" type="text" placeholder="Quem indicou?" focusBorderColor="orange.400" variant="outline" mask="" error={formState.errors.recommender}/>
-                                                    <Input register={register} name="commission" type="text" placeholder="Comissão da indicação" focusBorderColor="orange.400" variant="outline" mask="" error={formState.errors.commission}/>
-                                                </HStack>
-
-                                                <Divider/>
-
-                                                <HStack spacing="4" align="baseline">
                                                     <Input register={register} name="cpf" type="text" placeholder="CPF" focusBorderColor="orange.400" variant="outline" mask="cpf" error={formState.errors.cpf}/>
                                                     <Input register={register} name="cnpj" type="text" placeholder="CNPJ" focusBorderColor="orange.400" variant="outline" mask="cnpj" error={formState.errors.cnpj}/>
                                                 </HStack>
@@ -290,6 +283,13 @@ export function NewLeadModal( { isOpen, onRequestClose, afterCreate, statuses, o
                                                 <HStack spacing="4" align="baseline">
                                                     <Input register={register} name="address_code" type="text" placeholder="CEP" focusBorderColor="orange.400" variant="outline" mask="" error={formState.errors.address_code}/>
                                                     <Input register={register} name="address_number" type="text" placeholder="Estado" focusBorderColor="orange.400" variant="outline" mask="" error={formState.errors.address_number}/>
+                                                </HStack>
+
+                                                <Divider/>
+
+                                                <HStack spacing="4" align="baseline">
+                                                    <Input register={register} name="recommender" type="text" placeholder="Quem indicou?" focusBorderColor="orange.400" variant="outline" mask="" error={formState.errors.recommender}/>
+                                                    <Input register={register} name="commission" type="text" placeholder="Comissão da indicação" focusBorderColor="orange.400" variant="outline" mask="" error={formState.errors.commission}/>
                                                 </HStack>
                                             </Stack>
                                         </AccordionPanel>
