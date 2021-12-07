@@ -9,6 +9,7 @@ import { showErrors } from "../../hooks/useErrors";
 
 import { ReactComponent as ScrollIcon } from '../../assets/icons/Scroll.svg';
 import Companys from "../configs/Companys";
+import { ListUserSalesModal } from "./ListUserSalesModal";
 import { useProfile } from "../../hooks/useProfile";
 
 interface RemoveTaskData{
@@ -94,13 +95,21 @@ export function SalesSummary(){
         loadMonthAmount();
         loadPotentialSales();
         loadMonthGoal();
-    }, [])
+    }, []);
 
-    console.log(monthGoal);
+    const [isListUserSalesModalOpen, setIsListUserSalesModalOpen] = useState(false);
+
+    function OpenListUserSalesModal(){
+        setIsListUserSalesModalOpen(true);
+        console.log(isListUserSalesModalOpen);
+    }
+    function CloseListUserSalesModal(){
+        setIsListUserSalesModalOpen(false);
+    }
 
     return(
         <>
-            {/* <ConfirmLeadRemoveModal toRemoveLeadData={removeLeadData} afterRemove={leads.refetch} isOpen={isRemoveLeadModalOpen} onRequestClose={CloseRemoveLeadModal}/> */}
+            <ListUserSalesModal isOpen={isListUserSalesModalOpen} onRequestClose={CloseListUserSalesModal}/>
 
             <Stack spacing="8" width="100%">
                 <Stack spacing="5" w="100%" minWidth="300px" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8">
@@ -124,7 +133,7 @@ export function SalesSummary(){
 
                     <Text fontSize="2xl" w="100%" fontWeight="bold" color={amount > 0 ? "green.400" : "red.400"}>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(amount)}</Text>
 
-                    <Link href="/caixa" display="flex" alignItems="center" fontSize="md" color="gray.700"><ScrollIcon width="20px" stroke="#6e7191" fill="#6e7191"/> <Text ml="2">Ver histórico de vendas</Text></Link>  
+                    <Text onClick={() => OpenListUserSalesModal()} cursor="pointer" display="flex" alignItems="center" fontSize="md" color="gray.700"><ScrollIcon width="20px" stroke="#6e7191" fill="#6e7191"/> <Text ml="2">Ver histórico de vendas</Text></Text>  
                 </Stack>
             </Stack>
         </>

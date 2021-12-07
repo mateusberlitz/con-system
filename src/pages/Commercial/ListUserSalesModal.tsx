@@ -24,7 +24,7 @@ export interface toAddGoalUserData{
     name: string;
 }
 
-export function ListGoalsModal( { isOpen, onRequestClose } : ListUserSalesModalProps){
+export function ListUserSalesModal( { isOpen, onRequestClose } : ListUserSalesModalProps){
     const workingCompany = useWorkingCompany();
     const {profile, permissions} = useProfile();
 
