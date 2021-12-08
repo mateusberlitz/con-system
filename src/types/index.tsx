@@ -292,6 +292,12 @@ export interface Lead{
     cpf?: string;
     cnpj?: string;
 
+    latest_returned?: {
+        id: number;
+        lead: number;
+        user: User;
+    };
+
     address?: string;
     address_code?: string;
     address_country?: string;

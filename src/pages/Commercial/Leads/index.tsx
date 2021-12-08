@@ -414,6 +414,8 @@ export default function Leads(){
                                     segment: lead.segment,
                                 }
 
+                                console.log(lead.latest_returned);
+
                                 return (
                                     <AccordionItem key={lead.id} display="flex" flexDir="column" paddingX="8" paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
                                         {({ isExpanded }) => (
@@ -464,9 +466,18 @@ export default function Leads(){
                                                         <Text fontSize="sm" fontWeight="normal" color="gray.800">{lead.origin?.name}</Text>
                                                     </Stack>
 
-                                                    <Badge cursor="pointer" colorScheme={lead.status?.color} color="white" bg={`${lead.status?.color}.500`} display="flex" borderRadius="full" px="5" py="0" h="29px" alignItems="center"
-                                                        onClick={() => OpenEditLeadStatusOfLeadModal({id:lead.id, status: lead.status ? lead.status.id : 0, name:lead.name})}
-                                                        ><Text>{lead.status?.name}</Text></Badge>
+                                                    <Stack spacing="0">
+                                                        {
+                                                            lead.latest_returned && (
+                                                                <Text fontSize="10px" color="gray.800">de: {lead.latest_returned.user.name}</Text>
+                                                            )
+                                                        }
+                                                        <Badge cursor="pointer" colorScheme={lead.status?.color} color="white" bg={`${lead.status?.color}.500`} display="flex" borderRadius="full" px="5" py="0" h="29px" alignItems="center"
+                                                            onClick={() => OpenEditLeadStatusOfLeadModal({id:lead.id, status: lead.status ? lead.status.id : 0, name:lead.name})}
+                                                            >
+                                                                <Text>{lead.status?.name}</Text>
+                                                        </Badge>
+                                                    </Stack> 
 
                                                     {
                                                         (isManager && !lead.user) && (

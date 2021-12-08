@@ -107,6 +107,9 @@ export function SalesSummary(){
         setIsListUserSalesModalOpen(false);
     }
 
+    const percentOfGoal = monthGoal ? ((monthAmount * 100) / monthGoal) : 0;
+    console.log(percentOfGoal);
+
     return(
         <>
             <ListUserSalesModal isOpen={isListUserSalesModalOpen} onRequestClose={CloseListUserSalesModal}/>
@@ -115,7 +118,10 @@ export function SalesSummary(){
                 <Stack spacing="5" w="100%" minWidth="300px" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8">
                     <Text fontSize="xl" w="100%">Seu Mês</Text>
 
-                    <Text fontSize="2xl" w="100%" fontWeight="bold" color={monthAmount > 0 ? "green.400" : "red.400"}>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(monthAmount)}</Text>
+                    <HStack>
+                        <Text fontSize="2xl" w="100%" fontWeight="bold" color={percentOfGoal !== 100 ? ( percentOfGoal > 60 ? "yellow.400" : (percentOfGoal > 30 ? "orange.400" : "red.400")) : "green.400"}>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(monthAmount)}</Text>
+                        <Text display="flex" alignItems="center" fontSize="sm" color="gray.600">{percentOfGoal}%</Text> 
+                    </HStack>
 
                     <Stack spacing="1">
                         <Text href="/caixa" display="flex" alignItems="center" fontSize="sm" color="gray.600">Potencial de venda</Text>  
