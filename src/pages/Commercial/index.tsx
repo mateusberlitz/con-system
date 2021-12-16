@@ -7,6 +7,7 @@ import { TaskFilterData, useTasks } from "../../hooks/useTasks";
 import { useWorkingCompany } from "../../hooks/useWorkingCompany";
 import { TasksSummary } from "../Financial/TasksSummary";
 import { LeadsReport } from "./LeadsReport";
+import { LeadsReportByMonth } from "./LeadsReportByMonth";
 import { LeadsSummary } from "./LeadsSummary";
 import { SalesSummary } from "./SalesSummary";
 import { SchedulesSummary } from "./SchedulesSummary";
@@ -68,6 +69,8 @@ export default function Commercial(){
                         <LeadsReport />
                     </Stack>
                 </HStack>
+
+                <LeadsReportByMonth />
 
             </Stack>
         </MainBoard>

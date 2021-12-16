@@ -53,7 +53,6 @@ export function EditPartialPaymentModal( { isOpen, onRequestClose, afterEdit, to
     function includeAndFormatData(paymentData: EditPartialPaymentFormData){
         paymentData.value = moneyToBackend(paymentData.value);
 
-        console.log(paymentData.pay_date);
         paymentData.pay_date = formatInputDate(paymentData.pay_date);
 
         return paymentData;
@@ -62,7 +61,6 @@ export function EditPartialPaymentModal( { isOpen, onRequestClose, afterEdit, to
     const handleEditPayment = async (paymentData : EditPartialPaymentFormData) => {
         try{
             paymentData = includeAndFormatData(paymentData);
-            console.log(paymentData);
 
             await api.post(`/partial_payments/update/${toEditPartialPaymentData.id}`, paymentData);
 
@@ -100,8 +98,6 @@ export function EditPartialPaymentModal( { isOpen, onRequestClose, afterEdit, to
     const changeIsDisabledRecurrence = () => {
         setIsDisabledRecurrence(!isDisabledRecurrence);
     }
-
-    console.log(toEditPartialPaymentData);
 
     return (
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">

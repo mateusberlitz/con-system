@@ -38,7 +38,7 @@ export interface toAddSaleLeadData{
     name: string;
 }
 
-interface CreateNewSaleFormData{
+export interface CreateNewSaleFormData{
     value: string;
     lead: number;
     company: number;
@@ -55,10 +55,7 @@ interface CreateNewSaleFormData{
 const CreateNewSaleFormSchema = yup.object().shape({
     value: yup.string().required('Qual o valor da venda?'),
     segment: yup.string().required('Qual o segmento da carta vendida?'),
-    contract: yup.string().required("Informe o contrato da cota"),
-    group: yup.string().required("Qual o grupo?"),
-    quota: yup.string().required("Informe o número da cota"),
-    date: yup.date().required("Quando foi feita a venda?"),
+    date: yup.string().required("Quando foi feita a venda?"),
 });
 
 export function NewSaleModal( { isOpen, onRequestClose, afterCreate, toAddLeadData } : NewSaleModalProps){
@@ -137,7 +134,9 @@ export function NewSaleModal( { isOpen, onRequestClose, afterCreate, toAddLeadDa
                 state: redirectMessages.auth
             });
         }
-    }, [isOpen])
+    }, [isOpen]);
+
+    const [otherValue, setOtherValue] = useState(false);
 
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
@@ -149,17 +148,47 @@ export function NewSaleModal( { isOpen, onRequestClose, afterCreate, toAddLeadDa
                 
                 <ModalBody pl="10" pr="10">
                     <Stack spacing="6">
-                        
-                        <Input register={register} name="value" type="text" placeholder="Valor do crédito" focusBorderColor="orange.400" variant="outline" error={formState.errors.value}/>
 
+                        <Stack>
+                            {
+                                !otherValue ? (
+                                    <Select register={register}  h="45px" name="value" w="100%" fontSize="sm" focusBorderColor="orange.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" error={formState.errors.value}>
+                                        <option value="25000">R$25.000,00</option>
+                                        <option value="35000">R$35.000,00</option>
+                                        <option value="40000">R$40.000,00</option>
+                                        <option value="50000">R$50.000,00</option>
+                                        <option value="60000">R$60.000,00</option>
+                                        <option value="70000">R$70.000,00</option>
+                                        <option value="80000">R$80.000,00</option>
+                                        <option value="90000">R$90.000,00</option>
+                                        <option value="100000">R$100.000,00</option>
+                                        <option value="120000">R$120.000,00</option>
+                                        <option value="150000">R$150.000,00</option>
+                                        <option value="180000">R$180.000,00</option>
+                                        <option value="200000">R$200.000,00</option>
+                                        <option value="220000">R$220.000,00</option>
+                                        <option value="230000">R$230.000,00</option>
+                                        <option value="250000">R$250.000,00</option>
+                                        <option value="275000">R$275.000,00</option>
+                                        <option value="300000">R$300.000,00</option>
+                                    </Select>
+                                ) : (
+                                    <Input register={register} name="value" type="text" placeholder="Valor do crédito" focusBorderColor="orange.400" variant="outline" error={formState.errors.value}/>
+                                )
+                            }
 
-                        <HStack spacing="4" align="baseline">
+                            <Link fontSize="sm" ml="2" onClick={() => {setOtherValue(!otherValue)}} width="fit-content">
+                                { otherValue ? 'Valor predefinido' : 'Outro valor'}
+                            </Link>
+                        </Stack>
+
+                        {/* <HStack spacing="4" align="baseline">
                             <Input register={register} name="contract" type="text" placeholder="Contrato" focusBorderColor="orange.400" variant="outline" error={formState.errors.contract}/>
 
                             <Input register={register} name="group" type="text" placeholder="Grupo" focusBorderColor="orange.400" variant="outline" error={formState.errors.group}/>
 
                             <Input register={register} name="quota" type="text" placeholder="Cota" focusBorderColor="orange.400" variant="outline" mask="" error={formState.errors.quota}/>
-                        </HStack>
+                        </HStack> */}
 
                         <Input register={register} name="date" type="date" placeholder="Data da venda" focusBorderColor="orange.400" variant="outline" mask="" error={formState.errors.date}/>
 

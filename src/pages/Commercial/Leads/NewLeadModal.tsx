@@ -177,7 +177,7 @@ export function NewLeadModal( { isOpen, onRequestClose, afterCreate, statuses, o
                 state: redirectMessages.auth
             });
         }
-    }, [isOpen])
+    }, [isOpen]);
 
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">

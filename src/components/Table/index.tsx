@@ -1,5 +1,5 @@
 import { ElementType, ReactNode } from "react";
-import { Flex, Icon, Table as ChakraTable, Tbody, Th, Thead, Tr } from "@chakra-ui/react";
+import { ChakraProps, Flex, Icon, Table as ChakraTable, TableProps, Tbody, Th, Thead, Tr } from "@chakra-ui/react";
 
 interface ThProps{
     text: string,
@@ -8,16 +8,16 @@ interface ThProps{
     wrap?: boolean;
 }
 
-interface TableProps{
+interface TableComponentProps extends TableProps{
     children: ReactNode;
     header: ThProps[];
 }
 
-export function Table({ header, children } : TableProps){
+export function Table({ header, children, ...rest } : TableComponentProps){
 
     return (
-        <Flex overflow="auto" w="100%" h="400px">
-            <ChakraTable size="md" height="fit-content">
+        <Flex overflow="auto" w="100%" h="300px">
+            <ChakraTable size="md" height="fit-content" {...rest}>
                 <Thead>
                     <Tr>
                         {

@@ -119,8 +119,6 @@ export function AddInvoicePaymentModal ( { isOpen, onRequestClose, afterAttach, 
                 return;
             }
 
-            console.log(toFormFile);
-
             if(invoiceData.date !== ""){
                 invoiceData.date = formatInputDate(invoiceData.date);
                 InvoiceFormedData.append('date', invoiceData.date);
@@ -219,8 +217,6 @@ export function AddInvoicePaymentModal ( { isOpen, onRequestClose, afterAttach, 
             }
         }
     }
-
-    console.log(invoices, filter);
     // useEffect(() => {
 
     // }, [invoices])

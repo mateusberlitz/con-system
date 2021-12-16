@@ -43,6 +43,8 @@ export interface Goal{
     company: Company;
     month: number;
     year: number;
+    visits?: number;
+    sales?: number;
     created_at: string;
     updated_at:string;
 }
@@ -287,7 +289,7 @@ export interface Lead{
     notes: LeadNote[];
     user?: User;
     birthday?: string;
-    status?: LeadStatus;
+    status: LeadStatus;
     origin?: DataOrigin;
     cpf?: string;
     cnpj?: string;
@@ -360,6 +362,7 @@ export interface City{
 
 export interface Schedule{
     id: number;
+    status: boolean;
     datetime: string;
     city: string;
     user: User;
@@ -381,4 +384,5 @@ export interface Sales{
     recommender_commission: number;
     commission: number;
     date: string;
+    schedule?: number;
 }

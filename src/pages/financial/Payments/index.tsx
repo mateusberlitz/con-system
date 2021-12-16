@@ -1,4 +1,4 @@
-import { Link, Flex, HStack, Stack, Spinner, IconButton, Text, Accordion, AccordionItem, AccordionButton, AccordionPanel, useToast, Divider, Table, Thead, Th, Td, Tbody, Tr } from "@chakra-ui/react";
+import { Link, Flex, HStack, Stack, Spinner, IconButton, Text, Accordion, AccordionItem, AccordionButton, AccordionPanel, useToast, Divider, Table, Thead, Th, Td, Tbody, Tr, Checkbox } from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { MainBoard } from "../../../components/MainBoard";
 import { useCompanies } from "../../../hooks/useCompanies";
@@ -25,7 +25,7 @@ import { Input } from "../../../components/Forms/Inputs/Input";
 import { OutlineButton } from "../../../components/Buttons/OutlineButton";
 import { EditButton } from "../../../components/Buttons/EditButton";
 import { RemoveButton } from "../../../components/Buttons/RemoveButton";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { NewPaymentModal } from "./NewPaymentModal";
 import { ConfirmPaymentRemoveModal } from "./ConfirmPaymentRemoveModal";
 import { useHistory } from "react-router";
@@ -51,6 +51,7 @@ import { ConfirmPartialRemoveModal } from "./ConfirmPartialRemoveModal";
 import { ExportDocumentsModal } from "./ExportDocumentsModal";
 import { EditPartialPaymentFormData, EditPartialPaymentModal } from "./EditPartialPaymentModal";
 import { CompanySelectMaster } from "../../../components/CompanySelect/companySelectMaster";
+import { ConfirmPaymentRemoveListModal } from "./ConfirmPaymentRemoveListModal";
 
 interface RemovePaymentData{
     id: number;
@@ -454,6 +455,39 @@ export default function Payments(){
         })
     }
 
+    const [removeList, setRemoveList] = useState<number[]>([]);
+
+    const handleSelect = (event: ChangeEvent<HTMLInputElement>) => {
+        if(event.target?.checked){
+            setRemoveList([...removeList, parseInt(event.target?.value)]);
+        }else{
+            setRemoveList(removeList.filter((paymentId) => paymentId !== parseInt(event.target?.value)));
+        }
+    }
+
+    const [isPaymentsRemoveListModalOpen, setIsPaymentsRemoveListModalOpen] = useState(false);
+
+    function OpenPaymentsRemoveListModal(){
+        if(removeList.length === 0){
+            toast({
+                title: "Ops",
+                description: `Nenhum pagamento selecionado para excluir.`,
+                status: "warning",
+                duration: 12000,
+                isClosable: true,
+            });
+
+            return;
+        }
+
+        setIsPaymentsRemoveListModalOpen(true);
+    }
+    function ClosePaymentsRemoveListModal(){
+        setIsPaymentsRemoveListModalOpen(false);
+    }
+
+    console.log(removeList);
+
     return(
         <MainBoard sidebar="financial" header={ <CompanySelectMaster filters={[{filterData: filter, setFilter: handleChangeFilter}]}/>}
         >
@@ -463,6 +497,7 @@ export default function Payments(){
             <EditPaymentModal categories={categories} toEditPaymentData={toEditPaymentData} users={users.data} providers={providers.data} afterEdit={payments.refetch} isOpen={isEditPaymentModalOpen} onRequestClose={CloseEditPaymentModal}/>
             
             <ConfirmPaymentRemoveModal afterRemove={payments.refetch} toRemovePaymentData={removePaymentData} isOpen={isConfirmPaymentRemoveModalOpen} onRequestClose={CloseConfirmPaymentRemoveModal}/>
+            <ConfirmPaymentRemoveListModal afterRemove={payments.refetch} toRemovePaymentList={removeList} isOpen={isPaymentsRemoveListModalOpen} onRequestClose={ClosePaymentsRemoveListModal}/>
             <ConfirmPartialRemoveModal afterRemove={payments.refetch} toRemovePaymentData={removePartialData} isOpen={isConfirmPartialRemoveModalOpen} onRequestClose={CloseConfirmPartialRemoveModal}/>
             <EditPartialPaymentModal toEditPartialPaymentData={EditPartialData} afterEdit={payments.refetch} isOpen={isPartialEditModalOpen} onRequestClose={ClosePartialEditModal}/>
 
@@ -471,7 +506,6 @@ export default function Payments(){
             <AddInvoicePaymentModal afterAttach={payments.refetch} toAddInvoiceData={addInvoicePaymentData} isOpen={isAddInvoicePaymentModalOpen} onRequestClose={CloseAddInvoicePaymentModal}/>
             
             <ExportDocumentsModal isOpen={isExportDocumentsModalOpen} onRequestClose={CloseExportDocumentsModal}/>
-            
 
             <Flex justify="space-between" alignItems="center" mb="10">
                 <SolidButton onClick={OpenNewPaymentModal} color="white" bg="blue.400" icon={PlusIcon} colorScheme="blue">
@@ -553,6 +587,13 @@ export default function Payments(){
             </Flex>
 
             <Stack fontSize="13px" spacing="12">
+                {
+                    removeList.length > 0 && (
+                        <RemoveButton onClick={() => OpenPaymentsRemoveListModal()}/>
+                    )
+                }
+                
+
                 { totalOfSelectedDays > 0 &&
                     (
                         <Flex>
@@ -640,14 +681,19 @@ export default function Payments(){
                                                 {({ isExpanded }) => (
                                                     <>
                                                         <HStack justify="space-between" mb="3">
-                                                            <AccordionButton p="0" height="fit-content" w="auto">
-                                                                <Flex alignItems="center" justifyContent="center" h="24px" w="30px" p="0" borderRadius="full" border="2px" borderColor="blue.400" variant="outline">
-                                                                { 
-                                                                        !isExpanded ? <StrongPlusIcon stroke="#2097ed" fill="none" width="12px"/> :
-                                                                        <MinusIcon stroke="#2097ed" fill="none" width="12px"/>
-                                                                } 
-                                                                </Flex>
-                                                            </AccordionButton>
+                                                            <HStack spacing="4">
+                                                                <AccordionButton p="0" height="fit-content" w="auto">
+                                                                    <Flex alignItems="center" justifyContent="center" h="24px" w="30px" p="0" borderRadius="full" border="2px" borderColor="blue.400" variant="outline">
+                                                                    { 
+                                                                            !isExpanded ? <StrongPlusIcon stroke="#2097ed" fill="none" width="12px"/> :
+                                                                            <MinusIcon stroke="#2097ed" fill="none" width="12px"/>
+                                                                    } 
+                                                                    </Flex>
+                                                                </AccordionButton>
+
+                                                                <Checkbox label="" name="remove" checked={removeList.includes(payment.id)} value={payment.id} onChange={handleSelect}/>
+                                                            </HStack>
+                                                            
 
                                                             <Flex fontWeight="500" alignItems="center" opacity={payment.status ? 0.5 : 1}>
                                                                 <EllipseIcon stroke="none" fill={payment.category?.color}/>

@@ -1,4 +1,4 @@
-import { HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, useToast, Text, IconButton } from "@chakra-ui/react";
+import { HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, useToast, Text, IconButton, Divider } from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 
 
@@ -76,18 +76,32 @@ export function ListGoalsModal( { isOpen, onRequestClose, afterEdit, goals, toAd
                 <ModalCloseButton top="10" right="5"/>
                 
                 <ModalBody pl="10" pr="10">
-                    <Stack spacing="6">
+                    <Stack spacing="5">
                         
                         {
                             goals.map((goal: Goal) => {
                                 return(
-                                    <HStack>
-                                        <Text>{monthNames[goal.month]}/{goal.year}: </Text>
-                                        <Text  cursor="pointer" fontWeight="bold" _hover={{textDecoration: "underline"}}>
-                                            {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(goal.value)}
-                                        </Text>
-                                        <IconButton onClick={() => openConfirmRemoveGoalModal({id: goal.id, name: toAddUserData.name, month: goal.month})} h="24px" w="23px" p="0" float="right" aria-label="Excluir venda" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
-                                    </HStack>
+                                    <>
+                                        <HStack>
+                                            <Stack spacing="0">
+                                                <Text>{monthNames[goal.month]}/{goal.year}: </Text>
+
+                                                <HStack>
+                                                    <Text cursor="pointer" fontWeight="bold" _hover={{textDecoration: "underline"}}>
+                                                        {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(goal.value)}
+                                                    </Text>
+
+                                                    <Text>Visitas: <b>{goal.visits ? goal.visits : 'Vazio'}</b></Text>
+                                                    <Text>Fechamentos: <b>{goal.sales ? goal.sales : 'Vazio'}</b></Text>
+
+                                                    <IconButton onClick={() => openConfirmRemoveGoalModal({id: goal.id, name: toAddUserData.name, month: goal.month})} h="24px" w="23px" p="0" float="right" aria-label="Excluir venda" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
+                                                </HStack>
+                                            </Stack>
+                                        </HStack>
+
+                                        <Divider/>
+                                    </>
+                                    
                                 )
                             })
                         }

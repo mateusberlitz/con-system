@@ -35,6 +35,8 @@ import { NewSaleModal, toAddSaleLeadData } from "../Sales/NewSaleModal";
 import { EditSaleFormData, EditSaleModal } from "../Sales/EditSaleModal";
 import { ConfirmSaleRemoveModal, RemoveSaleData } from "../Sales/ConfirmSaleRemoveModal";
 import { SearchLeads } from "./SearchLeads";
+import { LeadsReportByMonth } from "../LeadsReportByMonth";
+import { LeadsReportByUser } from "./LeadsReportByUser";
 
 export default function Leads(){
     const toast = useToast();
@@ -84,8 +86,8 @@ export default function Leads(){
     const [filter, setFilter] = useState<LeadsFilterData>(() => {
         const data: LeadsFilterData = {
             search: '',
-            start_date: formatYmdDate(new Date().toString()),
-            end_date: formatYmdDate(new Date().toString()),
+            //start_date: formatYmdDate(new Date().toString()),
+            //end_date: formatYmdDate(new Date().toString()),
             status: 0,
             user: (isManager ? undefined : profile?.id),
             group_by: '',
@@ -95,7 +97,7 @@ export default function Leads(){
     })
 
     function handleChangeFilter(newFilter: LeadsFilterData){
-        newFilter.user = (isManager ? undefined : profile?.id);
+        newFilter.user = (isManager ? (newFilter.user ? newFilter.user : undefined) : profile?.id);
         setFilter(newFilter);
     }
 
@@ -326,8 +328,6 @@ export default function Leads(){
         }
     }, 0)
 
-    console.log(pendingLeadsCount);
-
     return (
         <MainBoard sidebar="commercial" header={<CompanySelectMaster />}>
             <NewLeadModal statuses={statuses} origins={origins} afterCreate={leads.refetch} isOpen={isNewLeadModalOpen} onRequestClose={CloseNewPaymentModal}/>
@@ -363,6 +363,12 @@ export default function Leads(){
                         <Text>Nenhuma lead encontrado.</Text>
                     </Flex>
                 ) ) 
+            }
+
+            {
+                filter && (
+                    <LeadsReportByUser filter={filter}/>
+                )
             }
 
             {
@@ -413,8 +419,6 @@ export default function Leads(){
                                     value: lead.value ? lead.value.toString().replace('.', ',') : '',
                                     segment: lead.segment,
                                 }
-
-                                console.log(lead.latest_returned);
 
                                 return (
                                     <AccordionItem key={lead.id} display="flex" flexDir="column" paddingX="8" paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
@@ -509,7 +513,6 @@ export default function Leads(){
 
                                                             {
                                                                 lead.notes.map((note) => {
-                                                                    console.log(note);
                                                                     return(
                                                                         <HStack key={note.id}>
                                                                             <Text color="gray.800" fontWeight="semibold">{formatBRDate(note.created_at)} - {note.status ? `${note.status.name} - ` : ''}</Text>

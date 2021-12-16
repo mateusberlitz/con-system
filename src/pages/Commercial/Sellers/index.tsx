@@ -66,6 +66,7 @@ export default function Sellers(){
         
         return data;
     })
+    
     const { data, isLoading, refetch, error} = useUsers(filter);
     const [ editUserData, setEditUserData ] = useState<EditUserFormData>(() => {
 

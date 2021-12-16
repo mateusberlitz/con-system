@@ -24,6 +24,7 @@ import { ScheduleRow } from "./ScheduleRow";
 import { FormEvent } from "toasted-notes/node_modules/@types/react";
 import { EditScheduleFormData, EditScheduleModal } from "./EditScheduleModal";
 import { ConfirmScheduleRemoveModal, RemoveScheduleData } from "./ConfirmScheduleRemoveModal";
+import { CompleteScheduleFormData, CompleteScheduleModal } from "./CompleteScheduleModal";
 
 export default function Schedules(){
     const workingCompany = useWorkingCompany();
@@ -105,6 +106,25 @@ export default function Schedules(){
     function CloseRemoveScheduleModal(){
         setIsRemoveScheduleModalOpen(false);
     }
+
+    const [isCompleteScheduleModalOpen, setIsCompleteScheduleModalOpen] = useState(false);
+    const [completeScheduleData, setCompleteScheduleData] = useState<CompleteScheduleFormData>(() => {
+
+        const data: CompleteScheduleFormData = {
+            id: 0,
+        };
+        
+        return data;
+    });
+
+    function OpenCompleteScheduleModal(scheduleData : CompleteScheduleFormData){
+        setCompleteScheduleData(scheduleData);
+        setIsCompleteScheduleModalOpen(true);
+    }
+    function CloseCompleteScheduleModal(){
+        setIsCompleteScheduleModalOpen(false);
+    }
+
 
 
 
@@ -191,6 +211,7 @@ export default function Schedules(){
         <MainBoard sidebar="commercial" header={<CompanySelectMaster/>}>
             <NewScheduleModal cities={cities} leads={leads} afterCreate={schedules.refetch} isOpen={isNewScheduleModalOpen} onRequestClose={CloseNewScheduleModal}/>
             <EditScheduleModal leads={leads} afterEdit={schedules.refetch} isOpen={isEditScheduleModalOpen} onRequestClose={CloseEditScheduleModal} toEditScheduleData={toEditScheduleData}/>
+            <CompleteScheduleModal leads={leads} afterEdit={schedules.refetch} isOpen={isCompleteScheduleModalOpen} onRequestClose={CloseCompleteScheduleModal} toCompleteScheduleData={completeScheduleData}/>
             <ConfirmScheduleRemoveModal afterRemove={schedules.refetch} isOpen={isRemoveScheduleModalOpen} onRequestClose={CloseRemoveScheduleModal} toRemoveScheduleData={removeScheduleData}/>
 
             <Board marginTop="-40px">
@@ -199,9 +220,9 @@ export default function Schedules(){
                         <IconButton onClick={() => handleRemoveDay()} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Voltar um dia" border="none" icon={ <BackIcon width="20px" stroke="#6e7191" fill="none"/>} variant="outline"/>
                         <IconButton onClick={() => handleAddDay()} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Adiantar um dia" border="none" icon={ <ForwardIcon width="20px" stroke="#6e7191" fill="none"/>} variant="outline"/>
 
-                        <Input value={inputStartDate} onChange={handleChangeStartDate} name="start_date" type="date" placeholder="Data inicial" variant="filled" maxW="240px"/>
+                        <Input value={inputStartDate} onChange={handleChangeStartDate} focusBorderColor="orange.400" name="start_date" type="date" placeholder="Data inicial" variant="filled" maxW="240px"/>
                         <Text>Até</Text>
-                        <Input value={inputEndDate} onChange={handleChangeEndDate} name="end_date" type="date" placeholder="Data final" variant="filled" maxW="240px"/>
+                        <Input value={inputEndDate} onChange={handleChangeEndDate} focusBorderColor="orange.400" name="end_date" type="date" placeholder="Data final" variant="filled" maxW="240px"/>
 
                         
                     </HStack>
@@ -236,7 +257,7 @@ export default function Schedules(){
 
                                     
                                 // </Tr>
-                                <ScheduleRow handleRemoveSchedule={OpenRemoveScheduleModal} handleEditSchedule={OpenEditScheduleModal} key={hour} hour={hour} days={toRowDays} hourSchedules={schedules.data?.data[splitedHour[0]]}/>
+                                <ScheduleRow handleRemoveSchedule={OpenRemoveScheduleModal} handleEditSchedule={OpenEditScheduleModal} handleCompleteSchedule={OpenCompleteScheduleModal} key={hour} hour={hour} days={toRowDays} hourSchedules={schedules.data?.data[splitedHour[0]]}/>
                             ):(
                                 <Tr key={hour} borderBottom="1px solid" borderColor="gray.200">
                                     <Th p="1" textAlign="center" borderBottom="none" borderLeft="1px solid #e2e8f0" borderRight="1px solid #e2e8f0" fontSize="11px">
