@@ -305,7 +305,7 @@ export default function CashFlow(){
                                                 </HStack>
 
                                                 <Flex>
-                                                    <Text fontWeight="bold" color="gray.800">{cashFlow.category.name}</Text>
+                                                    <Text fontWeight="bold" color="gray.800">{cashFlow.category && cashFlow.category.name}</Text>
                                                 </Flex>
 
                                                 <Flex>

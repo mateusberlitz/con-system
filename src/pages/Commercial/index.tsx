@@ -37,31 +37,31 @@ export default function Commercial(){
     return (
         <MainBoard sidebar="commercial" header={<CompanySelectMaster/>}>
             <Stack fontSize="13px" spacing="12">
-                <HStack spacing="8" alignItems="flex-start">
+                <Stack direction={["column", "column", "row"]} spacing="8" alignItems="flex-start">
                     {/* PAGAMENTOS */}
-                    <Stack spacing="8" w="55%">
+                    <Stack spacing="8" w={["100%", "100%", "55%"]}>
                         <LeadsSummary />
                     </Stack>
                     
 
                     {/* TAREFAS */}
-                    <Stack spacing="8" w="45%">
+                    <Stack spacing="8" w={["100%", "100%", "45%"]}>
                         <TasksSummary tasks={tasks} page={page} setPage={handleChangePage}/>
                     </Stack>
-                </HStack>
+                </Stack>
 
-                <HStack spacing="8" alignItems="flex-start">
+                <Stack direction={["column", "column", "row"]} spacing="8" alignItems="flex-start">
                     {/* PAGAMENTOS */}
-                    <Stack spacing="8" w="65%">
+                    <Stack spacing="8" w={["100%", "100%", "65%"]}>
                         <SchedulesSummary />
                     </Stack>
                     
 
                     {/* TAREFAS */}
-                    <Stack spacing="8" w="35%">
+                    <Stack spacing="8" w={["100%", "100%", "35%"]}>
                         <SalesSummary />
                     </Stack>
-                </HStack>
+                </Stack>
 
                 <HStack spacing="8" alignItems="flex-start">
                     {/* PAGAMENTOS */}

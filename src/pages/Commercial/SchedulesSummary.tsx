@@ -1,4 +1,4 @@
-import { Text, Stack,Flex, Spinner, HStack, Icon } from "@chakra-ui/react";
+import { Text, Stack,Flex, Spinner, HStack, Icon, useBreakpointValue } from "@chakra-ui/react";
 import { UseQueryResult } from "react-query";
 import { SolidButton } from "../../components/Buttons/SolidButton";
 import { Bill, City, DataOrigin, Lead, LeadStatus, Payment, Schedule } from "../../types";
@@ -147,14 +147,19 @@ export function SchedulesSummary(){
         }
     }, 0)
 
+    const isWideVersion = useBreakpointValue({
+        base: false,
+        lg: true,
+    });
+
     return (
         <>
             <NewScheduleModal cities={cities} leads={leads} afterCreate={schedules.refetch} isOpen={isNewScheduleModalOpen} onRequestClose={CloseNewScheduleModal}/>
             <EditScheduleModal leads={leads} afterEdit={schedules.refetch} isOpen={isEditScheduleModalOpen} onRequestClose={CloseEditScheduleModal} toEditScheduleData={toEditScheduleData}/>
             <ConfirmScheduleRemoveModal afterRemove={schedules.refetch} isOpen={isRemoveScheduleModalOpen} onRequestClose={CloseRemoveScheduleModal} toRemoveScheduleData={removeScheduleData}/>
 
-                <Stack w="100%" min-width="300px" spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8">
-                    <HStack justifyContent="space-between" mb="4">
+                <Stack w="100%" min-width="300px" spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px={[5,5,8]} py={[5,5,8]}>
+                    <Stack direction={["column", "column", "row"]} justifyContent="space-between" mb="4">
                         <HStack spacing="2">
                             <Icon as={CalendarIcon} fontSize="20" stroke="#14142b" fill="none"/>
 
@@ -164,7 +169,8 @@ export function SchedulesSummary(){
                         <SolidButton onClick={OpenNewScheduleModal} color="white" bg="orange.400" height="32px" icon={PlusIcon} colorScheme="orange" fontSize="12px">
                             Adicionar
                         </SolidButton>
-                    </HStack>
+                    </Stack>
+
                     
 
                     {   schedules.isLoading ? (
@@ -200,7 +206,7 @@ export function SchedulesSummary(){
                                         const scheduleColor = (date.toDateString() == todayDateObject.toDateString() ? 'yellow' : date < new Date() ? 'red' : 'gray');
 
                                         return (
-                                            <HStack spacing="6" justifyContent="space-between" key={schedule.id} paddingX="8" bg="white" py="3" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
+                                            <HStack spacing="6" justifyContent="space-between" key={schedule.id} paddingX={[4, 4, 8]} bg="white" py="3" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
                                                 <Stack spacing="0">
                                                     <Text fontSize="10px" color={`${scheduleColor}.800`}>{formatBRDate(schedule.datetime)}</Text>
                                                     <Text fontSize="sm" fontWeight="normal" color={`${scheduleColor}.800`}>{getHour(schedule.datetime)}</Text>
@@ -211,11 +217,15 @@ export function SchedulesSummary(){
                                                     <Text fontWeight="bold">{schedule.city}</Text>
                                                 </Stack>
 
-                                                <HStack>
-                                                    <EditButton onClick={() => OpenEditScheduleModal({id: schedule.id, city: schedule.city, datetime: schedule.datetime, lead: schedule.lead ? schedule.lead.id : 0})}/>
-                                                
-                                                    <RemoveButton onClick={() => OpenRemoveScheduleModal({id: schedule.id})}/>
-                                                </HStack>
+                                                {
+                                                    isWideVersion && (
+                                                        <HStack>
+                                                            <EditButton onClick={() => OpenEditScheduleModal({id: schedule.id, city: schedule.city, datetime: schedule.datetime, lead: schedule.lead ? schedule.lead.id : 0})}/>
+                                                        
+                                                            <RemoveButton onClick={() => OpenRemoveScheduleModal({id: schedule.id})}/>
+                                                        </HStack>
+                                                    )
+                                                }
                                             </HStack>
                                         )
                                     })

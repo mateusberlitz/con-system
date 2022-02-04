@@ -115,7 +115,7 @@ export function LeadsReportByUser({filter}: LeadsReportByUserProps){
 
     return (
         <>
-            <Stack mb="14" w="100%" min-width="300px" spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8">
+            <Stack mb="14" w="100%" min-width="300px" spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px={[5,5,8]} py={[5,5,8]}>
                 <HStack justifyContent="space-between" mb="4">
                     <HStack spacing="2">
                         <Icon as={CalendarIcon} fontSize="20" stroke="#14142b" fill="none"/>
@@ -124,8 +124,8 @@ export function LeadsReportByUser({filter}: LeadsReportByUserProps){
                     </HStack>
                 </HStack>
 
-                <HStack justify="space-between">
-                    <HStack spacing="5" w={["60%", "100%"]}>
+                <Stack justify="space-between" direction={["column", "column", "row"]}>
+                    <HStack spacing="5" w={["100%", "100%", "60%"]} flexWrap={'wrap'} mb="6">
                         {
                             leadsByStatus && Object.keys(leadsByStatus).map((status: string, index: number) => {
                                 console.log(leadsByStatus[status].length);
@@ -142,13 +142,13 @@ export function LeadsReportByUser({filter}: LeadsReportByUserProps){
                     {/* <Divider orientation='vertical' /> */}
 
                     {/* borderLeft="2px solid" borderColor="gray.200" */}
-                    <Stack w={["40%", "100%"]} py="5" px="6" bg="gray.100" borderRadius="10"> 
+                    <Stack w={["100%", "100%", "40%"]} py="5" px="6" bg="gray.100" borderRadius="10"> 
                         <HStack><Text color="gray.700">Visitas pendentes: </Text> <Text>{pendingSchedules}</Text></HStack>
                         <HStack><Text color="gray.700">Visitas concluídas:</Text><Text>{completedSchedules}</Text></HStack>
                         <HStack><Text color="gray.700">Fechamentos: </Text> <Text>{saledSchedules}</Text></HStack>
                         <HStack><Text color="gray.700">Conclusão da meta: </Text><Text>{percentOfGoal}%</Text></HStack>
                     </Stack>
-                </HStack>
+                </Stack>
             </Stack>
         </>
     )

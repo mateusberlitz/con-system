@@ -3,7 +3,9 @@ export function setAuthTimeCookie(expires_in: number){
     date.setTime(date.getTime() + (expires_in*1000));
     //date.setTime(date.getTime() + (60*1000));
 
-    document.cookie = `expireAuth; expires=${date.toUTCString()}; path=/`;
+    //document.cookie = `expireAuth; expires=${date.toUTCString()}; path=/`;
+    document.cookie = `value=expireAuth; max-age=${expires_in}; path=/`;
+    //console.log(document.cookie);
     return document.cookie;
 }
 
@@ -11,12 +13,14 @@ export function getAuthTimeCookie(){
     const decodedCookie = decodeURIComponent(document.cookie);
     const slicedCookie = decodedCookie.split(';');
 
+    console.log(decodedCookie);
+
     for(var i = 0; i < slicedCookie.length; i++){
         var cookiePart = slicedCookie[i];
 
         cookiePart = cookiePart.replace(/\s/g, '');
 
-        if(cookiePart === "expireAuth"){
+        if(cookiePart === "expireAuth" || cookiePart === "value=expireAuth"){
             return cookiePart;
         }
     }
@@ -26,6 +30,8 @@ export function getAuthTimeCookie(){
 
 export function checkAuthTimeCookie(){
     const cookie = getAuthTimeCookie();
+
+    console.log(cookie);
 
     if(cookie === ""){
         return false;

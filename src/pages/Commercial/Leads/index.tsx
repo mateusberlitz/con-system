@@ -1,4 +1,4 @@
-import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Badge as ChakraBadge, Checkbox, Divider, Flex, HStack, IconButton, Spinner, Stack, Text, useToast } from "@chakra-ui/react";
+import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Badge as ChakraBadge, Checkbox, Divider, Flex, HStack, IconButton, Link, Spinner, Stack, Text, useBreakpointValue, useToast } from "@chakra-ui/react";
 import Badge from "../../../components/Badge";
 import { OutlineButton } from "../../../components/Buttons/OutlineButton";
 import { CompanySelectMaster } from "../../../components/CompanySelect/companySelectMaster";
@@ -326,7 +326,22 @@ export default function Leads(){
         if(lead.status && lead.status.name === "Pendente"){
             return sumAmount + 1;
         }
-    }, 0)
+    }, 0);
+
+    const isWideVersion = useBreakpointValue({
+        base: false,
+        lg: true,
+    });
+
+    const [showingFilterMobile, setShowingFilterMobile] = useState(false);
+
+    const handleOpenFilter = () => {
+        setShowingFilterMobile(true);
+    }
+
+    const handleCloseFilter = () => {
+        setShowingFilterMobile(false);
+    }
 
     return (
         <MainBoard sidebar="commercial" header={<CompanySelectMaster />}>
@@ -348,7 +363,21 @@ export default function Leads(){
                 Adicionar Lead
             </SolidButton>
 
-            <SearchLeads filter={filter} handleSearchLeads={handleChangeFilter} origins={origins} statuses={statuses}/>
+            {
+                isWideVersion ?  (
+                    <SearchLeads filter={filter} handleSearchLeads={handleChangeFilter} origins={origins} statuses={statuses}/>
+                ) : (
+                    <>
+                        <Link onClick={showingFilterMobile ? handleCloseFilter : handleOpenFilter} mb="12">{showingFilterMobile ? 'Fechar Filtro' : 'Filtrar lista'}</Link>
+                        
+                        {
+                            showingFilterMobile && (
+                                <SearchLeads filter={filter} handleSearchLeads={handleChangeFilter} origins={origins} statuses={statuses}/>
+                            )
+                        }
+                    </>
+                )
+            }
 
             {   leads.isLoading ? (
                     <Flex justify="center">
@@ -421,10 +450,10 @@ export default function Leads(){
                                 }
 
                                 return (
-                                    <AccordionItem key={lead.id} display="flex" flexDir="column" paddingX="8" paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
+                                    <AccordionItem key={lead.id} display="flex" flexDir="column" paddingX={[4, 4, 8]} paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
                                         {({ isExpanded }) => (
                                             <>
-                                                <HStack justify="space-between" mb="3">
+                                                <HStack justify="space-between" mb="3" pos="relative">
                                                     <AccordionButton p="0" height="fit-content" w="auto">
                                                         <Flex alignItems="center" justifyContent="center" h="24px" w="30px" p="0" borderRadius="full" border="2px" borderColor="orange.400" variant="outline">
                                                         { 
@@ -443,12 +472,25 @@ export default function Leads(){
                                                         )
                                                     }
                                                     
-                                                    <Stack spacing="0">
-                                                        <Text fontSize="10px" color="gray.800">{getHour(lead.created_at)}</Text>
-                                                        <Text fontSize="sm" fontWeight="normal" color="gray.800">{formatBRDate(lead.created_at)}</Text>
-                                                    </Stack>
+                                                    {
+                                                        isWideVersion && (
+                                                            <Stack spacing="0">
+                                                                <Text fontSize="10px" color="gray.800">{getHour(lead.created_at)}</Text>
+                                                                <Text fontSize="sm" fontWeight="normal" color="gray.800">{formatBRDate(lead.created_at)}</Text>
+                                                            </Stack>
+                                                        )
+                                                    }
 
                                                     <Stack spacing="0">
+                                                        {
+                                                            !isWideVersion && (
+                                                                <Badge cursor="pointer" colorScheme={lead.status?.color} color={!isWideVersion ? `${lead.status?.color}.500` : "white"} bg={!isWideVersion ? `transparent` : `${lead.status?.color}.500`} display="flex" borderRadius="full" px="0" py="0" h="20px" alignItems="center"
+                                                                    onClick={() => OpenEditLeadStatusOfLeadModal({id:lead.id, status: lead.status ? lead.status.id : 0, name:lead.name})}
+                                                                    >
+                                                                        <Text>{lead.status?.name}</Text>
+                                                                </Badge>
+                                                            ) 
+                                                        }
                                                         <Text fontSize="sm" fontWeight="bold" color="gray.800">{lead.name}</Text>
                                                         <Text fontSize="11px" fontWeight="normal" color="gray.800">{lead.phone}</Text>
                                                     </Stack>
@@ -460,28 +502,40 @@ export default function Leads(){
 
                                                     {/* <Text fontSize="sm" fontWeight="normal" color="gray.800">Veículo - R$50.000,00</Text> */}
 
-                                                    <Stack spacing="0">
-                                                        <Text fontSize="10px" color="gray.800">Pretensão</Text>
-                                                        <Text fontSize="sm" fontWeight="normal" color="gray.800">{lead?.segment} - {lead.value ? Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(lead.value) : ''}</Text>
-                                                    </Stack>
+                                                    {
+                                                        isWideVersion && (
+                                                            <Stack spacing="0">
+                                                                <Text fontSize="10px" color="gray.800">Pretensão</Text>
+                                                                <Text fontSize="sm" fontWeight="normal" color="gray.800">{lead?.segment} - {lead.value ? Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(lead.value) : ''}</Text>
+                                                            </Stack>
+                                                        )
+                                                    }
 
-                                                    <Stack spacing="0">
-                                                        <Text fontSize="10px" color="gray.800">origem</Text>
-                                                        <Text fontSize="sm" fontWeight="normal" color="gray.800">{lead.origin?.name}</Text>
-                                                    </Stack>
+                                                    {
+                                                        isWideVersion && (
+                                                            <Stack spacing="0">
+                                                                <Text fontSize="10px" color="gray.800">origem</Text>
+                                                                <Text fontSize="sm" fontWeight="normal" color="gray.800">{lead.origin?.name}</Text>
+                                                            </Stack>
+                                                        )
+                                                    }
 
-                                                    <Stack spacing="0">
-                                                        {
-                                                            lead.latest_returned && (
-                                                                <Text fontSize="10px" color="gray.800">de: {lead.latest_returned.user.name}</Text>
-                                                            )
-                                                        }
-                                                        <Badge cursor="pointer" colorScheme={lead.status?.color} color="white" bg={`${lead.status?.color}.500`} display="flex" borderRadius="full" px="5" py="0" h="29px" alignItems="center"
-                                                            onClick={() => OpenEditLeadStatusOfLeadModal({id:lead.id, status: lead.status ? lead.status.id : 0, name:lead.name})}
-                                                            >
-                                                                <Text>{lead.status?.name}</Text>
-                                                        </Badge>
-                                                    </Stack> 
+                                                    {
+                                                        isWideVersion && (
+                                                            <Stack spacing="0" pos={!isWideVersion ? "absolute" : "relative"} right={!isWideVersion ? "-20px" : "inherit"} top={!isWideVersion ? "-10px" : "inherit"}>
+                                                                {
+                                                                    lead.latest_returned && (
+                                                                        <Text fontSize="10px" color="gray.800">de: {lead.latest_returned.user.name}</Text>
+                                                                    )
+                                                                }
+                                                                <Badge cursor="pointer" colorScheme={lead.status?.color} color={!isWideVersion ? `${lead.status?.color}.500` : "white"} bg={!isWideVersion ? `transparent` : `${lead.status?.color}.500`} display="flex" borderRadius="full" px="5" py="0" h="29px" alignItems="center"
+                                                                    onClick={() => OpenEditLeadStatusOfLeadModal({id:lead.id, status: lead.status ? lead.status.id : 0, name:lead.name})}
+                                                                    >
+                                                                        <Text>{lead.status?.name}</Text>
+                                                                </Badge>
+                                                            </Stack> 
+                                                        )
+                                                    }
 
                                                     {
                                                         (isManager && !lead.user) && (
@@ -507,7 +561,7 @@ export default function Leads(){
                                                 </HStack>
 
                                                 <AccordionPanel flexDir="column" borderTop="2px" borderColor="gray.500" px="1" py="5">
-                                                    <HStack justifyContent="space-between" mb="4">
+                                                    <Stack spacing="8" direction={["column", "column", "row"]} justifyContent="space-between" mb="4">
                                                         <Stack fontSize="sm" spacing="3">
                                                             <Text fontWeight="bold">Anotações</Text>
 
@@ -542,10 +596,13 @@ export default function Leads(){
 
                                                                     return(
                                                                         <HStack key={sale.id}>
-                                                                            <Text color="gray.800" fontWeight="normal">{formatBRDate(sale.date)}: </Text>
-                                                                            <Text>{sale.group}-{sale.quota} | </Text>
-                                                                            <Text fontWeight="semibold">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(sale.value)}</Text>
-                                                                            <Text fontWeight="normal">Comissão esperada: <strong>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(sale.commission)}</strong></Text>
+                                                                            {/* <Text>{sale.group}-{sale.quota} | </Text> */}
+                                                                            <Stack spacing="1">
+                                                                                <Text color="gray.800" fontWeight="normal" fontSize="12px">{formatBRDate(sale.date)}: </Text>
+                                                                                <Text fontWeight="semibold">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(sale.value)}</Text>
+                                                                            </Stack>
+                                                                            
+                                                                            <Text fontWeight="normal">Comissão: <strong>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(sale.commission)}</strong></Text>
                                                                             
                                                                             <IconButton onClick={() => OpenEditSaleModal(leadSalesData)} h="24px" w="23px" p="0" float="right" aria-label="Alterar venda" border="none" icon={ <EditIcon width="20px" stroke="#d69e2e" fill="none"/>} variant="outline"/>
                                                                             <IconButton onClick={() => OpenRemoveSaleModal({id: sale.id, group: sale.group, quota: sale.quota})} h="24px" w="23px" p="0" float="right" aria-label="Excluir venda" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
@@ -561,7 +618,8 @@ export default function Leads(){
                                                         </Stack>
 
                                                         <HStack spacing="5" alignItems="center" h="40px">
-                                                            <Divider orientation="vertical"/> 
+                                                            {/* <Divider orientation={isWideVersion ? "vertical" : "horizontal"}/>  */}
+                                                            <Divider orientation={"vertical"}/> 
 
                                                             <EditButton onClick={() => OpenEditLeadModal(leadToEditData)}/>
 
@@ -571,7 +629,7 @@ export default function Leads(){
                                                                 )
                                                             }
                                                         </HStack>
-                                                    </HStack>
+                                                    </Stack>
                                                 </AccordionPanel>
                                             </>
                                         )}

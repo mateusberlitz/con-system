@@ -70,7 +70,7 @@ export function LeadsReport(){
                         <HStack spacing="2">
                             <Icon as={CalendarIcon} fontSize="20" stroke="#14142b" fill="none"/>
 
-                            <Text fontSize="xl" mb="5" w="100%">Relatório de Leads</Text>
+                            <Text fontSize="xl" mb="5" w="100%">Leads por origem</Text>
                         </HStack>
                     </HStack>
                     

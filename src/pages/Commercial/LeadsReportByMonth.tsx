@@ -168,11 +168,11 @@ export function LeadsReportByMonth(){
     return (
         <>
                 <Stack mb="14" w="100%" min-width="300px" spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8">
-                    <HStack justifyContent="space-between" mb="4">
+                    <Stack direction={["column", "column", "row"]} justifyContent="space-between" mb="4" spacing="9">
                         <HStack spacing="2">
                             <Icon as={CalendarIcon} fontSize="20" stroke="#14142b" fill="none"/>
 
-                            <Text fontSize="xl" mb="5" w="100%">Relatório de Leads do vendedor</Text>
+                            <Text fontSize="xl" mb="5" w="100%">Relatório de Leads</Text>
                         </HStack>
 
                         {
@@ -191,7 +191,7 @@ export function LeadsReportByMonth(){
                                 </FormControl>
                             ))
                         }
-                    </HStack>
+                    </Stack>
                     
 
                     {/* {   leadsReport.isLoading ? (

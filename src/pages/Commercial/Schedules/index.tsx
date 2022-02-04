@@ -215,23 +215,26 @@ export default function Schedules(){
             <ConfirmScheduleRemoveModal afterRemove={schedules.refetch} isOpen={isRemoveScheduleModalOpen} onRequestClose={CloseRemoveScheduleModal} toRemoveScheduleData={removeScheduleData}/>
 
             <Board marginTop="-40px">
-                <HStack justifyContent="space-between" mb="7">
-                    <HStack>
-                        <IconButton onClick={() => handleRemoveDay()} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Voltar um dia" border="none" icon={ <BackIcon width="20px" stroke="#6e7191" fill="none"/>} variant="outline"/>
-                        <IconButton onClick={() => handleAddDay()} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Adiantar um dia" border="none" icon={ <ForwardIcon width="20px" stroke="#6e7191" fill="none"/>} variant="outline"/>
+                <Stack direction={["column", "column", "row"]} spacing="7" justifyContent="space-between" mb="7">
+                    <Stack direction={["column", "column", "row"]} spacing="4">
+                        <HStack>
+                            <IconButton onClick={() => handleRemoveDay()} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Voltar um dia" border="none" icon={ <BackIcon width="20px" stroke="#6e7191" fill="none"/>} variant="outline"/>
+                            <IconButton onClick={() => handleAddDay()} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Adiantar um dia" border="none" icon={ <ForwardIcon width="20px" stroke="#6e7191" fill="none"/>} variant="outline"/>
+                        </HStack>
 
-                        <Input value={inputStartDate} onChange={handleChangeStartDate} focusBorderColor="orange.400" name="start_date" type="date" placeholder="Data inicial" variant="filled" maxW="240px"/>
-                        <Text>Até</Text>
-                        <Input value={inputEndDate} onChange={handleChangeEndDate} focusBorderColor="orange.400" name="end_date" type="date" placeholder="Data final" variant="filled" maxW="240px"/>
-
+                        <HStack>
+                            <Input value={inputStartDate} onChange={handleChangeStartDate} focusBorderColor="orange.400" name="start_date" type="date" placeholder="Data inicial" variant="filled" maxW="240px"/>
+                            <Text>Até</Text>
+                        </HStack>
                         
-                    </HStack>
+                        <Input value={inputEndDate} onChange={handleChangeEndDate} focusBorderColor="orange.400" name="end_date" type="date" placeholder="Data final" variant="filled" maxW="240px"/>
+                    </Stack>
 
                     <SolidButton color="white" bg="orange.400" icon={PlusIcon} colorScheme="orange" mb="10" 
                         onClick={() => OpenNewScheduleModal()}>
                         Agendar
                     </SolidButton>
-                </HStack>
+                </Stack>
                 
                 {   schedules.isLoading ? (
                     <Flex justify="center" mt="4">

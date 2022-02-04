@@ -159,8 +159,8 @@ export function LeadsSummary(){
             <EditLeadModal toEditLeadData={toEditLeadData} statuses={statuses} origins={origins} afterEdit={leads.refetch} isOpen={isEditLeadModalOpen} onRequestClose={CloseEditLeadModal}/>
             <ConfirmLeadRemoveModal toRemoveLeadData={removeLeadData} afterRemove={leads.refetch} isOpen={isRemoveLeadModalOpen} onRequestClose={CloseRemoveLeadModal}/>
             
-                <Stack w="100%" min-width="300px" spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8">
-                    <HStack justifyContent="space-between" mb="4">
+                <Stack w="100%" min-width="300px" spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px={[5,5,8]} py={[5,5,8]} >
+                    <Stack direction={["column", "column", "row"]} justifyContent="space-between" mb="4">
                         <HStack spacing="2">
                             <AtSign/>
                             <Text fontSize="xl" mb="5" w="100%">Meus leads</Text>
@@ -169,7 +169,7 @@ export function LeadsSummary(){
                         <SolidButton onClick={OpenNewLeadModal} color="white" bg="orange.400" height="32px" icon={PlusIcon} colorScheme="orange" fontSize="12px">
                             Adicionar
                         </SolidButton>
-                    </HStack>
+                    </Stack>
                     
 
                     {   leads.isLoading ? (
@@ -229,7 +229,7 @@ export function LeadsSummary(){
                                         }
 
                                         return (
-                                                        <Flex key={lead.id} display="flex" flexDir="column" paddingX="8" paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
+                                                        <Flex key={lead.id} display="flex" flexDir="column" paddingX={[4, 4, 8]} paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
                                                             <HStack justify="space-between" mb="3">
                                                                 
                                                                 <Stack spacing="0">

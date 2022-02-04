@@ -8,11 +8,11 @@ interface BoardProps extends ChakraProps{
 
 export function Board({ tag = 'grid', children, ...rest } : BoardProps){
     return tag === 'flex' ? (
-        <Flex bg="white" boxShadow="md" p="9" borderRadius="24"  {...rest}>
+        <Flex bg="white" boxShadow="md" p={[4,4, 9]} borderRadius="24"  {...rest}>
             {children}
         </Flex>
     ): (
-        <GridItem bg="white" boxShadow="md" p="9" borderRadius="24" {...rest}>
+        <GridItem bg="white" boxShadow="md" p={[4,4, 9]} borderRadius="24" {...rest}>
             {children}
         </GridItem>
     );

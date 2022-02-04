@@ -31,6 +31,7 @@ import Sellers from './pages/Commercial/Sellers';
 import Leads from './pages/Commercial/Leads';
 import Schedules from './pages/Commercial/Schedules';
 import SimpleReport from './pages/Financial/Reports/SimpleReport';
+import Teams from './pages/Commercial/Teams';
 
 interface PrivateRouteProps extends RouteProps{
   component: any;
@@ -97,6 +98,7 @@ const Routes = (): JSX.Element => {
         <PrivateRoute path="/leads" neededPermission="Vendas Limitado" exact component={Leads} />
         <PrivateRoute path="/meusleads" neededPermission="Vendas Limitado" exact component={Leads} />
         <PrivateRoute path="/agenda" neededPermission="Vendas Limitado" exact component={Schedules} />
+        <PrivateRoute path="/teams" neededPermission="Vendas Completo" exact component={Teams} />
 
         {/* <PrivateRoute path="/empresas" component={Roles} /> */}
       </Switch>

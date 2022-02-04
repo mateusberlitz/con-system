@@ -84,6 +84,7 @@ export function SideBarNav({ desk }: SideBarNavProps){
             <NavLink href="/comercial" icon={ChartPieIcon} color="orange.400">Dashboard</NavLink> 
             <NavLink href="/leads" icon={AtsignIcon} color="orange.400">Leads</NavLink>
             <NavLink href="/agenda" icon={CalendarIcon} color="orange.400">Agendamentos</NavLink>
+            <NavLink href="/team" icon={CalendarIcon} color="orange.400">Equipe</NavLink>
             {/* <NavLink href="/calculadora" icon={ConfigureIcon}>Calculadora</NavLink> */}
             
 

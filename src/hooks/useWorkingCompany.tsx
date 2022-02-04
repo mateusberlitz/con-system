@@ -71,7 +71,6 @@ export function WorkingCompanyProvider({ children } : WorkingCompanyProviderProp
             {children}
         </WorkingCompanyContext.Provider>
     )
-
 }
 
 export const useWorkingCompany = () => useContext(WorkingCompanyContext);

@@ -97,8 +97,8 @@ export function TasksSummary({tasks, page, setPage}: TasksSummaryProps){
         <NewTaskModal afterCreate={tasks.refetch} isOpen={isNewTaskModalOpen} onRequestClose={CloseNewTaskModal}/>
         <ConfirmTaskRemoveModal toRemoveTaskData={removeTaskData} afterRemove={tasks.refetch} isOpen={isConfirmRemoveTaskModalOpen} onRequestClose={CloseConfirmRemoveTaskModal}/>
 
-        <Stack spacing="5" w="100%" minWidth="300px" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8">
-            <HStack justifyContent="space-between" mb="4">
+        <Stack spacing="5" w="100%" minWidth="300px" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px={[5,5,8]} py={[5,5,8]}>
+            <Stack direction={["column", "column", "row"]} justifyContent="space-between" mb="4">
                 <HStack spacing="2">
                     <CheckSquare/>
                     <Text fontSize="xl" mb="5" w="100%">Tarefas</Text>
@@ -107,7 +107,7 @@ export function TasksSummary({tasks, page, setPage}: TasksSummaryProps){
                 <SolidButton onClick={OpenNewTaskModal} color="white" bg="blue.400" height="32px" icon={PlusIcon} colorScheme="blue" fontSize="12px">
                     Adicionar
                 </SolidButton>
-            </HStack>
+            </Stack>
 
             {   tasks.isLoading ? (
                     <Flex justify="center">

@@ -117,7 +117,7 @@ export function EditPartialBillModal( { isOpen, onRequestClose, afterEdit, toEdi
                     <Stack spacing="6">
                         <HStack spacing="4" align="baseline">
                             <ControlledInput control={control} value={toEditPartialBillData.receive_date} name="receive_date" type="date" placeholder="Data do pagamento" variant="outline" error={formState.errors.receive_date} focusBorderColor="blue.400"/>
-                            <ControlledInput control={control} value={toEditPartialBillData.value} name="value" type="text" placeholder="Telefone" variant="outline" mask="money" error={formState.errors.value} focusBorderColor="blue.400"/>
+                            <ControlledInput control={control} value={toEditPartialBillData.value} name="value" type="text" placeholder="Valor" variant="outline" mask="money" error={formState.errors.value} focusBorderColor="blue.400"/>
                         </HStack>
                     </Stack>
                 </ModalBody>

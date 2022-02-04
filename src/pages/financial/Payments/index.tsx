@@ -895,7 +895,7 @@ export default function Payments(){
                     })
                 }
 
-                <Pagination totalCountOfRegister={payments.data ? payments.data.total : 0} registerPerPage={10} currentPage={page} onPageChange={setPage}/>
+                <Pagination totalCountOfRegister={payments.data ? payments.data.total : 0} registerPerPage={50} currentPage={page} onPageChange={setPage}/>
             </Stack>
             
         </MainBoard>

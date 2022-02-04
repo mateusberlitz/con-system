@@ -53,21 +53,21 @@ export function SearchLeads({filter, handleSearchLeads, statuses, origins}: Sear
 
     useEffect(() => {
         loadUsers();
-    }, [])
+    }, []);
 
     return (
         <Flex as="form" mb="20" onSubmit={handleSubmit(handleSearchLeads)}>
 
             <Stack spacing="6" w="100%">
-                <HStack spacing="6">
+                <Stack direction={["column", "column", "row"]} spacing="6" flexWrap={['wrap','wrap','nowrap']}>
                     <Input register={register} name="search" type="text" placeholder="Procurar" variant="filled" error={formState.errors.search} focusBorderColor="orange.400"/>
 
                     <Input register={register} name="start_date" type="date" placeholder="Data Inicial" variant="filled" error={formState.errors.start_date} focusBorderColor="orange.400"/>
                     <Input register={register} name="end_date" type="date" placeholder="Data Final" variant="filled" error={formState.errors.end_date} focusBorderColor="orange.400"/>
 
-                </HStack>
+                </Stack>
 
-                <HStack spacing="6">
+                <Stack direction={["column", "column", "row"]} spacing="6">
                     <Select register={register} defaultValue="true" h="45px" name="status" error={formState.errors.status} w="100%" maxW="200px" fontSize="sm" placeholder="Status" focusBorderColor="orange.400" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
                         {
                             statuses.map((status: LeadStatus) => {
@@ -101,7 +101,7 @@ export function SearchLeads({filter, handleSearchLeads, statuses, origins}: Sear
                     <OutlineButton type="submit" mb="10" color="orange.400" borderColor="orange.400" colorScheme="orange">
                         Filtrar
                     </OutlineButton>
-                </HStack>
+                </Stack>
             </Stack>
 
         </Flex>

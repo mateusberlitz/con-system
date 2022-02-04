@@ -99,6 +99,8 @@ export function ProfileProvider({ children } : ProfileProviderProps){
         const requestedPermissions = await getPermissions(roleId);
         const simplifiedPermissions = simplifyPermissions(requestedPermissions);
 
+        //console.log(roleId, requestedPermissions, isAuthenticated());
+
         setPermissions(simplifiedPermissions);
     }
 

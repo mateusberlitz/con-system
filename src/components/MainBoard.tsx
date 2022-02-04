@@ -25,8 +25,10 @@ export function MainBoard({ header = null, children, sidebar } : MainBoardProps)
                 <OpenButton/>
 
                 <Flex direction="column" w="100%" maxWidth={isWideVersion ? "calc(1280px - 254px)" : "1280px"} mx="auto">
-                    <Flex as="header" w="100%" mb="20">
-                        {header}
+                    <Flex as="header" w="100%" mb={[6, 6, 20]}>
+                        <Flex mt={[20, 20, 0]}>
+                            {header}
+                        </Flex>
 
                         <Profile />
                     </Flex>
