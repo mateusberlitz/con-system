@@ -223,8 +223,8 @@ export function SalesList({quotaSales, refetchQuotaSales}: QuotasListProps){
                                             </Stack>
 
                                             <Stack spacing="0">
-                                                <Text fontSize="12px" color="gray.800">Grupo: <strong>{quotaSale.quota.group}</strong></Text>
-                                                <Text fontSize="12px" color="gray.800">Cota: <strong>{quotaSale.quota.quota}</strong></Text>
+                                                <Text fontSize="12px" color="gray.800">Grupo: <strong>{quotaSale.ready_quota.group}</strong></Text>
+                                                <Text fontSize="12px" color="gray.800">Cota: <strong>{quotaSale.ready_quota.quota}</strong></Text>
                                             </Stack>
         
                                             <HStack spacing="5">
@@ -245,7 +245,7 @@ export function SalesList({quotaSales, refetchQuotaSales}: QuotasListProps){
                                                     // )
                                                 }
 
-                                                <EditButton disabled={!!quotaSale.cancelled} onClick={() => history.push(`editar-venda/${quotaSale.quota.id}/${quotaSale.id}`)}/>
+                                                <EditButton disabled={!!quotaSale.cancelled} onClick={() => history.push(`editar-venda/${quotaSale.ready_quota.id}/${quotaSale.id}`)}/>
                                             </HStack>
         
                                         </HStack>
@@ -306,7 +306,7 @@ export function SalesList({quotaSales, refetchQuotaSales}: QuotasListProps){
 
                                                 <Stack spacing="0">
                                                     <Text fontSize="10px" color="gray.800">Lucro</Text>
-                                                    <Text fontSize="sm" fontWeight="semibold" color="gray.800">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quotaSale.value - quotaSale.quota.cost - quotaSale.partner_value - (quotaSale.coordinator_value ? quotaSale.coordinator_value : 0) - (quotaSale.supervisor_value ? quotaSale.supervisor_value : 0))}</Text>
+                                                    <Text fontSize="sm" fontWeight="semibold" color="gray.800">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quotaSale.value - quotaSale.ready_quota.cost - quotaSale.partner_value - (quotaSale.coordinator_value ? quotaSale.coordinator_value : 0) - (quotaSale.supervisor_value ? quotaSale.supervisor_value : 0))}</Text>
                                                 </Stack>
                                             </HStack>
         
@@ -317,10 +317,10 @@ export function SalesList({quotaSales, refetchQuotaSales}: QuotasListProps){
                                                 </Flex>
 
                                                 <HStack spacing="5" alignItems="center">
-                                                    <SolidButton disabled={!!quotaSale.cancelled} colorScheme="red" h="29px" pl="5" pr="5" bg="red.400" minWidth="none" onClick={() => OpenConfirmQuotaSaleCancelModal({ id: quotaSale.id, group: quotaSale.quota.group, quota: quotaSale.quota.quota }) }>
+                                                    <SolidButton disabled={!!quotaSale.cancelled} colorScheme="red" h="29px" pl="5" pr="5" bg="red.400" minWidth="none" onClick={() => OpenConfirmQuotaSaleCancelModal({ id: quotaSale.id, group: quotaSale.ready_quota.group, quota: quotaSale.ready_quota.quota }) }>
                                                         Cancelar Venda
                                                     </SolidButton>
-                                                    <RemoveButton onClick={() => OpenConfirmQuotaSaleRemoveModal({ id: quotaSale.id, group: quotaSale.quota.group, quota: quotaSale.quota.quota }) }/>
+                                                    <RemoveButton onClick={() => OpenConfirmQuotaSaleRemoveModal({ id: quotaSale.id, group: quotaSale.ready_quota.group, quota: quotaSale.ready_quota.quota }) }/>
                                                 </HStack>
                                             </HStack>
 

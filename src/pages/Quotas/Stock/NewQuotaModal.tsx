@@ -165,7 +165,7 @@ export function NewQuotaModal({ isOpen, onRequestClose, afterCreate } : NewQuota
 
             quotaData = includeAndFormatData(quotaData);
 
-            const response = await api.post('/quotas/store', quotaData);
+            const response = await api.post('/ready_quotas/store', quotaData);
 
             toast({
                 title: "Sucesso",

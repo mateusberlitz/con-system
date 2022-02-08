@@ -7,8 +7,8 @@ import { CompanySelectMaster } from "../../../components/CompanySelect/companySe
 import { MainBoard } from "../../../components/MainBoard";
 import { getQuotas } from "../../../hooks/useQuotas";
 import { api } from "../../../services/api";
-import { BillCategory, Quota } from "../../../types";
-import { useQuota } from "../../../hooks/useQuota";
+import { BillCategory, Quota, ReadyQuota } from "../../../types";
+import { useReadyQuota } from "../../../hooks/useReadyQuota";
 import { ControlledInput } from "../../../components/Forms/Inputs/ControlledInput";
 
 import { useForm } from "react-hook-form";
@@ -32,7 +32,7 @@ interface QuotaSaleParams{
 }
 
 interface QuotaSaleFormData{
-    quota: number;
+    ready_quota: number;
     sale_date:string;
     company:number;
     value: string;
@@ -95,9 +95,9 @@ export default function NewQuotaSale(){
 
     const params = useParams<QuotaSaleParams>();
 
-    const quotaQuery = useQuota(params.quota);
+    const quotaQuery = useReadyQuota(params.quota);
 
-    const quota:Quota = (quotaQuery?.data ? quotaQuery?.data : null);
+    const quota:ReadyQuota = (quotaQuery?.data ? quotaQuery?.data : null);
 
     const { handleSubmit, register, formState, control} = useForm<QuotaSaleFormData>({
         resolver: yupResolver(NewQuotaSaleFormSchema),
@@ -171,7 +171,7 @@ export default function NewQuotaSale(){
             }
 
             quotaSaleData = includeAndFormatData(quotaSaleData);
-            quotaSaleData.quota = quota.id
+            quotaSaleData.ready_quota = quota.id
 
             const response = await api.post('/quota_sales/store', quotaSaleData);
 

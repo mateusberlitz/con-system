@@ -3,6 +3,8 @@ import { useState } from "react";
 import { CompanySelectMaster } from "../../../components/CompanySelect/companySelectMaster";
 import { MainBoard } from "../../../components/MainBoard";
 import { QuotaFilterData, useQuotas } from "../../../hooks/useQuotas";
+import { useReadyQuota } from "../../../hooks/useReadyQuota";
+import { useReadyQuotas } from "../../../hooks/useReadyQuotas";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { EditQuota } from "./EditQuotaModal";
 import { StockNavBar } from "./NavBar";
@@ -30,7 +32,7 @@ export default function Quotas(){
 
     const [page, setPage] = useState(1);
 
-    const quotas = useQuotas(filter, page);
+    const quotas = useReadyQuotas(filter, page);
 
     const [isNewQuotaModalOpen, setIsNewQuotaModalOpen] = useState(false);
 
@@ -57,7 +59,7 @@ export default function Quotas(){
                         </Flex>
                     ) : ( quotas.isError ? (
                         <Flex justify="center" mt="4" mb="4">
-                            <Text>Erro listar as contas a pagar</Text>
+                            <Text>Erro listar as cotas em estoque</Text>
                         </Flex>
                     ) : (quotas.data?.data.length === 0) ? (
                         <Flex justify="center">

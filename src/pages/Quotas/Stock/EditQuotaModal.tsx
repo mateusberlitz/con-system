@@ -64,7 +64,7 @@ const EditQuotaFormSchema = yup.object().shape({
     partner_cost: yup.string().nullable(),
     passed_cost: yup.string().nullable(),
     paid_percent: yup.string().required("Diga qual o percentual pago"),
-    partner_commission: yup.string(),
+    partner_commission: yup.string().nullable(),
     purchase_date: yup.string().required("Selecione a data de compra"),
     group: yup.string().required("Informe o grupo"),
     quota: yup.string().required("Informe a cota"),
@@ -141,7 +141,7 @@ export function EditQuotaModal( { isOpen, onRequestClose, afterEdit, toEditQuota
             quotaData = includeAndFormatData(quotaData);
             console.log(quotaData);
 
-            await api.post(`/quotas/update/${toEditQuotaData.id}`, quotaData);
+            await api.post(`/ready_quotas/update/${toEditQuotaData.id}`, quotaData);
 
             toast({
                 title: "Sucesso",

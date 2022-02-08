@@ -1,5 +1,5 @@
 import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Flex, HStack, IconButton, Spinner, Stack, Text } from "@chakra-ui/react";
-import { Quota } from "../../../types";
+import { Quota, ReadyQuota } from "../../../types";
 
 import { ReactComponent as PlusIcon } from '../../../assets/icons/Plus.svg';
 import { ReactComponent as MinusIcon } from '../../../assets/icons/Minus.svg';
@@ -18,12 +18,12 @@ import { UseQueryResult } from "react-query";
 import { formatBRDate } from "../../../utils/Date/formatBRDate";
 import { useState } from "react";
 import { EditQuota, EditQuotaModal } from "./EditQuotaModal";
-import { ConfirmPaymentRemoveModal, RemoveQuotaData } from "./ConfirmQuotaRemoveModal";
+import { ConfirmQuotaRemoveModal, RemoveQuotaData } from "./ConfirmQuotaRemoveModal";
 import { Router, useHistory } from "react-router";
 
 
 interface QuotasListProps{
-    quotas: Quota[];
+    quotas: ReadyQuota[];
     refetchQuotas: () => void;
 }
 
@@ -142,7 +142,7 @@ export function QuotasList({quotas, refetchQuotas}: QuotasListProps){
     return (
         <Stack fontSize="13px" spacing="12">
             <EditQuotaModal toEditQuotaData={editQuotaData} afterEdit={refetchQuotas} isOpen={isEditQuotaModalOpen} onRequestClose={CloseEditQuotaModal}/>
-            <ConfirmPaymentRemoveModal afterRemove={refetchQuotas} toRemoveQuotaData={removeQuotaData} isOpen={isConfirmQuotaRemoveModalOpen} onRequestClose={CloseConfirmQuotaRemoveModal}/>
+            <ConfirmQuotaRemoveModal afterRemove={refetchQuotas} toRemoveQuotaData={removeQuotaData} isOpen={isConfirmQuotaRemoveModalOpen} onRequestClose={CloseConfirmQuotaRemoveModal}/>
 
             <Accordion w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" spacing="0" allowMultiple>
                 <HStack spacing="8" justify="space-between" paddingX="8" paddingY="3" bg="gray.200">

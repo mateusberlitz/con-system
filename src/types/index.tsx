@@ -254,12 +254,38 @@ export interface Quota{
     updated_at?: Date;
 }
 
+export interface ReadyQuota{
+    id: number;
+    sold: boolean;
+    company: Company;
+    segment: string;
+    value?: number;
+    credit: number;
+    group: string;
+    quota: string;
+    cost: number;
+    partner?: string;
+    partner_cost?: number;
+    passed_cost?: number;
+    total_cost: number;
+    seller?: string;
+    cpf_cnpj: string;
+    paid_percent: string;
+    partner_commission?: string;
+    tax?: number;
+    contemplated_type: string;
+    description?: string;
+    purchase_date: string;
+    created_at?: Date;
+    updated_at?: Date;
+}
+
 export interface QuotaSale{
     id: number;
     cancelled: boolean;
     company: Company;
     bills: ResumedBill[];
-    quota: Quota;
+    ready_quota: Quota;
     value: number;
     passed_value: number;
     partner_value: number;

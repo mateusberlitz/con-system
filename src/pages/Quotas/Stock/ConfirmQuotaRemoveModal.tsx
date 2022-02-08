@@ -23,14 +23,14 @@ export interface RemoveQuotaData{
 }
 
 
-export function ConfirmPaymentRemoveModal( { isOpen, toRemoveQuotaData, afterRemove, onRequestClose } : ConfirmQuotaRemoveModalProps){
+export function ConfirmQuotaRemoveModal( { isOpen, toRemoveQuotaData, afterRemove, onRequestClose } : ConfirmQuotaRemoveModalProps){
     const toast = useToast();
 
     const history = useHistory();
 
-    const handleRemovePayment = async () => {
+    const handleRemoveQuota = async () => {
         try{
-            await api.delete(`/quotas/destroy/${toRemoveQuotaData.id}`);
+            await api.delete(`/ready_quotas/destroy/${toRemoveQuotaData.id}`);
 
             toast({
                 title: "Sucesso",
@@ -68,7 +68,7 @@ export function ConfirmPaymentRemoveModal( { isOpen, toRemoveQuotaData, afterRem
                 <ModalCloseButton top="10" right="5"/>
                 
                 <ModalBody pl="10" pr="10">
-                    <SolidButton onClick={handleRemovePayment} mr="6" color="white" bg="red.400" _hover={{filter: "brightness(90%)"}} rightIcon={<CloseIcon stroke="#ffffff" fill="none" width="18px" strokeWidth="3px"/>}>
+                    <SolidButton onClick={handleRemoveQuota} mr="6" color="white" bg="red.400" _hover={{filter: "brightness(90%)"}} rightIcon={<CloseIcon stroke="#ffffff" fill="none" width="18px" strokeWidth="3px"/>}>
                         Confirmar e Remover
                     </SolidButton>
                 </ModalBody>

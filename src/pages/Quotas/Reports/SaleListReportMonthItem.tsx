@@ -37,14 +37,14 @@ export function SaleListReportMonthItem({open = false, month, quotaSales} : Sale
                 quotaSales.map((quotaSale:QuotaSale) => (
                     <Tr display={isOpen ? 'table-row' : 'none'} opacity={isOpen ? 1 : 0} borderLeft="1px solid" borderColor="gray.400" transition="all ease 2s" _hover={{transition: "all ease 2s"}}>
                         <Th color="gray.800" fontWeight="normal">{formatBRDate(quotaSale.sale_date)}</Th>
-                        <Th color="gray.800" fontWeight="normal">{quotaSale.quota.group}-{quotaSale.quota.quota}</Th>
-                        <Th color="green.400" fontWeight="normal">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quotaSale.value - quotaSale.quota.cost - quotaSale.partner_value - (quotaSale.coordinator_value ? quotaSale.coordinator_value : 0) - (quotaSale.supervisor_value ? quotaSale.supervisor_value : 0))}</Th>
+                        <Th color="gray.800" fontWeight="normal">{quotaSale.ready_quota.group}-{quotaSale.ready_quota.quota}</Th>
+                        <Th color="green.400" fontWeight="normal">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quotaSale.value - quotaSale.ready_quota.cost - quotaSale.partner_value - (quotaSale.coordinator_value ? quotaSale.coordinator_value : 0) - (quotaSale.supervisor_value ? quotaSale.supervisor_value : 0))}</Th>
                         <Th color="gray.800" fontWeight="normal">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quotaSale.value)}</Th>
-                        <Th color="gray.800" fontWeight="normal">{quotaSale.quota.segment}</Th>
-                        <Th color="gray.800" fontWeight="normal">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quotaSale.quota.credit)}</Th>
-                        <Th color="gray.800" fontWeight="normal">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quotaSale.quota.total_cost)}</Th>
-                        <Th color="gray.800" fontWeight="normal">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quotaSale.quota.partner_cost ? quotaSale.quota.partner_cost : 0)}</Th>
-                        <Th color="gray.800" fontWeight="normal">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quotaSale.partner_value && quotaSale.quota.partner_cost ? (quotaSale.partner_value - quotaSale.quota.partner_cost) : 0)}</Th>
+                        <Th color="gray.800" fontWeight="normal">{quotaSale.ready_quota.segment}</Th>
+                        <Th color="gray.800" fontWeight="normal">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quotaSale.ready_quota.credit)}</Th>
+                        <Th color="gray.800" fontWeight="normal">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quotaSale.ready_quota.total_cost)}</Th>
+                        <Th color="gray.800" fontWeight="normal">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quotaSale.ready_quota.partner_cost ? quotaSale.ready_quota.partner_cost : 0)}</Th>
+                        <Th color="gray.800" fontWeight="normal">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quotaSale.partner_value && quotaSale.ready_quota.partner_cost ? (quotaSale.partner_value - quotaSale.ready_quota.partner_cost) : 0)}</Th>
                         <Th color="gray.800" fontWeight="normal">{quotaSale.coordinator ? quotaSale.coordinator : '--'}<br />{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quotaSale.coordinator_value ? quotaSale.coordinator_value : 0)}</Th>
                         <Th color="gray.800" fontWeight="normal">{quotaSale.supervisor ? quotaSale.supervisor : '--'}<br />{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quotaSale.supervisor_value ? quotaSale.supervisor_value : 0)}</Th>
                         <Th color="gray.800" fontWeight="normal">{quotaSale.seller}</Th>

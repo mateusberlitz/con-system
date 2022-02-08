@@ -8,7 +8,7 @@ export const getQuota = async (id: string) => {
     return data;
 }
 
-export function useQuota(id: string){
+export function useQuota2(id: string){
     return useQuery(['quota', id], () => getQuota(id), {
         staleTime: 1000 * 5 * 60, //fresh
     });

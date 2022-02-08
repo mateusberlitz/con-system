@@ -65,7 +65,7 @@ interface CreateNewLeadFormData{
 
 const CreateNewLeadFormSchema = yup.object().shape({
     name: yup.string().required('Nome do lead é obrigatório'),
-    email: yup.string().required('E-mail obrigatório').email("Informe um e-mail válido"),
+    email: yup.string().nullable().email("Informe um e-mail válido"),
     phone: yup.string().min(9, "Existe Telefone com menos de 9 dígitos?"),//51991090700
 
     accept_newsletter: yup.number(),

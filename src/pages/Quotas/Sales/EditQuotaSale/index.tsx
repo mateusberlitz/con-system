@@ -8,7 +8,7 @@ import { MainBoard } from "../../../../components/MainBoard";
 import { getQuotas } from "../../../../hooks/useQuotas";
 import { api } from "../../../../services/api";
 import { Bill, BillCategory, Quota, QuotaSale } from "../../../../types";
-import { useQuota } from "../../../../hooks/useQuota";
+import { useReadyQuota } from "../../../../hooks/useReadyQuota";
 import { ControlledInput } from "../../../../components/Forms/Inputs/ControlledInput";
 
 import { useForm } from "react-hook-form";
@@ -118,7 +118,7 @@ export default function EditQuotaSale(){
 
     const params = useParams<QuotaSaleParams>();
 
-    const quotaQuery = useQuota(params.quota);
+    const quotaQuery = useReadyQuota(params.quota);
     const quotaSaleQuery = useQuotaSale(params.quotaSale);
 
     //const quota:Quota = (quotaQuery?.data ? quotaQuery?.data : null);
@@ -136,7 +136,7 @@ export default function EditQuotaSale(){
     const paymentsForm = useForm<PaymentOfQuota>({
         resolver: yupResolver(PaymentsOfQuotaSchema),
         defaultValues: {
-            value: (quotaSale && quotaSale.quota.value) ? quotaSale.quota.value.toString().replace('.', ',') : '',
+            value: (quotaSale && quotaSale.ready_quota.value) ? quotaSale.ready_quota.value.toString().replace('.', ',') : '',
         }
     });
 
@@ -167,7 +167,7 @@ export default function EditQuotaSale(){
             }
 
             payment.value = moneyToBackend(payment.value);
-            payment.title = `[${quotaSale.quota.group}-${quotaSale.quota.quota}] ${payment.title}`;
+            payment.title = `[${quotaSale.ready_quota.group}-${quotaSale.ready_quota.quota}] ${payment.title}`;
 
             const expireDateToShow = payment.expire;
             payment.expire = formatInputDate(payment.expire);
@@ -223,7 +223,7 @@ export default function EditQuotaSale(){
 
         const partnerValue = (quotaSaleData.partner_value ? parseFloat(quotaSaleData.partner_value) : 0);
 
-        quotaSaleData.profit = parseFloat(quotaSaleData.value) - quotaSale.quota.cost - partnerValue;
+        quotaSaleData.profit = parseFloat(quotaSaleData.value) - quotaSale.ready_quota.cost - partnerValue;
 
         quotaSaleData.sale_date = formatInputDate(quotaSaleData.sale_date);
 
@@ -251,7 +251,7 @@ export default function EditQuotaSale(){
             }
 
             quotaSaleData = includeAndFormatData(quotaSaleData);
-            quotaSaleData.quota = quotaSale.quota.id
+            quotaSaleData.quota = quotaSale.ready_quota.id
 
             console.log(quotaSaleData);
 
@@ -259,7 +259,7 @@ export default function EditQuotaSale(){
 
             toast({
                 title: "Sucesso",
-                description: `A venda da cota ${quotaSale.quota.group}-${quotaSale.quota.quota} foi alterada.`,
+                description: `A venda da cota ${quotaSale.ready_quota.group}-${quotaSale.ready_quota.quota} foi alterada.`,
                 status: "success",
                 duration: 12000,
                 isClosable: true,
@@ -314,7 +314,7 @@ export default function EditQuotaSale(){
                                     <Text mb="6" fontWeight="bold" fontSize="lg">Vender a cota</Text>
             
                                     {
-                                        quotaSale.quota && <Text mb="6" fontWeight="bold" fontSize="lg">{quotaSale.quota.group}-{quotaSale.quota.quota}</Text>
+                                        quotaSale.ready_quota && <Text mb="6" fontWeight="bold" fontSize="lg">{quotaSale.ready_quota.group}-{quotaSale.ready_quota.quota}</Text>
                                     }
                                 </HStack>
             
@@ -324,27 +324,27 @@ export default function EditQuotaSale(){
             
                                         <Stack spacing="0">
                                             <Text fontSize="sm" color="gray.800">Grupo e cota:</Text>
-                                            <Text fontSize="sm" color="gray.800" fontWeight="bold">{quotaSale.quota.group}-{quotaSale.quota.quota}</Text>
+                                            <Text fontSize="sm" color="gray.800" fontWeight="bold">{quotaSale.ready_quota.group}-{quotaSale.ready_quota.quota}</Text>
                                         </Stack>
             
                                         <Stack spacing="0">
                                             <Text fontSize="sm" color="gray.800">Crédito:</Text>
-                                            <Text fontSize="sm" color="gray.800" fontWeight="bold">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quotaSale.quota.credit)}</Text>
+                                            <Text fontSize="sm" color="gray.800" fontWeight="bold">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quotaSale.ready_quota.credit)}</Text>
                                         </Stack> 
             
                                         <Stack spacing="0">
                                             <Text fontSize="sm" color="gray.800">% paga pelo crédito:</Text>
-                                            <Text fontSize="sm" color="gray.800" fontWeight="bold">{quotaSale.quota.paid_percent}</Text>
+                                            <Text fontSize="sm" color="gray.800" fontWeight="bold">{quotaSale.ready_quota.paid_percent}</Text>
                                         </Stack> 
             
                                         <Stack spacing="0">
                                             <Text fontSize="sm" color="gray.800">Custo da empresa:</Text>
-                                            <Text fontSize="sm" color="gray.800" fontWeight="bold">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quotaSale.quota.cost)}</Text>
+                                            <Text fontSize="sm" color="gray.800" fontWeight="bold">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quotaSale.ready_quota.cost)}</Text>
                                         </Stack> 
             
                                         <Stack spacing="0">
                                             <Text fontSize="sm" color="gray.800">Custo total:</Text>
-                                            <Text fontSize="sm" color="gray.800" fontWeight="bold">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quotaSale.quota.total_cost)}</Text>
+                                            <Text fontSize="sm" color="gray.800" fontWeight="bold">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(quotaSale.ready_quota.total_cost)}</Text>
                                         </Stack>                  
                                     </HStack>
                                 </Board>
