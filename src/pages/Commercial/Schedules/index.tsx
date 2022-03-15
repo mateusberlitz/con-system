@@ -25,9 +25,11 @@ import { FormEvent } from "toasted-notes/node_modules/@types/react";
 import { EditScheduleFormData, EditScheduleModal } from "./EditScheduleModal";
 import { ConfirmScheduleRemoveModal, RemoveScheduleData } from "./ConfirmScheduleRemoveModal";
 import { CompleteScheduleFormData, CompleteScheduleModal } from "./CompleteScheduleModal";
+import { useWorkingBranch } from "../../../hooks/useWorkingBranch";
 
 export default function Schedules(){
     const workingCompany = useWorkingCompany();
+    const workingBranch = useWorkingBranch();
     const [isNewScheduleModalOpen, setIsNewScheduleModalOpen] = useState(false);
     const {profile, permissions} = useProfile();
 
@@ -149,6 +151,7 @@ export default function Schedules(){
     const [filter, setFilter] = useState<SchedulesFilterData>(() => {
         const data: SchedulesFilterData = {
             company: workingCompany.company?.id,
+            branch: workingBranch.branch?.id,
             start_date: formatYmdDate(startDate.toString()),
             end_date: formatYmdDate(endDate.toDateString()),
             group_by: 'hour',
@@ -206,6 +209,10 @@ export default function Schedules(){
         inputStartDateDay.setDate(inputStartDateDay.getDate() + 1);
         d++;
     }
+
+    useEffect(() => {
+        setFilter({...filter, company: workingCompany.company?.id, branch: workingBranch.branch?.id});
+    }, [workingCompany, workingBranch]);
 
     return (
         <MainBoard sidebar="commercial" header={<CompanySelectMaster/>}>

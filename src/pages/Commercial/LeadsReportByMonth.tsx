@@ -165,6 +165,11 @@ export function LeadsReportByMonth(){
         }
       }
 
+    useEffect(() => {
+        setFilter({...filter, company: workingCompany.company?.id});
+        setUsersFilter({...usersFilter, company: workingCompany.company?.id});
+    }, [workingCompany]);
+
     return (
         <>
                 <Stack mb="14" w="100%" min-width="300px" spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8">

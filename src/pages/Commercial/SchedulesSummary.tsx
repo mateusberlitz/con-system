@@ -152,6 +152,10 @@ export function SchedulesSummary(){
         lg: true,
     });
 
+    useEffect(() => {
+        setFilter({...filter, company: workingCompany.company?.id});
+    }, [workingCompany]);
+
     return (
         <>
             <NewScheduleModal cities={cities} leads={leads} afterCreate={schedules.refetch} isOpen={isNewScheduleModalOpen} onRequestClose={CloseNewScheduleModal}/>

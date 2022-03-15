@@ -7,6 +7,7 @@ export interface LogsFilterData{
     end_date?: string;
     user?: number;
     company?: number;
+    branch?: number;
 }
 
 export const getLogs = async (filter?: LogsFilterData, page: number = 0) => {
@@ -17,6 +18,7 @@ export const getLogs = async (filter?: LogsFilterData, page: number = 0) => {
               search: filter.search,
               user: filter.user,
               company: filter.company,
+              branch: filter.branch,
               start_date: filter.start_date,
               end_date: filter.end_date,
             }

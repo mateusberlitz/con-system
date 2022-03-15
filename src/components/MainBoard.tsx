@@ -6,7 +6,7 @@ import { OpenButton } from "./SideBar/OpenButton";
 import { Profile } from "./Profile";
 
 interface MainBoardProps{
-    sidebar: string;
+    sidebar: "configs" | "financial" | "commercial" | "quotas";
     header?: ReactNode;
     children: ReactNode;
 }

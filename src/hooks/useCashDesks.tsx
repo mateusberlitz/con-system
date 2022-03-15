@@ -8,6 +8,7 @@ export interface CashDesksFilterData{
     category?: number;
     type?: number;
     company?: number;
+    branch?: number;
     page?: number;
     limit?: number;
 }
@@ -20,6 +21,7 @@ export const getCashDesks = async (filter?: CashDesksFilterData, limit: number =
               limit: limit,
               search: filter.search,
               company: filter.company,
+              branch: filter.branch,
               category: filter.category,
               type: filter.type,
               start_date: filter.start_date,

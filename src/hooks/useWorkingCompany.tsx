@@ -19,6 +19,7 @@ export function WorkingCompanyProvider({ children } : WorkingCompanyProviderProp
         const storagedCompany = localStorage.getItem('@lance/company');
     
         if (!!storagedCompany) {
+            console.log(!!storagedCompany);
             return JSON.parse(storagedCompany);
         }else{
             console.log(profile);
@@ -34,6 +35,8 @@ export function WorkingCompanyProvider({ children } : WorkingCompanyProviderProp
     
         return {};
     });
+
+    console.log(company);
 
     const previousCompanyRef = useRef<Company>();
 
@@ -64,7 +67,6 @@ export function WorkingCompanyProvider({ children } : WorkingCompanyProviderProp
         setCompany(company);
         localStorage.setItem('@lance/company', JSON.stringify(company));
     }
-
 
     return(
         <WorkingCompanyContext.Provider value={{company, changeCompany}}>

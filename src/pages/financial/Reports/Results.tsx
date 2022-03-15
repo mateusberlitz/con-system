@@ -1,4 +1,4 @@
-import { Divider, Flex, FormControl, HStack, Select as ChakraSelect, Spinner, Text, Th, Tr } from "@chakra-ui/react";
+import { Divider, Flex, FormControl, HStack, Select as ChakraSelect, Spinner, Stack, Text, Th, Tr } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Board } from "../../../components/Board";
 import { OutlineButton } from "../../../components/Buttons/OutlineButton";
@@ -66,8 +66,8 @@ export default function Results({filterExitTransactions, filterEntryTransactions
 
     return(
         <Board>
-            <HStack as="form" spacing="12" w="100%" mb="6" justifyContent="space-between">
-                <HStack spacing="12">
+            <HStack alignItems="flex-start" as="form" spacing="12" w="100%" mb="6" justifyContent="space-between">
+                <Stack direction={["column", "row"]} spacing={["5","12"]}>
                     <FormControl display="flex" w="fit-content" minW="150px">
                         <ChakraSelect onChange={(event) => {handleChangeYear(event); setSelectedYear((event?.target.value ? event?.target.value : selectedYear))}} defaultValue={workingCompany.company?.id} h="45px" name="selected_company" maxW="200px" fontSize="sm" focusBorderColor="purple.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
                             {
@@ -81,7 +81,7 @@ export default function Results({filterExitTransactions, filterEntryTransactions
                     </FormControl>
 
                     <Text fontWeight="bold">RELATÓRIO RESULTADO</Text>
-                </HStack>
+                </Stack>
 
                 <OutlineButton onClick={handleDownloadResults} isLoading={loadingExcel} variant="outline" colorScheme="blue" color="blue.400" borderColor="blue.400">
                     Baixar Tabela
@@ -123,7 +123,7 @@ export default function Results({filterExitTransactions, filterEntryTransactions
                         {text: 'Dezembro'},
                         {text: 'Soma da Categoria', bold:true},
                         {text: 'Resultado da Categoria', bold:true},
-                    ]}>
+                    ]} size="sm">
                         <Tr>
                             <Th></Th>
                         </Tr>

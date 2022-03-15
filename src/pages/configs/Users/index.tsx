@@ -28,6 +28,7 @@ import { ConfirmUserRemoveModal } from "./ConfirmUserRemoveModal";
 import { useCompanies } from "../../../hooks/useCompanies";
 import { useRoles } from "../../../hooks/useRoles";
 import { SyncCompaniesModal, SyncUserData } from "./SyncCompaniesModal";
+import { SyncBranchesModal, SyncBranchesUserData } from "./SyncBranchesModal";
 
 
 const SearchUserFormSchema = yup.object().shape({
@@ -59,7 +60,8 @@ export default function Users(){
         };
         
         return data;
-    })
+    });
+    
     const { data, isLoading, refetch, error} = useUsers(filter);
     const [ editUserData, setEditUserData ] = useState<EditUserFormData>(() => {
 
@@ -143,11 +145,32 @@ export default function Users(){
         setIsSyncCompaniesModalOpen(false);
     }
 
+    const [ editBranchesSyncUserData, setEditBranchesSyncUserData ] = useState<SyncBranchesUserData>(() => {
+
+        const data: SyncBranchesUserData = {
+            name: '',
+            id: 0,
+            branches: []
+        };
+        
+        return data;
+    });
+
+    const [isSyncBranchesModalOpen, setIsSyncBranchesModalOpen] = useState(false);
+    function OpenSyncBranchesModal(user : SyncBranchesUserData){
+        setEditBranchesSyncUserData(user);
+        setIsSyncBranchesModalOpen(true);
+    }
+    function CloseSyncBranchesModal(){
+        setIsSyncBranchesModalOpen(false);
+    }
+
     return(
         <MainBoard sidebar="configs">
             <NewUserModal afterCreate={refetch} isOpen={isNewUserModalOpen} onRequestClose={CloseNewUserModal}/>
             <EditUserModal afterEdit={refetch} toEditUserData={editUserData} isOpen={isEditModalOpen} onRequestClose={CloseEditModal}/>
             <SyncCompaniesModal afterEdit={refetch} toEditUserData={editSyncUserData} isOpen={isSyncCompaniesModalOpen} onRequestClose={CloseSyncCompaniesModal}/>
+            <SyncBranchesModal afterEdit={refetch} toEditUserData={editBranchesSyncUserData} isOpen={isSyncBranchesModalOpen} onRequestClose={CloseSyncBranchesModal}/>
             <ConfirmUserRemoveModal afterRemove={refetch} toRemoveUserData={removeUserData} isOpen={isConfirmUserRemoveModalOpen} onRequestClose={CloseConfirmUserRemoveModal}/>
             
             <SolidButton onClick={OpenNewUserModal} mb="12" color="white" bg="purple.300" icon={PlusIcon} colorScheme="purple">
@@ -186,11 +209,15 @@ export default function Users(){
                 <ProTable header={
                     [
                         {
-                            text: 'Lista de usuários',
+                            text: 'Usuários',
                             icon: ProfileIcon
                         },
                         {
-                            text: 'Empresa',
+                            text: 'Empresas',
+                            icon: HomeIcon
+                        },
+                        {
+                            text: 'Filiais',
                             icon: HomeIcon
                         },
                         {
@@ -205,16 +232,16 @@ export default function Users(){
                 }>
                     {/* ITEMS */}
                     { (!isLoading &&!error) && data.map((user:User) => {
-                        console.log(user.companies);
                         return(
                             <Tr key={user.id}>
                                 <Td alignItems="center" display="flex">
                                     <Flex mr="4" borderRadius="full" h="fit-content" w="fit-content" bgGradient="linear(to-r, purple.600, blue.300)" p="2px">
-                                        <Avatar borderColor="gray.600" border="2px" size="md" name={`${user.name} ${user.last_name}`} src={user.image ? `${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_STORAGE : process.env.REACT_APP_API_LOCAL_STORAGE}${user.image}` : ""}/>
+                                        <Avatar borderColor="gray.600" border="2px" size="sm" name={`${user.name} ${user.last_name}`} src={user.image ? `${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_STORAGE : process.env.REACT_APP_API_LOCAL_STORAGE}${user.image}` : ""}/>
                                     </Flex>
                                     <Text display="flex" fontSize="sm" color="gray.700" fontWeight="600">{user.name} {user.last_name && user.last_name}</Text>
                                 </Td>
-                                <Td fontSize="sm" color="blue.800" cursor="pointer" onClick={() => OpenSyncCompaniesModal({id:user.id, name: user.name, companies:user.companies}) }>{user.companies.length > 0 ? user.companies[0].name : "Sem empresas"} {user.companies.length > 1 && `+ ${user.companies.length - 1}`}</Td>
+                                <Td whiteSpace="nowrap" fontSize="sm" color="blue.800" cursor="pointer" onClick={() => OpenSyncCompaniesModal({id:user.id, name: user.name, companies:user.companies}) }>{user.companies.length > 0 ? user.companies[0].name : "Sem empresas"} {user.companies.length > 1 && `+ ${user.companies.length - 1}`}</Td>
+                                <Td whiteSpace="nowrap" fontSize="sm" color="blue.800" cursor="pointer" onClick={() => OpenSyncBranchesModal({id:user.id, name: user.name, branches:user.branches}) }>{user.branches.length > 0 ? user.branches[0].name : "Sem filiais"} {user.branches.length > 1 && `+ ${user.branches.length - 1}`}</Td>
                                 <Td fontSize="sm" color="gray.800">{user.role.name}</Td>
                                 <Td>
                                     <HStack spacing="4">

@@ -39,6 +39,7 @@ import { api } from "../../../services/api";
 import { UserFilterData, useUsers } from "../../../hooks/useUsers";
 import { InvoicesFilterData, useInvoices } from "../../../hooks/useInvoices";
 import { CompanySelectMaster } from "../../../components/CompanySelect/companySelectMaster";
+import { useWorkingBranch } from "../../../hooks/useWorkingBranch";
 
 interface RemovePaymentData{
     id: number;
@@ -60,11 +61,14 @@ const FilterPaymentsFormSchema = yup.object().shape({
 
 export default function Invoices(){
     const workingCompany = useWorkingCompany();
+    const workingBranch = useWorkingBranch();
+
 
     const [filter, setFilter] = useState<InvoicesFilterData>(() => {
         const data: InvoicesFilterData = {
             search: '',
             company: workingCompany.company?.id,
+            branch: workingBranch.branch?.id
         };
         
         return data;
@@ -118,40 +122,32 @@ export default function Invoices(){
     const users = useUsers(usersFilter);
 
     const handleSearchPayments = async (search : InvoicesFilterData) => {
-        search.company = workingCompany.company?.id;
-
         setPage(1);
-        setFilter(search);
+        setFilter({...filter, ...search});
     }
 
     let totalOfSelectedDays = 0;
 
+    useEffect(() => {
+        setFilter({...filter, company: workingCompany.company?.id, branch: workingBranch.branch?.id});
+    }, [workingCompany]);
+
     return(
-        <MainBoard sidebar="financial" header={
-            <HStack>
-                <Link href="/pagamentos"><BackArrow width="20px" stroke="#4e4b66" fill="none"/></Link> 
-                <CompanySelectMaster filters={[{filterData: filter, setFilter: handleChangeFilter}]} />
-            </HStack>
-        }
+        <MainBoard sidebar="financial" header={<CompanySelectMaster/>}
         >
 
             <Flex as="form" mb="20" onSubmit={handleSubmit(handleSearchPayments)}>
 
-                <Stack spacing="6" w="100%">
-                    <HStack spacing="6">
-                        <Input register={register} name="search" type="text" placeholder="Procurar" variant="filled" error={formState.errors.search}/>
+                <HStack spacing="6" w="100%">
+                    <Input register={register} name="search" type="text" placeholder="Procurar" variant="filled" error={formState.errors.search}/>
 
-                        <Input register={register} name="start_date" type="date" placeholder="Data Inicial" variant="filled" error={formState.errors.start_date}/>
-                        <Input register={register} name="end_date" type="date" placeholder="Data Final" variant="filled" error={formState.errors.end_date}/>
+                    <Input register={register} name="start_date" type="date" placeholder="Data Inicial" variant="filled" error={formState.errors.start_date}/>
+                    <Input register={register} name="end_date" type="date" placeholder="Data Final" variant="filled" error={formState.errors.end_date}/>
 
-                    </HStack>
-
-                    <HStack spacing="6">
-                        <OutlineButton type="submit" mb="10" color="blue.400" borderColor="blue.400" colorScheme="blue">
-                            Filtrar
-                        </OutlineButton>
-                    </HStack>
-                </Stack>
+                    <OutlineButton type="submit" color="blue.400" borderColor="blue.400" colorScheme="blue">
+                        Filtrar
+                    </OutlineButton>
+                </HStack>
 
             </Flex>
 

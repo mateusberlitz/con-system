@@ -1,7 +1,7 @@
 import { useQuery } from "react-query";
 import { api } from "../../services/api";
 import { getToken } from "../../services/auth";
-import { Company } from "../../types";
+import { Branch, Company } from "../../types";
 
 export interface Profile{
     id: number,
@@ -20,6 +20,7 @@ export interface Profile{
         updated_at: Date;
     };
     companies: Company[];
+    branches: Branch[];
     created_at: Date;
     updated_at: Date;
 }

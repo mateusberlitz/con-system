@@ -31,7 +31,6 @@ import { ReceiveBillFormData, ReceiveBillModal } from "../../Financial/Bills/Rec
 import { api } from "../../../services/api";
 import { showErrors } from "../../../hooks/useErrors";
 
-
 interface QuotasListProps{
     quotaSales: QuotaSale[];
     refetchQuotaSales: () => void;

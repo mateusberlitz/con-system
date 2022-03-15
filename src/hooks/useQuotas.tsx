@@ -7,6 +7,7 @@ export interface QuotaFilterData{
     end_date?: string;
     segment?: string;
     company?: number;
+    branch?: number;
     contemplated_type?: string;
     group?: string;
     quote?: string;
@@ -23,6 +24,7 @@ export const getQuotas = async (filter?: QuotaFilterData, page: number = 0) => {
               search: filter.search,
               segment: filter.segment,
               company: filter.company,
+              branch: filter.branch,
               start_date: filter.start_date,
               end_date: filter.end_date,
               contemplated_type: filter.contemplated_type,

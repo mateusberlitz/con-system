@@ -19,6 +19,8 @@ export function SaleListReportMonthItem({open = false, month, quotaSales} : Sale
         setIsOpen(!isOpen);
     }
 
+    console.log(quotaSales);
+
     return (
         <>
             <Tr cursor="pointer" transition="all ease 2s" alignItems="center" _hover={{transition: "all ease 2s"}} borderLeft="1px solid" borderColor="gray.400">

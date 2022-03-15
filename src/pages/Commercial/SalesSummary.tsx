@@ -97,7 +97,7 @@ export function SalesSummary(){
         loadMonthAmount();
         loadPendingSales();
         loadMonthGoal();
-    }, []);
+    }, [workingCompany]);
 
     const [isListUserSalesModalOpen, setIsListUserSalesModalOpen] = useState(false);
 

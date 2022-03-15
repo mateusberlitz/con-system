@@ -61,8 +61,6 @@ export function EditScheduleModal( { isOpen, onRequestClose, afterEdit, toEditSc
     const datetimeObject = new Date(toEditScheduleData.datetime);
     const initialDatetime = ( toEditScheduleData.datetime ? datetimeObject.toISOString().split('T')[0] + 'T' + (datetimeObject.getHours() < 10 ? '0' + datetimeObject.getHours() : datetimeObject.getHours()) + ':' +  datetimeObject.getMinutes() : '')
 
-    console.log(initialDatetime);
-
     const { register, handleSubmit, control, reset, formState} = useForm<EditScheduleFormData>({
         resolver: yupResolver(EditScheduleFormSchema),
         defaultValues: {

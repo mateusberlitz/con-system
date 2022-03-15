@@ -13,8 +13,6 @@ export function getAuthTimeCookie(){
     const decodedCookie = decodeURIComponent(document.cookie);
     const slicedCookie = decodedCookie.split(';');
 
-    console.log(decodedCookie);
-
     for(var i = 0; i < slicedCookie.length; i++){
         var cookiePart = slicedCookie[i];
 
@@ -30,8 +28,6 @@ export function getAuthTimeCookie(){
 
 export function checkAuthTimeCookie(){
     const cookie = getAuthTimeCookie();
-
-    console.log(cookie);
 
     if(cookie === ""){
         return false;

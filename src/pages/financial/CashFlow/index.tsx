@@ -1,4 +1,4 @@
-import { FormControl, Flex, HStack, Stack, Spinner, Text, IconButton, Select as ChakraSelect} from "@chakra-ui/react";
+import { FormControl, Flex, HStack, Stack, Spinner, Text, IconButton, Select as ChakraSelect, Box, useBreakpointValue, Icon} from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { MainBoard } from "../../../components/MainBoard";
 import { useCompanies } from "../../../hooks/useCompanies";
@@ -32,6 +32,8 @@ import { ConfirmCashFlowRemoveModal } from "./ConfirmCashFlowRemoveModal";
 import { Select } from "../../../components/Forms/Selects/Select";
 import { Pagination } from "../../../components/Pagination";
 import { ExportReportModal } from "./ExportReportModal";
+import { CompanySelectMaster } from "../../../components/CompanySelect/companySelectMaster";
+import { useWorkingBranch } from "../../../hooks/useWorkingBranch";
 
 interface RemoveCashFlowData{
     id: number;
@@ -47,11 +49,14 @@ const FilterCashFlowFormSchema = yup.object().shape({
 
 export default function CashFlow(){
     const workingCompany = useWorkingCompany();
+    const workingBranch = useWorkingBranch();
+    const isWideVersion = useBreakpointValue({base: false, lg: true});
 
     const [filter, setFilter] = useState<CashFlowsFilterData>(() => {
         const data: CashFlowsFilterData = {
             search: '',
             company: workingCompany.company?.id,
+            branch: workingBranch.branch?.id
         };
         
         return data;
@@ -166,22 +171,24 @@ export default function CashFlow(){
     }, [])
 
     const handleSearchCashFlow = async (search : CashFlowsFilterData) => {
-        search.company = workingCompany.company?.id;
-        
-        setFilter(search);
+        setFilter({...filter, ...search});
     }
 
+    const [toggleFilter, setToggleFilter] = useState(false);
+
+    useEffect(() => {
+        setFilter({...filter, company: workingCompany.company?.id, branch: workingBranch.branch?.id});
+    }, [workingCompany, workingBranch]);
+
     return(
-        <MainBoard sidebar="financial" header={ 
-            ( ( (permissions && HasPermission(permissions, 'Todas Empresas')) || (profile && profile.companies && profile.companies.length > 1)) && <CompanySelect filters={[{filterData: filter, setFilter: handleChangeFilter}]}/> )
-        }
+        <MainBoard sidebar="financial" header={<CompanySelectMaster />}
         >
             <NewCashFlowModal categories={categories} afterCreate={cashFlows.refetch} isOpen={isNewCashFlowModalOpen} onRequestClose={CloseNewCashFlowModal}/>
             <EditCashFlowModal categories={categories} toEditCashFlowData={toEditCashFlowData} afterEdit={cashFlows.refetch} isOpen={isEditCashFlowModalOpen} onRequestClose={CloseEditCashFlowModal}/>
             <ExportReportModal isOpen={isExportReportModalOpen} onRequestClose={CloseExportReportModal}/>
             <ConfirmCashFlowRemoveModal afterRemove={cashFlows.refetch} toRemoveCashFlowData={removeCashFlowData} isOpen={isConfirmCashFlowRemoveModalOpen} onRequestClose={CloseConfirmCashFlowRemoveModal}/>
 
-            <Flex justify="space-between" alignItems="center" mb="10">
+            <HStack justify="space-between" alignItems="center" mb="10">
                 <SolidButton onClick={OpenNewCashFlowModal} color="white" bg="blue.400" icon={PlusIcon} colorScheme="blue">
                     Adicionar Movimentação
                 </SolidButton>
@@ -193,33 +200,45 @@ export default function CashFlow(){
                 {/* <Link href="/categorias" border="2px" borderRadius="full" borderColor="gray.500" px="6" h="8" alignItems="center">
                     <Text>Categorias</Text>
                 </Link> */}
-            </Flex>
+            </HStack>
 
-            <Flex as="form" mb="20" onSubmit={handleSubmit(handleSearchCashFlow)}>
+            <Stack flexDir={["column", "row"]} spacing="6" as="form" mb="20" onSubmit={handleSubmit(handleSearchCashFlow)} borderRadius={!isWideVersion ? "24" : ""}  p={!isWideVersion ? "5" : ""} bg={!isWideVersion ? "white" : ""} boxShadow={!isWideVersion ? "md" : ""}>
+                {
+                    !isWideVersion && (
+                        <HStack onClick={() => setToggleFilter(!toggleFilter)}>
+                            <Icon as={PlusIcon} fontSize="20" stroke={"gray.800"} />
+                            <Text>Filtrar pagamentos</Text>
+                        </HStack>
+                    )
+                }
 
-                <Stack spacing="6" w="100%">
-                    <Input register={register} name="search" type="text" placeholder="Procurar" variant="filled" error={formState.errors.search}/>
+                <Box display={(isWideVersion || (!isWideVersion && toggleFilter)) ? 'flex' : 'none'}>
 
-                    <HStack spacing="6">
-                        <Input register={register} name="start_date" type="date" placeholder="Data inicial" variant="filled" error={formState.errors.start_date}/>
-                        <Input register={register} name="end_date" type="date" placeholder="Data Final" variant="filled" error={formState.errors.end_date}/>
+                    <Stack spacing="6" w="100%">
+                        <Input register={register} name="search" type="text" placeholder="Procurar" variant="filled" error={formState.errors.search}/>
 
-                        <Select register={register} h="45px" name="category" w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Categoria" error={formState.errors.category}>
-                            {categories && categories.map((category:CashFlowCategory) => {
-                                return (
-                                    <option key={category.id} value={category.id}>{category.name}</option>
-                                )
-                            })}
-                        </Select>
+                        <Stack direction={["column", "row"]} spacing="6">
+                            <Input register={register} name="start_date" type="date" placeholder="Data inicial" variant="filled" error={formState.errors.start_date}/>
+                            <Input register={register} name="end_date" type="date" placeholder="Data Final" variant="filled" error={formState.errors.end_date}/>
 
-                        <OutlineButton type="submit" mb="10" color="blue.400" borderColor="blue.400" colorScheme="blue">
-                            Filtrar
-                        </OutlineButton>
+                            <Select register={register} h="45px" name="category" w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Categoria" error={formState.errors.category}>
+                                {categories && categories.map((category:CashFlowCategory) => {
+                                    return (
+                                        <option key={category.id} value={category.id}>{category.name}</option>
+                                    )
+                                })}
+                            </Select>
 
-                    </HStack>
-                </Stack>
+                            <OutlineButton type="submit" mb="10" color="blue.400" borderColor="blue.400" colorScheme="blue">
+                                Filtrar
+                            </OutlineButton>
 
-            </Flex>
+                        </Stack>
+                    </Stack>
+
+                </Box>
+
+            </Stack>
 
             <Stack fontSize="13px" spacing="12">
                 {   cashFlows.isLoading ? (
@@ -283,49 +302,50 @@ export default function CashFlow(){
                                         }
 
                                         return (
-                                            <HStack key={`${cashFlow.id}-${cashFlow.title}`} justifyContent="space-between" borderTop="2px" borderColor="gray.500" px="8" py="4">
-                                                <Flex>
-                                                    <Text mr="6" fontSize="sm" color="gray.800">{cashFlow.created_at && getHour(cashFlow.created_at)}</Text>
-                                                    <Text color="gray.800">{cashFlow.title}</Text>
-                                                </Flex>
+                                            <Stack direction={["column", "row"]} px={["3","8"]} key={`${cashFlow.id}-${cashFlow.title}`} justifyContent="space-between" borderTop="2px" borderColor="gray.500" py="4">
+                                                <Stack direction={["row", "row"]} spacing={["3", "6"]} alignItems="center" mt={["1", "0"]}>
+                                                    <Flex>
+                                                        <Text mr="6" fontSize="sm" color="gray.800">{cashFlow.created_at && getHour(cashFlow.created_at)}</Text>
+                                                        <Text color="gray.800">{cashFlow.title}</Text>
+                                                    </Flex> 
 
-                                                <HStack>
-                                                    {
-                                                        (cashFlow.payment && cashFlow.payment.category) ? <TagIcon stroke="#4e4b66" fill="none" width="17px"/> : (
-                                                            (cashFlow.bill && cashFlow.bill.category)? <TagIcon stroke="#4e4b66" fill="none" width="17px"/> : ""
-                                                        )
-                                                    }
-                                                    <Text fontWeight="" color="gray.800">
+                                                    <HStack>
                                                         {
-                                                            (cashFlow.payment && cashFlow.payment.category) ? cashFlow.payment.category.name : (
-                                                                (cashFlow.bill && cashFlow.bill.category)? cashFlow.bill.category.name : ""
+                                                            (cashFlow.payment && cashFlow.payment.category) ? <TagIcon stroke="#4e4b66" fill="none" width="17px"/> : (
+                                                                (cashFlow.bill && cashFlow.bill.category)? <TagIcon stroke="#4e4b66" fill="none" width="17px"/> : ""
                                                             )
                                                         }
-                                                    </Text>
-                                                </HStack>
+                                                        <Text fontWeight="" color="gray.800">
+                                                            {
+                                                                (cashFlow.payment && cashFlow.payment.category) ? cashFlow.payment.category.name : (
+                                                                    (cashFlow.bill && cashFlow.bill.category)? cashFlow.bill.category.name : ""
+                                                                )
+                                                            }
+                                                        </Text>
+                                                    </HStack>
+                                                </Stack>
+                                                
 
                                                 <Flex>
                                                     <Text fontWeight="bold" color="gray.800">{cashFlow.category && cashFlow.category.name}</Text>
                                                 </Flex>
 
-                                                <Flex>
-                                                    <HStack fontWeight="bold" spacing="7">
-                                                        <Flex alignItems="center" color={cashFlow.value > 0 ? 'green.400' : 'red.400'}>
-                                                            {/* {cashFlow.value > 0 
-                                                                ? <StrongPlusIcon stroke="#48bb78" fill="none" width="12px"/> 
-                                                                : <MinusIcon stroke="#c30052" fill="none" width="12px"/>
-                                                            } */}
-                                                            <Text fontWeight="bold" ml="2">
-                                                                {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(cashFlow.value)}
-                                                            </Text>
-                                                        </Flex>
+                                                <HStack justifyContent="space-between" fontWeight="bold" spacing="7">
+                                                    <Flex alignItems="center" color={cashFlow.value > 0 ? 'green.400' : 'red.400'}>
+                                                        {/* {cashFlow.value > 0 
+                                                            ? <StrongPlusIcon stroke="#48bb78" fill="none" width="12px"/> 
+                                                            : <MinusIcon stroke="#c30052" fill="none" width="12px"/>
+                                                        } */}
+                                                        <Text fontWeight="bold" ml="2">
+                                                            {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(cashFlow.value)}
+                                                        </Text>
+                                                    </Flex>
 
-                                                        <EditButton onClick={() => OpenEditCashFlowModal(cashFlowToEditData)}/>
+                                                    <EditButton onClick={() => OpenEditCashFlowModal(cashFlowToEditData)}/>
 
-                                                        <IconButton onClick={() => OpenConfirmCashFlowRemoveModal({ id: cashFlow.id, title: cashFlow.title })} h="24px" w="23px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
-                                                    </HStack>
-                                                </Flex>
-                                            </HStack>
+                                                    <IconButton onClick={() => OpenConfirmCashFlowRemoveModal({ id: cashFlow.id, title: cashFlow.title })} h="24px" w="23px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
+                                                </HStack>
+                                            </Stack>
                                         )
                                     })
                                 }

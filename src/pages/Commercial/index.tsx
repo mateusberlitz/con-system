@@ -1,9 +1,10 @@
 import { HStack, Stack } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CompanySelectMaster } from "../../components/CompanySelect/companySelectMaster";
 import { MainBoard } from "../../components/MainBoard";
 import { useProfile } from "../../hooks/useProfile";
 import { TaskFilterData, useTasks } from "../../hooks/useTasks";
+import { useWorkingBranch } from "../../hooks/useWorkingBranch";
 import { useWorkingCompany } from "../../hooks/useWorkingCompany";
 import { TasksSummary } from "../Financial/TasksSummary";
 import { LeadsReport } from "./LeadsReport";
@@ -15,6 +16,7 @@ import { SchedulesSummary } from "./SchedulesSummary";
 export default function Commercial(){
     const { profile, permissions } = useProfile();
     const workingCompany = useWorkingCompany();
+    const workingBranch = useWorkingBranch();
 
     const [page, setPage] = useState(1);
 
@@ -26,13 +28,18 @@ export default function Commercial(){
         const data: TaskFilterData = {
             search: '',
             company: workingCompany.company?.id,
+            branch: workingBranch.branch?.id,
             author: (profile ? profile.id : 0),
         };
         
-        return data;
-    })
+        return data; 
+    });
 
     const tasks = useTasks(tasksFilter, page);
+
+    useEffect(() => {
+        setTasksFilter({...tasksFilter, company: workingCompany.company?.id, branch: workingBranch.branch?.id});
+    }, [workingCompany, workingBranch]);
 
     return (
         <MainBoard sidebar="commercial" header={<CompanySelectMaster/>}>

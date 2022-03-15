@@ -9,6 +9,7 @@ import { useCompanies } from "../../../hooks/useCompanies";
 import { useProfile } from "../../../hooks/useProfile";
 import { useSimpleReport } from "../../../hooks/useSimpleRepor";
 import { TransactionsByAccountFilterData } from "../../../hooks/useTransactionsByAccount";
+import { useWorkingBranch } from "../../../hooks/useWorkingBranch";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { api } from "../../../services/api";
 import { Company } from "../../../types";
@@ -18,6 +19,7 @@ import { newMonthsAmountArraySimple } from "./populateMonthAmountArraySimple";
 export default function SimpleReport(){
     const {permissions, profile} = useProfile();
     const workingCompany = useWorkingCompany();
+    const workingBranch = useWorkingBranch();
 
     const history = useHistory();
 
@@ -40,6 +42,7 @@ export default function SimpleReport(){
         const data: TransactionsByAccountFilterData = {
             transaction_type: 'payments',
             company: workingCompany.company?.id,
+            branch: workingBranch.branch?.id,
             year: dateObject.getFullYear().toString(),
         };
         
@@ -50,6 +53,7 @@ export default function SimpleReport(){
         const data: TransactionsByAccountFilterData = {
             transaction_type: 'bills',
             company: workingCompany.company?.id,
+            branch: workingBranch.branch?.id,
             year: dateObject.getFullYear().toString(),
         };
         
@@ -100,17 +104,15 @@ export default function SimpleReport(){
     const totalEntriesByMonths = newMonthsAmountArray();
     const totalByMonths = newMonthsAmountArray();
 
-    //console.log(simpleReport);
     const months = newMonthsAmountArraySimple();
 
+    useEffect(() => {
+        setFilterExitTransactions({...filterExitTransactions, company: workingCompany.company?.id, branch: workingBranch.branch?.id});
+        setFilterEntryTransactions({...filterEntryTransactions, company: workingCompany.company?.id, branch: workingBranch.branch?.id});
+    }, [workingCompany, workingBranch]);
+
     return(
-        <MainBoard sidebar="financial" header={
-                <CompanySelectMaster filters={[
-                    {filterData: filterExitTransactions, setFilter: setFilterExitTransactions}, 
-                    {filterData: filterEntryTransactions, setFilter: setFilterEntryTransactions},
-                ]}/> 
-            }
-        >
+        <MainBoard sidebar="financial" header={ <CompanySelectMaster />  }>
 
         <Board mb="12">
             <HStack as="form" spacing="12" w="100%" mb="6" justifyContent="left">

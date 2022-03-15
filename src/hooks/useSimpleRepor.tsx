@@ -6,6 +6,7 @@ export interface TransactionsByAccountFilterData{
     title?: string;
     category?: number;
     company?: number;
+    branch?: number;
     year?: string;
     quote?: string;
 }
@@ -18,6 +19,7 @@ export const getTransactions = async (filter?: TransactionsByAccountFilterData, 
               title: filter.title,
               category: filter.category,
               company: filter.company,
+              branch: filter.branch,
               year: filter.year,
               transaction_type: filter.transaction_type
             }

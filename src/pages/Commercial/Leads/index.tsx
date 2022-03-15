@@ -37,8 +37,13 @@ import { ConfirmSaleRemoveModal, RemoveSaleData } from "../Sales/ConfirmSaleRemo
 import { SearchLeads } from "./SearchLeads";
 import { LeadsReportByMonth } from "../LeadsReportByMonth";
 import { LeadsReportByUser } from "./LeadsReportByUser";
+import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
+import { useWorkingBranch } from "../../../hooks/useWorkingBranch";
 
 export default function Leads(){
+    const workingCompany = useWorkingCompany();
+    const workingBranch = useWorkingBranch();
+
     const toast = useToast();
     const { permissions, profile } = useProfile();
 
@@ -88,6 +93,8 @@ export default function Leads(){
             search: '',
             //start_date: formatYmdDate(new Date().toString()),
             //end_date: formatYmdDate(new Date().toString()),
+            company: workingCompany.company?.id,
+            branch: workingBranch.branch?.id,
             status: 0,
             user: (isManager ? undefined : profile?.id),
             group_by: '',
@@ -342,6 +349,10 @@ export default function Leads(){
     const handleCloseFilter = () => {
         setShowingFilterMobile(false);
     }
+
+    useEffect(() => {
+        setFilter({...filter, company: workingCompany.company?.id, branch: workingBranch.branch?.id});
+    }, [workingCompany, workingBranch]);
 
     return (
         <MainBoard sidebar="commercial" header={<CompanySelectMaster />}>

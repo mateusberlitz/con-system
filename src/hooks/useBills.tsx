@@ -7,6 +7,7 @@ export interface BillFilterData{
     end_date?: string;
     category?: number;
     company?: number;
+    branch?: number;
     source?: number;
     status?: number;
     group_by?: string;
@@ -21,6 +22,7 @@ export const getBills = async (filter?: BillFilterData, page: number = 0) => {
                 search: filter.search,
                 category: filter.category,
                 company: filter.company,
+                branch: filter.branch,
                 start_date: filter.start_date,
                 end_date: filter.end_date,
                 source: filter.source,

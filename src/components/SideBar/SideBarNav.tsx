@@ -21,7 +21,7 @@ import LogoBranco from '../../assets/icons/Logo-Branco.svg';
 import { HasPermission, useProfile } from "../../hooks/useProfile";
 
 interface SideBarNavProps{
-    desk: string;
+    desk: "configs" | "financial" | "commercial" | "quotas";
 }
 
 export function SideBarNav({ desk }: SideBarNavProps){

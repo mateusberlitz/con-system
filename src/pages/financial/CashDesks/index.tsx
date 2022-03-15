@@ -1,4 +1,4 @@
-import { FormControl, Flex, HStack, Stack, Spinner, Text, IconButton, Select as ChakraSelect} from "@chakra-ui/react";
+import { FormControl, Flex, HStack, Stack, Spinner, Text, IconButton, Select as ChakraSelect, useBreakpointValue, Icon, Box} from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { MainBoard } from "../../../components/MainBoard";
 import { useCompanies } from "../../../hooks/useCompanies";
@@ -37,6 +37,7 @@ import { Pagination } from "../../../components/Pagination";
 import { useHistory } from "react-router-dom";
 import { ExportExcelModal } from "./ExportExcelModal";
 import { CompanySelectMaster } from "../../../components/CompanySelect/companySelectMaster";
+import { useWorkingBranch } from "../../../hooks/useWorkingBranch";
 
 interface RemoveCashFlowData{
     id: number;
@@ -52,6 +53,8 @@ const FilterCashDeskFormSchema = yup.object().shape({
 
 export default function CashDesks(){
     const workingCompany = useWorkingCompany();
+    const workingBranch = useWorkingBranch();
+    const isWideVersion = useBreakpointValue({base: false, lg: true});
 
     const history = useHistory();
 
@@ -59,6 +62,7 @@ export default function CashDesks(){
         const data: CashDesksFilterData = {
             search: '',
             company: workingCompany.company?.id,
+            branch: workingBranch.branch?.id
         };
         
         return data;
@@ -161,9 +165,7 @@ export default function CashDesks(){
     }, [])
 
     const handleSearchCashFlow = async (search : CashDesksFilterData) => {
-        search.company = workingCompany.company?.id;
-        
-        setFilter(search);
+        setFilter({...filter, ...search});
     }
 
     const [isExportExcelModalOpen, setIsExportExcelModalOpen] = useState(false);
@@ -175,28 +177,34 @@ export default function CashDesks(){
         setIsExportExcelModalOpen(false);
     }
 
+    const [toggleFilter, setToggleFilter] = useState(false);
+
+    useEffect(() => {
+        setFilter({...filter, company: workingCompany.company?.id, branch: workingBranch.branch?.id});
+    }, [workingCompany, workingBranch]);
+
     return(
-        <MainBoard sidebar="financial" header={ 
-            ( ( (permissions && HasPermission(permissions, 'Todas Empresas')) || (profile && profile.companies && profile.companies.length > 1)) && <CompanySelectMaster filters={[{filterData: filter, setFilter: handleChangeFilter}]}/> )
-        }
+        <MainBoard sidebar="financial" header={<CompanySelectMaster/>}
         >
             <NewCashDesksModal categories={categories} afterCreate={cashDesks.refetch} isOpen={isNewCashDeskModalOpen} onRequestClose={CloseNewCashDeskModal}/>
             <EditCashDeskModal categories={categories} toEditCashDeskData={toEditCashDeskData} afterEdit={cashDesks.refetch} isOpen={isEditCashDeskModalOpen} onRequestClose={CloseEditCashDeskModal}/>
             <ConfirmCashDeskRemoveModal afterRemove={cashDesks.refetch} toRemoveCashDeskData={removeCashFlowData} isOpen={isConfirmCashDeskRemoveModalOpen} onRequestClose={CloseConfirmCashDeskRemoveModal}/>
             <ExportExcelModal isOpen={isExportExcelModalOpen} onRequestClose={CloseExportExcelModal}/>
 
-            <Flex justify="space-between" alignItems="center" mb="10">
+            <Stack direction={["column", "row"]} spacing="5" justify="space-between" alignItems="left" mb="10">
                 <SolidButton onClick={OpenNewCashDeskModal} color="white" bg="blue.400" icon={PlusIcon} colorScheme="blue">
                     Adicionar Movimentação
                 </SolidButton>
 
-                <OutlineButton onClick={() => {history.push('/caixa/categorias')}}>
-                    Categorias
-                </OutlineButton>
+                <HStack>
+                    <OutlineButton onClick={() => {history.push('/caixa/categorias')}}>
+                        Categorias
+                    </OutlineButton>
 
-                <OutlineButton onClick={OpenExportExcelModal} variant="outline" colorScheme="blue" color="blue.400" borderColor="blue.400">
-                    Gerar Relatório
-                </OutlineButton>
+                    <OutlineButton onClick={OpenExportExcelModal} variant="outline" colorScheme="blue" color="blue.400" borderColor="blue.400">
+                        Gerar Relatório
+                    </OutlineButton>
+                </HStack>
 
                 {/* <OutlineButton onClick={OpenExportReportModal} variant="outline" colorScheme="blue" color="blue.400" borderColor="blue.400">
                     Gerar Relatório
@@ -205,39 +213,49 @@ export default function CashDesks(){
                 {/* <Link href="/categorias" border="2px" borderRadius="full" borderColor="gray.500" px="6" h="8" alignItems="center">
                     <Text>Categorias</Text>
                 </Link> */}
-            </Flex>
+            </Stack>
 
-            <Flex as="form" mb="20" onSubmit={handleSubmit(handleSearchCashFlow)}>
+            <Stack flexDir={["column", "row"]} spacing="6" as="form" mb="20" onSubmit={handleSubmit(handleSearchCashFlow)} borderRadius={!isWideVersion ? "24" : ""}  p={!isWideVersion ? "5" : ""} bg={!isWideVersion ? "white" : ""} boxShadow={!isWideVersion ? "md" : ""}>
 
-                <Stack spacing="6" w="100%">
-                    <Input register={register} name="search" type="text" placeholder="Procurar" variant="filled" error={formState.errors.search}/>
+                {
+                    !isWideVersion && (
+                        <HStack onClick={() => setToggleFilter(!toggleFilter)}>
+                            <Icon as={PlusIcon} fontSize="20" stroke={"gray.800"} />
+                            <Text>Filtrar pagamentos</Text>
+                        </HStack>
+                    )
+                }
 
-                    <HStack spacing="6">
-                        <Input register={register} name="start_date" type="date" placeholder="Data inicial" variant="filled" error={formState.errors.start_date}/>
-                        <Input register={register} name="end_date" type="date" placeholder="Data Final" variant="filled" error={formState.errors.end_date}/>
+                <Box display={(isWideVersion || (!isWideVersion && toggleFilter)) ? 'flex' : 'none'}>
+                    <Stack spacing="6" w="100%">
+                        <Input register={register} name="search" type="text" placeholder="Procurar" variant="filled" error={formState.errors.search}/>
 
-                        <Select register={register} h="45px" name="category" w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Categoria" error={formState.errors.category}>
-                            {categories && categories.map((category:CashFlowCategory) => {
-                                return (
-                                    <option key={category.id} value={category.id}>{category.name}</option>
-                                )
-                            })}
-                        </Select>
+                        <Stack direction={["column", "row"]} spacing="6">
+                            <Input register={register} name="start_date" type="date" placeholder="Data inicial" variant="filled" error={formState.errors.start_date}/>
+                            <Input register={register} name="end_date" type="date" placeholder="Data Final" variant="filled" error={formState.errors.end_date}/>
 
-                        <Select register={register} h="45px" name="type" w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Tipo" error={formState.errors.type}>
-                            <option value={1}>Dinheiro</option>
-                            <option value={2}>Cartão</option>
-                            <option value={3}>Pix</option>
-                        </Select>
+                            <Select register={register} h="45px" name="category" w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Categoria" error={formState.errors.category}>
+                                {categories && categories.map((category:CashFlowCategory) => {
+                                    return (
+                                        <option key={category.id} value={category.id}>{category.name}</option>
+                                    )
+                                })}
+                            </Select>
 
-                        <OutlineButton type="submit" mb="10" color="blue.400" borderColor="blue.400" colorScheme="blue">
-                            Filtrar
-                        </OutlineButton>
+                            <Select register={register} h="45px" name="type" w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Tipo" error={formState.errors.type}>
+                                <option value={1}>Dinheiro</option>
+                                <option value={2}>Cartão</option>
+                                <option value={3}>Pix</option>
+                            </Select>
 
-                    </HStack>
-                </Stack>
+                            <OutlineButton type="submit" mb="10" color="blue.400" borderColor="blue.400" colorScheme="blue">
+                                Filtrar
+                            </OutlineButton>
 
-            </Flex>
+                        </Stack>
+                    </Stack>
+                </Box>
+            </Stack>
 
             <Stack fontSize="13px" spacing="12">
                 {   cashDesks.isLoading ? (

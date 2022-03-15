@@ -5,6 +5,7 @@ import { CompanySelectMaster } from "../../../components/CompanySelect/companySe
 import { MainBoard } from "../../../components/MainBoard";
 import { Table } from "../../../components/Table";
 import { quotaReportFilterData, useQuotaReport } from "../../../hooks/useQuotaReport";
+import { useWorkingBranch } from "../../../hooks/useWorkingBranch";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { api } from "../../../services/api";
 import { newMonthsAmountArray } from "../../Financial/Reports/populateMonthAmountArray";
@@ -30,6 +31,7 @@ interface cancelReport{
 export default function QuotasReport(){
     //const {permissions, profile} = useProfile();
     const workingCompany = useWorkingCompany();
+    const workingBranch = useWorkingBranch();
 
     //const history = useHistory();
 
@@ -37,7 +39,7 @@ export default function QuotasReport(){
     const [selectedYear, setSelectedYear] = useState<string>('');
 
     const loadYears = async () => {
-        const { data } = await api.get('/quotas_years');
+        const { data } = await api.get('/ready_quotas_years');
 
         setYears(data);
     }
@@ -51,6 +53,7 @@ export default function QuotasReport(){
     const [filter, setFilter] = useState<quotaReportFilterData>(() => {
         const data: quotaReportFilterData = {
             company: workingCompany.company?.id,
+            branch: workingBranch.branch?.id,
             year: dateObject.getFullYear().toString(),
         };
         
@@ -75,6 +78,10 @@ export default function QuotasReport(){
     let totalSales = 0;
     let total = 0;
     const totalByMonths = newMonthsAmountArray();
+
+    useEffect(() => {
+        setFilter({...filter, company: workingCompany.company?.id, branch: workingBranch.branch?.id});
+    }, [workingCompany, workingBranch]);
 
     return (
         <MainBoard sidebar="quotas" header={ <CompanySelectMaster/>}>

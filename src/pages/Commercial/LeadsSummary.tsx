@@ -23,6 +23,7 @@ import { api } from "../../services/api";
 import { ReactComponent as PlusIcon } from '../../assets/icons/Plus.svg';
 import { getHour } from "../../utils/Date/getHour";
 import { NewLeadModal } from "./Leads/NewLeadModal";
+import { useWorkingCompany } from "../../hooks/useWorkingCompany";
 
 interface BillsSummaryProps{
     bills?: UseQueryResult<{
@@ -35,6 +36,7 @@ interface BillsSummaryProps{
 
 export function LeadsSummary(){
     const {profile} = useProfile();
+    const workingCompany = useWorkingCompany();
     
     const [origins, setOrigins] = useState<DataOrigin[]>([]);
 
@@ -80,10 +82,15 @@ export function LeadsSummary(){
             status: 0,
             user: profile?.id,
             group_by: '',
+            company: workingCompany.company?.id
         };
         
         return data;
     })
+
+    useEffect(() => {
+        setFilter({...filter, company: workingCompany.company?.id});
+    }, [workingCompany]);
 
     function handleChangeFilter(newFilter: LeadsFilterData){
         setFilter(newFilter);

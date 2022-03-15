@@ -1,6 +1,7 @@
 import { createContext, ReactNode, useContext, useEffect, useRef, useState } from "react";
 import { isAuthenticated } from "../../services/auth";
 import { encodePermissions, simplifyPermissions, decodePermissions } from "../../services/permissionsSecurity";
+import { Company } from "../../types";
 import { getMe, Profile } from "./useMe";
 import { getPermissions } from "./useProfilePermissions";
 
@@ -90,7 +91,15 @@ export function ProfileProvider({ children } : ProfileProviderProps){
 
         loadPermissions(loadedProfile.role.id);
 
-        localStorage.setItem('@lance/company', JSON.stringify(loadedProfile.companies[0] ? loadedProfile.companies[0] : ''));
+        if(loadedProfile.branches[0]){
+            localStorage.setItem('@lance/branch', JSON.stringify(loadedProfile.branches[0] ? loadedProfile.branches[0] : ''));
+
+            const branchCompany = loadedProfile.companies.filter((company:Company) => company.id === loadedProfile.branches[0].company.id);
+
+            localStorage.setItem('@lance/company', JSON.stringify(branchCompany[0] ? branchCompany[0] : ''));
+        }else{
+            localStorage.setItem('@lance/company', JSON.stringify(loadedProfile.companies[0] ? loadedProfile.companies[0] : ''));
+        }
 
         setProfile(loadedProfile);
     }

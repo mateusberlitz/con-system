@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { api } from "../../services/api";
 
 import { ReactComponent as CheckIcon } from '../../assets/icons/Check.svg';
-import { Company } from "../../types";
+import { Branch, Company } from "../../types";
 
 interface RemoveTaskData{
     id: number;
@@ -11,27 +11,30 @@ interface RemoveTaskData{
 
 interface CashSummaryFilter{
     company: number | undefined;
+    branch?: number | undefined;
 }
 
 interface CashSummaryProps{
     company: Company | undefined;
+    branch?: Branch | undefined | null;
 }
 
-export function CashSummary({company}: CashSummaryProps){
+export function CashSummary({company, branch}: CashSummaryProps){
     const workingCompany = company;
-
-    console.log(company);
+    const workingBranch = branch;
 
     const [amount, setAmount] = useState(0);
 
     const loadAmount = async () => {
         const filterAmount:CashSummaryFilter = {
             company: company?.id,
+            branch: branch?.id,
         };
 
         const { data } = await api.get('/amount', {
             params: {
-                company: (company && company.id ? company?.id.toString() : "0")
+                company: (company && company.id ? company?.id.toString() : "0"),
+                branch: (branch && branch.id ? branch?.id.toString() : "0")
             }
         });
 
@@ -44,7 +47,8 @@ export function CashSummary({company}: CashSummaryProps){
 
         const { data } = await api.get('/month_amount', {
             params: {
-                company: (company && company.id  ? company?.id.toString() : "0")
+                company: (company && company.id  ? company?.id.toString() : "0"),
+                branch: (branch && branch.id  ? branch?.id.toString() : "0")
             }
         });
 
@@ -54,7 +58,7 @@ export function CashSummary({company}: CashSummaryProps){
     useEffect(() => {
         loadAmount();
         loadMonthAmount();
-    }, [company])
+    }, [company, branch])
 
     return(
         <Stack spacing="8" width="100%">

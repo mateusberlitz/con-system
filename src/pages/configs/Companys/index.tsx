@@ -14,10 +14,12 @@ import { ConfirmCompanyRemoveModal } from "./ConfirmCompanyRemoveModal";
 import { useCompanies } from "../../../hooks/useCompanies";
 import { EditCompanyModal } from "./EditCompanyModal";
 import { Company } from "../../../types";
+import { useHistory } from "react-router-dom";
 
 
 
 export default function Companys(){
+    const history = useHistory();
     const { data, isLoading, refetch, error} = useCompanies();
 
     const [removeCompanyId, setRemoveCompanyId] = useState(0);
@@ -96,10 +98,14 @@ export default function Companys(){
                                         </HStack>
                                     </Flex>
 
-                                    <Stack spacing="4">
-                                        <Text color="gray.800" fontSize="md"> <Icon as={LocationIcon}  stroke="#4e4b66" fill="none" mr="2"/>{company.address}</Text>
-                                        <Text color="gray.800" fontSize="md"> <Icon as={CallIcon}  stroke="#4e4b66" fill="none" mr="2"/>{company.phone}</Text>
-                                    </Stack>
+                                    <HStack justifyContent="space-between">
+                                        <Stack spacing="4">
+                                            <Text color="gray.800" fontSize="md"> <Icon as={LocationIcon}  stroke="#4e4b66" fill="none" mr="2"/>{company.address}</Text>
+                                            <Text color="gray.800" fontSize="md"> <Icon as={CallIcon}  stroke="#4e4b66" fill="none" mr="2"/>{company.phone}</Text>
+                                        </Stack>
+
+                                        <SolidButton colorScheme="purple" bg="purple.300" onClick={() => history.push(`/empresas/${company.id}`)}>Gerenciar</SolidButton>
+                                    </HStack>
                                     
                                 </Board>
                             )

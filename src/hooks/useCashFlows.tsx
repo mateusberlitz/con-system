@@ -7,6 +7,7 @@ export interface CashFlowsFilterData{
     end_date?: string;
     category?: number;
     company?: number;
+    branch?: number;
     page?: number;
     limit?: number;
 }
@@ -19,6 +20,7 @@ export const getCashFlows = async (filter?: CashFlowsFilterData, limit: number =
               limit: limit,
               search: filter.search,
               company: filter.company,
+              branch: filter.branch,
               category: filter.category,
               start_date: filter.start_date,
               end_date: filter.end_date,

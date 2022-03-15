@@ -1,4 +1,4 @@
-import { Text, Stack,Flex, Spinner, HStack } from "@chakra-ui/react";
+import { Text, Stack,Flex, Spinner, HStack, useBreakpointValue } from "@chakra-ui/react";
 import { UseQueryResult } from "react-query";
 import { SolidButton } from "../../components/Buttons/SolidButton";
 import { Payment } from "../../types";
@@ -22,9 +22,10 @@ interface PendenciesSummaryProps{
 }
 
 export function PendenciesSummary({payments, paymentFilter, openPayPayment, handleChangePaymentFilter}: PendenciesSummaryProps){
+    const isWideVersion = useBreakpointValue({base: false, lg: true});
 
     return (
-        <Stack w="100%" spacing="6" min-width="300px" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8">
+        <Stack w="100%" px={["5", "8px"]} spacing="6" min-width="300px" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" py="8">
                     <HStack>
                         <Text fontSize="xl" mb="4" w="100%">Pendências</Text>
                         {/* {
@@ -77,15 +78,25 @@ export function PendenciesSummary({payments, paymentFilter, openPayPayment, hand
 
                                             return (
                                                 <HStack key={payment.id} justifyContent="space-between" borderTop="2px" borderColor="gray.500" px="8" py="4">
-                                                    <Flex fontWeight="500" alignItems="center" opacity={payment.status ? 0.5 : 1}>
-                                                        <EllipseIcon stroke="none" fill="#f24e1e"/>
-                                                        <Text ml="2" color="orange.400">{payment.title}</Text>
-                                                    </Flex>
+                                                    <Stack>
+                                                        <Flex fontWeight="500" alignItems="center" opacity={payment.status ? 0.5 : 1}>
+                                                            <EllipseIcon stroke="none" fill="#f24e1e"/>
+                                                            <Text ml="2" color="orange.400">{payment.title}</Text>
+                                                        </Flex>
 
-                                                    <Flex fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
-                                                        <AttachIcon stroke="#4e4b66" fill="none" width="16px"/>
-                                                        <Text ml="2">Anexar</Text>
-                                                    </Flex>
+                                                        {
+                                                            !isWideVersion && <Text fontSize={["10px", "13px"]} opacity={payment.status ? 0.5 : 1} float="right">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(payment.value)}</Text>
+                                                        }
+                                                    </Stack>
+
+                                                    {
+                                                        isWideVersion && (
+                                                            <Flex fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
+                                                                <AttachIcon stroke="#4e4b66" fill="none" width="16px"/>
+                                                                <Text ml="2">Anexar</Text>
+                                                            </Flex>
+                                                        )
+                                                    }
 
                                                     <Flex>
                                                         <HStack fontWeight="bold" spacing="7">
@@ -103,7 +114,9 @@ export function PendenciesSummary({payments, paymentFilter, openPayPayment, hand
                                                                 )
                                                             }
 
-                                                            <Text opacity={payment.status ? 0.5 : 1} float="right">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(payment.value)}</Text>
+                                                            {
+                                                                isWideVersion && <Text fontSize={["10px", "13px"]} opacity={payment.status ? 0.5 : 1} float="right">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(payment.value)}</Text>
+                                                            }
                                                         </HStack>
                                                     </Flex>
                                                 </HStack>

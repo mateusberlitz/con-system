@@ -31,6 +31,7 @@ export interface User{
     created_at?: Date;
     updated_at?: Date;
     companies: Company[];
+    branches: Branch[];
     goals: Goal[];
     goal_amount?: number;
     conversion_percent?: number;
@@ -411,4 +412,30 @@ export interface Sales{
     commission: number;
     date: string;
     schedule?: number;
+}
+
+export interface Branch{
+    id: number;
+    company: Company;
+    manager: User;
+    name: string;
+    city: City;
+    state: State;
+    address: string
+    email?: string
+    phone?: string
+}
+
+export interface Desk{
+    id: number;
+    name: string;
+}
+
+export interface Team{
+    id: number;
+    branch: Branch;
+    desk: Desk;
+    company: Company;
+    manager: User;
+    name: string;
 }

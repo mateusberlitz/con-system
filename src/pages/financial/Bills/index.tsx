@@ -1,4 +1,4 @@
-import { FormControl, Flex, HStack, Stack, Spinner, Text, IconButton, Select as ChakraSelect, Accordion, AccordionItem, AccordionButton, AccordionPanel, useToast, Table, Thead, Tr, Th, Tbody, Td, Divider } from "@chakra-ui/react";
+import { FormControl, Flex, HStack, Stack, Spinner, Text, IconButton, Select as ChakraSelect, Accordion, AccordionItem, AccordionButton, AccordionPanel, useToast, Table, Thead, Tr, Th, Tbody, Td, Divider, Box, Icon, useBreakpointValue } from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { MainBoard } from "../../../components/MainBoard";
 import { useCompanies } from "../../../hooks/useCompanies";
@@ -45,6 +45,8 @@ import { ReceiveAllBillsModal } from "./ReceiveAllBillsModal";
 import { showErrors } from "../../../hooks/useErrors";
 import { ConfirmPartialBillRemoveModal } from "./ConfirmPartialBillRemoveModal";
 import { EditPartialBillFormData, EditPartialBillModal } from "./EditPartialBillModal";
+import { useWorkingBranch } from "../../../hooks/useWorkingBranch";
+import { CompanySelectMaster } from "../../../components/CompanySelect/companySelectMaster";
 
 interface RemoveBillData{
     id: number;
@@ -63,12 +65,15 @@ const FilterBillsFormSchema = yup.object().shape({
 
 export default function Bills(){
     const workingCompany = useWorkingCompany();
+    const workingBranch = useWorkingBranch();
     const history = useHistory();
+    const isWideVersion = useBreakpointValue({base: false, lg: true});
 
     const [filter, setFilter] = useState<BillFilterData>(() => {
         const data: BillFilterData = {
             search: '',
             company: workingCompany.company?.id,
+            branch: workingBranch.branch?.id,
             status: 0,
         };
         
@@ -128,8 +133,8 @@ export default function Bills(){
     const usersFilter: UserFilterData = {
         search: ''
     };
-    const users = useUsers(usersFilter);
 
+    const users = useUsers(usersFilter);
 
     const [toEditBillData, setToEditBillData] = useState<EditBillFormData>(() => {
 
@@ -290,15 +295,19 @@ export default function Bills(){
     if((filter.start_date !== undefined && filter.start_date !== '') && (filter.end_date !== undefined && filter.end_date !== '')){
         (!bills.isLoading && !bills.error) && Object.keys(bills.data?.data).map((day:string) => {
             totalOfSelectedDays = totalOfSelectedDays + bills.data?.data[day].reduce((sumAmount:number, bill:Bill) => {
-                return sumAmount + bill.value;
+                return sumAmount + (bill.status ? (bill.paid > 0 ? bill.paid : bill.value) : bill.value - bill.paid);
             }, 0);
         })
     }
 
+    const [toggleFilter, setToggleFilter] = useState(false);
+
+    useEffect(() => {
+        setFilter({...filter, company: workingCompany.company?.id, branch: workingBranch.branch?.id});
+    }, [workingCompany, workingBranch]);
+
     return(
-        <MainBoard sidebar="financial" header={ 
-            ( ( (permissions && HasPermission(permissions, 'Todas Empresas')) || (profile && profile.companies && profile.companies.length > 1)) && <CompanySelect filters={[{filterData: filter, setFilter: handleChangeFilter}]} /> )
-        }
+        <MainBoard sidebar="financial" header={ <CompanySelectMaster />}
         >
             <NewBillModal categories={categories} users={users.data} sources={sources.data} afterCreate={bills.refetch} isOpen={isNewBillModalOpen} onRequestClose={CloseNewBillModal}/>
             <ReceiveBillModal afterReceive={bills.refetch} toReceiveBillData={toReceiveBillData} isOpen={isReceiveBillModalOpen} onRequestClose={CloseReceiveBillModal}/>
@@ -310,7 +319,7 @@ export default function Bills(){
 
             <ConfirmBillRemoveModal afterRemove={bills.refetch} toRemoveBillData={removeBillData} isOpen={isConfirmBillRemoveModalOpen} onRequestClose={CloseConfirmBillRemoveModal}/>
 
-            <Flex justify="space-between" alignItems="center" mb="10">
+            <Stack flexDirection={["column", "row"]} spacing={["4", "0"]} justify="space-between" mb="10">
                 <SolidButton onClick={OpenNewBillModal} color="white" bg="blue.400" icon={PlusIcon} colorScheme="blue">
                     Adicionar Conta a Receber
                 </SolidButton>
@@ -319,50 +328,64 @@ export default function Bills(){
                     <Text>Categorias</Text>
                 </Link> */}
 
-                <OutlineButton onClick={() => {history.push('/receber/categorias')}}>
-                    Categorias
-                </OutlineButton>
+                <HStack spacing="4">
+                    <OutlineButton onClick={() => {history.push('/receber/categorias')}}>
+                        Categorias
+                    </OutlineButton>
 
-                <OutlineButton onClick={() => {history.push('/receber/fontes')}}>
-                    Fontes
-                </OutlineButton>
-            </Flex>
+                    <OutlineButton onClick={() => {history.push('/receber/fontes')}}>
+                        Fontes
+                    </OutlineButton>
+                </HStack>
+            </Stack>
 
-            <Flex as="form" mb="20" onSubmit={handleSubmit(handleSearchBills)}>
+            <Stack flexDir={["column", "row"]} spacing="6"  as="form" mb="20" onSubmit={handleSubmit(handleSearchBills)} borderRadius={!isWideVersion ? "24" : ""}  p={!isWideVersion ? "5" : ""} bg={!isWideVersion ? "white" : ""} boxShadow={!isWideVersion ? "md" : ""}>
 
-                <Stack spacing="6" w="100%">
-                    <HStack spacing="6">
-                        <Input register={register} name="search" type="text" placeholder="Procurar" variant="filled" error={formState.errors.search}/>
+                {
+                    !isWideVersion && (
+                        <HStack onClick={() => setToggleFilter(!toggleFilter)}>
+                            <Icon as={PlusIcon} fontSize="20" stroke={"gray.800"} />
+                            <Text>Filtrar pagamentos</Text>
+                        </HStack>
+                    )
+                }
 
-                        <Select register={register} defaultValue={0} h="45px" name="status" error={formState.errors.status} w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
-                            <option value="">Todos</option>
-                            <option value={1}>Recebidos</option>
-                            <option value={0}>Pendentes</option>
-                        </Select>
-                    </HStack>
+                <Box display={(isWideVersion || (!isWideVersion && toggleFilter)) ? 'flex' : 'none'}>
 
-                    <HStack spacing="6">
-                        <Input register={register} name="source" type="text" placeholder="Cliente" variant="filled" error={formState.errors.source}/>
+                    <Stack spacing="6" w="100%">
+                        <Stack direction={["column", "row"]} spacing="6">
+                            <Input register={register} name="search" type="text" placeholder="Procurar" variant="filled" error={formState.errors.search}/>
 
-                        <Input register={register} name="start_date" type="date" placeholder="Data Inicial" variant="filled" error={formState.errors.start_date}/>
-                        <Input register={register} name="end_date" type="date" placeholder="Data Final" variant="filled" error={formState.errors.end_date}/>
+                            <Select register={register} defaultValue={0} h="45px" name="status" error={formState.errors.status} w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
+                                <option value="">Todos</option>
+                                <option value={1}>Recebidos</option>
+                                <option value={0}>Pendentes</option>
+                            </Select>
+                        </Stack>
 
-                        <Select register={register} h="45px" name="category" w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Categoria">
-                            {categories && categories.map((category: BillCategory) => {
-                                return (
-                                    <option key={category.id} value={category.id}>{category.name}</option>
-                                )
-                            })}
-                        </Select>
+                        <Stack direction={["column", "row"]} spacing="6">
+                            <Input register={register} name="source" type="text" placeholder="Cliente" variant="filled" error={formState.errors.source}/>
 
-                        <OutlineButton type="submit" mb="10" color="blue.400" borderColor="blue.400" colorScheme="blue">
-                            Filtrar
-                        </OutlineButton>
+                            <Input register={register} name="start_date" type="date" placeholder="Data Inicial" variant="filled" error={formState.errors.start_date}/>
+                            <Input register={register} name="end_date" type="date" placeholder="Data Final" variant="filled" error={formState.errors.end_date}/>
 
-                    </HStack>
-                </Stack>
+                            <Select register={register} h="45px" name="category" w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Categoria">
+                                {categories && categories.map((category: BillCategory) => {
+                                    return (
+                                        <option key={category.id} value={category.id}>{category.name}</option>
+                                    )
+                                })}
+                            </Select>
 
-            </Flex>
+                            <OutlineButton type="submit" mb="10" color="blue.400" borderColor="blue.400" colorScheme="blue">
+                                Filtrar
+                            </OutlineButton>
+
+                        </Stack>
+                    </Stack>
+                </Box>
+
+            </Stack>
 
             <Stack fontSize="13px" spacing="12">
                 { totalOfSelectedDays > 0 &&
@@ -392,8 +415,8 @@ export default function Bills(){
                 {
                     (!bills.isLoading && !bills.error) && Object.keys(bills.data?.data).map((day:string) => {
                         const totalDayBills = bills.data?.data[day].length;
-                        const totalDayAmount = bills.data?.data[day].reduce((sumAmount:number, Bill:Bill) => {
-                            return sumAmount + Bill.value;
+                        const totalDayAmount = bills.data?.data[day].reduce((sumAmount:number, bill:Bill) => {
+                            return sumAmount + (bill.status ? (bill.paid > 0 ? bill.paid : bill.value) : bill.value - bill.paid);
                         }, 0);
 
                         const todayFormatedDate = formatDate(formatYmdDate(new Date().toDateString()));
@@ -405,24 +428,29 @@ export default function Bills(){
 
                         return (
                             <Accordion key={day} w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" spacing="0" allowMultiple>
-                                <HStack spacing="8" justify="space-between" paddingX="8" paddingY="3" bg="gray.200">
-                                    <Text fontWeight="bold">{(todayFormatedDate === dayBillsFormated) ? 'Hoje' : (tomorrow === BillDay) ? "Amanhã" : ""} {formatBRDate(day)}</Text>
-                                    <Text fontWeight="bold">{totalDayBills} Contas a Receber</Text>
+                                <HStack spacing="8" justify="space-between" paddingX={["4", "8"]} paddingY="3" bg="gray.200">
+                                    <Stack direction={["column", "row"]} spacing={["4", "6"]} alignItems="baseline" mt={["1", "0"]}>
+                                        <Text fontWeight="bold">{(todayFormatedDate === dayBillsFormated) ? 'Hoje' : (tomorrow === BillDay) ? "Amanhã" : ""} {formatBRDate(day)}</Text>
+                                        <Text fontWeight="bold">{totalDayBills} Contas a Receber</Text>
+                                    </Stack>
 
-                                    {
-                                        !hasBillstoReceive ? (
-                                            <Flex fontWeight="bold" alignItems="center" color="green.400">
-                                                <CheckIcon stroke="#48bb78" fill="none" width="16px"/>
-                                                <Text ml="2">Tudo Recebido</Text>
-                                            </Flex>
-                                        ) : (
-                                            <SolidButton onClick={() => OpenReceiveAllBillsModal(day)}
-                                            h="30px" size="sm" fontSize="11" color="white" bg="green.400" colorScheme="green">
-                                                Receber Tudo
-                                            </SolidButton>
-                                        )
-                                    }
-                                    <Text float="right"><strong>TOTAL: {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalDayAmount)}</strong></Text>
+
+                                    <Stack direction={["column", "row"]} spacing={["3", "6"]} alignItems={["flex-end","center"]}>
+                                        {
+                                            !hasBillstoReceive ? (
+                                                <Flex fontWeight="bold" alignItems="center" color="green.400">
+                                                    <CheckIcon stroke="#48bb78" fill="none" width="16px"/>
+                                                    <Text ml="2">Tudo Recebido</Text>
+                                                </Flex>
+                                            ) : (
+                                                <SolidButton onClick={() => OpenReceiveAllBillsModal(day)}
+                                                h="30px" size="sm" fontSize="11" color="white" bg="green.400" colorScheme="green">
+                                                    Receber Tudo
+                                                </SolidButton>
+                                            )
+                                        }
+                                        <Text float="right"><strong>TOTAL: {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalDayAmount)}</strong></Text>
+                                    </Stack>
                                 </HStack>
 
                                 {
@@ -444,70 +472,87 @@ export default function Bills(){
                                             <AccordionItem key={bill.id} display="flex" flexDir="column" paddingX="8" paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
                                                 {({ isExpanded }) => (
                                                     <>
-                                                        <HStack justify="space-between" mb="3">
-                                                            <AccordionButton p="0" height="fit-content" w="auto">
-                                                                <Flex alignItems="center" justifyContent="center" h="24px" w="30px" p="0" borderRadius="full" border="2px" borderColor="blue.400" variant="outline">
-                                                                { 
-                                                                        !isExpanded ? <StrongPlusIcon stroke="#2097ed" fill="none" width="12px"/> :
-                                                                        <MinusIcon stroke="#2097ed" fill="none" width="12px"/>
-                                                                } 
-                                                                </Flex>
-                                                            </AccordionButton>
+                                                        <Stack spacing={["5", ""]} direction={['column', 'row']} justify="space-between" mb="3" alignItems={["", "center"]}>
+                                                            <HStack spacing={["5", "5"]} justifyContent="space-between">
+                                                                <AccordionButton p="0" height="fit-content" w="auto">
+                                                                    <Flex alignItems="center" justifyContent="center" h="24px" w="30px" p="0" borderRadius="full" border="2px" borderColor="blue.400" variant="outline">
+                                                                    { 
+                                                                            !isExpanded ? <StrongPlusIcon stroke="#2097ed" fill="none" width="12px"/> :
+                                                                            <MinusIcon stroke="#2097ed" fill="none" width="12px"/>
+                                                                    } 
+                                                                    </Flex>
+                                                                </AccordionButton>
+
+                                                                <Stack direction={['column', 'row']} spacing={["1", "4"]}>
+                                                                    <Flex fontWeight="500" alignItems="center" opacity={bill.status ? 0.5 : 1}>
+                                                                        <EllipseIcon stroke="none" fill={bill.cash_desk_category !== null ? bill.cash_desk_category.color : bill.category?.color}/>
+                                                                        <Text ml="2" color={bill.cash_desk_category !== null ? bill.cash_desk_category.color : bill.category?.color}>{bill.title}</Text>
+                                                                    </Flex>
+
+                                                                    <Flex fontWeight="500" alignItems="center" color="gray.800" opacity={bill.status ? 0.5 : 1}>
+                                                                        {
+                                                                            isWideVersion && <TagIcon stroke="#4e4b66" fill="none" width="17px"/>
+                                                                        }
+                                                                        <Text ml="2">{bill.cash_desk_category !== null ? bill.cash_desk_category.name : bill.category.name}</Text>
+                                                                    </Flex>
+                                                                </Stack>
+
+                                                                {
+                                                                    !isWideVersion && <Text float="right">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(bill.status ? (bill.paid > 0 ? bill.paid : bill.value) : bill.value - bill.paid)}</Text>
+                                                                }
+                                                            </HStack>
 
                                                             
-                                                            <Flex fontWeight="500" alignItems="center" opacity={bill.status ? 0.5 : 1}>
-                                                                <EllipseIcon stroke="none" fill={bill.cash_desk_category !== null ? bill.cash_desk_category.color : bill.category?.color}/>
-                                                                <Text ml="2" color={bill.cash_desk_category !== null ? bill.cash_desk_category.color : bill.category?.color}>{bill.title}</Text>
-                                                            </Flex>
 
-                                                            <Flex fontWeight="500" alignItems="center" color="gray.800" opacity={bill.status ? 0.5 : 1}>
-                                                                <TagIcon stroke="#4e4b66" fill="none" width="17px"/>
-                                                                <Text ml="2">{bill.cash_desk_category !== null ? bill.cash_desk_category.name : bill.category.name}</Text>
-                                                            </Flex>
+                                                            <HStack spacing={["5", "5"]} justifyContent="space-between" fontSize={["11px", "13px"]}>
+                                                                {
+                                                                    bill.status ? (
+                                                                        <HStack>
+                                                                            <Flex fontWeight="bold" alignItems="center" color="green.400">
+                                                                                <CheckIcon stroke="#48bb78" fill="none" width="16px"/>
+                                                                                <Text ml="2">Recebido</Text>
+                                                                            </Flex>
+
+                                                                            <IconButton onClick={() => handleReverseBill(bill.id)} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <RefreshIcon width="20px" stroke="#14142b" fill="none"/>} variant="outline"/>
+                                                                        </HStack>
+                                                                    ) : (
+                                                                        <OutlineButton onClick={() => OpenReceiveBillModal({ id: bill.id, title: bill.title , value: bill.value, paid: bill.paid, status: bill.status, new_value: ''})}
+                                                                            h="30px" size="sm" color="green.400" borderColor="green.400" colorScheme="green" fontSize="11">
+                                                                            Receber
+                                                                        </OutlineButton>
+                                                                    )
+                                                                }
+                                                            </HStack>
                                                             
                                                             {
-                                                                bill.status ? (
-                                                                    <HStack>
-                                                                        <Flex fontWeight="bold" alignItems="center" color="green.400">
-                                                                            <CheckIcon stroke="#48bb78" fill="none" width="16px"/>
-                                                                            <Text ml="2">Recebido</Text>
-                                                                        </Flex>
-
-                                                                        <IconButton onClick={() => handleReverseBill(bill.id)} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <RefreshIcon width="20px" stroke="#14142b" fill="none"/>} variant="outline"/>
-                                                                    </HStack>
-                                                                ) : (
-                                                                    <OutlineButton onClick={() => OpenReceiveBillModal({ id: bill.id, title: bill.title , value: bill.value, paid: bill.paid, status: bill.status, new_value: ''})}
-                                                                        h="30px" size="sm" color="green.400" borderColor="green.400" colorScheme="green" fontSize="11">
-                                                                        Receber
-                                                                    </OutlineButton>
-                                                                )
+                                                                isWideVersion && <Text float="right">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(bill.status ? (bill.paid > 0 ? bill.paid : bill.value) : bill.value - bill.paid)}</Text>
                                                             }
-                                                            
-                                                            <Text float="right">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(bill.status ? (bill.paid > 0 ? bill.paid : bill.value) : bill.value - bill.paid)}</Text>
-                                                        </HStack>
+                                                        </Stack>
 
                                                         <AccordionPanel flexDir="column" borderTop="2px" borderColor="gray.500" px="0" py="5">
-                                                            <HStack mb="3" justifyContent="space-between" alignItems="center">
+                                                            <Stack direction={['column', 'row']} spacing={["5", "4"]} justifyContent="space-between" mb="4">
                                                                 
                                                                 <Flex alignItems="center">
                                                                     <Text fontWeight="500" mr="2">Valor total: </Text>
                                                                     <Text fontWeight="700">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(bill.value)}</Text>
                                                                 </Flex>
 
-                                                                <Flex alignItems="center">
-                                                                    <Text fontWeight="500">Fonte: </Text>
-                                                                    <Text> {bill.source?.name && bill.source?.name}</Text>
-                                                                </Flex>
+                                                                <HStack spacing="5">
+                                                                    <Flex alignItems="center">
+                                                                        <Text fontWeight="500">Fonte: </Text>
+                                                                        <Text> {bill.source?.name && bill.source?.name}</Text>
+                                                                    </Flex>
 
-                                                                <Flex alignItems="center">
-                                                                    <Text fontWeight="500">Observação: </Text>
-                                                                    <Text> {bill.observation && bill.observation}</Text>
-                                                                </Flex>
-                                                            </HStack>
+                                                                    <Flex alignItems="center">
+                                                                        <Text fontWeight="500">Observação: </Text>
+                                                                        <Text> {bill.observation && bill.observation}</Text>
+                                                                    </Flex>
+                                                                </HStack>
+                                                            </Stack>
                                                                 
                                                             <Divider mb="3"/>
 
-                                                            <HStack spacing="5" alignItems="center">
+                                                            <Stack direction={['column', 'row']} spacing="5" alignItems="center">
                                                                 <Table size="sm" variant="simple">
                                                                     <Thead>
                                                                         <Tr>
@@ -551,9 +596,11 @@ export default function Bills(){
                                                                     } */}
                                                                 </Table>
 
-                                                                <EditButton onClick={() => OpenEditBillModal(billToEditData)}/>
-                                                                <RemoveButton onClick={() => OpenConfirmBillRemoveModal({ id: bill.id, title: bill.title }) }/>
-                                                            </HStack>
+                                                                <HStack spacing="5" alignItems="center">
+                                                                    <EditButton onClick={() => OpenEditBillModal(billToEditData)}/>
+                                                                    <RemoveButton onClick={() => OpenConfirmBillRemoveModal({ id: bill.id, title: bill.title }) }/>
+                                                                </HStack>
+                                                            </Stack>
 
                                                         </AccordionPanel>
                                                     </>

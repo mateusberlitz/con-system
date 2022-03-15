@@ -4,6 +4,7 @@ import { api } from "../services/api";
 export interface UserFilterData{
     search?: string;
     company?: number;
+    branch?: number;
     role?: number;
     goals?: boolean;
 }
@@ -15,6 +16,7 @@ export const getUsers = async (filter?: UserFilterData) => {
               search: filter.search,
               role: filter.role,
               company: filter.company,
+              branch: filter.branch,
               goals: filter.goals
             }
         });

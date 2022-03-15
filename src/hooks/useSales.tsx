@@ -6,6 +6,7 @@ export interface SalesFilterData{
     start_date?: string;
     end_date?: string;
     company?: number;
+    branch?: number;
     user?: number;
     value?: string;
     status?: number;
@@ -22,6 +23,7 @@ export const getSales = async (filter?: SalesFilterData, page: number = 0) => {
               status: filter.status,
               origin: filter.origin,
               company: filter.company,
+              branch: filter.branch,
               start_date: filter.start_date,
               end_date: filter.end_date,
               user: filter.user,

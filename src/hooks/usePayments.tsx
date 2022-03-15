@@ -7,6 +7,7 @@ export interface PaymentFilterData{
     end_date?: string;
     category?: number;
     company?: number;
+    branch?: number;
     contract?: number;
     pay_to_user?: number;
     group?: string;
@@ -25,6 +26,7 @@ export const getPayments = async (filter?: PaymentFilterData, page: number = 0) 
               search: filter.search,
               category: filter.category,
               company: filter.company,
+              branch: filter.branch,
               start_date: filter.start_date,
               end_date: filter.end_date,
               contract: filter.contract,

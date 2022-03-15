@@ -1,4 +1,4 @@
-import { Link, Flex, HStack, Stack, Spinner, IconButton, Text, Accordion, AccordionItem, AccordionButton, AccordionPanel, useToast, Divider, Table, Thead, Th, Td, Tbody, Tr, Checkbox } from "@chakra-ui/react";
+import { Link, Flex, HStack, Stack, Spinner, IconButton, Text, Accordion, AccordionItem, AccordionButton, AccordionPanel, useToast, Divider, Table, Thead, Th, Td, Tbody, Tr, Checkbox, useBreakpointValue, Icon, Box } from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { MainBoard } from "../../../components/MainBoard";
 import { useCompanies } from "../../../hooks/useCompanies";
@@ -52,6 +52,7 @@ import { ExportDocumentsModal } from "./ExportDocumentsModal";
 import { EditPartialPaymentFormData, EditPartialPaymentModal } from "./EditPartialPaymentModal";
 import { CompanySelectMaster } from "../../../components/CompanySelect/companySelectMaster";
 import { ConfirmPaymentRemoveListModal } from "./ConfirmPaymentRemoveListModal";
+import { useWorkingBranch } from "../../../hooks/useWorkingBranch";
 
 interface RemovePaymentData{
     id: number;
@@ -74,12 +75,15 @@ const FilterPaymentsFormSchema = yup.object().shape({
 
 export default function Payments(){
     const workingCompany = useWorkingCompany();
+    const workingBranch = useWorkingBranch();
     const history = useHistory();
+    const isWideVersion = useBreakpointValue({base: false, lg: true});
 
     const [filter, setFilter] = useState<PaymentFilterData>(() => {
         const data: PaymentFilterData = {
             search: '',
             company: workingCompany.company?.id,
+            branch: workingBranch.branch?.id,
             status: 0,
             pendency: 0,
         };
@@ -450,7 +454,7 @@ export default function Payments(){
     if((filter.start_date !== undefined && filter.start_date !== '') && (filter.end_date !== undefined && filter.end_date !== '')){
         (!payments.isLoading && !payments.error) && Object.keys(payments.data?.data).map((day:string) => {
             totalOfSelectedDays = totalOfSelectedDays + payments.data?.data[day].reduce((sumAmount:number, payment:Payment) => {
-                return sumAmount + payment.value;
+                return sumAmount + (payment.status ? (payment.paid > 0 ? payment.paid : payment.value) : payment.value - payment.paid);
             }, 0);
         })
     }
@@ -486,7 +490,12 @@ export default function Payments(){
         setIsPaymentsRemoveListModalOpen(false);
     }
 
-    console.log(removeList);
+    console.log(isWideVersion);
+    const [toggleFilter, setToggleFilter] = useState(false);
+
+    useEffect(() => {
+        setFilter({...filter, company: workingCompany.company?.id, branch: workingBranch.branch?.id});
+    }, [workingCompany, workingBranch]);
 
     return(
         <MainBoard sidebar="financial" header={ <CompanySelectMaster filters={[{filterData: filter, setFilter: handleChangeFilter}]}/>}
@@ -507,7 +516,7 @@ export default function Payments(){
             
             <ExportDocumentsModal isOpen={isExportDocumentsModalOpen} onRequestClose={CloseExportDocumentsModal}/>
 
-            <Flex justify="space-between" alignItems="center" mb="10">
+            <Stack flexDirection={["column", "row"]} spacing={["4", "0"]} justify="space-between" mb="10">
                 <SolidButton onClick={OpenNewPaymentModal} color="white" bg="blue.400" icon={PlusIcon} colorScheme="blue">
                     Adicionar Pagamento
                 </SolidButton>
@@ -516,75 +525,90 @@ export default function Payments(){
                     <Text>Categorias</Text>
                 </Link> */}
 
-                <OutlineButton onClick={() => {history.push('/pagamentos/categorias')}}>
-                    Categorias
-                </OutlineButton>
+                <HStack spacing="4">
+                    <OutlineButton h={!isWideVersion ? "36px" : "45px"} px={!isWideVersion ? "6" : "8"} onClick={() => {history.push('/pagamentos/categorias')}}>
+                        Categorias
+                    </OutlineButton>
 
-                <OutlineButton onClick={() => {history.push('/pagamentos/notas')}}>
-                    Notas
-                </OutlineButton>
+                    <OutlineButton h={!isWideVersion ? "36px" : "45px"} px={!isWideVersion ? "6" : "8"} onClick={() => {history.push('/pagamentos/fornecedores')}}>
+                        Fornecedores
+                    </OutlineButton>
+                </HStack>
 
-                <OutlineButton onClick={() => {history.push('/pagamentos/fornecedores')}}>
-                    Fornecedores
-                </OutlineButton>
+                <HStack spacing="4">
+                    <OutlineButton h={!isWideVersion ? "36px" : "45px"} px={!isWideVersion ? "6" : "8"} onClick={() => {history.push('/pagamentos/notas')}}>
+                        Notas
+                    </OutlineButton>
 
-                <OutlineButton onClick={OpenExportDocumentsModal} variant="outline" colorScheme="blue" color="blue.400" borderColor="blue.400">
-                    Baixar Documentos
-                </OutlineButton>
-            </Flex>
+                    <OutlineButton h={!isWideVersion ? "36px" : "45px"} px={!isWideVersion ? "6" : "8"} onClick={OpenExportDocumentsModal} variant="outline" colorScheme="blue" color="blue.400" borderColor="blue.400">
+                        Baixar Documentos
+                    </OutlineButton>
+                </HStack>
+            </Stack>
 
-            <Flex as="form" mb="20" onSubmit={handleSubmit(handleSearchPayments)}>
+            <Stack flexDir={["column", "row"]} spacing="6" as="form" mb="20" onSubmit={handleSubmit(handleSearchPayments)} borderRadius={!isWideVersion ? "24" : ""}  p={!isWideVersion ? "5" : ""} bg={!isWideVersion ? "white" : ""} boxShadow={!isWideVersion ? "md" : ""}>
 
-                <Stack spacing="6" w="100%">
-                    <HStack spacing="6">
-                        <Input register={register} name="search" type="text" placeholder="Procurar" variant="filled" error={formState.errors.search}/>
+                {
+                    !isWideVersion && (
+                        <HStack onClick={() => setToggleFilter(!toggleFilter)}>
+                            <Icon as={PlusIcon} fontSize="20" stroke={"gray.800"} />
+                            <Text>Filtrar pagamentos</Text>
+                        </HStack>
+                    )
+                }
 
-                        <Input register={register} name="start_date" type="date" placeholder="Data Inicial" variant="filled" error={formState.errors.start_date}/>
-                        <Input register={register} name="end_date" type="date" placeholder="Data Final" variant="filled" error={formState.errors.end_date}/>
+                <Box display={(isWideVersion || (!isWideVersion && toggleFilter)) ? 'flex' : 'none'}>
+                    <Stack spacing="6" w="100%">
+                        <Stack direction={["column", "row"]} spacing="6">
+                            <Input register={register} name="search" type="text" placeholder="Procurar" variant="filled" error={formState.errors.search}/>
 
-                        <Select register={register} h="45px" name="category" w="100%" maxW="200px" error={formState.errors.category} fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Categoria">
-                            {categories && categories.map((category:PaymentCategory) => {
-                                return (
-                                    <option key={category.id} value={category.id}>{category.name}</option>
-                                )
-                            })}
-                        </Select>
+                            <Input register={register} name="start_date" type="date" placeholder="Data Inicial" variant="filled" error={formState.errors.start_date}/>
+                            <Input register={register} name="end_date" type="date" placeholder="Data Final" variant="filled" error={formState.errors.end_date}/>
 
-                    </HStack>
+                            <Select register={register} h="45px" name="category" w="100%" maxW="200px" error={formState.errors.category} fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Categoria">
+                                {categories && categories.map((category:PaymentCategory) => {
+                                    return (
+                                        <option key={category.id} value={category.id}>{category.name}</option>
+                                    )
+                                })}
+                            </Select>
 
-                    <HStack spacing="6">
-                        <Input register={register} name="group" type="text" placeholder="Grupo" variant="filled" error={formState.errors.group}/>
-                            
-                        <Input register={register} name="quote" type="text" placeholder="Cota" variant="filled" error={formState.errors.quote}/>
-                        {/* <Input register={register} name="contract" type="text" placeholder="Contrato" variant="filled" error={formState.errors.contract}/> */}
-                            
-                        <Select register={register} h="45px" name="pay_to_user" error={formState.errors.pay_to_user} w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Pagar para">
-                            {users.data && users.data.map((user:User) => {
-                                return (
-                                    <option key={user.id} value={user.id}>{user.name}</option>
-                                )
-                            })}
-                        </Select>
+                        </Stack>
 
-                        <Select register={register} defaultValue={0} h="45px" name="pendency" error={formState.errors.pendency} w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
-                            <option value="">Todos</option>
-                            <option value={1}>Pendentes</option>
-                            <option value={0}>Não Pendentes</option>
-                        </Select>
+                        <Stack direction={["column", "row"]} spacing="6">
+                            <Input register={register} name="group" type="text" placeholder="Grupo" variant="filled" error={formState.errors.group}/>
+                                
+                            <Input register={register} name="quote" type="text" placeholder="Cota" variant="filled" error={formState.errors.quote}/>
+                            {/* <Input register={register} name="contract" type="text" placeholder="Contrato" variant="filled" error={formState.errors.contract}/> */}
+                                
+                            <Select register={register} h="45px" name="pay_to_user" error={formState.errors.pay_to_user} w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Pagar para">
+                                {users.data && users.data.map((user:User) => {
+                                    return (
+                                        <option key={user.id} value={user.id}>{user.name}</option>
+                                    )
+                                })}
+                            </Select>
 
-                        <Select register={register} defaultValue={0} h="45px" name="status" error={formState.errors.status} w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
-                            <option value="">Todos</option>
-                            <option value={1}>Pagos</option>
-                            <option value={0}>Não pagos</option>
-                        </Select>
+                            <Select register={register} defaultValue={0} h="45px" name="pendency" error={formState.errors.pendency} w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
+                                <option value="">Todos</option>
+                                <option value={1}>Pendentes</option>
+                                <option value={0}>Não Pendentes</option>
+                            </Select>
 
-                        <OutlineButton type="submit" mb="10" color="blue.400" borderColor="blue.400" colorScheme="blue">
-                            Filtrar
-                        </OutlineButton>
-                    </HStack>
-                </Stack>
+                            <Select register={register} defaultValue={0} h="45px" name="status" error={formState.errors.status} w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
+                                <option value="">Todos</option>
+                                <option value={1}>Pagos</option>
+                                <option value={0}>Não pagos</option>
+                            </Select>
 
-            </Flex>
+                            <OutlineButton type="submit" mb="10" color="blue.400" borderColor="blue.400" colorScheme="blue">
+                                Filtrar
+                            </OutlineButton>
+                        </Stack>
+                    </Stack>
+                </Box>
+
+            </Stack>
 
             <Stack fontSize="13px" spacing="12">
                 {
@@ -622,7 +646,7 @@ export default function Payments(){
                     (!payments.isLoading && !payments.error) && Object.keys(payments.data?.data).map((day:string) => {
                         const totalDayPayments = payments.data?.data[day].length;
                         const totalDayAmount = payments.data?.data[day].reduce((sumAmount:number, payment:Payment) => {
-                            return sumAmount + payment.value;
+                            return sumAmount + (payment.status ? (payment.paid > 0 ? payment.paid : payment.value) : payment.value - payment.paid);
                         }, 0);
 
                         const todayFormatedDate = formatDate(formatYmdDate(new Date().toDateString()));
@@ -634,25 +658,29 @@ export default function Payments(){
 
                         return (
                             <Accordion key={day} w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" spacing="0" allowMultiple>
-                                <HStack spacing="8" justify="space-between" paddingX="8" paddingY="3" bg="gray.200">
-                                    <Text fontWeight="bold">{(todayFormatedDate === dayPaymentsFormated) ? 'Hoje' : (tomorrow === paymentDay) ? "Amanhã" : ""} {formatBRDate(day)}</Text>
+                                <HStack spacing="8" justify="space-between" paddingX={["4", "8"]} paddingY="3" bg="gray.200">
+                                    <Stack direction={["column", "row"]} spacing={["4", "6"]} alignItems="baseline" mt={["1", "0"]}>
+                                        <Text fontWeight="bold">{(todayFormatedDate === dayPaymentsFormated) ? 'Hoje' : (tomorrow === paymentDay) ? "Amanhã" : ""} {formatBRDate(day)}</Text>
                                     
-                                    <Text fontWeight="bold">{totalDayPayments} Pagamentos</Text>
+                                        <Text fontWeight="bold">{totalDayPayments} Pagamentos</Text>
+                                    </Stack>
 
-                                    {
-                                        !hasPaymentsYoPay ? (
-                                            <Flex fontWeight="bold" alignItems="center" color="green.400">
-                                                <CheckIcon stroke="#48bb78" fill="none" width="16px"/>
-                                                <Text ml="2">Pago</Text>
-                                            </Flex>
-                                        ) : (
-                                            <SolidButton h="30px" size="sm" fontSize="11" color="white" bg="green.400" colorScheme="green" onClick={() => OpenPayAllPaymentsModal(day)}>
-                                                Pagar Tudo
-                                            </SolidButton>
-                                        )
-                                    }
+                                    <Stack direction={["column", "row"]} spacing={["3", "6"]} alignItems={["flex-end","center"]}>
+                                        {
+                                            !hasPaymentsYoPay ? (
+                                                <Flex fontWeight="bold" alignItems="right" color="green.400">
+                                                    <CheckIcon stroke="#48bb78" fill="none" width="16px"/>
+                                                    <Text ml="2">Pago</Text>
+                                                </Flex>
+                                            ) : (
+                                                <SolidButton h="30px" size="sm" fontSize="11" color="white" bg="green.400" colorScheme="green" onClick={() => OpenPayAllPaymentsModal(day)}>
+                                                    Pagar Tudo
+                                                </SolidButton>
+                                            )
+                                        }
                                     
-                                    <Text float="right"><strong>TOTAL: {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalDayAmount)}</strong></Text>
+                                        <Text float="right" textAlign="right"><strong>TOTAL: {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalDayAmount)}</strong></Text>
+                                    </Stack>
                                 </HStack>
 
                                 {
@@ -677,100 +705,112 @@ export default function Payments(){
                                         }
 
                                         return (
-                                            <AccordionItem key={payment.id} display="flex" flexDir="column" paddingX="8" paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
+                                            <AccordionItem key={payment.id} display="flex" flexDir="column" paddingX={["4", "8"]} paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
                                                 {({ isExpanded }) => (
                                                     <>
-                                                        <HStack justify="space-between" mb="3">
-                                                            <HStack spacing="4">
-                                                                <AccordionButton p="0" height="fit-content" w="auto">
-                                                                    <Flex alignItems="center" justifyContent="center" h="24px" w="30px" p="0" borderRadius="full" border="2px" borderColor="blue.400" variant="outline">
-                                                                    { 
-                                                                            !isExpanded ? <StrongPlusIcon stroke="#2097ed" fill="none" width="12px"/> :
-                                                                            <MinusIcon stroke="#2097ed" fill="none" width="12px"/>
-                                                                    } 
-                                                                    </Flex>
-                                                                </AccordionButton>
-
-                                                                <Checkbox label="" name="remove" checked={removeList.includes(payment.id)} value={payment.id} onChange={handleSelect}/>
-                                                            </HStack>
+                                                        <Stack spacing={["5", ""]} direction={['column', 'row']} justify="space-between" mb="3" alignItems={["", "center"]}>
                                                             
+                                                            <HStack spacing={["5", "5"]} justifyContent="space-between">
+                                                                <HStack spacing={["3", "4"]}>
+                                                                    <AccordionButton p="0" height="fit-content" w="auto">
+                                                                        <Flex alignItems="center" justifyContent="center" h={["20px", "24px"]} w={["24px", "30px"]} p="0" borderRadius="full" border="2px" borderColor="blue.400" variant="outline">
+                                                                        { 
+                                                                                !isExpanded ? <StrongPlusIcon stroke="#2097ed" fill="none" width="12px"/> :
+                                                                                <MinusIcon stroke="#2097ed" fill="none" width="12px"/>
+                                                                        } 
+                                                                        </Flex>
+                                                                    </AccordionButton>
 
-                                                            <Flex fontWeight="500" alignItems="center" opacity={payment.status ? 0.5 : 1}>
-                                                                <EllipseIcon stroke="none" fill={payment.category?.color}/>
-                                                                <Text ml="2" color={payment.category?.color}>{payment.title}</Text>
-                                                            </Flex>
-
-                                                            <Flex fontWeight="500" alignItems="center" color="gray.800" opacity={payment.status ? 0.5 : 1}>
-                                                                <TagIcon stroke="#4e4b66" fill="none" width="17px"/>
-                                                                {/* <Text ml="2">{payment.company.name}</Text> */}
-                                                                <Text ml="2">{payment.category?.name}</Text>
-                                                            </Flex>
-
-                                                            {
-                                                                payment.file ? (
-                                                                    <HStack>
-                                                                        <Link target="_blank" href={`${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_STORAGE : process.env.REACT_APP_API_LOCAL_STORAGE}${payment.file}`} display="flex" fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
-                                                                            <FileIcon stroke="#4e4b66" fill="none" width="16px"/>
-                                                                            <Text ml="2">Ver Boleto</Text>
-                                                                        </Link>
-
-                                                                        <IconButton onClick={() => handleRemoveAttachment(payment.id)} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
-                                                                    </HStack>
-                                                                ) : (
-                                                                    <Flex onClick={() => OpenAddFilePaymentModal({id: payment.id, title: payment.title})} fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
-                                                                        <AttachIcon stroke="#4e4b66" fill="none" width="16px"/>
-                                                                        <Text ml="2">Boleto</Text>
+                                                                    <Checkbox label="" name="remove" checked={removeList.includes(payment.id)} value={payment.id} onChange={handleSelect}/>
+                                                                </HStack>
+                                                                
+                                                                <Stack direction={['column', 'row']} spacing={["1", "4"]}>
+                                                                    <Flex fontWeight="500" alignItems="center" opacity={payment.status ? 0.5 : 1}>
+                                                                        <EllipseIcon stroke="none" fill={payment.category?.color}/>
+                                                                        <Text ml="2" color={payment.category?.color}>{payment.title}</Text>
                                                                     </Flex>
-                                                                )
-                                                            
-                                                            }
 
-                                                            {
-                                                                payment.proof ? (
-                                                                    <HStack>
-                                                                        <Link target="_blank" href={`${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_STORAGE : process.env.REACT_APP_API_LOCAL_STORAGE}${payment.proof}`} display="flex" fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
-                                                                            <FileIcon stroke="#4e4b66" fill="none" width="16px"/>
-                                                                            <Text ml="2">Ver Comprovante</Text>
-                                                                        </Link>
-
-                                                                        <IconButton onClick={() => handleRemoveProof(payment.id)} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
-                                                                    </HStack>
-                                                                ) : (
-                                                                    <Flex onClick={() => OpenAddProofPaymentModal({id: payment.id, title: payment.title})} fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
-                                                                        <AttachIcon stroke="#4e4b66" fill="none" width="16px"/>
-                                                                        <Text ml="2">Comprovante</Text>
-                                                                    </Flex>
-                                                                )
-                                                            
-                                                            }
-
-                                                            {
-                                                                payment.invoice && (
-                                                                    <HStack>
-                                                                        <Link target="_blank" href={`${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_STORAGE : process.env.REACT_APP_API_LOCAL_STORAGE}${payment.invoice}`} display="flex" fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
-                                                                            <FileIcon stroke="#4e4b66" fill="none" width="16px"/>
-                                                                            <Text ml="2">Ver Nota</Text>
-                                                                        </Link>
-
-                                                                        <IconButton onClick={() => handleRemoveInvoice(payment.id)} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
-                                                                    </HStack>
-                                                                ) 
-                                                            }
-
-                                                            {
-                                                                    <Flex onClick={() => OpenAddInvoicePaymentModal({id: payment.id, title: payment.title})} fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
-                                                                        <AttachIcon stroke="#4e4b66" fill="none" width="16px"/>
-                                                                        <Text ml="2">Notas</Text>
+                                                                    <Flex fontWeight="500" alignItems="center" color="gray.800" opacity={payment.status ? 0.5 : 1}>
                                                                         {
-                                                                            (payment.invoices_count && payment.invoices_count > 0) ? (
-                                                                                <Text ml="2">: {payment.invoices_count}</Text>
-                                                                            ) : (
-                                                                                <Text ml="2">-</Text>
-                                                                            )
+                                                                            isWideVersion && <TagIcon stroke="#4e4b66" fill="none" width="14px"/>
                                                                         }
+                                                                        {/* <Text ml="2">{payment.company.name}</Text> */}
+                                                                        <Text ml="2" fontSize={["10px", "13px"]}>{payment.category?.name}</Text>
                                                                     </Flex>
-                                                            
-                                                            }
+                                                                </Stack>
+
+                                                                {
+                                                                    !isWideVersion && <Text opacity={payment.status ? 0.5 : 1} float="right">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(payment.status ? (payment.paid > 0 ? payment.paid : payment.value) : payment.value - payment.paid)}</Text>
+                                                                }
+                                                            </HStack>
+
+                                                            <HStack spacing={["5", "5"]} justifyContent="space-between" fontSize={["11px", "13px"]}>
+                                                                {
+                                                                    payment.file ? (
+                                                                        <HStack>
+                                                                            <Link target="_blank" href={`${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_STORAGE : process.env.REACT_APP_API_LOCAL_STORAGE}${payment.file}`} display="flex" fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
+                                                                                <FileIcon stroke="#4e4b66" fill="none" width="16px"/>
+                                                                                <Text ml="2">Ver Boleto</Text>
+                                                                            </Link>
+
+                                                                            <IconButton onClick={() => handleRemoveAttachment(payment.id)} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
+                                                                        </HStack>
+                                                                    ) : (
+                                                                        <Flex onClick={() => OpenAddFilePaymentModal({id: payment.id, title: payment.title})} fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
+                                                                            <AttachIcon stroke="#4e4b66" fill="none" width="16px"/>
+                                                                            <Text ml="2">Boleto</Text>
+                                                                        </Flex>
+                                                                    )
+                                                                
+                                                                }
+
+                                                                {
+                                                                    payment.proof ? (
+                                                                        <HStack>
+                                                                            <Link target="_blank" href={`${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_STORAGE : process.env.REACT_APP_API_LOCAL_STORAGE}${payment.proof}`} display="flex" fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
+                                                                                <FileIcon stroke="#4e4b66" fill="none" width="16px"/>
+                                                                                <Text ml="2">Ver Comprovante</Text>
+                                                                            </Link>
+
+                                                                            <IconButton onClick={() => handleRemoveProof(payment.id)} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
+                                                                        </HStack>
+                                                                    ) : (
+                                                                        <Flex onClick={() => OpenAddProofPaymentModal({id: payment.id, title: payment.title})} fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
+                                                                            <AttachIcon stroke="#4e4b66" fill="none" width="16px"/>
+                                                                            <Text ml="2">Comprovante</Text>
+                                                                        </Flex>
+                                                                    )
+                                                                
+                                                                }
+
+                                                                {
+                                                                    payment.invoice && (
+                                                                        <HStack>
+                                                                            <Link target="_blank" href={`${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_STORAGE : process.env.REACT_APP_API_LOCAL_STORAGE}${payment.invoice}`} display="flex" fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
+                                                                                <FileIcon stroke="#4e4b66" fill="none" width="16px"/>
+                                                                                <Text ml="2">Ver Nota</Text>
+                                                                            </Link>
+
+                                                                            <IconButton onClick={() => handleRemoveInvoice(payment.id)} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
+                                                                        </HStack>
+                                                                    ) 
+                                                                }
+
+                                                                {
+                                                                        <Flex onClick={() => OpenAddInvoicePaymentModal({id: payment.id, title: payment.title})} fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
+                                                                            <AttachIcon stroke="#4e4b66" fill="none" width="16px"/>
+                                                                            <Text ml="2">Notas</Text>
+                                                                            {
+                                                                                (payment.invoices_count && payment.invoices_count > 0) ? (
+                                                                                    <Text ml="2">: {payment.invoices_count}</Text>
+                                                                                ) : (
+                                                                                    <Text ml="2">-</Text>
+                                                                                )
+                                                                            }
+                                                                        </Flex>
+                                                                
+                                                                }
+                                                            </HStack>
 
                                                             {
                                                                 payment.status ? (
@@ -790,36 +830,42 @@ export default function Payments(){
                                                                 )
                                                             }
 
-                                                            <Text opacity={payment.status ? 0.5 : 1} float="right">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(payment.status ? (payment.paid > 0 ? payment.paid : payment.value) : payment.value - payment.paid)}</Text>
-                                                        </HStack>
+                                                            {
+                                                                isWideVersion && <Text opacity={payment.status ? 0.5 : 1} float="right">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(payment.status ? (payment.paid > 0 ? payment.paid : payment.value) : payment.value - payment.paid)}</Text>
+                                                            }
+                                                        </Stack>
 
-                                                        <AccordionPanel flexDir="column" borderTop="2px" borderColor="gray.500" px="0" py="5">
-                                                            <HStack justifyContent="space-between" mb="4">
-                                                                    <Text>
-                                                                        Valor total: 
-                                                                        <strong> {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(payment.value)}</strong>
-                                                                    </Text>
+                                                        <AccordionPanel flexDir="column" borderTop="2px" borderColor="gray.500" px="0" py="5" fontSize={["11px", "small"]}>
+                                                            <Stack direction={['column', 'row']} spacing={["5", "4"]} justifyContent="space-between" mb="4">
+                                                                    <HStack spacing="5">
+                                                                        <Text>
+                                                                            Valor total: 
+                                                                            <strong> {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(payment.value)}</strong>
+                                                                        </Text>
+
+                                                                        <Text>
+                                                                            <strong>Pagar para: </strong>
+                                                                            {payment.pay_to_user?.name && `${payment.pay_to_user.name} ${payment.pay_to_user.last_name}`}
+                                                                        </Text>
+                                                                    </HStack>
                                                                     
-                                                                    <Text>
-                                                                        <strong>Pagar para: </strong>
-                                                                        {payment.pay_to_user?.name && `${payment.pay_to_user.name} ${payment.pay_to_user.last_name}`}
-                                                                    </Text>
+                                                                    <HStack spacing="5">
+                                                                        <Text>
+                                                                            <strong>Contrato: </strong>
+                                                                            {payment.contract && payment.contract}
+                                                                        </Text>
 
-                                                                    <Text>
-                                                                        <strong>Contrato: </strong>
-                                                                        {payment.contract && payment.contract}
-                                                                    </Text>
+                                                                        <Text>
+                                                                            <strong>Grupo: </strong>
+                                                                            {payment.group && payment.group}
+                                                                        </Text>
 
-                                                                    <Text>
-                                                                        <strong>Grupo: </strong>
-                                                                        {payment.group && payment.group}
-                                                                    </Text>
-
-                                                                    <Text>
-                                                                        <strong>Cota: </strong>
-                                                                        {payment.quote && payment.quote}
-                                                                    </Text>
-                                                            </HStack>
+                                                                        <Text>
+                                                                            <strong>Cota: </strong>
+                                                                            {payment.quote && payment.quote}
+                                                                        </Text>
+                                                                    </HStack>
+                                                            </Stack>
 
                                                             <HStack mb="3">
                                                                 <Flex alignItems="center">
@@ -830,7 +876,7 @@ export default function Payments(){
 
                                                             <Divider mb="3"/>
 
-                                                            <HStack justifyContent="space-between" alignItems="center">
+                                                            <Stack direction={['column', 'row']} spacing="6" justifyContent="space-between" alignItems="center">
                                                                 <Table size="sm" variant="simple">
                                                                     <Thead>
                                                                         <Tr>
@@ -879,7 +925,7 @@ export default function Payments(){
                                                                     <EditButton onClick={() => OpenEditPaymentModal(paymentToEditData)}/>
                                                                     <RemoveButton onClick={() => OpenConfirmPaymentRemoveModal({ id: payment.id, title: payment.title }) }/>
                                                                 </HStack>
-                                                            </HStack>
+                                                            </Stack>
 
                                                         </AccordionPanel>
                                                     </>

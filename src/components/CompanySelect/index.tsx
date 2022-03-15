@@ -5,6 +5,7 @@ import { CashFlowsFilterData } from "../../hooks/useCashFlows";
 import { useCompanies } from "../../hooks/useCompanies";
 import { PaymentFilterData } from "../../hooks/usePayments";
 import { useProfile } from "../../hooks/useProfile";
+import { useWorkingBranch } from "../../hooks/useWorkingBranch";
 import { useWorkingCompany } from "../../hooks/useWorkingCompany";
 import { Company } from "../../types";
 
@@ -24,9 +25,12 @@ interface CompanySelectProps extends ChakraProps{
 
 export function CompanySelect({filters, ...rest}: CompanySelectProps){
     const workingCompany = useWorkingCompany();
+    const workingBranch = useWorkingBranch();
 
     const companies = useCompanies();
     const {profile} = useProfile();
+
+    console.log(workingCompany.company?.id);
 
     function handleChangeCompany(event:any){
         console.log(event.target.value);
@@ -47,6 +51,7 @@ export function CompanySelect({filters, ...rest}: CompanySelectProps){
             const selectedCompanyId = (event?.target.value ? event?.target.value : 1);
             const selectedCompanyData = companies.data.filter((company:Company) => Number(company.id) === Number(selectedCompanyId))[0]
             workingCompany.changeCompany(selectedCompanyData);
+            workingBranch.clearBranch(selectedCompanyData);
 
             if(filters){
                 filters.map((filter) => {

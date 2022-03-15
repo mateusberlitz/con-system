@@ -7,6 +7,7 @@ export interface TaskFilterData{
     end_date?: string;
     author?: number;
     company?: number;
+    branch?: number;
 }
 
 export const getTasks = async (filter?: TaskFilterData, page: number = 0) => {
@@ -17,6 +18,7 @@ export const getTasks = async (filter?: TaskFilterData, page: number = 0) => {
               search: filter.search,
               author: filter.author,
               company: filter.company,
+              branch: filter.branch,
               start_date: filter.start_date,
               end_date: filter.end_date,
             }

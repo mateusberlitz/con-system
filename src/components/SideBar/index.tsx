@@ -3,7 +3,7 @@ import { useSideBarDrawer } from "../_Contexts/SidebarDrawerContext";
 import { SideBarNav } from "./SideBarNav";
 
 interface SideBarProps{
-    desk: string;
+    desk: "configs" | "financial" | "commercial" | "quotas";
 }
 
 export function SideBar({ desk } : SideBarProps){

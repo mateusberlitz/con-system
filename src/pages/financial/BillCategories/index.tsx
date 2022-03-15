@@ -29,6 +29,7 @@ import { ControlledCheckbox } from "../../../components/Forms/CheckBox/Controlle
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { Stack } from "@chakra-ui/react";
 import { CompanySelectMaster } from "../../../components/CompanySelect/companySelectMaster";
+import { useWorkingBranch } from "../../../hooks/useWorkingBranch";
 
 interface CreateNewBillCategoryFormData{
     name: string;
@@ -44,6 +45,7 @@ const CreateNewBillCategoryFormSchema = yup.object().shape({
 
 export default function BillCategories(){
     const workingCompany = useWorkingCompany();
+    const workingBranch = useWorkingBranch();
 
     const [categories, setCategories] = useState<BillCategory[]>([]);
     const [color, setColor] = useState('#ffffff');
@@ -104,7 +106,8 @@ export default function BillCategories(){
     const loadCategories = async () => {
         const { data } = await api.get('/bill_categories', {
             params: {
-                company: workingCompany.company?.id
+                company: workingCompany.company?.id,
+                branch: workingBranch.branch?.id,
             }
         });
 
@@ -113,7 +116,7 @@ export default function BillCategories(){
 
     useEffect(() => {
         loadCategories();
-    }, [workingCompany])
+    }, [workingCompany, workingBranch])
 
     const handleCreateCategory = async (BillCategoryData: CreateNewBillCategoryFormData) => {
         BillCategoryData.color = color;
@@ -172,9 +175,11 @@ export default function BillCategories(){
             <ConfirmBillCategoryRemoveModal afterRemove={loadCategories} toRemoveBillCategoryId={BillCategoryId} isOpen={isConfirmBillCategoryRemoveModalOpen} onRequestClose={CloseConfirmBillCategoryRemoveModal}/>
 
 
-            <HStack as="form" spacing="4" mb="10" onSubmit={handleSubmit(handleCreateCategory)}>
-                <ColorPicker color={color} setNewColor={setColor}/>
-                <Input name="name" register={register} type="text" placeholder="Categoria" variant="outline" maxW="200px" error={formState.errors.name}/>
+            <Stack mt={["6", "0"]} direction={["column", "row"]} as="form" spacing="4" mb="10" onSubmit={handleSubmit(handleCreateCategory)}>
+                <HStack>
+                    <ColorPicker color={color} setNewColor={setColor}/>
+                    <Input name="name" register={register} type="text" placeholder="Categoria" variant="outline" maxW="200px" error={formState.errors.name}/>
+                </HStack>
 
                 <Flex as="div">
                     <ControlledCheckbox label="Desabilitar no resultado" control={control} defaultIsChecked={false} name="individual" error={formState.errors.individual}/>
@@ -183,7 +188,7 @@ export default function BillCategories(){
                 <SolidButton type="submit" mb="10" color="white" bg="blue.400" icon={PlusIcon} colorScheme="blue">
                     Adicionar
                 </SolidButton>
-            </HStack>
+            </Stack>
 
             <SimpleGrid columns={3} minChildWidth="260px" gap={6}>
             {

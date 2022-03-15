@@ -1,10 +1,11 @@
 import { Flex, Spinner, Text } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CompanySelectMaster } from "../../../components/CompanySelect/companySelectMaster";
 import { MainBoard } from "../../../components/MainBoard";
 import { QuotaFilterData, useQuotas } from "../../../hooks/useQuotas";
 import { useReadyQuota } from "../../../hooks/useReadyQuota";
 import { useReadyQuotas } from "../../../hooks/useReadyQuotas";
+import { useWorkingBranch } from "../../../hooks/useWorkingBranch";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { EditQuota } from "./EditQuotaModal";
 import { StockNavBar } from "./NavBar";
@@ -14,11 +15,13 @@ import { SearchQuotas } from "./SearchQuotas";
 
 export default function Quotas(){
     const workingCompany = useWorkingCompany();
+    const workingBranch = useWorkingBranch();
 
     const [filter, setFilter] = useState<QuotaFilterData>(() => {
         const data: QuotaFilterData = {
             search: '',
             company: workingCompany.company?.id,
+            branch: workingBranch.branch?.id,
             status: 0,
             sold: 'false',
         };
@@ -42,6 +45,10 @@ export default function Quotas(){
     function CloseNewQuotaModal(){
         setIsNewQuotaModalOpen(false);
     }
+
+    useEffect(() => {
+        setFilter({...filter, company: workingCompany.company?.id, branch: workingBranch.branch?.id});
+    }, [workingCompany, workingBranch]);
 
     return (
         <MainBoard sidebar="quotas" header={ <CompanySelectMaster/>}

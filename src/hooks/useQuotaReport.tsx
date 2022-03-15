@@ -4,6 +4,7 @@ import { api } from "../services/api";
 export interface quotaReportFilterData{
     type?: string;
     company?: number;
+    branch?: number;
     year?: string;
 }
 
@@ -14,6 +15,7 @@ export const getQuotaReport = async (filter?: quotaReportFilterData, page: numbe
               page: page,
               type: filter.type,
               company: filter.company,
+              branch: filter.branch,
               year: filter.year,
             }
         });

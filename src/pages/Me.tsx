@@ -121,14 +121,14 @@ export default function Me(){
                         
                     </HStack>
 
-                    <HStack spacing="4" align="baseline">
+                    <Stack direction={["column", "row"]} spacing="4" align="baseline">
                         <ControlledInput control={control} value={profile.email} name="email" type="text" placeholder="E-mail" variant="outline" error={formState.errors.email}/>
                         <ControlledInput control={control} value={profile.phone} name="phone" type="text" placeholder="Telefone" variant="outline" mask="phone" error={formState.errors.phone}/>
                         
                         <SolidButton type="submit" mb="12" color="white" bg="purple.300" colorScheme="purple">
                             Salvar
                         </SolidButton>
-                    </HStack>
+                    </Stack>
                 </Stack>
             )}
         </MainBoard>

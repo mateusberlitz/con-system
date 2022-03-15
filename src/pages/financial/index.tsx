@@ -1,6 +1,6 @@
 import { Flex, HStack, Stack, Text } from "@chakra-ui/layout";
 import { Select as ChakraSelect } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MainBoard } from "../../components/MainBoard";
 import { PaymentFilterData, usePayments } from "../../hooks/usePayments";
 import { useWorkingCompany } from "../../hooks/useWorkingCompany";
@@ -20,13 +20,14 @@ import { useCompanies } from "../../hooks/useCompanies";
 import { FormControl } from "@chakra-ui/react";
 import { CashFlowsFilterData } from "../../hooks/useCashFlows";
 import { TaskFilterData, useTasks } from "../../hooks/useTasks";
+import { CompanySelectMaster } from "../../components/CompanySelect/companySelectMaster";
+import { useWorkingBranch } from "../../hooks/useWorkingBranch";
 
 
 export default function Financial(){
     const { profile, permissions } = useProfile();
     const workingCompany = useWorkingCompany();
-
-    //console.log(workingCompany.company);
+    const workingBranch = useWorkingBranch();
 
     const [filter, setFilter] = useState<PaymentFilterData>(() => {
         const data: PaymentFilterData = {
@@ -132,6 +133,7 @@ export default function Financial(){
         const data: CashFlowsFilterData = {
             search: '',
             company: workingCompany.company?.id,
+            branch: workingBranch.branch?.id,
         };
         
         return data;
@@ -150,6 +152,7 @@ export default function Financial(){
         const data: TaskFilterData = {
             search: '',
             company: workingCompany.company?.id,
+            branch: workingBranch.branch?.id,
             author: (profile ? profile.id : 0),
         };
         
@@ -160,86 +163,23 @@ export default function Financial(){
 
     const companies = useCompanies();
 
-    function handleChangeCompany(event:any){
-        let selectedCompanyId: number | undefined;
-
-        if(event.target.value === ''){
-            selectedCompanyId = event.target.value;
-            workingCompany.changeCompany(event.target.value);
-        }else{
-            selectedCompanyId = (event?.target.value ? event?.target.value : 1);
-            const selectedCompanyData = companies.data.filter((company:Company) => Number(company.id) === Number(selectedCompanyId))[0]
-            workingCompany.changeCompany(selectedCompanyData);
-        }
-
-        // const selectedCompanyId = (event?.target.value ? event?.target.value : 1);
-        // const selectedCompanyData = companies.data.filter((company:Company) => Number(company.id) === Number(selectedCompanyId))[0]
-        // workingCompany.changeCompany(selectedCompanyData);
-
-        //filtro das contas a receber
-        const updatedFilterBills = filterBills;
-        updatedFilterBills.company = selectedCompanyId;
-
-        setFilterBills(updatedFilterBills);
-
-        // //filtro dos pagamentos
-        const updatedFilterPayments = filter;
-        updatedFilterPayments.company = selectedCompanyId;
-
-        setFilter(updatedFilterPayments);
-
-        // //filtro de tarefas
-        const updatedTasksFilter = tasksFilter;
-        updatedTasksFilter.company = selectedCompanyId;
-
-        setTasksFilter(updatedTasksFilter);
-
-        // //filtro dos pagamentos pendentes
-        // const updatedFilterPendencies = filterPendencies;
-        // updatedFilterPendencies.company = selectedCompanyId;
-
-        // setFilterPendencies(updatedFilterPendencies);
-
-        // //filtro do fluxo de caixa
-        // const updatedFilterCashFlow = filterCashFlow;
-        // updatedFilterCashFlow.company = selectedCompanyId;
-
-        // setFilterCashFlow(updatedFilterCashFlow);
-    }
+    useEffect(() => {
+        setFilter({...filter, company: workingCompany.company?.id, branch: workingBranch.branch?.id});
+        setFilterBills({...filterBills, company: workingCompany.company?.id, branch: workingBranch.branch?.id});
+        setTasksFilter({...tasksFilter, company: workingCompany.company?.id, branch: workingBranch.branch?.id});
+        setFilterCashFlow({...filterCashFlow, company: workingCompany.company?.id, branch: workingBranch.branch?.id});
+        setFilterPendencies({...filterPendencies, company: workingCompany.company?.id, branch: workingBranch.branch?.id});
+    }, [workingCompany, workingBranch]);
 
     return(
-        <MainBoard sidebar="financial" header={
-            ( ((permissions && HasPermission(permissions, 'Todas Empresas'))  || (profile && profile.companies && profile.companies.length > 1)) ?
-                ( !profile || !profile.companies ? (
-                    <Flex justify="center">
-                        <Text>Nenhuma empresa disponível</Text>
-                    </Flex>
-                ) : (
-                        <HStack as="form" spacing="10" w="100%" mb="10">
-                            <FormControl pos="relative">
-                                <ChakraSelect onChange={handleChangeCompany} defaultValue={workingCompany.company?.id} h="45px" name="selected_company" w="100%" maxW="200px" fontSize="sm" focusBorderColor="purple.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
-                                {profile.role.name === "Diretor" && <option value="">Todas as empresas</option>}
-
-                                {profile.companies && profile.companies.map((company:Company) => {
-                                    return (
-                                        <option key={company.id} value={company.id}>{company.name}</option>
-                                    )
-                                })}
-                                </ChakraSelect>
-                            </FormControl>
-                        </HStack>
-                    ))
-                :
-                <div></div>
-            )
-        }>
+        <MainBoard sidebar="financial" header={<CompanySelectMaster />}>
             <Stack fontSize="13px" spacing="12">
                 <PayPaymentModal afterPay={payments.refetch} toPayPaymentData={toPayPaymentData} isOpen={isPayPaymentModalOpen} onRequestClose={ClosePayPaymentModal}/>
                 <ReceiveBillModal afterReceive={bills.refetch} toReceiveBillData={toReceiveBillData} isOpen={isReceiveBillModalOpen} onRequestClose={CloseReceiveBillModal}/>
 
-                <HStack spacing="8" alignItems="flex-start">
+                <Stack flexDirection={["column", "row"]} spacing="8" alignItems="flex-start">
                     {/* PAGAMENTOS */}
-                    <Stack spacing="8" w="55%">
+                    <Stack spacing="8" w={["100%", "55%"]}>
                         <PaymentsSummary payments={payments} openPayPayment={OpenPayPaymentModal} filter={filter} handleChangeFilter={handleChangeFilter}/>
 
                         <BillsSummary bills={bills} openReceiveBill={OpenReceiveBillModal} filter={filterBills} handleChangeFilter={handleChangeBillsFilter}/>
@@ -251,16 +191,16 @@ export default function Financial(){
                     {/* TAREFAS */}
                     
 
-                    <Stack spacing="8" w="45%">
+                    <Stack spacing="8" w={["100%", "45%"]}>
                         <TasksSummary tasks={tasks} page={page} setPage={handleChangePage}/>
 
                         {
                             HasPermission(permissions, 'Financeiro Completo') && (
-                                <CashSummary company={workingCompany.company}/>
+                                <CashSummary company={workingCompany.company} branch={workingBranch.branch}/>
                             )
                         }
                     </Stack>
-                </HStack>
+                </Stack>
 
             </Stack>
         </MainBoard>

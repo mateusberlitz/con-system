@@ -6,6 +6,7 @@ export interface InvoicesFilterData{
     start_date?: string;
     end_date?: string;
     company?: number;
+    branch?: number;
     payment?: number;
     group_by?: string;
 }
@@ -17,6 +18,7 @@ export const getInvoices = async (filter?: InvoicesFilterData, page: number = 0)
               page: page,
               search: filter.search,
               company: filter.company,
+              branch: filter.branch,
               payment: filter.payment,
               start_date: filter.start_date,
               end_date: filter.end_date,

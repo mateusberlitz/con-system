@@ -6,6 +6,7 @@ import { SidebarDrawerProvider } from './components/_Contexts/SidebarDrawerConte
 import { ProfileProvider } from './hooks/useProfile';
 import { WorkingCompanyProvider } from './hooks/useWorkingCompany';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { WorkingBranchProvider } from './hooks/useWorkingBranch';
 
 const queryClient = new QueryClient();
 
@@ -19,7 +20,11 @@ function App() {
             <ChakraProvider theme={theme}>
                       <ProfileProvider>
                           <WorkingCompanyProvider>
+                            <WorkingBranchProvider>
+
                               <Routes />
+
+                            </WorkingBranchProvider>
                           </WorkingCompanyProvider>
                       </ProfileProvider>
             </ChakraProvider>

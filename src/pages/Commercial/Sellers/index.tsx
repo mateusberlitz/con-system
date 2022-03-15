@@ -21,7 +21,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { UserFilterData, useUsers } from "../../../hooks/useUsers";
 
 import { Company, Goal, User } from "../../../types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCompanies } from "../../../hooks/useCompanies";
 import { useRoles } from "../../../hooks/useRoles";
 import { EditUserModal } from "../../configs/Users/EditUserModal";
@@ -31,6 +31,7 @@ import { EditGoalFormData, EditGoalModal } from "./EditGoalModal";
 import { ConfirmGoalRemoveModal, RemoveGoalData } from "./ConfirmGoalRemoveModal";
 import { ListGoalsModal } from "./ListGoalsModal";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
+import { useWorkingBranch } from "../../../hooks/useWorkingBranch";
 
 const SearchUserFormSchema = yup.object().shape({
     search: yup.string().nullable(),
@@ -53,12 +54,14 @@ interface RemoveUserData{
 
 export default function Sellers(){
     const workingCompany = useWorkingCompany();
+    const workingBranch = useWorkingBranch();
     const companies = useCompanies();
     const roles = useRoles();
 
     const [filter, setFilter] = useState<UserFilterData>(() => {
         const data: UserFilterData = {
             search: '',
+            branch: workingBranch.branch?.id,
             company: workingCompany.company?.id,
             role: 5,
             goals: true,
@@ -214,10 +217,14 @@ export default function Sellers(){
         search.role = 5;
         search.goals = true;
 
-        setFilter(search);
+        setFilter({...filter, ...search});
     }
 
     const month = new Date().getMonth() + 1;
+
+    useEffect(() => {
+        setFilter({...filter, company: workingCompany.company?.id, branch: workingBranch.branch?.id});
+    }, [workingCompany, workingBranch]);
 
     return (
         <MainBoard sidebar="commercial" header={<CompanySelectMaster/>}>

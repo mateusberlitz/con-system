@@ -58,6 +58,10 @@ export function ListUserSalesModal( { isOpen, onRequestClose } : ListUserSalesMo
         }
     }, [isOpen]);
 
+    useEffect(() => {
+        setFilter({...filter, company: workingCompany.company?.id});
+    }, [workingCompany]);
+
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
             <ModalOverlay />

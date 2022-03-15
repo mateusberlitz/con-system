@@ -25,9 +25,10 @@ import { useHistory } from "react-router";
 import { Spinner } from "@chakra-ui/spinner";
 import { EditPaymentCategoryModal } from "./EditPaymentCategoryModal";
 import { ConfirmPaymentCategoryRemoveModal } from "./ConfirmPaymentCategoryRemoveModal";
-import { Checkbox } from "@chakra-ui/react";
+import { Checkbox, Divider, useBreakpointValue } from "@chakra-ui/react";
 import { CompanySelectMaster } from "../../../components/CompanySelect/companySelectMaster";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
+import { useWorkingBranch } from "../../../hooks/useWorkingBranch";
 
 interface CreateNewPaymentCategoryFormData{
     name: string;
@@ -42,6 +43,8 @@ const CreateNewPaymentCategoryFormSchema = yup.object().shape({
 
 export default function PaymentCategories(){
     const workingCompany = useWorkingCompany();
+    const workingBranch = useWorkingBranch();
+    const isWideVersion = useBreakpointValue({base: false, lg: true});
 
     const [categories, setCategories] = useState<PaymentCategory[]>([]);
     const [color, setColor] = useState('#ffffff');
@@ -102,7 +105,8 @@ export default function PaymentCategories(){
     const loadCategories = async () => {
         const { data } = await api.get('/payment_categories', {
             params: {
-                company: workingCompany.company?.id
+                company: workingCompany.company?.id,
+                branch: workingBranch.branch?.id,
             }
         });
 
@@ -111,7 +115,7 @@ export default function PaymentCategories(){
 
     useEffect(() => {
         loadCategories();
-    }, [workingCompany])
+    }, [workingCompany, workingBranch])
 
     const handleCreateCategory = async (paymentCategoryData: CreateNewPaymentCategoryFormData) => {
         paymentCategoryData.color = color;
@@ -169,9 +173,11 @@ export default function PaymentCategories(){
             <ConfirmPaymentCategoryRemoveModal afterRemove={loadCategories} toRemovePaymentCategoryId={paymentCategoryId} isOpen={isConfirmPaymentCategoryRemoveModalOpen} onRequestClose={CloseConfirmPaymentCategoryRemoveModal}/>
 
 
-            <HStack as="form" spacing="4" mb="10" onSubmit={handleSubmit(handleCreateCategory)}>
-                <ColorPicker color={color} setNewColor={setColor}/>
-                <Input name="name" register={register} type="text" placeholder="Categoria" variant="outline" maxW="200px" error={formState.errors.name}/>
+            <Stack mt={["6", "0"]} direction={["column", "row"]} as="form" spacing="4" mb="10" onSubmit={handleSubmit(handleCreateCategory)}>
+                <HStack>
+                    <ColorPicker color={color} setNewColor={setColor}/>
+                    <Input name="name" register={register} type="text" placeholder="Categoria" variant="outline" maxW="200px" error={formState.errors.name}/>
+                </HStack>
 
                 <Flex as="div">
                     <Checkbox {...register("individual")} colorScheme="blue" size="md" mr="15" borderRadius="full" fontSize="sm" color="gray.800" value={1}>
@@ -182,7 +188,11 @@ export default function PaymentCategories(){
                 <SolidButton type="submit" mb="10" color="white" bg="blue.400" icon={PlusIcon} colorScheme="blue">
                     Adicionar
                 </SolidButton>
-            </HStack>
+            </Stack>
+
+            {
+                !isWideVersion && <Divider mb="10"/>
+            }
 
             <SimpleGrid columns={3} minChildWidth="260px" gap={6}>
             {

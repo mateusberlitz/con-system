@@ -1,4 +1,4 @@
-import { Divider, Flex, FormControl, HStack, Select as ChakraSelect, Spinner, Text, Th, Tr } from "@chakra-ui/react";
+import { Divider, Flex, FormControl, HStack, Select as ChakraSelect, Spinner, Stack, Text, Th, Tr } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Board } from "../../../components/Board";
@@ -8,6 +8,7 @@ import { Table } from "../../../components/Table";
 import { useCompanies } from "../../../hooks/useCompanies";
 import { useProfile } from "../../../hooks/useProfile";
 import { TransactionsByAccountFilterData, useTransactionsByAccount } from "../../../hooks/useTransactionsByAccount";
+import { useWorkingBranch } from "../../../hooks/useWorkingBranch";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { api } from "../../../services/api";
 import { Company } from "../../../types";
@@ -17,6 +18,7 @@ import Results from "./Results";
 export default function Reports(){
     const {permissions, profile} = useProfile();
     const workingCompany = useWorkingCompany();
+    const workingBranch = useWorkingBranch();
 
     const history = useHistory();
 
@@ -39,6 +41,7 @@ export default function Reports(){
         const data: TransactionsByAccountFilterData = {
             transaction_type: 'payments',
             company: workingCompany.company?.id,
+            branch: workingBranch.branch?.id,
             year: dateObject.getFullYear().toString(),
         };
         
@@ -49,6 +52,7 @@ export default function Reports(){
         const data: TransactionsByAccountFilterData = {
             transaction_type: 'bills',
             company: workingCompany.company?.id,
+            branch: workingBranch.branch?.id,
             year: dateObject.getFullYear().toString(),
         };
         
@@ -120,6 +124,7 @@ export default function Reports(){
         const data: TransactionsByAccountFilterData = {
             transaction_type: 'payments',
             company: workingCompany.company?.id,
+            branch: workingBranch.branch?.id,
             year: dateObject.getFullYear().toString(),
         };
         
@@ -130,6 +135,7 @@ export default function Reports(){
         const data: TransactionsByAccountFilterData = {
             transaction_type: 'bills',
             company: workingCompany.company?.id,
+            branch: workingBranch.branch?.id,
             year: dateObject.getFullYear().toString(),
         };
         
@@ -155,19 +161,21 @@ export default function Reports(){
         setFilterEntryTransactions(newEntryResultFilter);
     }
 
+    useEffect(() => {
+        setFilterExitTransactions({...filterExitTransactions, company: workingCompany.company?.id, branch: workingBranch.branch?.id});
+        setFilterEntryTransactions({...filterEntryTransactions, company: workingCompany.company?.id, branch: workingBranch.branch?.id});
+        setFilterResultExitTransactions({...filterResultExitTransactions, company: workingCompany.company?.id, branch: workingBranch.branch?.id});
+        setFilterResultEntryTransactions({...filterResultEntryTransactions, company: workingCompany.company?.id, branch: workingBranch.branch?.id});
+    }, [workingCompany, workingBranch]);
+
     return(
         <MainBoard sidebar="financial" header={
-                <CompanySelectMaster filters={[
-                    {filterData: filterExitTransactions, setFilter: setFilterExitTransactions}, 
-                    {filterData: filterEntryTransactions, setFilter: setFilterEntryTransactions}, 
-                    {filterData: filterResultExitTransactions, setFilter: setFilterResultExitTransactions}, 
-                    {filterData: filterResultEntryTransactions, setFilter: setFilterResultEntryTransactions}
-                ]}/> 
+                <CompanySelectMaster/> 
             }
         >
 
         <Board mb="12">
-            <HStack as="form" spacing="12" w="100%" mb="6" justifyContent="left">
+            <Stack direction={["column", "row"]} spacing={["5","12"]} as="form" w="100%" mb="6" justifyContent="left">
                 <FormControl display="flex" w="fit-content" minW="150px">
                     <ChakraSelect onChange={handleChangeYear} defaultValue={workingCompany.company?.id} h="45px" name="selected_company" maxW="200px" fontSize="sm" focusBorderColor="purple.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
                         {
@@ -181,7 +189,7 @@ export default function Reports(){
                 </FormControl>
 
                 <Text fontWeight="bold">RELATÓRIO DE FLUXO DE CAIXA</Text>
-            </HStack>
+            </Stack>
 
             <Divider mb="6"/>
 
@@ -218,7 +226,7 @@ export default function Reports(){
                         {text: 'Dezembro'},
                         {text: 'Soma da Categoria', bold:true},
                         {text: 'Resultado da Categoria', bold:true},
-                    ]}>
+                    ]} size="sm">
                         <Tr>
                             <Th></Th>
                         </Tr>

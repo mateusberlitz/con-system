@@ -52,10 +52,15 @@ export function LeadsReport(){
         const data: LeadsFilterData = {
             user: profile?.id,
             group_by: 'origin',
+            company: workingCompany.company?.id
         };
         
         return data;
     })
+
+    useEffect(() => {
+        setFilter({...filter, company: workingCompany.company?.id});
+    }, [workingCompany]);
 
     function handleChangeFilter(newFilter: LeadsFilterData){
         setFilter(newFilter);

@@ -6,6 +6,7 @@ import { MainBoard } from "../../../components/MainBoard";
 import { Table } from "../../../components/Table";
 import { quotaReportFilterData, useQuotaReport } from "../../../hooks/useQuotaReport";
 import { QuotaSaleFilterData, useQuotaSales } from "../../../hooks/useQuotaSales";
+import { useWorkingBranch } from "../../../hooks/useWorkingBranch";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { api } from "../../../services/api";
 import { Quota, QuotaSale } from "../../../types";
@@ -32,12 +33,13 @@ interface cancelReport{
 
 export default function SaleListReport(){
     const workingCompany = useWorkingCompany();
+    const workingBranch = useWorkingBranch();
 
     const [years, setYears] = useState<Number[]>([]);
     const [selectedYear, setSelectedYear] = useState<string>('');
 
     const loadYears = async () => {
-        const { data } = await api.get('/quotas_years');
+        const { data } = await api.get('/ready_quotas_years');
 
         setYears(data);
     }
@@ -62,6 +64,7 @@ export default function SaleListReport(){
         const data: QuotaSaleFilterData = {
             search: '',
             company: workingCompany.company?.id,
+            branch: workingBranch.branch?.id,
             group_by: 'month',
             status: 0,
         };
@@ -76,6 +79,10 @@ export default function SaleListReport(){
     const [page, setPage] = useState(1);
 
     const quotaSales = useQuotaSales(filter, page);
+
+    useEffect(() => {
+        setFilter({...filter, company: workingCompany.company?.id, branch: workingBranch.branch?.id});
+    }, [workingCompany, workingBranch]);
 
     return (
         <Board>
@@ -103,17 +110,17 @@ export default function SaleListReport(){
                     </Flex>
                 ) : ( quotaSales.isError ? (
                     <Flex justify="center" mt="4" mb="4">
-                        <Text>Erro listar as contas a pagar</Text>
+                        <Text>Erro listar as vendas</Text>
                     </Flex>
                 ) : (quotaSales.data?.data.length === 0) && (
                     <Flex justify="center">
-                        <Text>Nenhuma pagamento encontrado.</Text>
+                        <Text>Nenhuma venda encontrado.</Text>
                     </Flex>
                 ) ) 
             }
 
             {
-                (!quotaSales.isLoading && !quotaSales.data?.data.error) && (
+                (!quotaSales.isLoading && !quotaSales.data?.data.error && quotaSales.data?.data.length !== 0) && (
 
                     <Accordion allowMultiple>
                         <Table header={[

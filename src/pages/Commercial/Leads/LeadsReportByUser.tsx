@@ -35,6 +35,7 @@ import { EditButton } from "../../../components/Buttons/EditButton";
 import { RemoveButton } from "../../../components/Buttons/RemoveButton";
 import { Table } from "../../../components/Table";
 import { useSales } from "../../../hooks/useSales";
+import { useWorkingBranch } from "../../../hooks/useWorkingBranch";
 
 interface LeadsReportByUserProps{
     filter: LeadsFilterData;
@@ -47,6 +48,7 @@ interface groupedLeadsByStatus{
 export function LeadsReportByUser({filter}: LeadsReportByUserProps){
     const {profile} = useProfile();
     const workingCompany = useWorkingCompany();
+    const workingBranch = useWorkingBranch();
     const today = new Date();
 
     const leads = useLeads(filter, 1);
@@ -55,8 +57,6 @@ export function LeadsReportByUser({filter}: LeadsReportByUserProps){
 
     leadsByStatus = leads.data?.data.reduce((groups: any, lead: Lead) => {
         const group:Lead[] = Object.keys(leadsByStatus).length === 0 ? [] : groups[lead.status.name];
-
-        //console.log(Object.keys(leadsByStatus));
 
         group.push(lead);
         groups[lead.status.name] = group;
@@ -71,6 +71,7 @@ export function LeadsReportByUser({filter}: LeadsReportByUserProps){
         const { data } = await api.get('/month_sales_amount', {
             params: {
                 company: (workingCompany.company && workingCompany.company.id  ? workingCompany.company?.id.toString() : "0"),
+                branch: workingBranch.branch?.id,
                 user: (profile  ? profile.id : 0),
                 month: today.getMonth() + 1,
             }
