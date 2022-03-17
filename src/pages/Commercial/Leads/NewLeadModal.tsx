@@ -203,7 +203,7 @@ export function NewLeadModal( { isOpen, onRequestClose, afterCreate, statuses, o
                             {
                                 ( !statuses ? (
                                     <Flex justify="center">
-                                        <Text>Nenhuma empresa disponível</Text>
+                                        <Text>Nenhum status disponível</Text>
                                     </Flex>
                                 ) : (
                                     <ControlledSelect control={control} value={1} isDisabled={true} h="45px" name="status" w="100%" fontSize="sm" focusBorderColor="orange.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" error={formState.errors.status}>
@@ -219,7 +219,7 @@ export function NewLeadModal( { isOpen, onRequestClose, afterCreate, statuses, o
                             {
                                 ( !origins ? (
                                     <Flex justify="center">
-                                        <Text>Nenhuma empresa disponível</Text>
+                                        <Text>Nenhuma origem disponível</Text>
                                     </Flex>
                                 ) : (
                                     <ControlledSelect control={control} value={1} h="45px" name="origin" w="100%" fontSize="sm" focusBorderColor="orange.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" error={formState.errors.origin}>
@@ -237,11 +237,18 @@ export function NewLeadModal( { isOpen, onRequestClose, afterCreate, statuses, o
                             <Select register={register}  h="45px" name="segment" w="100%" fontSize="sm" placeholder="Segmento pretendido" focusBorderColor="orange.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" error={formState.errors.segment}>
                                 <option value="Imóvel">Imóvel</option>
                                 <option value="Veículo">Veículo</option>
+                                <option value="Investimento">Investimento</option>
                             </Select>
 
                             <Input register={register} name="value" type="text" placeholder="Valor pretendido" focusBorderColor="orange.400" variant="outline" mask="money" error={formState.errors.value}/>
                         </HStack>
 
+                        <Divider/>
+
+                        <HStack spacing="4" align="baseline">
+                            <Input register={register} name="recommender" type="text" placeholder="Quem indicou?" focusBorderColor="orange.400" variant="outline" mask="" error={formState.errors.recommender}/>
+                            <Input register={register} name="commission" type="text" placeholder="Comissão da indicação" focusBorderColor="orange.400" variant="outline" mask="" error={formState.errors.commission}/>
+                        </HStack>
                         
 
                         {/* <Divider/> */}
@@ -283,13 +290,6 @@ export function NewLeadModal( { isOpen, onRequestClose, afterCreate, statuses, o
                                                 <HStack spacing="4" align="baseline">
                                                     <Input register={register} name="address_code" type="text" placeholder="CEP" focusBorderColor="orange.400" variant="outline" mask="" error={formState.errors.address_code}/>
                                                     <Input register={register} name="address_number" type="text" placeholder="Estado" focusBorderColor="orange.400" variant="outline" mask="" error={formState.errors.address_number}/>
-                                                </HStack>
-
-                                                <Divider/>
-
-                                                <HStack spacing="4" align="baseline">
-                                                    <Input register={register} name="recommender" type="text" placeholder="Quem indicou?" focusBorderColor="orange.400" variant="outline" mask="" error={formState.errors.recommender}/>
-                                                    <Input register={register} name="commission" type="text" placeholder="Comissão da indicação" focusBorderColor="orange.400" variant="outline" mask="" error={formState.errors.commission}/>
                                                 </HStack>
                                             </Stack>
                                         </AccordionPanel>

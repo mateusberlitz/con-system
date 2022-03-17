@@ -220,7 +220,7 @@ export function EditLeadModal( { isOpen, onRequestClose, afterEdit, toEditLeadDa
                             {
                                 ( !statuses ? (
                                     <Flex justify="center">
-                                        <Text>Nenhuma empresa disponível</Text>
+                                        <Text>Nenhum status disponível</Text>
                                     </Flex>
                                 ) : (
                                     <ControlledSelect control={control} value={toEditLeadData.status} isDisabled={true} h="45px" name="status" w="100%" fontSize="sm" focusBorderColor="orange.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" error={formState.errors.status}>
@@ -236,7 +236,7 @@ export function EditLeadModal( { isOpen, onRequestClose, afterEdit, toEditLeadDa
                             {
                                 ( !origins ? (
                                     <Flex justify="center">
-                                        <Text>Nenhuma empresa disponível</Text>
+                                        <Text>Nenhuma origem disponível</Text>
                                     </Flex>
                                 ) : (
                                     <ControlledSelect control={control} value={toEditLeadData.origin} h="45px" name="origin" w="100%" fontSize="sm" focusBorderColor="orange.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" error={formState.errors.origin}>
@@ -254,12 +254,18 @@ export function EditLeadModal( { isOpen, onRequestClose, afterEdit, toEditLeadDa
                             <ControlledSelect control={control} value={toEditLeadData.segment ? toEditLeadData.segment.toString() : ""} placeholder="Segmento pretendido"  h="45px" name="segment" w="100%" fontSize="sm" focusBorderColor="orange.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" error={formState.errors.segment}>
                                 <option value="Imóvel">Imóvel</option>
                                 <option value="Veículo">Veículo</option>
+                                <option value="Investimento">Investimento</option>
                             </ControlledSelect>
 
                             <ControlledInput control={control} value={toEditLeadData.value} name="value" type="text" placeholder="Valor" focusBorderColor="orange.400" variant="outline" error={formState.errors.value}/>
                         </HStack>
 
-                        
+                        <Divider/>
+
+                        <HStack spacing="4" align="baseline">
+                            <ControlledInput control={control} value={toEditLeadData.recommender} name="recommender" type="text" placeholder="Quem indicou?" focusBorderColor="orange.400" variant="outline" error={formState.errors.recommender}/>
+                            <ControlledInput control={control} value={toEditLeadData.commission?.toString()} name="commission" type="text" placeholder="Comissão da indicação" focusBorderColor="orange.400" variant="outline" error={formState.errors.commission}/>
+                        </HStack>
 
                         {/* <Divider/> */}
 
@@ -301,13 +307,6 @@ export function EditLeadModal( { isOpen, onRequestClose, afterEdit, toEditLeadDa
                                                 <HStack spacing="4" align="baseline">
                                                     <ControlledInput control={control} value={toEditLeadData.address_code} name="address_code" type="text" placeholder="CEP" focusBorderColor="orange.400" variant="outline" mask="" error={formState.errors.address_code}/>
                                                     <ControlledInput control={control} value={toEditLeadData.address_number} name="address_number" type="text" placeholder="Estado" focusBorderColor="orange.400" variant="outline" mask="" error={formState.errors.address_number}/>
-                                                </HStack>
-
-                                                <Divider/>
-
-                                                <HStack spacing="4" align="baseline">
-                                                    <ControlledInput control={control} value={toEditLeadData.recommender} name="recommender" type="text" placeholder="Quem indicou?" focusBorderColor="orange.400" variant="outline" error={formState.errors.recommender}/>
-                                                    <ControlledInput control={control} value={toEditLeadData.commission?.toString()} name="commission" type="text" placeholder="Comissão da indicação" focusBorderColor="orange.400" variant="outline" error={formState.errors.commission}/>
                                                 </HStack>
                                             </Stack>
                                         </AccordionPanel>
