@@ -75,7 +75,7 @@ export function EditUserModal( { isOpen, toEditUserData, afterEdit, onRequestClo
 
             afterEdit();
             onRequestClose();
-        }catch(error) {
+        }catch(error:any) {
             showErrors(error, toast);
 
             if(error.response.data.access){

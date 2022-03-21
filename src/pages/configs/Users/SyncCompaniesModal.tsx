@@ -112,7 +112,7 @@ export function SyncCompaniesModal( { isOpen, toEditUserData, afterEdit, onReque
             afterEdit();
             onRequestClose();
             reset();
-        }catch(error) {
+        }catch(error:any) {
             showErrors(error, toast);
 
             if(error.response.data.access){

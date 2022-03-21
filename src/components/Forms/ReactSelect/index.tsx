@@ -15,6 +15,8 @@ interface ReactSelectProps extends ChakraProps{
     error?: FieldError;
     control?: any;
 
+    color?: string;
+
     value?: string;
     variant?: string;
 
@@ -24,7 +26,7 @@ interface ReactSelectProps extends ChakraProps{
     label?: string;
 }
 
-export function ReactSelect({name, register, control, value = "", variant = 'outline', label, error, options, width, marginBottom, maxWidth, ...rest} : ReactSelectProps){
+export function ReactSelect({name, register, control, value = "", variant = 'outline', color = "#f24e1e", label, error, options, width, marginBottom, maxWidth, ...rest} : ReactSelectProps){
     const customStyles = {
         container: (styles:any) => ({ 
             ...styles,
@@ -39,25 +41,25 @@ export function ReactSelect({name, register, control, value = "", variant = 'out
         }),
         option: (provided:any, state:any) => ({
           ...provided,
-          backgroundColor: state.isSelected ? '#f24e1e' : 'white',
+          backgroundColor: state.isSelected ? color : 'white',
           cursor: state.isDisabled ? 'not-allowed' : 'pointer',
           fontSize: '13px',
           paddingLeft: "15px",
           ':hover': {
-            backgroundColor: !state.isSelected ? "#ffefe1" : "#f24e1e",
-            color: !state.isSelected ? "#f24e1e" : "#ffffff"
+            backgroundColor: !state.isSelected ? `${color}12` : color,
+            color: !state.isSelected ? color : "#ffffff"
           },
         }),
         control: (styles: any, state: any) => ({ 
             ...styles, 
             backgroundColor: '#f7f7fc' , 
-            borderColor: state.isFocused ? "#f24e1e" : "#d9dbe9",
+            borderColor: state.isFocused ? color : "#d9dbe9",
             // ':focus': {
-                boxShadow: 0,//state.isFocused ? "0 0 0 1px #f24e1e" : ""
+                boxShadow: 0,//state.isFocused ? "0 0 0 1px color : ""
             // },
             ':hover': {
                 //border: '2px solid',
-                borderColor: state.isFocused ? "#f24e1e" : "#d9dbe9",
+                borderColor: state.isFocused ? color : "#d9dbe9",
             },
             height: '45px',
             borderRadius: '90px'

@@ -1,4 +1,4 @@
-import { Avatar, Divider, Flex, Heading, HStack, Link, Spinner, Stack, Td, Text, Tr } from "@chakra-ui/react";
+import { Avatar, Divider, Flex, Heading, HStack, Link, Spinner, Stack, Td, Text, Tr, useBreakpointValue } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { MainBoard } from "../../../components/MainBoard";
@@ -22,6 +22,11 @@ import { ConfirmUserRemoveModal } from "../Users/ConfirmUserRemoveModal";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { useTeams } from "../../../hooks/useTeams";
 import { OutlineButton } from "../../../components/Buttons/OutlineButton";
+import { NewTeamModal } from "../Teams/NewTeamModal";
+import { ConfirmTeamRemoveModal, RemoveTeamData } from "../Teams/ConfirmTeamRemoveModal";
+import { EditTeamFormData, EditTeamModal } from "../Teams/EditTeamModal";
+import IncludeUserModal, { IncludeUserData } from "../Users/IncludeUserModal";
+import { number } from "yup";
 
 
 interface BranchParams{
@@ -44,6 +49,8 @@ interface RemoveUserData{
 export default function Branch(){
     const history = useHistory();
     const { id } = useParams<BranchParams>();
+    const isWideVersion = useBreakpointValue({base: false, lg: true});
+
 
     const [branch, setBranch] = useState<BranchInterface>();
 
@@ -112,6 +119,76 @@ export default function Branch(){
 
     const teams = useTeams({branch: parseInt(id)}, 1);
 
+    const [isNewTeamModalOpen, setIsNewTeamModalOpen] = useState(false);
+
+    function OpenNewTeamModal(){
+        setIsNewTeamModalOpen(true);
+    }
+    function CloseNewTeamModal(){
+        setIsNewTeamModalOpen(false);
+    }
+
+    const [ editTeamData, setEditTeamData ] = useState<EditTeamFormData>(() => {
+
+        const data: EditTeamFormData = {
+            id: 0,
+            name: '',
+            manager: 0,
+            branch: 0,
+            company: 0,
+            desk: 0,
+        };
+        
+        return data;
+    });
+
+    const [removeTeamData, setRemoveTeamData] = useState<RemoveTeamData>(() => {
+
+        const data: RemoveTeamData = {
+            name: '',
+            id: 0,
+        };
+        
+        return data;
+    });
+
+    const [isEditTeamModalOpen, setIsEditTeamModalOpen] = useState(false);
+    const [isConfirmTeamRemoveModalOpen, setIsConfirmTeamRemoveModalOpen] = useState(false);
+
+    function OpenEditTeamModal(team : EditTeamFormData){
+        setEditTeamData(team);
+        setIsEditTeamModalOpen(true);
+    }
+    function CloseEditTeamModal(){
+        setIsEditTeamModalOpen(false);
+    }
+
+    function OpenConfirmTeamRemoveModal(teamIdAndName:RemoveTeamData){
+        setRemoveTeamData(teamIdAndName);
+        setIsConfirmTeamRemoveModalOpen(true);
+    }
+    function CloseConfirmTeamRemoveModal(){
+        setIsConfirmTeamRemoveModalOpen(false);
+    }
+
+    const [isIncludeUserModalOpen, setIsIncludeUserModalOpen] = useState(false);
+    const [includeUserData, setIncludeUserData] = useState<IncludeUserData>({
+        company: 0,
+        companyName: '',
+        branch: 0,
+        branchName: '',
+        team: 0,
+        teamName: '',
+    });
+
+    function OpenIncludeUserModal(){
+        setIncludeUserData({branch: branch && branch.id, company: branch && branch.company.id});
+        setIsIncludeUserModalOpen(true);
+    }
+    function CloseIncludeUserModal(){
+        setIsIncludeUserModalOpen(false);
+    }
+
     return(
         <MainBoard sidebar="configs" header={
             branch && (
@@ -126,6 +203,12 @@ export default function Branch(){
             <EditUserModal afterEdit={refetch} toEditUserData={editUserData} isOpen={isEditModalOpen} onRequestClose={CloseEditModal}/>
             <ConfirmUserRemoveModal afterRemove={refetch} toRemoveUserData={removeUserData} isOpen={isConfirmUserRemoveModalOpen} onRequestClose={CloseConfirmUserRemoveModal}/>
 
+            <NewTeamModal afterCreate={teams.refetch} isOpen={isNewTeamModalOpen} onRequestClose={CloseNewTeamModal}/>
+            <EditTeamModal afterEdit={teams.refetch} toEditTeamData={editTeamData} isOpen={isEditTeamModalOpen} onRequestClose={CloseEditTeamModal}/>
+            <ConfirmTeamRemoveModal afterRemove={teams.refetch} toRemoveTeamData={removeTeamData} isOpen={isConfirmTeamRemoveModalOpen} onRequestClose={CloseConfirmTeamRemoveModal}/>
+
+            <IncludeUserModal afterEdit={refetch} toIncludeUserProps={includeUserData} isOpen={isIncludeUserModalOpen} onRequestClose={CloseIncludeUserModal}/>
+
             <Stack spacing="8">
                 <HStack justifyContent="space-between">
                     <HStack>
@@ -133,7 +216,7 @@ export default function Branch(){
                     </HStack>
                     <HStack>
                         <ProfileIcon width="20px" stroke="#4e4b66" fill="none"/>
-                        <Text>25 Usuários</Text>
+                        <Text>{branch && branch.users.length} Usuários</Text>
                     </HStack>
                 </HStack>
 
@@ -143,7 +226,7 @@ export default function Branch(){
                     <HStack mb="4" justifyContent="space-between">
                         <Text fontSize="xl">Equipes</Text>
 
-                        <SolidButton onClick={() => 0} mb="12" color="white" bg="purple.300" icon={PlusIcon} colorScheme="purple">
+                        <SolidButton onClick={() => OpenNewTeamModal()} mb="12" color="white" bg="purple.300" icon={PlusIcon} colorScheme="purple">
                             Adicionar equipe
                         </SolidButton>
                     </HStack>
@@ -161,7 +244,7 @@ export default function Branch(){
                             <Text>Nenhuma equipe encontrada.</Text>
                         </Flex>
                     ) ) 
-                }
+                    }
 
                 {
                     (!teams.isLoading && !teams.error && teams.data?.data.length !== 0) && (
@@ -199,12 +282,12 @@ export default function Branch(){
                                         <Td alignItems="center" display="flex">
                                             <Text display="flex" fontSize="sm" color="gray.700" fontWeight="600">{team.name}</Text>
                                         </Td>
-                                        
-                                        
 
                                         <Td fontSize="sm" color="gray.800">{team.desk.name}</Td>
                                         {/* <Td fontSize="sm" color="gray.800">{branch.email}</Td>
                                         <Td fontSize="sm" color="gray.800">{branch.phone}</Td> */}
+
+                                        <Td fontSize="sm" color="gray.800">{team.users.length > 0 ? team.users.length : 'Nenhum'}</Td>
 
 
                                         <Td alignItems="center" display="flex">
@@ -216,9 +299,9 @@ export default function Branch(){
 
                                         <Td>
                                             <HStack spacing="4">
-                                                <OutlineButton size="sm" colorScheme="purple" h="28px" px="5" onClick={() => history.push(`/filiais/${team.id}`)}>Gerenciar</OutlineButton>
-                                                {/* <EditButton onClick={() => OpenEditBranchModal({id: branch.id, name: branch.name, phone: branch.phone, email: branch.email, company: branch.company.id, manager: branch.manager.id, city: branch.city.name, state: branch.state.id, address: branch.address }) }/>
-                                                <RemoveButton onClick={() => OpenConfirmBranchRemoveModal({ id: branch.id, name: branch.name }) }/> */}
+                                                {/* <OutlineButton size="sm" colorScheme="purple" h="28px" px="5" onClick={() => history.push(`/filiais/${team.id}`)}>Gerenciar</OutlineButton> */}
+                                                <EditButton onClick={() => OpenEditTeamModal({id: team.id, name: team.name, company: team.company.id, branch: team.branch.id, manager: team.manager.id, desk: team.desk.id }) }/>
+                                                <RemoveButton onClick={() => OpenConfirmTeamRemoveModal({ id: team.id, name: team.name }) }/>
                                             </HStack>
                                         </Td>
                                     </Tr>
@@ -228,66 +311,87 @@ export default function Branch(){
                 )}
                 </Board>
 
+                
                 <Board mt="50px">
-                    <ProTable header={
-                        [
-                            {
-                                text: 'Usuários',
-                                icon: ProfileIcon
-                            },
-                            // {
-                            //     text: 'Empresas',
-                            //     icon: HomeIcon
-                            // },
-                            // {
-                            //     text: 'Filiais',
-                            //     icon: HomeIcon
-                            // },
-                            {
-                                text: 'Cargo',
-                                icon: PasteIcon
-                            },
-                            {
-                                text: 'Ações',
-                                //icon: ConfigureIcon
-                            },
-                        ]
-                    }>
-                        {/* ITEMS */}
-                        { (!isLoading &&!error) && data.map((user:User) => {
-                            return(
-                                <Tr key={user.id}>
-                                    <Td alignItems="center" display="flex">
-                                        <Flex mr="4" borderRadius="full" h="fit-content" w="fit-content" bgGradient="linear(to-r, purple.600, blue.300)" p="2px">
-                                            <Avatar borderColor="gray.600" border="2px" size="sm" name={`${user.name} ${user.last_name}`} src={user.image ? `${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_STORAGE : process.env.REACT_APP_API_LOCAL_STORAGE}${user.image}` : ""}/>
-                                        </Flex>
-                                        <Text display="flex" fontSize="sm" color="gray.700" fontWeight="600">{user.name} {user.last_name && user.last_name}</Text>
-                                    </Td>
-                                    {/* <Td whiteSpace="nowrap" fontSize="sm" color="blue.800" cursor="pointer" onClick={() => OpenSyncCompaniesModal({id:user.id, name: user.name, companies:user.companies}) }>{user.companies.length > 0 ? user.companies[0].name : "Sem empresas"} {user.companies.length > 1 && `+ ${user.companies.length - 1}`}</Td>
-                                    <Td whiteSpace="nowrap" fontSize="sm" color="blue.800" cursor="pointer" onClick={() => OpenSyncBranchesModal({id:user.id, name: user.name, branches:user.branches}) }>{user.branches.length > 0 ? user.branches[0].name : "Sem filiais"} {user.branches.length > 1 && `+ ${user.branches.length - 1}`}</Td> */}
-                                    <Td fontSize="sm" color="gray.800">{user.role.name}</Td>
-                                    <Td>
-                                        <HStack spacing="4">
-                                            <RemoveButton onClick={() => OpenConfirmUserRemoveModal({ id: user.id, name: user.name }) }/>
-                                            <EditButton onClick={() => OpenEditModal({id: user.id, name: user.name, phone: user.phone, email: user.email, role: user.role.id }) }/>
-                                        </HStack>
-                                    </Td>
-                                </Tr>
-                            )
-                        })}
-                    </ProTable>
+                    <HStack mb="4" justifyContent="space-between">
+                        <Text fontSize="xl">Usuários</Text>
 
-                    { isLoading ? (
-                            <Flex justify="center">
+                        <HStack spacing="5">
+                            <OutlineButton h={!isWideVersion ? "36px" : "45px"} onClick={() => OpenIncludeUserModal()} colorScheme="purple">
+                                Incluir integrante
+                            </OutlineButton>
+
+                            <SolidButton onClick={() => OpenNewTeamModal()} color="white" bg="purple.300" icon={PlusIcon} colorScheme="purple">
+                                Adicionar integrante
+                            </SolidButton>
+                        </HStack>
+                    </HStack>
+
+                    {
+                        (!isLoading && !error && data.length !== 0) && (
+                            <ProTable w="100%" header={
+                                [
+                                    {
+                                        text: 'Usuários',
+                                        icon: ProfileIcon
+                                    },
+                                    // {
+                                    //     text: 'Empresas',
+                                    //     icon: HomeIcon
+                                    // },
+                                    // {
+                                    //     text: 'Filiais',
+                                    //     icon: HomeIcon
+                                    // },
+                                    {
+                                        text: 'Cargo',
+                                        icon: PasteIcon
+                                    },
+                                    {
+                                        text: 'Ações',
+                                    },
+                                ]
+                            }>
+                                {/* ITEMS */}
+                                { (!isLoading && !error) && data.map((user:User) => {
+                                    return(
+                                        <Tr key={user.id}>
+                                            <Td alignItems="center" display="flex">
+                                                <Flex mr="4" borderRadius="full" h="fit-content" w="fit-content" bgGradient="linear(to-r, purple.600, blue.300)" p="2px">
+                                                    <Avatar borderColor="gray.600" border="2px" size="sm" name={`${user.name} ${user.last_name}`} src={user.image ? `${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_STORAGE : process.env.REACT_APP_API_LOCAL_STORAGE}${user.image}` : ""}/>
+                                                </Flex>
+                                                <Text display="flex" fontSize="sm" color="gray.700" fontWeight="600">{user.name} {user.last_name && user.last_name}</Text>
+                                            </Td>
+                                            {/* <Td whiteSpace="nowrap" fontSize="sm" color="blue.800" cursor="pointer" onClick={() => OpenSyncCompaniesModal({id:user.id, name: user.name, companies:user.companies}) }>{user.companies.length > 0 ? user.companies[0].name : "Sem empresas"} {user.companies.length > 1 && `+ ${user.companies.length - 1}`}</Td>
+                                            <Td whiteSpace="nowrap" fontSize="sm" color="blue.800" cursor="pointer" onClick={() => OpenSyncBranchesModal({id:user.id, name: user.name, branches:user.branches}) }>{user.branches.length > 0 ? user.branches[0].name : "Sem filiais"} {user.branches.length > 1 && `+ ${user.branches.length - 1}`}</Td> */}
+                                            <Td fontSize="sm" color="gray.800">{user.role.name}</Td>
+                                            <Td>
+                                                <HStack spacing="4">
+                                                    <RemoveButton onClick={() => OpenConfirmUserRemoveModal({ id: user.id, name: user.name }) }/>
+                                                    <EditButton onClick={() => OpenEditModal({id: user.id, name: user.name, phone: user.phone, email: user.email, role: user.role.id }) }/>
+                                                </HStack>
+                                            </Td>
+                                        </Tr>
+                                    )
+                                })}
+                            </ProTable>
+                        )}
+
+                        {   isLoading ? (
+                            <Flex justify="left">
                                 <Spinner/>
                             </Flex>
-                        ) : error && (
-                            <Flex justify="center" mt="4" mb="4">
-                                <Text>Erro ao obter os dados dos usuários</Text>
+                        ) : ( error ? (
+                            <Flex justify="left" mt="4" mb="4">
+                                <Text>Erro listar os usuários</Text>
                             </Flex>
-                        )
-                    }
-                </Board>
+                        ) : (data.length === 0) && (
+                            <Flex justify="left">
+                                <Text>Nenhum usuários nessa filial.</Text>
+                            </Flex>
+                        ) ) 
+                        }
+                    </Board>
             </Stack>
 
         </MainBoard>

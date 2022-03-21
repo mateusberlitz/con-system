@@ -54,8 +54,6 @@ export function EditBranchModal( { isOpen, toEditBranchData, afterEdit, onReques
     const toast = useToast();
     const { showErrors } = useErrors();
 
-    console.log(toEditBranchData);
-
     const { handleSubmit, formState, control, reset} = useForm<EditBranchFormData>({
         resolver: yupResolver(EditBranchFormSchema),
     });
@@ -96,8 +94,6 @@ export function EditBranchModal( { isOpen, toEditBranchData, afterEdit, onReques
     const users = useUsers({});
     const companies = useCompanies();
     const states = useStates();
-
-    console.log(formState);
 
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">

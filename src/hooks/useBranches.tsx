@@ -12,7 +12,7 @@ export const getBranches = async (filter?: BranchesFilterData, page: number = 0)
     if(filter){
         const {data, headers} = await api.get('/branches', {
             params: {
-              company: page,
+              company: filter.company,
               search: filter.search,
               manager: filter.manager,
               name: filter.name,

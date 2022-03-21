@@ -424,6 +424,7 @@ export interface Branch{
     address: string
     email?: string
     phone?: string
+    users: User[];
 }
 
 export interface Desk{
@@ -438,4 +439,5 @@ export interface Team{
     company: Company;
     manager: User;
     name: string;
+    users: User[];
 }

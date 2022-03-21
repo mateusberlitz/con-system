@@ -1,4 +1,4 @@
-import { HStack, Stack } from "@chakra-ui/react";
+import { FormLabel, HStack, Stack, Switch } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { CompanySelectMaster } from "../../components/CompanySelect/companySelectMaster";
 import { MainBoard } from "../../components/MainBoard";
@@ -44,6 +44,11 @@ export default function Commercial(){
     return (
         <MainBoard sidebar="commercial" header={<CompanySelectMaster/>}>
             <Stack fontSize="13px" spacing="12">
+                <HStack>
+                    <FormLabel htmlFor='isChecked'>Gerente:</FormLabel>
+                    <Switch id='isChecked' isChecked />
+                </HStack>
+
                 <Stack direction={["column", "column", "row"]} spacing="8" alignItems="flex-start">
                     {/* PAGAMENTOS */}
                     <Stack spacing="8" w={["100%", "100%", "55%"]}>

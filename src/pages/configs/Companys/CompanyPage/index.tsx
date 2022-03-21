@@ -20,6 +20,7 @@ import { NewBranchModal } from "./NewBranchModal";
 import { EditBranchFormData, EditBranchModal } from "./EditBranchModal";
 import { ConfirmBranchRemoveModal, RemoveBranchData } from "./ConfirmBranchRemoveModal";
 import { OutlineButton } from "../../../../components/Buttons/OutlineButton";
+import { useUsers } from "../../../../hooks/useUsers";
 
 
 interface CompanyParams{
@@ -42,7 +43,10 @@ export default function CompanyPage(){
         loadCompanyData();
     }, []);
 
+    console.log(id);
+
     const branches = useBranches({company: parseInt(id)}, 1);
+    const users = useUsers({company: parseInt(id)});
 
     const [removeBranch, setRemoveBranch] = useState<RemoveBranchData>(() => {
         const data: RemoveBranchData = {
@@ -96,7 +100,6 @@ export default function CompanyPage(){
         setisConfirmBranchRemoveModalOpen(false);
     }
 
-
     return (
         <>
             <NewBranchModal afterCreate={branches.refetch} isOpen={isNewBranchModalOpen} onRequestClose={CloseNewBranchModal}/>
@@ -120,11 +123,11 @@ export default function CompanyPage(){
                                 <Heading fontSize="2xl">{company.name}</Heading>
                                 <HStack>
                                     <LocationIcon width="20px" stroke="#4e4b66" fill="none"/>
-                                    <Text>2 Filiais</Text>
+                                    <Text>{branches.data && branches.data?.data.length} Filiais</Text>
                                 </HStack>
                                 <HStack>
                                     <ProfileIcon width="20px" stroke="#4e4b66" fill="none"/>
-                                    <Text>25 Usuários</Text>
+                                    <Text>{users.data && users.data?.length} Usuários</Text>
                                 </HStack>
                             </HStack>
 

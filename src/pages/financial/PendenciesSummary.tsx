@@ -25,7 +25,7 @@ export function PendenciesSummary({payments, paymentFilter, openPayPayment, hand
     const isWideVersion = useBreakpointValue({base: false, lg: true});
 
     return (
-        <Stack w="100%" px={["5", "8px"]} spacing="6" min-width="300px" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" py="8">
+        <Stack w="100%" px={["5", "8"]} spacing="6" min-width="300px" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" py="8">
                     <HStack>
                         <Text fontSize="xl" mb="4" w="100%">Pendências</Text>
                         {/* {

@@ -177,7 +177,7 @@ export default function Financial(){
                 <PayPaymentModal afterPay={payments.refetch} toPayPaymentData={toPayPaymentData} isOpen={isPayPaymentModalOpen} onRequestClose={ClosePayPaymentModal}/>
                 <ReceiveBillModal afterReceive={bills.refetch} toReceiveBillData={toReceiveBillData} isOpen={isReceiveBillModalOpen} onRequestClose={CloseReceiveBillModal}/>
 
-                <Stack flexDirection={["column", "row"]} spacing="8" alignItems="flex-start">
+                <Stack direction={["column", "row"]} spacing="8" alignItems="flex-start">
                     {/* PAGAMENTOS */}
                     <Stack spacing="8" w={["100%", "55%"]}>
                         <PaymentsSummary payments={payments} openPayPayment={OpenPayPaymentModal} filter={filter} handleChangeFilter={handleChangeFilter}/>
