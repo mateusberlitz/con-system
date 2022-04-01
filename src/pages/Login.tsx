@@ -11,7 +11,6 @@ import { ReactComponent as MailIcon } from '../assets/icons/Mail.svg';
 import { ReactComponent as LockIcon } from '../assets/icons/Lock.svg';
 import Logo from '../assets/icons/Logo.svg';
 import { Img } from "@chakra-ui/image";
-import { api } from "../services/api";
 
 
 import { useForm } from "react-hook-form";
@@ -21,6 +20,8 @@ import { useToast } from "@chakra-ui/react";
 import { Alert } from "../components/Alert";
 import { useProfile } from "../hooks/useProfile";
 import { useEffect, } from "react";
+import { useTenant } from "../hooks/useTenant";
+import { api } from "../services/api";
 
 interface SignInFormData{
     email: string;
@@ -36,6 +37,7 @@ const signInFormSchema = yup.object().shape({
 
 export default function Login(){
     const {permissions, profile} = useProfile();
+    const {prefix} = useTenant();
     const history = useHistory();
     const { loadProfile } = useProfile();
     const toastSignin = useToast();
@@ -48,9 +50,9 @@ export default function Login(){
         if(profile && permissions){
             if(Object.keys(profile).length !== 0){
                 if(profile.role.desk_id === 1){
-                    history.push('/home');
+                    history.push(`/home`);
                 }else{
-                    history.push('/financeiro');
+                    history.push(`/financeiro`);
                 }
             }
         }

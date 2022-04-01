@@ -12,6 +12,7 @@ import Companys from "../configs/Companys";
 import { ListUserSalesModal } from "./ListUserSalesModal";
 import { useProfile } from "../../hooks/useProfile";
 import { Goal } from "../../types";
+import { useTenant } from "../../hooks/useTenant";
 
 interface RemoveTaskData{
     id: number;
@@ -24,6 +25,7 @@ interface CashSummaryFilter{
 export function SalesSummary(){
     const workingCompany = useWorkingCompany();
     const { profile } = useProfile();
+    const { prefix } = useTenant();
 
     const [amount, setAmount] = useState(0);
 

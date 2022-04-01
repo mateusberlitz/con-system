@@ -2,6 +2,7 @@ import { useQuery } from "react-query";
 import { api } from "../../services/api";
 import { getToken } from "../../services/auth";
 import { Branch, Company } from "../../types";
+import { useTenant } from "../useTenant";
 
 export interface Profile{
     id: number,

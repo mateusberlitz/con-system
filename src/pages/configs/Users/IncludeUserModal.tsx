@@ -10,7 +10,7 @@ import { api } from "../../../services/api";
 import { showErrors } from "../../../hooks/useErrors";
 import { useHistory } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { User } from "../../../types";
+import { Branch, Company, Team, User } from "../../../types";
 
 
 interface IncludeUserModalProps{
@@ -54,24 +54,44 @@ export default function IncludeUserModal({isOpen, toIncludeUserProps, onRequestC
 
     const handleSyncNewUser = async (userData : IncludeUserFormData) => {
         try{
-            
+
+            const user:User = await api.get(`users/${userData.user}`).then(response => response.data);
+
+            //console.log(user, toIncludeUserProps.branch);
 
             if(toIncludeUserProps.company){
-                const companyData:Sync = [];
+                const companyData:Sync = user.companies.reduce((syncCompanies:Sync, company:Company) => {
+                    syncCompanies[company.id] = "on";
+                    return syncCompanies;
+                }, {} as Sync);
+
+                console.log(companyData);
                 companyData[toIncludeUserProps.company] = "on";
 
                 await api.post(`/users/${userData.user}/sync`, companyData);
             }
 
+            //console.log(toIncludeUserProps.branch);
+
             if(toIncludeUserProps.branch){
-                const branchData:Sync = [];
+                const branchData:Sync = user.branches.reduce((syncBranches:Sync, branch:Branch) => {
+                    syncBranches[branch.id] = "on";
+                    return syncBranches;
+                }, {} as Sync);
+
                 branchData[toIncludeUserProps.branch] = "on";
+
+                console.log(branchData);
 
                 await api.post(`/users/${userData.user}/sync_branches`, branchData);
             }
 
             if(toIncludeUserProps.team){
-                const teamData:Sync = [];
+                const teamData:Sync = user.teams.reduce((syncTeams:Sync, team:Team) => {
+                    syncTeams[team.id] = "on";
+                    return syncTeams;
+                }, {} as Sync);
+
                 teamData[toIncludeUserProps.team] = "on";
 
                 await api.post(`/users/${userData.user}/sync_teams`, teamData);

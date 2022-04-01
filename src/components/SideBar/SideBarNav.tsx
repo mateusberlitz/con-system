@@ -1,4 +1,4 @@
-import { Icon, Img, Link, Stack, Text } from "@chakra-ui/react";
+import { Box, Icon, Img, Stack, Text } from "@chakra-ui/react";
 import { NavLink } from "./NavLink";
 
 import { ReactComponent as HomeIcon } from '../../assets/icons/Home.svg';
@@ -19,6 +19,8 @@ import { ReactComponent as CalendarIcon } from '../../assets/icons/Calandar.svg'
 
 import LogoBranco from '../../assets/icons/Logo-Branco.svg';
 import { HasPermission, useProfile } from "../../hooks/useProfile";
+import { useTenant } from "../../hooks/useTenant";
+import { Link } from "react-router-dom";
 
 interface SideBarNavProps{
     desk: "configs" | "financial" | "commercial" | "quotas";
@@ -26,6 +28,7 @@ interface SideBarNavProps{
 
 export function SideBarNav({ desk }: SideBarNavProps){
     const { permissions } = useProfile();
+    const { prefix } = useTenant();
 
     return desk === 'configs' ? (
         <Stack spacing="2" align="flex-start" h="100vh" bg="purple.300" borderBottomRightRadius="10px" borderTopRightRadius="10px">
@@ -33,46 +36,50 @@ export function SideBarNav({ desk }: SideBarNavProps){
 
             {
                 HasPermission(permissions, 'Usuários') && (
-                    <NavLink color="purple.300" href="/usuarios" icon={ProfileIcon}>Usuários</NavLink>
+                    <NavLink color="purple.300" href={`/usuarios`} icon={ProfileIcon}>Usuários</NavLink>
                 )
             }
             {
                 HasPermission(permissions, 'Usuários') && (
                     <>
-                        <NavLink color="purple.300" href="/empresas" icon={HomeIcon}>Empresas</NavLink> 
-                        <NavLink color="purple.300" href="/permissoes" icon={ConfigureIcon}>Permissões</NavLink>
+                        <NavLink color="purple.300" href={`/empresas`} icon={HomeIcon}>Empresas</NavLink> 
+                        <NavLink color="purple.300" href={`/permissoes`} icon={ConfigureIcon}>Permissões</NavLink>
                     </>
                 )
             }
 
-            <Link mt="24" href="/home" display="flex" h="16" alignItems="center" w="100%" px="7" color="white" _hover={{textDecor: 'none'}} >
-                <Icon as={BackArrowIcon} fontSize="20" stroke="#ffffff" fill="none"/>
-                <Text ml="4" fontWeight="medium">Início</Text>
+            <Link to={`/home`}>
+                <Box mt="24" display="flex" h="16" alignItems="center" w="100%" px="7" color="white" _hover={{textDecor: 'none'}} >
+                    <Icon as={BackArrowIcon} fontSize="20" stroke="#ffffff" fill="none"/>
+                    <Text ml="4" fontWeight="medium">Início</Text>
+                </Box>
             </Link>
         </Stack>
     ) : (desk === 'financial' ? (
         <Stack spacing="2" align="flex-start" h="100vh" bg="blue.400" borderBottomRightRadius="10px" borderTopRightRadius="10px">
             <Img src={LogoBranco} px="7" mt="9" mb="14" />
 
-            <NavLink href="/financeiro" icon={ChartPieIcon} color="blue.400">Dashboard</NavLink> 
-            <NavLink href="/pagamentos" icon={CardIcon} color="blue.400">Pagamentos</NavLink>
+            <NavLink href={`/financeiro`} icon={ChartPieIcon} color="blue.400">Dashboard</NavLink> 
+            <NavLink href={`/pagamentos`} icon={CardIcon} color="blue.400">Pagamentos</NavLink>
 
             {
                 HasPermission(permissions, 'Financeiro Completo') && (
                     <>
-                        <NavLink href="/receber" icon={TagIcon} color="blue.400">Contas a Receber</NavLink>
-                        <NavLink href="/fluxo" icon={ChartBarIcon} color="blue.400">Fluxo de Caixa</NavLink>
-                        <NavLink href="/caixa" icon={PrinterIcon} color="blue.400">Caixa</NavLink>
-                        <NavLink href="/relatorios" icon={ScrollIcon} color="blue.400">Relatórios</NavLink>
+                        <NavLink href={`/receber`} icon={TagIcon} color="blue.400">Contas a Receber</NavLink>
+                        <NavLink href={`/fluxo`} icon={ChartBarIcon} color="blue.400">Fluxo de Caixa</NavLink>
+                        <NavLink href={`/caixa`} icon={PrinterIcon} color="blue.400">Caixa</NavLink>
+                        <NavLink href={`/relatorios`} icon={ScrollIcon} color="blue.400">Relatórios</NavLink>
                     </>
                 )
             }
 
             {
                 (HasPermission(permissions, 'Usuários') || HasPermission(permissions, 'Configurações') || HasPermission(permissions, 'Contempladas')) && (
-                    <Link mt="30px" position="absolute" bottom="24px" alignItems="center" href="/home" display="flex" h="16" w="100%" px="7" color="white" _hover={{textDecor: 'none'}} >
-                        <Icon as={BackArrowIcon} fontSize="20" stroke="#ffffff" fill="none"/>
-                        <Text ml="4" fontWeight="medium">Tela inicial</Text>
+                    <Link to={`/home`}>
+                        <Box mt="24" display="flex" h="16" alignItems="center" w="100%" px="7" color="white" _hover={{textDecor: 'none'}} >
+                            <Icon as={BackArrowIcon} fontSize="20" stroke="#ffffff" fill="none"/>
+                            <Text ml="4" fontWeight="medium">Início</Text>
+                        </Box>
                     </Link>
                 )
             }
@@ -81,24 +88,26 @@ export function SideBarNav({ desk }: SideBarNavProps){
         <Stack spacing="2" align="flex-start" h="100vh" bg="orange.400" borderBottomRightRadius="10px" borderTopRightRadius="10px">
             <Img src={LogoBranco} px="7" mt="9" mb="14" />
 
-            <NavLink href="/comercial" icon={ChartPieIcon} color="orange.400">Dashboard</NavLink> 
-            <NavLink href="/leads" icon={AtsignIcon} color="orange.400">Leads</NavLink>
-            <NavLink href="/agenda" icon={CalendarIcon} color="orange.400">Agendamentos</NavLink>
-            <NavLink href="/team" icon={CalendarIcon} color="orange.400">Equipe</NavLink>
+            <NavLink href={`/comercial`} icon={ChartPieIcon} color="orange.400">Dashboard</NavLink> 
+            <NavLink href={`/leads`} icon={AtsignIcon} color="orange.400">Leads</NavLink>
+            <NavLink href={`/agenda`} icon={CalendarIcon} color="orange.400">Agendamentos</NavLink>
+            <NavLink href={`/team`} icon={CalendarIcon} color="orange.400">Equipe</NavLink>
             {/* <NavLink href="/calculadora" icon={ConfigureIcon}>Calculadora</NavLink> */}
             
 
             {
                 (HasPermission(permissions, 'Vendas Completo')) && (
-                    <NavLink href="/vendedores" icon={ProfileIcon} color="orange.400">Vendedores</NavLink>
+                    <NavLink href={`/vendedores`} icon={ProfileIcon} color="orange.400">Vendedores</NavLink>
                 )
             }
 
             {
                 (HasPermission(permissions, 'Usuários') || HasPermission(permissions, 'Configurações') || HasPermission(permissions, 'Contempladas')) && (
-                    <Link mt="30px" position="absolute" bottom="24px" alignItems="center" href="/home" display="flex" h="16" w="100%" px="7" color="white" _hover={{textDecor: 'none'}} >
-                        <Icon as={BackArrowIcon} fontSize="20" stroke="#ffffff" fill="none"/>
-                        <Text ml="4" fontWeight="medium">Tela inicial</Text>
+                    <Link to={`/home`}>
+                        <Box mt="24" display="flex" h="16" alignItems="center" w="100%" px="7" color="white" _hover={{textDecor: 'none'}} >
+                            <Icon as={BackArrowIcon} fontSize="20" stroke="#ffffff" fill="none"/>
+                            <Text ml="4" fontWeight="medium">Início</Text>
+                        </Box>
                     </Link>
                 )
             }
@@ -108,14 +117,16 @@ export function SideBarNav({ desk }: SideBarNavProps){
             <Img src={LogoBranco} px="7" mt="9" mb="14" />
 
             {/* <NavLink href="/financeiro" icon={ChartPieIcon}>Dashboard</NavLink>  */}
-            <NavLink href="/contempladas" icon={FolderIcon} stroke="#ffffff" fill="none" color="blue.800">Estoque</NavLink>
-            <NavLink href="/venda-contempladas" icon={BagIcon} fill="none" color="blue.800">Vendas</NavLink>
-            <NavLink href="/relatorio-contempladas" icon={ScrollIcon} fill="none" color="blue.800">Relatório</NavLink>
+            <NavLink href={`/contempladas`} icon={FolderIcon} stroke="#ffffff" fill="none" color="blue.800">Estoque</NavLink>
+            <NavLink href={`/venda-contempladas`} icon={BagIcon} fill="none" color="blue.800">Vendas</NavLink>
+            <NavLink href={`/relatorio-contempladas`} icon={ScrollIcon} fill="none" color="blue.800">Relatório</NavLink>
             {
                 (HasPermission(permissions, 'Usuários') || HasPermission(permissions, 'Configurações') || HasPermission(permissions, 'Contempladas')) && (
-                    <Link mt="30px" position="absolute" bottom="24px" alignItems="center" href="/home" display="flex" h="16" w="100%" px="7" color="white" _hover={{textDecor: 'none'}} >
-                        <Icon as={BackArrowIcon} fontSize="20" stroke="#ffffff" fill="none"/>
-                        <Text ml="4" fontWeight="medium">Tela inicial</Text>
+                    <Link to={`/home`}>
+                        <Box mt="24" display="flex" h="16" alignItems="center" w="100%" px="7" color="white" _hover={{textDecor: 'none'}} >
+                            <Icon as={BackArrowIcon} fontSize="20" stroke="#ffffff" fill="none"/>
+                            <Text ml="4" fontWeight="medium">Início</Text>
+                        </Box>
                     </Link>
                 )
             }

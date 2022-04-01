@@ -191,12 +191,12 @@ export default function Users(){
                 </Select>
 
                 <Select register={register} name="company" error={formState.errors.company} focusBorderColor="purple.600">
-                        <option value="0">Empresa</option>
-                        {companies.data && companies.data.map((company:Company) => {
-                            return (
-                                <option key={company.id} value={company.id}>{company.name}</option>
-                            )
-                        })}
+                    <option value="0">Empresa</option>
+                    {companies.data && companies.data.map((company:Company) => {
+                        return (
+                            <option key={company.id} value={company.id}>{company.name}</option>
+                        )
+                    })}
                 </Select>
 
                 <OutlineButton type="submit" colorScheme="purple" h="45px" size="sm" borderRadius="full" variant="outline">

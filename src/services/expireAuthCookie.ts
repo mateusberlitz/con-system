@@ -1,10 +1,12 @@
+import { getPrefix } from "./tenantApi";
+
 export function setAuthTimeCookie(expires_in: number){
     const date = new Date();
     date.setTime(date.getTime() + (expires_in*1000));
     //date.setTime(date.getTime() + (60*1000));
 
     //document.cookie = `expireAuth; expires=${date.toUTCString()}; path=/`;
-    document.cookie = `value=expireAuth; max-age=${expires_in}; path=/`;
+    document.cookie = `value=expireAuth; max-age=${expires_in}; path=/${getPrefix()}`;
     //console.log(document.cookie);
     return document.cookie;
 }

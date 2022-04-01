@@ -32,6 +32,7 @@ export interface User{
     updated_at?: Date;
     companies: Company[];
     branches: Branch[];
+    teams: Team[];
     goals: Goal[];
     goal_amount?: number;
     conversion_percent?: number;
@@ -440,4 +441,10 @@ export interface Team{
     manager: User;
     name: string;
     users: User[];
+}
+
+export interface Tenant{
+    id: number;
+    name: string;
+    prefix: string;
 }

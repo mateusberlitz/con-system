@@ -19,10 +19,8 @@ export function WorkingCompanyProvider({ children } : WorkingCompanyProviderProp
         const storagedCompany = localStorage.getItem('@lance/company');
     
         if (!!storagedCompany) {
-            console.log(!!storagedCompany);
             return JSON.parse(storagedCompany);
         }else{
-            console.log(profile);
             if(profile){
                 if(Object.keys(profile).length > 0){
                     if((profile?.role.id !== 1) && (profile?.companies.length > 0)){
@@ -35,8 +33,6 @@ export function WorkingCompanyProvider({ children } : WorkingCompanyProviderProp
     
         return {};
     });
-
-    console.log(company);
 
     const previousCompanyRef = useRef<Company>();
 

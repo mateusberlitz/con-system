@@ -73,8 +73,10 @@ export function Logs(){
             <Stack spacing="10">
                 <HStack justifyContent="space-between">
                     <HStack spacing="3" height="50px">
-                        <Link href="/vendedores" display="flex" flexDirection="row">
-                            <BackArrow width="20px" stroke="#4e4b66" fill="none"/>
+                        <Link to="/vendedores">
+                            <Flex display="flex" flexDirection="row">
+                                <BackArrow width="20px" stroke="#4e4b66" fill="none"/>
+                            </Flex>
                         </Link>
 
                         <Divider orientation="vertical" />

@@ -4,6 +4,7 @@ import { SolidButton } from "../Buttons/SolidButton";
 import { logout } from "../../services/auth";
 import { useState } from "react";
 import { useHistory } from "react-router";
+import { useTenant } from "../../hooks/useTenant";
 
 interface LogoutModalProps{
     isOpen: boolean;
@@ -12,6 +13,7 @@ interface LogoutModalProps{
 
 export function LogoutModal( { isOpen, onRequestClose } : LogoutModalProps){
     //const {isOpen, onClose} = useDisclosure();
+    const { prefix } = useTenant();
     const [logoutState, setLogoutState] = useState("");
     const history = useHistory();
 
@@ -21,7 +23,7 @@ export function LogoutModal( { isOpen, onRequestClose } : LogoutModalProps){
         if(logout()){
             setLogoutState("logged off");
             
-            history.push("/");
+            history.push(`/${prefix}`);
         }
     }
 

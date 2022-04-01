@@ -4,6 +4,7 @@ import Routes from './routes';
 import { BrowserRouter } from 'react-router-dom';
 import { SidebarDrawerProvider } from './components/_Contexts/SidebarDrawerContext';
 import { ProfileProvider } from './hooks/useProfile';
+import { TenantProvider } from './hooks/useTenant';
 import { WorkingCompanyProvider } from './hooks/useWorkingCompany';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { WorkingBranchProvider } from './hooks/useWorkingBranch';
@@ -18,6 +19,7 @@ function App() {
       <QueryClientProvider client={queryClient}>
           <SidebarDrawerProvider>
             <ChakraProvider theme={theme}>
+                <TenantProvider>
                       <ProfileProvider>
                           <WorkingCompanyProvider>
                             <WorkingBranchProvider>
@@ -27,6 +29,7 @@ function App() {
                             </WorkingBranchProvider>
                           </WorkingCompanyProvider>
                       </ProfileProvider>
+                </TenantProvider>
             </ChakraProvider>
           </SidebarDrawerProvider>
       </QueryClientProvider>

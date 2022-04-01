@@ -1,7 +1,10 @@
 import { createContext, ReactNode, useContext, useEffect, useRef, useState } from "react";
-import { isAuthenticated } from "../../services/auth";
+import { useHistory } from "react-router-dom";
+import { api } from "../../services/api";
+import { getToken, isAuthenticated, logout } from "../../services/auth";
 import { encodePermissions, simplifyPermissions, decodePermissions } from "../../services/permissionsSecurity";
-import { Company } from "../../types";
+import { Company, User } from "../../types";
+import { useTenant } from "../useTenant";
 import { getMe, Profile } from "./useMe";
 import { getPermissions } from "./useProfilePermissions";
 
@@ -17,11 +20,14 @@ interface ProfileContextData{
     profile?: Profile;
     permissions?: SimplePermission[];
     loadProfile: () => void;
+    isAuthenticated: boolean;
 }
 
 const ProfileContext = createContext<ProfileContextData>({} as ProfileContextData);
 
 export function ProfileProvider({ children } : ProfileProviderProps){
+    const history = useHistory();
+    const { prefix } = useTenant();
 
     const [permissions, setPermissions] = useState<SimplePermission[]>(():SimplePermission[]|any => {
         const storagedPermissions = localStorage.getItem('@lance/permissions');
@@ -38,32 +44,37 @@ export function ProfileProvider({ children } : ProfileProviderProps){
     });
 
 
-    const [profile, setProfile] = useState<Profile>(() => {
-        const storagedProfile = localStorage.getItem('@lance/profile');
-    
-        if (storagedProfile) {
-          return JSON.parse(storagedProfile);
+    const [profile, setProfile] = useState<Profile>(
+        () => {
+            const storagedProfile = localStorage.getItem('@lance/profile');
+        
+            if (storagedProfile) {
+            return JSON.parse(storagedProfile);
+            }
+        
+            return null;
         }
-    
-        return {};
-    });
+    );
 
+    //const [user, setUser] = useState<Profile>();
+
+    const isAuthenticated = !!profile;
 
 
     //PREFER STATE OF PROFILE
-        const previousProfileRef = useRef<Profile>();
+        // const previousProfileRef = useRef<Profile>();
 
-        useEffect(() => {
-            previousProfileRef.current = profile;
-        });
+        // useEffect(() => {
+        //     previousProfileRef.current = profile;
+        // });
 
-        const profilePreviousValue = previousProfileRef.current ?? profile;
+        // const profilePreviousValue = previousProfileRef.current ?? profile;
 
-        useEffect(() => {
-            if(profilePreviousValue !== profile){
-                localStorage.setItem('@lance/profile', JSON.stringify(profile));
-            }
-        }, [profile, profilePreviousValue]);
+        // useEffect(() => {
+        //     if(profilePreviousValue !== profile){
+        //         localStorage.setItem('@lance/profile', JSON.stringify(profile));
+        //     }
+        // }, [profile, profilePreviousValue]);
 
 
     //PREFER STATE OF PERMISSIONS
@@ -87,24 +98,50 @@ export function ProfileProvider({ children } : ProfileProviderProps){
 
     //LOADERS
     const loadProfile = async () => {
-        const loadedProfile = await getMe();
+        const token = getToken();
 
-        loadPermissions(loadedProfile.role.id);
+        if(token){
+            api.get('/me').then(response => {
+                const loadedProfile = response.data;
 
-        if(loadedProfile.branches[0]){
-            localStorage.setItem('@lance/branch', JSON.stringify(loadedProfile.branches[0] ? loadedProfile.branches[0] : ''));
+                loadPermissions(loadedProfile.role.id);
 
-            const branchCompany = loadedProfile.companies.filter((company:Company) => company.id === loadedProfile.branches[0].company.id);
+                if(loadedProfile.branches[0]){
+                    localStorage.setItem('@lance/branch', JSON.stringify(loadedProfile.branches[0] ? loadedProfile.branches[0] : ''));
 
-            localStorage.setItem('@lance/company', JSON.stringify(branchCompany[0] ? branchCompany[0] : ''));
-        }else{
-            localStorage.setItem('@lance/company', JSON.stringify(loadedProfile.companies[0] ? loadedProfile.companies[0] : ''));
+                    const branchCompany = loadedProfile.companies.filter((company:Company) => company.id === loadedProfile.branches[0].company.id);
+
+                    localStorage.setItem('@lance/company', JSON.stringify(branchCompany[0] ? branchCompany[0] : ''));
+                }else{
+                    localStorage.setItem('@lance/company', JSON.stringify(loadedProfile.companies[0] ? loadedProfile.companies[0] : ''));
+                }
+
+                setProfile(loadedProfile);
+                localStorage.setItem('@lance/profile', JSON.stringify(loadedProfile));
+            }).catch(error => {
+                logout();
+                //history.push(`/${prefix}/`);
+            });
+
+            //const loadedProfile = await getMe();
+
+            // loadPermissions(loadedProfile.role.id);
+
+            // if(loadedProfile.branches[0]){
+            //     localStorage.setItem('@lance/branch', JSON.stringify(loadedProfile.branches[0] ? loadedProfile.branches[0] : ''));
+
+            //     const branchCompany = loadedProfile.companies.filter((company:Company) => company.id === loadedProfile.branches[0].company.id);
+
+            //     localStorage.setItem('@lance/company', JSON.stringify(branchCompany[0] ? branchCompany[0] : ''));
+            // }else{
+            //     localStorage.setItem('@lance/company', JSON.stringify(loadedProfile.companies[0] ? loadedProfile.companies[0] : ''));
+            // }
+
+            // setProfile(loadedProfile);
         }
-
-        setProfile(loadedProfile);
     }
 
-    const loadPermissions = async (roleId = profile.role.id) => {
+    const loadPermissions = async (roleId = profile ? profile.role.id : 0) => {
         const requestedPermissions = await getPermissions(roleId);
         const simplifiedPermissions = simplifyPermissions(requestedPermissions);
 
@@ -113,18 +150,33 @@ export function ProfileProvider({ children } : ProfileProviderProps){
         setPermissions(simplifiedPermissions);
     }
 
-    if(isAuthenticated()){
-        if(!profile.name){
-            loadProfile();
-        }
+    if(isAuthenticated){
+        // if(!profile.name){
+        //     loadProfile();
+        // }
 
         if(permissions.length === 0){
             loadPermissions();
         }
     }
 
+    useEffect(() => {
+        loadProfile();
+        // const token = getToken();
+
+        // if(token){
+        //     api.get('/me').then(response => {
+        //         setUser(response.data);
+        //     }).catch(error => {
+        //         logout();
+        //         console.log(prefix);
+        //         //history.push(`/${prefix}/`);
+        //     });
+        // }
+    }, []);
+
     return(
-        <ProfileContext.Provider value={{profile, permissions, loadProfile}}>
+        <ProfileContext.Provider value={{profile, permissions, loadProfile, isAuthenticated}}>
             {children}
         </ProfileContext.Provider>
     )

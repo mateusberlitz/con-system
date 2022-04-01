@@ -1,8 +1,11 @@
 import axios from 'axios'
 import { getToken } from './auth';
+import { getApiUrl } from './tenantApi';
+
+console.log(getApiUrl());
 
 export const api = axios.create({
-    baseURL: process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_URL : process.env.REACT_APP_API_LOCAL_URL
+    baseURL: getApiUrl()
 });
 
 api.interceptors.request.use(async config => {
@@ -11,6 +14,8 @@ api.interceptors.request.use(async config => {
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    //config.headers.accept
 
     return config;
 });
