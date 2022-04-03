@@ -1,146 +1,208 @@
-import { Flex, HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Spinner, Stack, useToast } from "@chakra-ui/react";
-import { SolidButton } from "../../../components/Buttons/SolidButton";
-import { ControlledInput } from "../../../components/Forms/Inputs/ControlledInput";
+import {
+  Flex,
+  HStack,
+  Link,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Spinner,
+  Stack,
+  useToast
+} from '@chakra-ui/react'
+import { SolidButton } from '../../../components/Buttons/SolidButton'
+import { ControlledInput } from '../../../components/Forms/Inputs/ControlledInput'
 
-import {  useForm } from "react-hook-form";
-import * as yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { api } from "../../../services/api";
-import { useHistory } from "react-router";
-import { useErrors } from "../../../hooks/useErrors";
-import { Company, Role } from "../../../types";
-import { ControlledSelect } from "../../../components/Forms/Selects/ControlledSelect";
-import { useCompanies } from "../../../hooks/useCompanies";
-import { useRoles } from "../../../hooks/useRoles";
-import { useEffect } from "react";
-import { isAuthenticated } from "../../../services/auth";
-import { redirectMessages } from "../../../utils/redirectMessages";
+import { useForm } from 'react-hook-form'
+import * as yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { api } from '../../../services/api'
+import { useHistory } from 'react-router'
+import { useErrors } from '../../../hooks/useErrors'
+import { Role } from '../../../types'
+import { ControlledSelect } from '../../../components/Forms/Selects/ControlledSelect'
+import { useCompanies } from '../../../hooks/useCompanies'
+import { useRoles } from '../../../hooks/useRoles'
+import { useEffect } from 'react'
+import { isAuthenticated } from '../../../services/auth'
+import { redirectMessages } from '../../../utils/redirectMessages'
 
-interface EditUserModalProps{
-    isOpen: boolean;
-    toEditUserData: EditUserData;
-    onRequestClose: () => void;
-    afterEdit: () => void;
+interface EditUserModalProps {
+  isOpen: boolean
+  toEditUserData: EditUserData
+  onRequestClose: () => void
+  afterEdit: () => void
 }
 
-interface EditUserFormData{
-    phone: string;
-    email: string;
-    company: number;
-    role: number;
+interface EditUserFormData {
+  phone: string
+  email: string
+  company: number
+  role: number
 }
 
-interface EditUserData{
-    id: number;
-    name: string;
-    phone: string;
-    email: string;
-    role: number;
+interface EditUserData {
+  id: number
+  name: string
+  phone: string
+  email: string
+  role: number
 }
 
 const EditUserFormSchema = yup.object().shape({
-    phone: yup.string().min(9, "Existe Telefone com menos de 9 dígitos?"),//51991090700
-    email: yup.string().required("Informe um E-mail").email("Informe um e-mail válido"),
-    role: yup.number().required("Selecione um Cargo")
-});
+  phone: yup.string().min(9, 'Existe Telefone com menos de 9 dígitos?'), //51991090700
+  email: yup
+    .string()
+    .required('Informe um E-mail')
+    .email('Informe um e-mail válido'),
+  role: yup.number().required('Selecione um Cargo')
+})
 
-export function EditUserModal( { isOpen, toEditUserData, afterEdit, onRequestClose } : EditUserModalProps){
-    const companies = useCompanies();
-    const roles = useRoles();
+export function EditUserModal({
+  isOpen,
+  toEditUserData,
+  afterEdit,
+  onRequestClose
+}: EditUserModalProps) {
+  const companies = useCompanies()
+  const roles = useRoles()
 
-    const history = useHistory();
-    const toast = useToast();
-    const { showErrors } = useErrors();
+  const history = useHistory()
+  const toast = useToast()
+  const { showErrors } = useErrors()
 
-    const { handleSubmit, formState, control} = useForm<EditUserFormData>({
-        resolver: yupResolver(EditUserFormSchema),
-        defaultValues: {
-            phone: toEditUserData.phone,
-            email: toEditUserData.name,
-            role: toEditUserData.role,
-        }
-    });
-
-    const handleEditUser = async (userData : EditUserFormData) => {
-        try{
-            await api.post(`/users/edit/${toEditUserData.id}`, userData);
-
-            toast({
-                title: "Sucesso",
-                description: "Dados do usuário atualizados.",
-                status: "success",
-                duration: 12000,
-                isClosable: true,
-            });
-
-            afterEdit();
-            onRequestClose();
-        }catch(error:any) {
-            showErrors(error, toast);
-
-            if(error.response.data.access){
-                history.push('/');
-            }
-        }
+  const { handleSubmit, formState, control } = useForm<EditUserFormData>({
+    resolver: yupResolver(EditUserFormSchema),
+    defaultValues: {
+      phone: toEditUserData.phone,
+      email: toEditUserData.name,
+      role: toEditUserData.role
     }
+  })
 
-    useEffect(() => {
-        if(!isAuthenticated()){
-            history.push({
-                pathname: '/',
-                state: redirectMessages.auth
-            });
-        }
-    }, [isOpen])
+  const handleEditUser = async (userData: EditUserFormData) => {
+    try {
+      await api.post(`/users/edit/${toEditUserData.id}`, userData)
 
-    return(
-        <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
-            <ModalOverlay />
-            <ModalContent as="form" borderRadius="24px" onSubmit={handleSubmit(handleEditUser)}>
-                <ModalHeader p="10" fontWeight="700" fontSize="2xl">Editar usuário {toEditUserData.name}</ModalHeader>
+      toast({
+        title: 'Sucesso',
+        description: 'Dados do usuário atualizados.',
+        status: 'success',
+        duration: 12000,
+        isClosable: true
+      })
 
-                <ModalCloseButton top="10" right="5"/>
-                
-                <ModalBody pl="10" pr="10">
-                    <Stack spacing="6">
+      afterEdit()
+      onRequestClose()
+    } catch (error: any) {
+      showErrors(error, toast)
 
-                        <HStack spacing="4" align="baseline">
-                            <ControlledInput control={control} value={toEditUserData.email} name="email" type="text" placeholder="E-mail" variant="outline" error={formState.errors.email} focusBorderColor="purple.600"/>
-                            <ControlledInput control={control} value={toEditUserData.phone} name="phone" type="text" placeholder="Telefone" variant="outline" mask="phone" error={formState.errors.phone} focusBorderColor="purple.600"/>
-                        </HStack>
+      if (error.response.data.access) {
+        history.push('/')
+      }
+    }
+  }
 
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      history.push({
+        pathname: '/',
+        state: redirectMessages.auth
+      })
+    }
+  }, [isOpen])
 
-                        <HStack spacing="4" align="baseline">
+  return (
+    <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
+      <ModalOverlay />
+      <ModalContent
+        as="form"
+        borderRadius="24px"
+        onSubmit={handleSubmit(handleEditUser)}
+      >
+        <ModalHeader p="10" fontWeight="700" fontSize="2xl">
+          Editar usuário {toEditUserData.name}
+        </ModalHeader>
 
-                        { companies.isLoading ? (
-                            <Flex justify="center">
-                                <Spinner/>
-                            </Flex>
-                        ) : (
-                            <ControlledSelect control={control} name="role" value={toEditUserData.role.toString()} variant="outline" error={formState.errors.email} focusBorderColor="purple.600">
-                                    <option key="0" value="0">Cargo</option>
-                                    {roles.data && roles.data.map((role:Role) => {
-                                        return (
-                                            <option key={role.id} value={role.id}>{role.name}</option>
-                                        )
-                                    })}
-                            </ControlledSelect>
-                            )
-                        }
-                        </HStack>
-                    
-                    
-                    </Stack>
-                </ModalBody>
+        <ModalCloseButton top="10" right="5" />
 
-                <ModalFooter p="10">
-                    <SolidButton mr="6" color="white" bg="purple.300" colorScheme="purple" type="submit" isLoading={formState.isSubmitting}>
-                        Atualizar
-                    </SolidButton>
+        <ModalBody pl="10" pr="10">
+          <Stack spacing="6">
+            <HStack spacing="4" align="baseline">
+              <ControlledInput
+                control={control}
+                value={toEditUserData.email}
+                name="email"
+                type="text"
+                placeholder="E-mail"
+                variant="outline"
+                error={formState.errors.email}
+                focusBorderColor="purple.600"
+              />
+              <ControlledInput
+                control={control}
+                value={toEditUserData.phone}
+                name="phone"
+                type="text"
+                placeholder="Telefone"
+                variant="outline"
+                mask="phone"
+                error={formState.errors.phone}
+                focusBorderColor="purple.600"
+              />
+            </HStack>
 
-                    <Link onClick={onRequestClose} color="gray.700" fontSize="14px">Cancelar</Link>
-                </ModalFooter>
-            </ModalContent>
-        </Modal>
-    )
+            <HStack spacing="4" align="baseline">
+              {companies.isLoading ? (
+                <Flex justify="center">
+                  <Spinner />
+                </Flex>
+              ) : (
+                <ControlledSelect
+                  control={control}
+                  name="role"
+                  value={toEditUserData.role.toString()}
+                  variant="outline"
+                  error={formState.errors.email}
+                  focusBorderColor="purple.600"
+                >
+                  <option key="0" value="0">
+                    Cargo
+                  </option>
+                  {roles.data &&
+                    roles.data.map((role: Role) => {
+                      return (
+                        <option key={role.id} value={role.id}>
+                          {role.name}
+                        </option>
+                      )
+                    })}
+                </ControlledSelect>
+              )}
+            </HStack>
+          </Stack>
+        </ModalBody>
+
+        <ModalFooter p="10">
+          <SolidButton
+            mr="6"
+            color="white"
+            bg="purple.300"
+            colorScheme="purple"
+            type="submit"
+            isLoading={formState.isSubmitting}
+          >
+            Atualizar
+          </SolidButton>
+
+          <Link onClick={onRequestClose} color="gray.700" fontSize="14px">
+            Cancelar
+          </Link>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  )
 }

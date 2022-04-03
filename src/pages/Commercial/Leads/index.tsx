@@ -1,658 +1,1043 @@
-import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Badge as ChakraBadge, Checkbox, Divider, Flex, HStack, IconButton, Link, Spinner, Stack, Text, useBreakpointValue, useToast } from "@chakra-ui/react";
-import Badge from "../../../components/Badge";
-import { OutlineButton } from "../../../components/Buttons/OutlineButton";
-import { CompanySelectMaster } from "../../../components/CompanySelect/companySelectMaster";
-import { MainBoard } from "../../../components/MainBoard";
+import {
+  Accordion,
+  AccordionButton,
+  AccordionItem,
+  AccordionPanel,
+  Badge as ChakraBadge,
+  Checkbox,
+  Divider,
+  Flex,
+  HStack,
+  IconButton,
+  Link,
+  Spinner,
+  Stack,
+  Text,
+  useBreakpointValue,
+  useToast
+} from '@chakra-ui/react'
+import Badge from '../../../components/Badge'
+import { OutlineButton } from '../../../components/Buttons/OutlineButton'
+import { CompanySelectMaster } from '../../../components/CompanySelect/companySelectMaster'
+import { MainBoard } from '../../../components/MainBoard'
 
-import { ReactComponent as PlusIcon } from '../../../assets/icons/Plus.svg';
-import { ReactComponent as MinusIcon } from '../../../assets/icons/Minus.svg';
-import { ReactComponent as StrongPlusIcon } from '../../../assets/icons/StrongPlus.svg';
-import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
-import { ReactComponent as EditIcon } from '../../../assets/icons/Edit.svg';
+import { ReactComponent as PlusIcon } from '../../../assets/icons/Plus.svg'
+import { ReactComponent as MinusIcon } from '../../../assets/icons/Minus.svg'
+import { ReactComponent as StrongPlusIcon } from '../../../assets/icons/StrongPlus.svg'
+import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg'
+import { ReactComponent as EditIcon } from '../../../assets/icons/Edit.svg'
 
+import { HasPermission, useProfile } from '../../../hooks/useProfile'
+import { EditButton } from '../../../components/Buttons/EditButton'
+import { RemoveButton } from '../../../components/Buttons/RemoveButton'
+import { SolidButton } from '../../../components/Buttons/SolidButton'
+import { ChangeEvent, useState } from 'react'
+import { LeadsFilterData, useLeads } from '../../../hooks/useLeads'
+import { DataOrigin, Lead, LeadStatus } from '../../../types'
+import { api } from '../../../services/api'
+import { useEffect } from 'react'
+import { NewLeadModal } from './NewLeadModal'
+import { formatBRDate } from '../../../utils/Date/formatBRDate'
+import { getHour } from '../../../utils/Date/getHour'
+import { EditLeadFormData, EditLeadModal } from './EditLeadModal'
+import {
+  ConfirmLeadRemoveModal,
+  RemoveLeadData
+} from './ConfirmLeadRemoveModal'
+import { useUsers } from '../../../hooks/useUsers'
+import { DelegateLeadModal } from './DelegateLeadModal'
+import { ConfirmRemoveUserOfLead } from './ConfirmRemoveUserOfLead'
+import {
+  ChangeLeadStatusModal,
+  EditLeadStatusFormData
+} from './ChangeLeadStatusModal'
+import { AddLeadNoteModal, toAddLeadNoteData } from './AddLeadNoteModal'
+import { NewSaleModal, toAddSaleLeadData } from '../Sales/NewSaleModal'
+import { EditSaleFormData, EditSaleModal } from '../Sales/EditSaleModal'
+import {
+  ConfirmSaleRemoveModal,
+  RemoveSaleData
+} from '../Sales/ConfirmSaleRemoveModal'
+import { SearchLeads } from './SearchLeads'
+import { LeadsReportByUser } from './LeadsReportByUser'
+import { useWorkingCompany } from '../../../hooks/useWorkingCompany'
+import { useWorkingBranch } from '../../../hooks/useWorkingBranch'
 
-import { HasPermission, useProfile } from "../../../hooks/useProfile";
-import { EditButton } from "../../../components/Buttons/EditButton";
-import { RemoveButton } from "../../../components/Buttons/RemoveButton";
-import { SolidButton } from "../../../components/Buttons/SolidButton";
-import { ChangeEvent, useState } from "react";
-import { formatYmdDate } from "../../../utils/Date/formatYmdDate";
-import { LeadsFilterData, useLeads } from "../../../hooks/useLeads";
-import { DataOrigin, Lead, LeadStatus } from "../../../types";
-import { api } from "../../../services/api";
-import { useEffect } from "react";
-import { NewLeadModal } from "./NewLeadModal";
-import { formatBRDate } from "../../../utils/Date/formatBRDate";
-import { getHour } from "../../../utils/Date/getHour";
-import { EditLeadFormData, EditLeadModal } from "./EditLeadModal";
-import { ConfirmLeadRemoveModal, RemoveLeadData } from "./ConfirmLeadRemoveModal";
-import { useUsers } from "../../../hooks/useUsers";
-import { DelegateLeadModal } from "./DelegateLeadModal";
-import { ConfirmRemoveUserOfLead } from "./ConfirmRemoveUserOfLead";
-import { ChangeLeadStatusModal, EditLeadStatusFormData } from "./ChangeLeadStatusModal";
-import { AddLeadNoteModal, toAddLeadNoteData } from "./AddLeadNoteModal";
-import { NewSaleModal, toAddSaleLeadData } from "../Sales/NewSaleModal";
-import { EditSaleFormData, EditSaleModal } from "../Sales/EditSaleModal";
-import { ConfirmSaleRemoveModal, RemoveSaleData } from "../Sales/ConfirmSaleRemoveModal";
-import { SearchLeads } from "./SearchLeads";
-import { LeadsReportByMonth } from "../LeadsReportByMonth";
-import { LeadsReportByUser } from "./LeadsReportByUser";
-import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
-import { useWorkingBranch } from "../../../hooks/useWorkingBranch";
+export default function Leads() {
+  const workingCompany = useWorkingCompany()
+  const workingBranch = useWorkingBranch()
 
-export default function Leads(){
-    const workingCompany = useWorkingCompany();
-    const workingBranch = useWorkingBranch();
+  const toast = useToast()
+  const { permissions, profile } = useProfile()
 
-    const toast = useToast();
-    const { permissions, profile } = useProfile();
+  const isManager = HasPermission(permissions, 'Vendas Completo')
 
-    const isManager = HasPermission(permissions, 'Vendas Completo');
+  const [statuses, setStatuses] = useState<LeadStatus[]>([])
 
-    const [statuses, setStatuses] = useState<LeadStatus[]>([]);
+  const loadStatuses = async () => {
+    const { data } = await api.get('/lead_statuses')
 
-    const loadStatuses = async () => {
-        const { data } = await api.get('/lead_statuses');
+    setStatuses(data)
+  }
 
-        setStatuses(data);
+  const checkPendingLeads = async () => {
+    await api.post('/leads/check')
+  }
+
+  useEffect(() => {
+    loadStatuses()
+    checkPendingLeads()
+  }, [])
+
+  const [origins, setOrigins] = useState<DataOrigin[]>([])
+
+  const loadOrigins = async () => {
+    const { data } = await api.get('/data_origins')
+
+    setOrigins(data)
+  }
+
+  useEffect(() => {
+    loadOrigins()
+  }, [])
+
+  const [isNewLeadModalOpen, setIsNewLeadModalOpen] = useState(false)
+
+  function OpenNewPaymentModal() {
+    setIsNewLeadModalOpen(true)
+  }
+  function CloseNewPaymentModal() {
+    setIsNewLeadModalOpen(false)
+  }
+
+  const [filter, setFilter] = useState<LeadsFilterData>(() => {
+    const data: LeadsFilterData = {
+      search: '',
+      //start_date: formatYmdDate(new Date().toString()),
+      //end_date: formatYmdDate(new Date().toString()),
+      company: workingCompany.company?.id,
+      branch: workingBranch.branch?.id,
+      status: 0,
+      user: isManager ? undefined : profile?.id,
+      group_by: ''
     }
 
-    const checkPendingLeads = async () => {
-        await api.post('/leads/check');
+    return data
+  })
+
+  function handleChangeFilter(newFilter: LeadsFilterData) {
+    newFilter.user = isManager
+      ? newFilter.user
+        ? newFilter.user
+        : undefined
+      : profile?.id
+    setFilter(newFilter)
+  }
+
+  const leads = useLeads(filter, 1)
+
+  const [isEditLeadModalOpen, setIsEditLeadModalOpen] = useState(false)
+
+  const [toEditLeadData, setToEditLeadData] = useState<EditLeadFormData>(() => {
+    const data: EditLeadFormData = {
+      id: 0,
+      name: '',
+      email: '',
+      phone: '',
+      company: 0,
+      accept_newsletter: 0,
+      user: 0,
+      status: 0,
+      birthday: '',
+      cnpj: '',
+      cpf: '',
+      origin: 0,
+      address: '',
+      address_code: '',
+      address_country: '',
+      address_uf: '',
+      address_city: '',
+      address_number: ''
     }
 
-    useEffect(() => {
-        loadStatuses();
-        checkPendingLeads();
-    }, []);
+    return data
+  })
 
+  function OpenEditLeadModal(leadData: EditLeadFormData) {
+    setToEditLeadData(leadData)
+    setIsEditLeadModalOpen(true)
+  }
+  function CloseEditLeadModal() {
+    setIsEditLeadModalOpen(false)
+  }
 
-    const [origins, setOrigins] = useState<DataOrigin[]>([]);
-
-    const loadOrigins = async () => {
-        const { data } = await api.get('/data_origins');
-
-        setOrigins(data);
+  const [isRemoveLeadModalOpen, setIsRemoveLeadModalOpen] = useState(false)
+  const [removeLeadData, setRemoveLeadData] = useState<RemoveLeadData>(() => {
+    const data: RemoveLeadData = {
+      name: '',
+      id: 0
     }
 
-    useEffect(() => {
-        loadOrigins();
-    }, []);
+    return data
+  })
 
-    const [isNewLeadModalOpen, setIsNewLeadModalOpen] = useState(false);
+  function OpenRemoveLeadModal(leadData: RemoveLeadData) {
+    setRemoveLeadData(leadData)
+    setIsRemoveLeadModalOpen(true)
+  }
+  function CloseRemoveLeadModal() {
+    setIsRemoveLeadModalOpen(false)
+  }
 
-    function OpenNewPaymentModal(){
-        setIsNewLeadModalOpen(true);
+  const users = useUsers({ role: 5 })
+
+  const [delegateList, setDelegateList] = useState<number[]>([])
+  const [delegate, setDelegate] = useState(0)
+  const [isDelegateLeadModalOpen, setIsDelegateLeadModalOpen] = useState(false)
+
+  function CloseDelegateLeadModal() {
+    setIsDelegateLeadModalOpen(false)
+    setDelegate(0)
+  }
+
+  const handleSelect = (event: ChangeEvent<HTMLInputElement>) => {
+    console.log(event.target?.value, event.target?.checked)
+    if (event.target?.checked) {
+      setDelegateList([...delegateList, parseInt(event.target?.value)])
+    } else {
+      setDelegateList(
+        delegateList.filter(leadId => leadId !== parseInt(event.target?.value))
+      )
     }
-    function CloseNewPaymentModal(){
-        setIsNewLeadModalOpen(false);
+  }
+
+  const delegateSelected = () => {
+    if (delegateList.length > 0) {
+      setIsDelegateLeadModalOpen(true)
+      return
     }
 
-    const [filter, setFilter] = useState<LeadsFilterData>(() => {
-        const data: LeadsFilterData = {
-            search: '',
-            //start_date: formatYmdDate(new Date().toString()),
-            //end_date: formatYmdDate(new Date().toString()),
-            company: workingCompany.company?.id,
-            branch: workingBranch.branch?.id,
-            status: 0,
-            user: (isManager ? undefined : profile?.id),
-            group_by: '',
-        };
-        
-        return data;
+    toast({
+      title: 'Ops',
+      description: `Nenhum lead selecionado.`,
+      status: 'warning',
+      duration: 12000,
+      isClosable: true
     })
 
-    function handleChangeFilter(newFilter: LeadsFilterData){
-        newFilter.user = (isManager ? (newFilter.user ? newFilter.user : undefined) : profile?.id);
-        setFilter(newFilter);
+    console.log(delegateList)
+  }
+
+  const delegateOne = (id: number) => {
+    setDelegate(id)
+    setIsDelegateLeadModalOpen(true)
+  }
+
+  const [isRemoveUserOfLeadModalOpen, setIsRemoveUserOfLeadModalOpen] =
+    useState(false)
+  const [removeUserOfLeadData, setRemoveUserOfLeadData] =
+    useState<RemoveLeadData>(() => {
+      const data: RemoveLeadData = {
+        name: '',
+        id: 0
+      }
+
+      return data
+    })
+
+  function OpenRemoveUserOfLeadModal(leadData: RemoveLeadData) {
+    setRemoveUserOfLeadData(leadData)
+    setIsRemoveUserOfLeadModalOpen(true)
+  }
+  function CloseRemoveUserOfLeadModal() {
+    setIsRemoveUserOfLeadModalOpen(false)
+  }
+
+  const [isEditLeadStatusModalOpen, setIsEditLeadStatusModalOpen] =
+    useState(false)
+  const [toEditLeadStatusData, setToEditLeadStatusData] =
+    useState<EditLeadStatusFormData>(() => {
+      const data: EditLeadStatusFormData = {
+        name: '',
+        id: 0,
+        status: 0
+      }
+
+      return data
+    })
+
+  function OpenEditLeadStatusOfLeadModal(leadData: EditLeadStatusFormData) {
+    setToEditLeadStatusData(leadData)
+    setIsEditLeadStatusModalOpen(true)
+  }
+  function CloseEditLeadStatusOfLeadModal() {
+    setIsEditLeadStatusModalOpen(false)
+  }
+
+  const [isAddLeadNoteModalOpen, setIsAddLeadNoteModalOpen] = useState(false)
+  const [toAddLeadNoteData, setToAddLeadNoteData] = useState<toAddLeadNoteData>(
+    () => {
+      const data: toAddLeadNoteData = {
+        name: '',
+        id: 0
+      }
+
+      return data
     }
+  )
 
-    const leads = useLeads(filter, 1);
+  function OpenAddLeadNoteModal(leadData: toAddLeadNoteData) {
+    setToAddLeadNoteData(leadData)
+    setIsAddLeadNoteModalOpen(true)
+  }
+  function CloseAddLeadNoteModal() {
+    setIsAddLeadNoteModalOpen(false)
+  }
 
-    const [isEditLeadModalOpen, setIsEditLeadModalOpen] = useState(false);
+  const [isNewSaleModalOpen, setIsNewSaleModalOpen] = useState(false)
+  const [addSaleToLeadData, setAddSaleToLeadData] = useState<toAddSaleLeadData>(
+    () => {
+      const data: toAddSaleLeadData = {
+        name: '',
+        id: 0
+      }
 
-    const [toEditLeadData, setToEditLeadData] = useState<EditLeadFormData>(() => {
-
-        const data: EditLeadFormData = {
-            id: 0,
-            name: '',
-            email: '',
-            phone: '',
-            company: 0,
-            accept_newsletter: 0,
-            user: 0,
-            status: 0,
-            birthday: '',
-            cnpj: '',
-            cpf: '',
-            origin: 0,
-            address: '',
-            address_code: '',
-            address_country: '',
-            address_uf: '',
-            address_city: '',
-            address_number: '',
-        };
-        
-        return data;
-    });
-
-    function OpenEditLeadModal(leadData : EditLeadFormData){
-        setToEditLeadData(leadData);
-        setIsEditLeadModalOpen(true);
+      return data
     }
-    function CloseEditLeadModal(){
-        setIsEditLeadModalOpen(false);
+  )
+
+  function OpenNewSaleModal(leadData: toAddSaleLeadData) {
+    setAddSaleToLeadData(leadData)
+    setIsNewSaleModalOpen(true)
+  }
+  function CloseNewSaleModal() {
+    setIsNewSaleModalOpen(false)
+  }
+
+  const [isEditSaleModalOpen, setIsEditSaleModalOpen] = useState(false)
+  const [editSaleFormData, setEditSaleFormData] = useState<EditSaleFormData>(
+    () => {
+      const data: EditSaleFormData = {
+        id: 0,
+        value: '',
+        group: '',
+        quota: '',
+        contract: '',
+        segment: '',
+        date: ''
+      }
+
+      return data
     }
+  )
 
-    const [isRemoveLeadModalOpen, setIsRemoveLeadModalOpen] = useState(false);
-    const [removeLeadData, setRemoveLeadData] = useState<RemoveLeadData>(() => {
+  function OpenEditSaleModal(leadData: EditSaleFormData) {
+    setEditSaleFormData(leadData)
+    setIsEditSaleModalOpen(true)
+  }
+  function CloseNewEditModal() {
+    setIsEditSaleModalOpen(false)
+  }
 
-        const data: RemoveLeadData = {
-            name: '',
-            id: 0,
-        };
-        
-        return data;
-    });
+  const [isConfirmSaleRemoveModalOpen, setIsConfirmSaleRemoveModalOpen] =
+    useState(false)
+  const [removeSaleFormData, setRemoveSaleFormData] = useState<RemoveSaleData>(
+    () => {
+      const data: RemoveSaleData = {
+        id: 0,
+        group: '',
+        quota: ''
+      }
 
-    function OpenRemoveLeadModal(leadData : RemoveLeadData){
-        setRemoveLeadData(leadData);
-        setIsRemoveLeadModalOpen(true);
+      return data
     }
-    function CloseRemoveLeadModal(){
-        setIsRemoveLeadModalOpen(false);
-    }
+  )
 
-    const users = useUsers({role: 5});
+  function OpenRemoveSaleModal(leadData: RemoveSaleData) {
+    setRemoveSaleFormData(leadData)
+    setIsConfirmSaleRemoveModalOpen(true)
+  }
+  function CloseRemoveEditModal() {
+    setIsConfirmSaleRemoveModalOpen(false)
+  }
 
-    const [delegateList, setDelegateList] = useState<number[]>([]);
-    const [delegate, setDelegate] = useState(0);
-    const [isDelegateLeadModalOpen, setIsDelegateLeadModalOpen] = useState(false);
+  const pendingLeadsCount = leads.data?.data.reduce(
+    (sumAmount: number, lead: Lead) => {
+      if (lead.status && lead.status.name === 'Pendente') {
+        return sumAmount + 1
+      }
+    },
+    0
+  )
 
-    function CloseDelegateLeadModal(){
-        setIsDelegateLeadModalOpen(false);
-        setDelegate(0);
-    }
+  const isWideVersion = useBreakpointValue({
+    base: false,
+    lg: true
+  })
 
-    const handleSelect = (event: ChangeEvent<HTMLInputElement>) => {
-        console.log(event.target?.value, event.target?.checked);
-        if(event.target?.checked){
-            setDelegateList([...delegateList, parseInt(event.target?.value)]);
-        }else{
-            setDelegateList(delegateList.filter((leadId) => leadId !== parseInt(event.target?.value)));
-        }
-    }
+  const [showingFilterMobile, setShowingFilterMobile] = useState(false)
 
-    const delegateSelected = () => {
-        if(delegateList.length > 0){
-            setIsDelegateLeadModalOpen(true);
-            return;
-        }
+  const handleOpenFilter = () => {
+    setShowingFilterMobile(true)
+  }
 
-        toast({
-            title: "Ops",
-            description: `Nenhum lead selecionado.`,
-            status: "warning",
-            duration: 12000,
-            isClosable: true,
-        });
+  const handleCloseFilter = () => {
+    setShowingFilterMobile(false)
+  }
 
-        console.log(delegateList);
-    }
+  useEffect(() => {
+    setFilter({
+      ...filter,
+      company: workingCompany.company?.id,
+      branch: workingBranch.branch?.id
+    })
+  }, [workingCompany, workingBranch])
 
-    const delegateOne = (id: number) => {
-        setDelegate(id);
-        setIsDelegateLeadModalOpen(true);
-    }
+  return (
+    <MainBoard sidebar="commercial" header={<CompanySelectMaster />}>
+      <NewLeadModal
+        statuses={statuses}
+        origins={origins}
+        afterCreate={leads.refetch}
+        isOpen={isNewLeadModalOpen}
+        onRequestClose={CloseNewPaymentModal}
+      />
+      <EditLeadModal
+        toEditLeadData={toEditLeadData}
+        statuses={statuses}
+        origins={origins}
+        afterEdit={leads.refetch}
+        isOpen={isEditLeadModalOpen}
+        onRequestClose={CloseEditLeadModal}
+      />
+      <ChangeLeadStatusModal
+        toEditLeadStatusData={toEditLeadStatusData}
+        statuses={statuses}
+        afterEdit={leads.refetch}
+        isOpen={isEditLeadStatusModalOpen}
+        onRequestClose={CloseEditLeadStatusOfLeadModal}
+      />
+      <AddLeadNoteModal
+        toAddLeadNoteData={toAddLeadNoteData}
+        afterEdit={leads.refetch}
+        isOpen={isAddLeadNoteModalOpen}
+        onRequestClose={CloseAddLeadNoteModal}
+      />
+      <DelegateLeadModal
+        toDelegateLeadList={delegateList}
+        toDelegate={delegate}
+        users={users.data}
+        afterDelegate={leads.refetch}
+        isOpen={isDelegateLeadModalOpen}
+        onRequestClose={CloseDelegateLeadModal}
+      />
+      <ConfirmRemoveUserOfLead
+        toRemoveLeadData={removeUserOfLeadData}
+        afterRemove={leads.refetch}
+        isOpen={isRemoveUserOfLeadModalOpen}
+        onRequestClose={CloseRemoveUserOfLeadModal}
+      />
+      <ConfirmLeadRemoveModal
+        toRemoveLeadData={removeLeadData}
+        afterRemove={leads.refetch}
+        isOpen={isRemoveLeadModalOpen}
+        onRequestClose={CloseRemoveLeadModal}
+      />
 
-    const [isRemoveUserOfLeadModalOpen, setIsRemoveUserOfLeadModalOpen] = useState(false);
-    const [removeUserOfLeadData, setRemoveUserOfLeadData] = useState<RemoveLeadData>(() => {
+      <NewSaleModal
+        toAddLeadData={addSaleToLeadData}
+        afterCreate={leads.refetch}
+        isOpen={isNewSaleModalOpen}
+        onRequestClose={CloseNewSaleModal}
+      />
+      <EditSaleModal
+        toEditSaleData={editSaleFormData}
+        afterEdit={leads.refetch}
+        isOpen={isEditSaleModalOpen}
+        onRequestClose={CloseNewEditModal}
+      />
+      <ConfirmSaleRemoveModal
+        toRemoveSaleData={removeSaleFormData}
+        afterRemove={leads.refetch}
+        isOpen={isConfirmSaleRemoveModalOpen}
+        onRequestClose={CloseRemoveEditModal}
+      />
 
-        const data: RemoveLeadData = {
-            name: '',
-            id: 0,
-        };
-        
-        return data;
-    });
+      <SolidButton
+        color="white"
+        bg="orange.400"
+        icon={PlusIcon}
+        colorScheme="orange"
+        mb="10"
+        onClick={OpenNewPaymentModal}
+      >
+        Adicionar Lead
+      </SolidButton>
 
-    function OpenRemoveUserOfLeadModal(leadData : RemoveLeadData){
-        setRemoveUserOfLeadData(leadData);
-        setIsRemoveUserOfLeadModalOpen(true);
-    }
-    function CloseRemoveUserOfLeadModal(){
-        setIsRemoveUserOfLeadModalOpen(false);
-    }
+      {isWideVersion ? (
+        <SearchLeads
+          filter={filter}
+          handleSearchLeads={handleChangeFilter}
+          origins={origins}
+          statuses={statuses}
+        />
+      ) : (
+        <>
+          <Link
+            onClick={showingFilterMobile ? handleCloseFilter : handleOpenFilter}
+            mb="12"
+          >
+            {showingFilterMobile ? 'Fechar Filtro' : 'Filtrar lista'}
+          </Link>
 
-    const [isEditLeadStatusModalOpen, setIsEditLeadStatusModalOpen] = useState(false);
-    const [toEditLeadStatusData, setToEditLeadStatusData] = useState<EditLeadStatusFormData>(() => {
+          {showingFilterMobile && (
+            <SearchLeads
+              filter={filter}
+              handleSearchLeads={handleChangeFilter}
+              origins={origins}
+              statuses={statuses}
+            />
+          )}
+        </>
+      )}
 
-        const data: EditLeadStatusFormData = {
-            name: '',
-            id: 0,
-            status: 0,
-        };
-        
-        return data;
-    });
+      {leads.isLoading ? (
+        <Flex justify="center">
+          <Spinner />
+        </Flex>
+      ) : leads.isError ? (
+        <Flex justify="center" mt="4" mb="4">
+          <Text>Erro listar os leads</Text>
+        </Flex>
+      ) : (
+        leads.data?.data.length === 0 && (
+          <Flex justify="center">
+            <Text>Nenhuma lead encontrado.</Text>
+          </Flex>
+        )
+      )}
 
-    function OpenEditLeadStatusOfLeadModal(leadData : EditLeadStatusFormData){
-        setToEditLeadStatusData(leadData);
-        setIsEditLeadStatusModalOpen(true);
-    }
-    function CloseEditLeadStatusOfLeadModal(){
-        setIsEditLeadStatusModalOpen(false);
-    }
+      {filter && <LeadsReportByUser filter={filter} />}
 
-    const [isAddLeadNoteModalOpen, setIsAddLeadNoteModalOpen] = useState(false);
-    const [toAddLeadNoteData, setToAddLeadNoteData] = useState<toAddLeadNoteData>(() => {
+      {!leads.isLoading && !leads.error && (
+        <Accordion
+          w="100%"
+          border="2px"
+          borderColor="gray.500"
+          borderRadius="26"
+          overflow="hidden"
+          spacing="0"
+          allowMultiple
+        >
+          <HStack
+            spacing="8"
+            justify="space-between"
+            paddingX="8"
+            paddingY="3"
+            bg="gray.200"
+          >
+            <HStack fontSize="sm" spacing="4">
+              <Text>{leads.data?.data.length} leads</Text>
+              <Text fontWeight="bold">
+                {pendingLeadsCount ? pendingLeadsCount : 0} pendentes
+              </Text>
+            </HStack>
 
-        const data: toAddLeadNoteData = {
-            name: '',
-            id: 0,
-        };
-        
-        return data;
-    });
+            {isManager && (
+              <OutlineButton
+                onClick={() => delegateSelected()}
+                h="30px"
+                size="sm"
+                fontSize="11"
+                color="orange.400"
+                borderColor="orange.400"
+                colorScheme="orange"
+              >
+                Delegar selecionados
+              </OutlineButton>
+            )}
+          </HStack>
 
-    function OpenAddLeadNoteModal(leadData : toAddLeadNoteData){
-        setToAddLeadNoteData(leadData);
-        setIsAddLeadNoteModalOpen(true);
-    }
-    function CloseAddLeadNoteModal(){
-        setIsAddLeadNoteModalOpen(false);
-    }
+          {leads.data?.data.map((lead: Lead) => {
+            const leadToEditData: EditLeadFormData = {
+              id: lead.id,
+              name: lead.name,
+              email: lead.email,
+              phone: lead.phone,
+              company: lead.company.id,
+              accept_newsletter: lead.accept_newsletter,
+              user: lead.user?.id,
+              status: lead.status?.id,
+              birthday: lead.birthday,
+              cnpj: lead.cnpj,
+              cpf: lead.cpf,
+              origin: lead.origin?.id,
 
+              address: lead.address,
+              address_code: lead.address_code,
+              address_country: lead.address_country,
+              address_uf: lead.address_uf,
+              address_city: lead.address_city,
+              address_number: lead.address_number,
 
-    const [isNewSaleModalOpen, setIsNewSaleModalOpen] = useState(false);
-    const [addSaleToLeadData, setAddSaleToLeadData] = useState<toAddSaleLeadData>(() => {
+              recommender: lead.recommender,
+              commission: lead.commission,
 
-        const data: toAddSaleLeadData = {
-            name: '',
-            id: 0,
-        };
-        
-        return data;
-    });
-
-    function OpenNewSaleModal(leadData : toAddSaleLeadData){
-        setAddSaleToLeadData(leadData);
-        setIsNewSaleModalOpen(true);
-    }
-    function CloseNewSaleModal(){
-        setIsNewSaleModalOpen(false);
-    }
-
-    const [isEditSaleModalOpen, setIsEditSaleModalOpen] = useState(false);
-    const [editSaleFormData, setEditSaleFormData] = useState<EditSaleFormData>(() => {
-
-        const data: EditSaleFormData = {
-            id: 0,
-            value: '',
-            group: '',
-            quota: '',
-            contract: '',
-            segment: '',
-            date: '',
-        };
-        
-        return data;
-    });
-
-    function OpenEditSaleModal(leadData : EditSaleFormData){
-        setEditSaleFormData(leadData);
-        setIsEditSaleModalOpen(true);
-    }
-    function CloseNewEditModal(){
-        setIsEditSaleModalOpen(false);
-    }
-
-    const [isConfirmSaleRemoveModalOpen, setIsConfirmSaleRemoveModalOpen] = useState(false);
-    const [removeSaleFormData, setRemoveSaleFormData] = useState<RemoveSaleData>(() => {
-
-        const data: RemoveSaleData = {
-            id: 0,
-            group: '',
-            quota: '',
-        };
-        
-        return data;
-    });
-
-    function OpenRemoveSaleModal(leadData : RemoveSaleData){
-        setRemoveSaleFormData(leadData);
-        setIsConfirmSaleRemoveModalOpen(true);
-    }
-    function CloseRemoveEditModal(){
-        setIsConfirmSaleRemoveModalOpen(false);
-    }
-
-    const pendingLeadsCount = leads.data?.data.reduce((sumAmount:number, lead: Lead) => {
-        if(lead.status && lead.status.name === "Pendente"){
-            return sumAmount + 1;
-        }
-    }, 0);
-
-    const isWideVersion = useBreakpointValue({
-        base: false,
-        lg: true,
-    });
-
-    const [showingFilterMobile, setShowingFilterMobile] = useState(false);
-
-    const handleOpenFilter = () => {
-        setShowingFilterMobile(true);
-    }
-
-    const handleCloseFilter = () => {
-        setShowingFilterMobile(false);
-    }
-
-    useEffect(() => {
-        setFilter({...filter, company: workingCompany.company?.id, branch: workingBranch.branch?.id});
-    }, [workingCompany, workingBranch]);
-
-    return (
-        <MainBoard sidebar="commercial" header={<CompanySelectMaster />}>
-            <NewLeadModal statuses={statuses} origins={origins} afterCreate={leads.refetch} isOpen={isNewLeadModalOpen} onRequestClose={CloseNewPaymentModal}/>
-            <EditLeadModal toEditLeadData={toEditLeadData} statuses={statuses} origins={origins} afterEdit={leads.refetch} isOpen={isEditLeadModalOpen} onRequestClose={CloseEditLeadModal}/>
-            <ChangeLeadStatusModal toEditLeadStatusData={toEditLeadStatusData} statuses={statuses} afterEdit={leads.refetch} isOpen={isEditLeadStatusModalOpen} onRequestClose={CloseEditLeadStatusOfLeadModal}/>
-            <AddLeadNoteModal toAddLeadNoteData={toAddLeadNoteData} afterEdit={leads.refetch} isOpen={isAddLeadNoteModalOpen} onRequestClose={CloseAddLeadNoteModal}/>
-            <DelegateLeadModal toDelegateLeadList={delegateList} toDelegate={delegate} users={users.data} afterDelegate={leads.refetch} isOpen={isDelegateLeadModalOpen} onRequestClose={CloseDelegateLeadModal}/>
-            <ConfirmRemoveUserOfLead toRemoveLeadData={removeUserOfLeadData} afterRemove={leads.refetch} isOpen={isRemoveUserOfLeadModalOpen} onRequestClose={CloseRemoveUserOfLeadModal}/>
-            <ConfirmLeadRemoveModal toRemoveLeadData={removeLeadData} afterRemove={leads.refetch} isOpen={isRemoveLeadModalOpen} onRequestClose={CloseRemoveLeadModal}/>
-            
-            <NewSaleModal toAddLeadData={addSaleToLeadData} afterCreate={leads.refetch} isOpen={isNewSaleModalOpen} onRequestClose={CloseNewSaleModal}/>
-            <EditSaleModal toEditSaleData={editSaleFormData} afterEdit={leads.refetch} isOpen={isEditSaleModalOpen} onRequestClose={CloseNewEditModal}/>
-            <ConfirmSaleRemoveModal toRemoveSaleData={removeSaleFormData} afterRemove={leads.refetch} isOpen={isConfirmSaleRemoveModalOpen} onRequestClose={CloseRemoveEditModal}/>
-
-
-
-            <SolidButton color="white" bg="orange.400" icon={PlusIcon} colorScheme="orange" mb="10" onClick={OpenNewPaymentModal}>
-                Adicionar Lead
-            </SolidButton>
-
-            {
-                isWideVersion ?  (
-                    <SearchLeads filter={filter} handleSearchLeads={handleChangeFilter} origins={origins} statuses={statuses}/>
-                ) : (
-                    <>
-                        <Link onClick={showingFilterMobile ? handleCloseFilter : handleOpenFilter} mb="12">{showingFilterMobile ? 'Fechar Filtro' : 'Filtrar lista'}</Link>
-                        
-                        {
-                            showingFilterMobile && (
-                                <SearchLeads filter={filter} handleSearchLeads={handleChangeFilter} origins={origins} statuses={statuses}/>
-                            )
-                        }
-                    </>
-                )
+              value: lead.value ? lead.value.toString().replace('.', ',') : '',
+              segment: lead.segment
             }
 
-            {   leads.isLoading ? (
-                    <Flex justify="center">
-                        <Spinner/>
-                    </Flex>
-                ) : ( leads.isError ? (
-                    <Flex justify="center" mt="4" mb="4">
-                        <Text>Erro listar os leads</Text>
-                    </Flex>
-                ) : (leads.data?.data.length === 0) && (
-                    <Flex justify="center">
-                        <Text>Nenhuma lead encontrado.</Text>
-                    </Flex>
-                ) ) 
-            }
+            return (
+              <AccordionItem
+                key={lead.id}
+                display="flex"
+                flexDir="column"
+                paddingX={[4, 4, 8]}
+                paddingTop="3"
+                bg="white"
+                borderTop="2px"
+                borderTopColor="gray.500"
+                borderBottom="0"
+              >
+                {({ isExpanded }) => (
+                  <>
+                    <HStack justify="space-between" mb="3" pos="relative">
+                      <AccordionButton p="0" height="fit-content" w="auto">
+                        <Flex
+                          alignItems="center"
+                          justifyContent="center"
+                          h="24px"
+                          w="30px"
+                          p="0"
+                          borderRadius="full"
+                          border="2px"
+                          borderColor="orange.400"
+                          variant="outline"
+                        >
+                          {!isExpanded ? (
+                            <StrongPlusIcon
+                              stroke="#f24e1e"
+                              fill="none"
+                              width="12px"
+                            />
+                          ) : (
+                            <MinusIcon
+                              stroke="#f24e1e"
+                              fill="none"
+                              width="12px"
+                            />
+                          )}
+                        </Flex>
+                      </AccordionButton>
 
-            {
-                filter && (
-                    <LeadsReportByUser filter={filter}/>
-                )
-            }
+                      {/* <ControlledCheckbox label="Pendência" control={control} defaultIsChecked={toEditPaymentData.pendency} name="pendency" error={formState.errors.pendency}/> */}
+                      {isManager && !lead.user && (
+                        <>
+                          <Checkbox
+                            label=""
+                            name="delegate"
+                            checked={delegateList.includes(lead.id)}
+                            value={lead.id}
+                            onChange={handleSelect}
+                          />
+                        </>
+                      )}
 
-            {
-                (!leads.isLoading && !leads.error) && (
-                    <Accordion w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" spacing="0" allowMultiple>
-                
-                        <HStack spacing="8" justify="space-between" paddingX="8" paddingY="3" bg="gray.200">
-                            <HStack fontSize="sm" spacing="4">
-                                <Text>{leads.data?.data.length} leads</Text>
-                                <Text fontWeight="bold">{pendingLeadsCount ? pendingLeadsCount : 0} pendentes</Text>
-                            </HStack>
+                      {isWideVersion && (
+                        <Stack spacing="0">
+                          <Text fontSize="10px" color="gray.800">
+                            {getHour(lead.created_at)}
+                          </Text>
+                          <Text
+                            fontSize="sm"
+                            fontWeight="normal"
+                            color="gray.800"
+                          >
+                            {formatBRDate(lead.created_at)}
+                          </Text>
+                        </Stack>
+                      )}
 
-                            {
-                                isManager && (
-                                    <OutlineButton onClick={() => delegateSelected()} h="30px" size="sm" fontSize="11" color="orange.400" borderColor="orange.400" colorScheme="orange">
-                                        Delegar selecionados
-                                    </OutlineButton>
-                                )
+                      <Stack spacing="0">
+                        {!isWideVersion && (
+                          <Badge
+                            cursor="pointer"
+                            colorScheme={lead.status?.color}
+                            color={
+                              !isWideVersion
+                                ? `${lead.status?.color}.500`
+                                : 'white'
                             }
+                            bg={
+                              !isWideVersion
+                                ? `transparent`
+                                : `${lead.status?.color}.500`
+                            }
+                            display="flex"
+                            borderRadius="full"
+                            px="0"
+                            py="0"
+                            h="20px"
+                            alignItems="center"
+                            onClick={() =>
+                              OpenEditLeadStatusOfLeadModal({
+                                id: lead.id,
+                                status: lead.status ? lead.status.id : 0,
+                                name: lead.name
+                              })
+                            }
+                          >
+                            <Text>{lead.status?.name}</Text>
+                          </Badge>
+                        )}
+                        <Text fontSize="sm" fontWeight="bold" color="gray.800">
+                          {lead.name}
+                        </Text>
+                        <Text
+                          fontSize="11px"
+                          fontWeight="normal"
+                          color="gray.800"
+                        >
+                          {lead.phone}
+                        </Text>
+                      </Stack>
+
+                      <Stack spacing="0">
+                        <Text
+                          fontSize="sm"
+                          fontWeight="normal"
+                          color="gray.800"
+                        >
+                          {lead.address_city}
+                        </Text>
+                        <Text
+                          fontSize="sm"
+                          fontWeight="normal"
+                          color="gray.800"
+                        >
+                          {lead.address_uf}
+                        </Text>
+                      </Stack>
+
+                      {/* <Text fontSize="sm" fontWeight="normal" color="gray.800">Veículo - R$50.000,00</Text> */}
+
+                      {isWideVersion && (
+                        <Stack spacing="0">
+                          <Text fontSize="10px" color="gray.800">
+                            Pretensão
+                          </Text>
+                          <Text
+                            fontSize="sm"
+                            fontWeight="normal"
+                            color="gray.800"
+                          >
+                            {lead?.segment} -{' '}
+                            {lead.value
+                              ? Intl.NumberFormat('pt-BR', {
+                                  style: 'currency',
+                                  currency: 'BRL'
+                                }).format(lead.value)
+                              : ''}
+                          </Text>
+                        </Stack>
+                      )}
+
+                      {isWideVersion && (
+                        <Stack spacing="0">
+                          <Text fontSize="10px" color="gray.800">
+                            origem
+                          </Text>
+                          <Text
+                            fontSize="sm"
+                            fontWeight="normal"
+                            color="gray.800"
+                          >
+                            {lead.origin?.name}
+                          </Text>
+                        </Stack>
+                      )}
+
+                      {isWideVersion && (
+                        <Stack
+                          spacing="0"
+                          pos={!isWideVersion ? 'absolute' : 'relative'}
+                          right={!isWideVersion ? '-20px' : 'inherit'}
+                          top={!isWideVersion ? '-10px' : 'inherit'}
+                        >
+                          {lead.latest_returned && (
+                            <Text fontSize="10px" color="gray.800">
+                              de: {lead.latest_returned.user.name}
+                            </Text>
+                          )}
+                          <Badge
+                            cursor="pointer"
+                            colorScheme={lead.status?.color}
+                            color={
+                              !isWideVersion
+                                ? `${lead.status?.color}.500`
+                                : 'white'
+                            }
+                            bg={
+                              !isWideVersion
+                                ? `transparent`
+                                : `${lead.status?.color}.500`
+                            }
+                            display="flex"
+                            borderRadius="full"
+                            px="5"
+                            py="0"
+                            h="29px"
+                            alignItems="center"
+                            onClick={() =>
+                              OpenEditLeadStatusOfLeadModal({
+                                id: lead.id,
+                                status: lead.status ? lead.status.id : 0,
+                                name: lead.name
+                              })
+                            }
+                          >
+                            <Text>{lead.status?.name}</Text>
+                          </Badge>
+                        </Stack>
+                      )}
+
+                      {isManager && !lead.user && (
+                        <OutlineButton
+                          onClick={() => delegateOne(lead.id)}
+                          h="30px"
+                          size="sm"
+                          fontSize="11"
+                          color="orange.400"
+                          borderColor="orange.400"
+                          colorScheme="orange"
+                        >
+                          Delegar
+                        </OutlineButton>
+                      )}
+
+                      {lead.user && isManager && (
+                        <HStack>
+                          <Text
+                            fontSize="sm"
+                            fontWeight="normal"
+                            color="gray.800"
+                          >
+                            {lead.user?.name}
+                          </Text>
+
+                          {!lead.own && (
+                            <IconButton
+                              onClick={() =>
+                                OpenRemoveUserOfLeadModal({
+                                  id: lead.id,
+                                  name: lead.name
+                                })
+                              }
+                              h="24px"
+                              w="20px"
+                              minW="25px"
+                              p="0"
+                              float="right"
+                              aria-label="Excluir categoria"
+                              border="none"
+                              icon={
+                                <CloseIcon
+                                  width="20px"
+                                  stroke="#C30052"
+                                  fill="none"
+                                />
+                              }
+                              variant="outline"
+                            />
+                          )}
                         </HStack>
+                      )}
+                    </HStack>
 
-                        {
-                            leads.data?.data.map((lead: Lead) => {
-                                const leadToEditData:EditLeadFormData = {
-                                    id: lead.id,
-                                    name: lead.name,
-                                    email: lead.email,
-                                    phone: lead.phone,
-                                    company: lead.company.id,
-                                    accept_newsletter: lead.accept_newsletter,
-                                    user: lead.user?.id,
-                                    status: lead.status?.id,
-                                    birthday: lead.birthday,
-                                    cnpj: lead.cnpj,
-                                    cpf: lead.cpf,
-                                    origin: lead.origin?.id,
+                    <AccordionPanel
+                      flexDir="column"
+                      borderTop="2px"
+                      borderColor="gray.500"
+                      px="1"
+                      py="5"
+                    >
+                      <Stack
+                        spacing="8"
+                        direction={['column', 'column', 'row']}
+                        justifyContent="space-between"
+                        mb="4"
+                      >
+                        <Stack fontSize="sm" spacing="3">
+                          <Text fontWeight="bold">Anotações</Text>
 
-                                    address: lead.address,
-                                    address_code: lead.address_code,
-                                    address_country: lead.address_country,
-                                    address_uf: lead.address_uf,
-                                    address_city: lead.address_city,
-                                    address_number: lead.address_number,
+                          {lead.notes.map(note => {
+                            return (
+                              <HStack key={note.id}>
+                                <Text color="gray.800" fontWeight="semibold">
+                                  {formatBRDate(note.created_at)} -{' '}
+                                  {note.status ? `${note.status.name} - ` : ''}
+                                </Text>
+                                <Text color="gray.800">{note.text}</Text>
+                              </HStack>
+                            )
+                          })}
 
-                                    recommender: lead.recommender,
-                                    commission: lead.commission,
+                          <OutlineButton
+                            onClick={() => {
+                              OpenAddLeadNoteModal({
+                                id: lead.id,
+                                name: lead.name
+                              })
+                            }}
+                            icon={EditIcon}
+                            h="30px"
+                            px="3"
+                            variant="outline"
+                            size="sm"
+                            fontSize="11"
+                            color="orange.400"
+                            border="none"
+                            colorScheme="orange"
+                          >
+                            Anotar
+                          </OutlineButton>
 
-                                    value: lead.value ? lead.value.toString().replace('.', ',') : '',
-                                    segment: lead.segment,
-                                }
+                          <Text fontWeight="bold">Vendas</Text>
 
-                                return (
-                                    <AccordionItem key={lead.id} display="flex" flexDir="column" paddingX={[4, 4, 8]} paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
-                                        {({ isExpanded }) => (
-                                            <>
-                                                <HStack justify="space-between" mb="3" pos="relative">
-                                                    <AccordionButton p="0" height="fit-content" w="auto">
-                                                        <Flex alignItems="center" justifyContent="center" h="24px" w="30px" p="0" borderRadius="full" border="2px" borderColor="orange.400" variant="outline">
-                                                        { 
-                                                                !isExpanded ? <StrongPlusIcon stroke="#f24e1e" fill="none" width="12px"/> :
-                                                                <MinusIcon stroke="#f24e1e" fill="none" width="12px"/>
-                                                        } 
-                                                        </Flex>
-                                                    </AccordionButton>
+                          {lead.sales &&
+                            lead.sales.map(sale => {
+                              const leadSalesData: EditSaleFormData = {
+                                id: sale.id,
+                                value: sale.value.toString().replace('.', ','),
+                                contract: sale.contract,
+                                group: sale.group,
+                                quota: sale.quota,
+                                segment: sale.segment,
+                                date: sale.date
+                              }
 
-                                                    {/* <ControlledCheckbox label="Pendência" control={control} defaultIsChecked={toEditPaymentData.pendency} name="pendency" error={formState.errors.pendency}/> */}
-                                                    {
-                                                        (isManager && !lead.user) && (
-                                                            <>
-                                                                <Checkbox label="" name="delegate" checked={delegateList.includes(lead.id)} value={lead.id} onChange={handleSelect}/>
-                                                            </>
-                                                        )
-                                                    }
-                                                    
-                                                    {
-                                                        isWideVersion && (
-                                                            <Stack spacing="0">
-                                                                <Text fontSize="10px" color="gray.800">{getHour(lead.created_at)}</Text>
-                                                                <Text fontSize="sm" fontWeight="normal" color="gray.800">{formatBRDate(lead.created_at)}</Text>
-                                                            </Stack>
-                                                        )
-                                                    }
+                              return (
+                                <HStack key={sale.id}>
+                                  {/* <Text>{sale.group}-{sale.quota} | </Text> */}
+                                  <Stack spacing="1">
+                                    <Text
+                                      color="gray.800"
+                                      fontWeight="normal"
+                                      fontSize="12px"
+                                    >
+                                      {formatBRDate(sale.date)}:{' '}
+                                    </Text>
+                                    <Text fontWeight="semibold">
+                                      {Intl.NumberFormat('pt-BR', {
+                                        style: 'currency',
+                                        currency: 'BRL'
+                                      }).format(sale.value)}
+                                    </Text>
+                                  </Stack>
 
-                                                    <Stack spacing="0">
-                                                        {
-                                                            !isWideVersion && (
-                                                                <Badge cursor="pointer" colorScheme={lead.status?.color} color={!isWideVersion ? `${lead.status?.color}.500` : "white"} bg={!isWideVersion ? `transparent` : `${lead.status?.color}.500`} display="flex" borderRadius="full" px="0" py="0" h="20px" alignItems="center"
-                                                                    onClick={() => OpenEditLeadStatusOfLeadModal({id:lead.id, status: lead.status ? lead.status.id : 0, name:lead.name})}
-                                                                    >
-                                                                        <Text>{lead.status?.name}</Text>
-                                                                </Badge>
-                                                            ) 
-                                                        }
-                                                        <Text fontSize="sm" fontWeight="bold" color="gray.800">{lead.name}</Text>
-                                                        <Text fontSize="11px" fontWeight="normal" color="gray.800">{lead.phone}</Text>
-                                                    </Stack>
+                                  <Text fontWeight="normal">
+                                    Comissão:{' '}
+                                    <strong>
+                                      {Intl.NumberFormat('pt-BR', {
+                                        style: 'currency',
+                                        currency: 'BRL'
+                                      }).format(sale.commission)}
+                                    </strong>
+                                  </Text>
 
-                                                    <Stack spacing="0">
-                                                        <Text fontSize="sm" fontWeight="normal" color="gray.800">{lead.address_city}</Text>
-                                                        <Text fontSize="sm" fontWeight="normal" color="gray.800">{lead.address_uf}</Text>
-                                                    </Stack>
+                                  <IconButton
+                                    onClick={() =>
+                                      OpenEditSaleModal(leadSalesData)
+                                    }
+                                    h="24px"
+                                    w="23px"
+                                    p="0"
+                                    float="right"
+                                    aria-label="Alterar venda"
+                                    border="none"
+                                    icon={
+                                      <EditIcon
+                                        width="20px"
+                                        stroke="#d69e2e"
+                                        fill="none"
+                                      />
+                                    }
+                                    variant="outline"
+                                  />
+                                  <IconButton
+                                    onClick={() =>
+                                      OpenRemoveSaleModal({
+                                        id: sale.id,
+                                        group: sale.group,
+                                        quota: sale.quota
+                                      })
+                                    }
+                                    h="24px"
+                                    w="23px"
+                                    p="0"
+                                    float="right"
+                                    aria-label="Excluir venda"
+                                    border="none"
+                                    icon={
+                                      <CloseIcon
+                                        width="20px"
+                                        stroke="#C30052"
+                                        fill="none"
+                                      />
+                                    }
+                                    variant="outline"
+                                  />
+                                  {/* <EditButton onClick={() => OpenEditSaleModal(leadSalesData)}/> */}
+                                </HStack>
+                              )
+                            })}
 
-                                                    {/* <Text fontSize="sm" fontWeight="normal" color="gray.800">Veículo - R$50.000,00</Text> */}
+                          <OutlineButton
+                            onClick={() => {
+                              OpenNewSaleModal({ id: lead.id, name: lead.name })
+                            }}
+                            icon={PlusIcon}
+                            h="30px"
+                            px="3"
+                            variant="outline"
+                            size="sm"
+                            fontSize="11"
+                            color="green.400"
+                            border="none"
+                            colorScheme="green"
+                          >
+                            Cadastrar venda
+                          </OutlineButton>
+                        </Stack>
 
-                                                    {
-                                                        isWideVersion && (
-                                                            <Stack spacing="0">
-                                                                <Text fontSize="10px" color="gray.800">Pretensão</Text>
-                                                                <Text fontSize="sm" fontWeight="normal" color="gray.800">{lead?.segment} - {lead.value ? Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(lead.value) : ''}</Text>
-                                                            </Stack>
-                                                        )
-                                                    }
+                        <HStack spacing="5" alignItems="center" h="40px">
+                          {/* <Divider orientation={isWideVersion ? "vertical" : "horizontal"}/>  */}
+                          <Divider orientation={'vertical'} />
 
-                                                    {
-                                                        isWideVersion && (
-                                                            <Stack spacing="0">
-                                                                <Text fontSize="10px" color="gray.800">origem</Text>
-                                                                <Text fontSize="sm" fontWeight="normal" color="gray.800">{lead.origin?.name}</Text>
-                                                            </Stack>
-                                                        )
-                                                    }
+                          <EditButton
+                            onClick={() => OpenEditLeadModal(leadToEditData)}
+                          />
 
-                                                    {
-                                                        isWideVersion && (
-                                                            <Stack spacing="0" pos={!isWideVersion ? "absolute" : "relative"} right={!isWideVersion ? "-20px" : "inherit"} top={!isWideVersion ? "-10px" : "inherit"}>
-                                                                {
-                                                                    lead.latest_returned && (
-                                                                        <Text fontSize="10px" color="gray.800">de: {lead.latest_returned.user.name}</Text>
-                                                                    )
-                                                                }
-                                                                <Badge cursor="pointer" colorScheme={lead.status?.color} color={!isWideVersion ? `${lead.status?.color}.500` : "white"} bg={!isWideVersion ? `transparent` : `${lead.status?.color}.500`} display="flex" borderRadius="full" px="5" py="0" h="29px" alignItems="center"
-                                                                    onClick={() => OpenEditLeadStatusOfLeadModal({id:lead.id, status: lead.status ? lead.status.id : 0, name:lead.name})}
-                                                                    >
-                                                                        <Text>{lead.status?.name}</Text>
-                                                                </Badge>
-                                                            </Stack> 
-                                                        )
-                                                    }
-
-                                                    {
-                                                        (isManager && !lead.user) && (
-                                                            <OutlineButton onClick={() => delegateOne(lead.id)} h="30px" size="sm" fontSize="11" color="orange.400" borderColor="orange.400" colorScheme="orange">
-                                                                Delegar
-                                                            </OutlineButton>
-                                                        )
-                                                    }
-
-                                                    {
-                                                        (lead.user && isManager) && (
-                                                            <HStack>
-                                                                <Text fontSize="sm" fontWeight="normal" color="gray.800">{lead.user?.name}</Text>
-
-                                                                {
-                                                                    !lead.own && (
-                                                                        <IconButton onClick={() => OpenRemoveUserOfLeadModal({id:lead.id, name: lead.name})} h="24px" w="20px" minW="25px" p="0" float="right" aria-label="Excluir categoria" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
-                                                                    )
-                                                                }
-                                                            </HStack>
-                                                        )
-                                                    }
-                                                </HStack>
-
-                                                <AccordionPanel flexDir="column" borderTop="2px" borderColor="gray.500" px="1" py="5">
-                                                    <Stack spacing="8" direction={["column", "column", "row"]} justifyContent="space-between" mb="4">
-                                                        <Stack fontSize="sm" spacing="3">
-                                                            <Text fontWeight="bold">Anotações</Text>
-
-                                                            {
-                                                                lead.notes.map((note) => {
-                                                                    return(
-                                                                        <HStack key={note.id}>
-                                                                            <Text color="gray.800" fontWeight="semibold">{formatBRDate(note.created_at)} - {note.status ? `${note.status.name} - ` : ''}</Text>
-                                                                            <Text color="gray.800">{note.text}</Text>
-                                                                        </HStack>
-                                                                    )
-                                                                })
-                                                            }
-
-                                                            <OutlineButton onClick={() => {OpenAddLeadNoteModal({id: lead.id, name: lead.name})}} icon={EditIcon} h="30px" px="3" variant="outline" size="sm" fontSize="11" color="orange.400" border="none" colorScheme="orange">
-                                                                Anotar
-                                                            </OutlineButton>
-
-                                                            <Text fontWeight="bold">Vendas</Text>
-
-                                                            {
-                                                                lead.sales && lead.sales.map((sale) => {
-                                                                    const leadSalesData:EditSaleFormData = {
-                                                                        id: sale.id,
-                                                                        value: sale.value.toString().replace('.', ','),
-                                                                        contract: sale.contract,
-                                                                        group: sale.group,
-                                                                        quota: sale.quota,
-                                                                        segment: sale.segment,
-                                                                        date: sale.date,
-                                                                    }
-
-                                                                    return(
-                                                                        <HStack key={sale.id}>
-                                                                            {/* <Text>{sale.group}-{sale.quota} | </Text> */}
-                                                                            <Stack spacing="1">
-                                                                                <Text color="gray.800" fontWeight="normal" fontSize="12px">{formatBRDate(sale.date)}: </Text>
-                                                                                <Text fontWeight="semibold">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(sale.value)}</Text>
-                                                                            </Stack>
-                                                                            
-                                                                            <Text fontWeight="normal">Comissão: <strong>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(sale.commission)}</strong></Text>
-                                                                            
-                                                                            <IconButton onClick={() => OpenEditSaleModal(leadSalesData)} h="24px" w="23px" p="0" float="right" aria-label="Alterar venda" border="none" icon={ <EditIcon width="20px" stroke="#d69e2e" fill="none"/>} variant="outline"/>
-                                                                            <IconButton onClick={() => OpenRemoveSaleModal({id: sale.id, group: sale.group, quota: sale.quota})} h="24px" w="23px" p="0" float="right" aria-label="Excluir venda" border="none" icon={ <CloseIcon width="20px" stroke="#C30052" fill="none"/>} variant="outline"/>
-                                                                            {/* <EditButton onClick={() => OpenEditSaleModal(leadSalesData)}/> */}
-                                                                        </HStack>
-                                                                    )
-                                                                })
-                                                            }
-
-                                                            <OutlineButton onClick={() => {OpenNewSaleModal({id: lead.id, name: lead.name})}} icon={PlusIcon} h="30px" px="3" variant="outline" size="sm" fontSize="11" color="green.400" border="none" colorScheme="green">
-                                                                Cadastrar venda
-                                                            </OutlineButton>
-                                                        </Stack>
-
-                                                        <HStack spacing="5" alignItems="center" h="40px">
-                                                            {/* <Divider orientation={isWideVersion ? "vertical" : "horizontal"}/>  */}
-                                                            <Divider orientation={"vertical"}/> 
-
-                                                            <EditButton onClick={() => OpenEditLeadModal(leadToEditData)}/>
-
-                                                            {
-                                                                (isManager || lead.user) && (
-                                                                    <RemoveButton onClick={() => OpenRemoveLeadModal({name: lead.name, id: lead.id})}/>
-                                                                )
-                                                            }
-                                                        </HStack>
-                                                    </Stack>
-                                                </AccordionPanel>
-                                            </>
-                                        )}
-                                    </AccordionItem>
-                                )
-                            })
-                        }
-
-                        
-                    </Accordion>
-                )
-            }
-        </MainBoard>
-    )
+                          {(isManager || lead.user) && (
+                            <RemoveButton
+                              onClick={() =>
+                                OpenRemoveLeadModal({
+                                  name: lead.name,
+                                  id: lead.id
+                                })
+                              }
+                            />
+                          )}
+                        </HStack>
+                      </Stack>
+                    </AccordionPanel>
+                  </>
+                )}
+              </AccordionItem>
+            )
+          })}
+        </Accordion>
+      )}
+    </MainBoard>
+  )
 }

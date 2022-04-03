@@ -1,122 +1,175 @@
-import { HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, useToast } from "@chakra-ui/react";
-import { SolidButton } from "../../../components/Buttons/SolidButton";
+import {
+  HStack,
+  Link,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Stack,
+  useToast
+} from '@chakra-ui/react'
+import { SolidButton } from '../../../components/Buttons/SolidButton'
 
+import { useForm } from 'react-hook-form'
+import * as yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { api } from '../../../services/api'
+import { useHistory } from 'react-router'
+import { useErrors } from '../../../hooks/useErrors'
 
-import { useForm } from "react-hook-form";
-import * as yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { api } from "../../../services/api";
-import { useHistory } from "react-router";
-import { useErrors } from "../../../hooks/useErrors";
+import { useWorkingCompany } from '../../../hooks/useWorkingCompany'
+import { ControlledInput } from '../../../components/Forms/Inputs/ControlledInput'
+import { formatYmdDate } from '../../../utils/Date/formatYmdDate'
+import { useEffect } from 'react'
+import { redirectMessages } from '../../../utils/redirectMessages'
+import { isAuthenticated } from '../../../services/auth'
 
-import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
-import { ControlledInput } from "../../../components/Forms/Inputs/ControlledInput";
-import moneyToBackend from "../../../utils/moneyToBackend";
-import { formatYmdDate } from "../../../utils/Date/formatYmdDate";
-import { formatInputDate } from "../../../utils/Date/formatInputDate";
-import { useEffect } from "react";
-import { redirectMessages } from "../../../utils/redirectMessages";
-import { isAuthenticated } from "../../../services/auth";
-
-interface ExportReportModalProps{
-    isOpen: boolean;
-    onRequestClose: () => void;
+interface ExportReportModalProps {
+  isOpen: boolean
+  onRequestClose: () => void
 }
 
-export interface ExportReportFormData{
-    start_date: string,
-    end_date: string,
-    company: number
+export interface ExportReportFormData {
+  start_date: string
+  end_date: string
+  company: number
 }
 
 const ExportReportFormSchema = yup.object().shape({
-    start_date: yup.date().required("Selecione a data inicial"),
-    end_date: yup.date().required("Selecione a data final"),
-});
+  start_date: yup.date().required('Selecione a data inicial'),
+  end_date: yup.date().required('Selecione a data final')
+})
 
-export function ExportExcelModal ( { isOpen, onRequestClose} : ExportReportModalProps){
-    const workingCompany = useWorkingCompany();
-    const history = useHistory();
-    const toast = useToast();
-    const { showErrors } = useErrors();
+export function ExportExcelModal({
+  isOpen,
+  onRequestClose
+}: ExportReportModalProps) {
+  const workingCompany = useWorkingCompany()
+  const history = useHistory()
+  const toast = useToast()
+  const { showErrors } = useErrors()
 
-    const { handleSubmit, reset, control, formState} = useForm<ExportReportFormData>({
-        resolver: yupResolver(ExportReportFormSchema),
-    });
+  const { handleSubmit, reset, control, formState } =
+    useForm<ExportReportFormData>({
+      resolver: yupResolver(ExportReportFormSchema)
+    })
 
-    const handleExportReport = async (cashDeskData : ExportReportFormData) => {
-        try{
-            if(!workingCompany.company){
-                toast({
-                    title: "Ué",
-                    description: `Seleciona uma empresa`,
-                    status: "warning",
-                    duration: 12000,
-                    isClosable: true,
-                });
+  const handleExportReport = async (cashDeskData: ExportReportFormData) => {
+    try {
+      if (!workingCompany.company) {
+        toast({
+          title: 'Ué',
+          description: `Seleciona uma empresa`,
+          status: 'warning',
+          duration: 12000,
+          isClosable: true
+        })
 
-                return;
-            }
+        return
+      }
 
-            cashDeskData.start_date = formatYmdDate(cashDeskData.start_date);
-            cashDeskData.end_date = formatYmdDate(cashDeskData.end_date);
+      cashDeskData.start_date = formatYmdDate(cashDeskData.start_date)
+      cashDeskData.end_date = formatYmdDate(cashDeskData.end_date)
 
-            cashDeskData.company = workingCompany.company?.id;
+      cashDeskData.company = workingCompany.company?.id
 
+      const { data, headers } = await api.get(`/cashdesks_excel`, {
+        params: cashDeskData
+      })
 
-            const {data, headers} = await api.get(`/cashdesks_excel`, {params: cashDeskData
-            });
+      const win = window.open(
+        `${
+          process.env.NODE_ENV === 'production'
+            ? process.env.REACT_APP_API_STORAGE
+            : process.env.REACT_APP_API_LOCAL_STORAGE
+        }${data.file}`,
+        '_blank'
+      )
 
-            const win = window.open(`${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_STORAGE : process.env.REACT_APP_API_LOCAL_STORAGE}${data.file}`, "_blank");
-            
-            onRequestClose();
-            //reset();
-        }catch(error:any) {
-            showErrors(error, toast);
+      onRequestClose()
+      //reset();
+    } catch (error: any) {
+      showErrors(error, toast)
 
-            if(error.response.data.access){
-                history.push('/');
-            }
-        }
+      if (error.response.data.access) {
+        history.push('/')
+      }
     }
+  }
 
-    useEffect(() => {
-        if(!isAuthenticated()){
-            history.push({
-                pathname: '/',
-                state: redirectMessages.auth
-            });
-        }
-    }, [isOpen])
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      history.push({
+        pathname: '/',
+        state: redirectMessages.auth
+      })
+    }
+  }, [isOpen])
 
-    const todayYmd = formatYmdDate(new Date().toDateString());
+  const todayYmd = formatYmdDate(new Date().toDateString())
 
-    return(
-        <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
-            <ModalOverlay />
-            <ModalContent as="form" borderRadius="24px" onSubmit={handleSubmit(handleExportReport)}>
-                <ModalHeader p="10" fontWeight="700" fontSize="2xl">Gerar Relatório</ModalHeader>
+  return (
+    <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
+      <ModalOverlay />
+      <ModalContent
+        as="form"
+        borderRadius="24px"
+        onSubmit={handleSubmit(handleExportReport)}
+      >
+        <ModalHeader p="10" fontWeight="700" fontSize="2xl">
+          Gerar Relatório
+        </ModalHeader>
 
-                <ModalCloseButton top="10" right="5"/>
-                
-                <ModalBody pl="10" pr="10">
-                    <Stack spacing="6">
-                        <HStack spacing="4" align="baseline">
-                            <ControlledInput control={control} value={todayYmd} name="start_date" type="date" placeholder="Data inicial" variant="outline" error={formState.errors.start_date} focusBorderColor="blue.400"/>
+        <ModalCloseButton top="10" right="5" />
 
-                            <ControlledInput control={control} value={todayYmd} name="end_date" type="date" placeholder="Data final" variant="outline" error={formState.errors.end_date} focusBorderColor="blue.400"/>
-                        </HStack>
-                    </Stack>
-                </ModalBody>
+        <ModalBody pl="10" pr="10">
+          <Stack spacing="6">
+            <HStack spacing="4" align="baseline">
+              <ControlledInput
+                control={control}
+                value={todayYmd}
+                name="start_date"
+                type="date"
+                placeholder="Data inicial"
+                variant="outline"
+                error={formState.errors.start_date}
+                focusBorderColor="blue.400"
+              />
 
-                <ModalFooter p="10">
-                    <SolidButton mr="6" color="white" bg="green.400" colorScheme="green" type="submit" isLoading={formState.isSubmitting}>
-                        Download
-                    </SolidButton>
+              <ControlledInput
+                control={control}
+                value={todayYmd}
+                name="end_date"
+                type="date"
+                placeholder="Data final"
+                variant="outline"
+                error={formState.errors.end_date}
+                focusBorderColor="blue.400"
+              />
+            </HStack>
+          </Stack>
+        </ModalBody>
 
-                    <Link onClick={onRequestClose} color="gray.700" fontSize="14px">Cancelar</Link>
-                </ModalFooter>
-            </ModalContent>
-        </Modal>
-    )
+        <ModalFooter p="10">
+          <SolidButton
+            mr="6"
+            color="white"
+            bg="green.400"
+            colorScheme="green"
+            type="submit"
+            isLoading={formState.isSubmitting}
+          >
+            Download
+          </SolidButton>
+
+          <Link onClick={onRequestClose} color="gray.700" fontSize="14px">
+            Cancelar
+          </Link>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  )
 }

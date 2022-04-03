@@ -1,12 +1,10 @@
-import { StackProps } from "@chakra-ui/core";
-import { Flex, Text, Spinner, HStack, FormControl, Select as ChakraSelect, ChakraProps, HTMLChakraProps } from "@chakra-ui/react";
+import { Flex, Text, HStack, FormControl, Select as ChakraSelect, ChakraProps } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useBranches } from "../../hooks/useBranches";
-import { useCompanies } from "../../hooks/useCompanies";
 import { useProfile } from "../../hooks/useProfile";
 import { useWorkingBranch } from "../../hooks/useWorkingBranch";
 import { useWorkingCompany } from "../../hooks/useWorkingCompany";
-import { Branch, Company } from "../../types";
+import { Branch } from "../../types";
 
 export interface filter{
     filterData: any;

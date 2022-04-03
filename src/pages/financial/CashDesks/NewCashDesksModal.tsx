@@ -1,170 +1,258 @@
-import { HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, useToast } from "@chakra-ui/react";
-import { SolidButton } from "../../../components/Buttons/SolidButton";
+import {
+  HStack,
+  Link,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Stack,
+  useToast
+} from '@chakra-ui/react'
+import { SolidButton } from '../../../components/Buttons/SolidButton'
 
+import { useForm } from 'react-hook-form'
+import * as yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { api } from '../../../services/api'
+import { useHistory } from 'react-router'
+import { useErrors } from '../../../hooks/useErrors'
 
-import { useForm } from "react-hook-form";
-import * as yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { api } from "../../../services/api";
-import { useHistory } from "react-router";
-import { useErrors } from "../../../hooks/useErrors";
+import { Input } from '../../../components/Forms/Inputs/Input'
+import { Select } from '../../../components/Forms/Selects/Select'
+import { PaymentCategory } from '../../../types'
+import { useWorkingCompany } from '../../../hooks/useWorkingCompany'
+import moneyToBackend from '../../../utils/moneyToBackend'
+import { useEffect } from 'react'
+import { isAuthenticated } from '../../../services/auth'
+import { redirectMessages } from '../../../utils/redirectMessages'
+import { formatYmdDate } from '../../../utils/Date/formatYmdDate'
+import { ControlledInput } from '../../../components/Forms/Inputs/ControlledInput'
 
-import { Input } from "../../../components/Forms/Inputs/Input";
-import { Select } from "../../../components/Forms/Selects/Select";
-import { PaymentCategory} from "../../../types";
-import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
-import moneyToBackend from "../../../utils/moneyToBackend";
-import { useEffect } from "react";
-import { isAuthenticated } from "../../../services/auth";
-import { redirectMessages } from "../../../utils/redirectMessages";
-import { formatYmdDate } from "../../../utils/Date/formatYmdDate";
-import { ControlledInput } from "../../../components/Forms/Inputs/ControlledInput";
-import { ControlledCheckbox } from "../../../components/Forms/CheckBox/ControlledCheckbox";
-
-interface NewCashDesksModalProps{
-    isOpen: boolean;
-    onRequestClose: () => void;
-    afterCreate: () => void;
-    categories: PaymentCategory[];
+interface NewCashDesksModalProps {
+  isOpen: boolean
+  onRequestClose: () => void
+  afterCreate: () => void
+  categories: PaymentCategory[]
 }
 
-interface CreateNewCashDesksFormData{
-    title: string;
-    company: number;
-    category: number;
-    type?: number;
-    value: string;
-    date: string;
+interface CreateNewCashDesksFormData {
+  title: string
+  company: number
+  category: number
+  type?: number
+  value: string
+  date: string
 }
 
 const CreateNewCashDesksFormSchema = yup.object().shape({
-    title: yup.string().required('Título da movimentação é obrigatório.'),
-    company: yup.number(),
-    category: yup.number(),
-    type: yup.number(),
-    value: yup.string().required("Informe o valor da movimentação."),
-    date: yup.date().required("Selecione a data"),
-});
+  title: yup.string().required('Título da movimentação é obrigatório.'),
+  company: yup.number(),
+  category: yup.number(),
+  type: yup.number(),
+  value: yup.string().required('Informe o valor da movimentação.'),
+  date: yup.date().required('Selecione a data')
+})
 
-export function NewCashDesksModal( { isOpen, onRequestClose, afterCreate, categories, } : NewCashDesksModalProps){
-    const workingCompany = useWorkingCompany();
-    const history = useHistory();
-    const toast = useToast();
-    const { showErrors } = useErrors();
+export function NewCashDesksModal({
+  isOpen,
+  onRequestClose,
+  afterCreate,
+  categories
+}: NewCashDesksModalProps) {
+  const workingCompany = useWorkingCompany()
+  const history = useHistory()
+  const toast = useToast()
+  const { showErrors } = useErrors()
 
-    const { register, control, handleSubmit, reset, formState} = useForm<CreateNewCashDesksFormData>({
-        resolver: yupResolver(CreateNewCashDesksFormSchema),
-    });
+  const { register, control, handleSubmit, reset, formState } =
+    useForm<CreateNewCashDesksFormData>({
+      resolver: yupResolver(CreateNewCashDesksFormSchema)
+    })
 
-    function includeAndFormatData(cashDesksData: CreateNewCashDesksFormData){
-        cashDesksData.value = moneyToBackend(cashDesksData.value);
+  function includeAndFormatData(cashDesksData: CreateNewCashDesksFormData) {
+    cashDesksData.value = moneyToBackend(cashDesksData.value)
 
-        if(!workingCompany.company){
-            return cashDesksData;
-        }
-
-        cashDesksData.company = workingCompany.company?.id;
-
-        return cashDesksData;
+    if (!workingCompany.company) {
+      return cashDesksData
     }
 
-    const handleCreateNewPayment = async (cashDesksData : CreateNewCashDesksFormData) => {
-        try{
-            if(!workingCompany.company){
-                toast({
-                    title: "Ué",
-                    description: `Seleciona uma empresa para trabalhar`,
-                    status: "warning",
-                    duration: 12000,
-                    isClosable: true,
-                });
+    cashDesksData.company = workingCompany.company?.id
 
-                return;
-            }
+    return cashDesksData
+  }
 
-            cashDesksData = includeAndFormatData(cashDesksData);
+  const handleCreateNewPayment = async (
+    cashDesksData: CreateNewCashDesksFormData
+  ) => {
+    try {
+      if (!workingCompany.company) {
+        toast({
+          title: 'Ué',
+          description: `Seleciona uma empresa para trabalhar`,
+          status: 'warning',
+          duration: 12000,
+          isClosable: true
+        })
 
-            console.log(cashDesksData);
+        return
+      }
 
-            await api.post('/cashdesks/store', cashDesksData);
+      cashDesksData = includeAndFormatData(cashDesksData)
 
-            toast({
-                title: "Sucesso",
-                description: `A movimentação do caixa ${cashDesksData.title} foi cadastrada.`,
-                status: "success",
-                duration: 12000,
-                isClosable: true,
-            });
+      console.log(cashDesksData)
 
-            onRequestClose();
-            afterCreate();
-            reset();
-        }catch(error:any) {
-            showErrors(error, toast);
+      await api.post('/cashdesks/store', cashDesksData)
 
-            if(error.response.data.access){
-                history.push('/');
-            }
-        }
+      toast({
+        title: 'Sucesso',
+        description: `A movimentação do caixa ${cashDesksData.title} foi cadastrada.`,
+        status: 'success',
+        duration: 12000,
+        isClosable: true
+      })
+
+      onRequestClose()
+      afterCreate()
+      reset()
+    } catch (error: any) {
+      showErrors(error, toast)
+
+      if (error.response.data.access) {
+        history.push('/')
+      }
     }
+  }
 
-    useEffect(() => {
-        if(!isAuthenticated()){
-            history.push({
-                pathname: '/',
-                state: redirectMessages.auth
-            });
-        }
-    }, [isOpen]);
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      history.push({
+        pathname: '/',
+        state: redirectMessages.auth
+      })
+    }
+  }, [isOpen])
 
-    const todayYmd = formatYmdDate(new Date().toDateString());
+  const todayYmd = formatYmdDate(new Date().toDateString())
 
-    return(
-        <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
-            <ModalOverlay />
-            <ModalContent as="form" borderRadius="24px" onSubmit={handleSubmit(handleCreateNewPayment)}>
-                <ModalHeader p="10" fontWeight="700" fontSize="2xl">Cadastrar Movimentação</ModalHeader>
+  return (
+    <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
+      <ModalOverlay />
+      <ModalContent
+        as="form"
+        borderRadius="24px"
+        onSubmit={handleSubmit(handleCreateNewPayment)}
+      >
+        <ModalHeader p="10" fontWeight="700" fontSize="2xl">
+          Cadastrar Movimentação
+        </ModalHeader>
 
-                <ModalCloseButton top="10" right="5"/>
-                
-                <ModalBody pl="10" pr="10">
-                    <Stack spacing="6">
-                        <HStack spacing="4" align="baseline">
-                            <Select register={register} h="45px" value="0" name="type" w="100%" fontSize="sm" focusBorderColor="blue.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" error={formState.errors.type}>
-                                <option value={1}>Dinheiro</option>
-                                <option value={2}>Cartão</option>
-                                <option value={3}>Pix</option>
-                            </Select>
+        <ModalCloseButton top="10" right="5" />
 
-                            <Select register={register} h="45px" value="0" name="category" w="100%" fontSize="sm" focusBorderColor="blue.400" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Categoria" error={formState.errors.category}>
-                                {categories && categories.map((category:PaymentCategory) => {
-                                    return (
-                                        <option key={category.id} value={category.id}>{category.name}</option>
-                                    )
-                                })}
-                            </Select>
-                        </HStack>
-                        
-                        <Input register={register} name="title" type="text" placeholder="Título" variant="outline" error={formState.errors.title}/>
+        <ModalBody pl="10" pr="10">
+          <Stack spacing="6">
+            <HStack spacing="4" align="baseline">
+              <Select
+                register={register}
+                h="45px"
+                value="0"
+                name="type"
+                w="100%"
+                fontSize="sm"
+                focusBorderColor="blue.400"
+                bg="gray.400"
+                variant="outline"
+                _hover={{ bgColor: 'gray.500' }}
+                size="lg"
+                borderRadius="full"
+                error={formState.errors.type}
+              >
+                <option value={1}>Dinheiro</option>
+                <option value={2}>Cartão</option>
+                <option value={3}>Pix</option>
+              </Select>
 
-                        <HStack spacing="4" align="baseline">
-                            <Input register={register} name="value" type="text" placeholder="Valor" variant="outline" mask="money" error={formState.errors.value}/>
-                            
-                            {/* <Input register={register} name="date" value={todayYmd} type="date" placeholder="Data da movimentação" variant="outline" error={formState.errors.date}/> */}
-                            <ControlledInput control={control} value={todayYmd} name="date" type="date" placeholder="Data da Movimentação" variant="outline" error={formState.errors.date} focusBorderColor="blue.400"/>
-                        </HStack>
+              <Select
+                register={register}
+                h="45px"
+                value="0"
+                name="category"
+                w="100%"
+                fontSize="sm"
+                focusBorderColor="blue.400"
+                bg="gray.400"
+                variant="outline"
+                _hover={{ bgColor: 'gray.500' }}
+                size="lg"
+                borderRadius="full"
+                placeholder="Categoria"
+                error={formState.errors.category}
+              >
+                {categories &&
+                  categories.map((category: PaymentCategory) => {
+                    return (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
+                    )
+                  })}
+              </Select>
+            </HStack>
 
-                    </Stack>
-                </ModalBody>
+            <Input
+              register={register}
+              name="title"
+              type="text"
+              placeholder="Título"
+              variant="outline"
+              error={formState.errors.title}
+            />
 
-                <ModalFooter p="10">
-                    <SolidButton mr="6" color="white" bg="blue.400" colorScheme="blue" type="submit" isLoading={formState.isSubmitting}>
-                        Cadastrar
-                    </SolidButton>
+            <HStack spacing="4" align="baseline">
+              <Input
+                register={register}
+                name="value"
+                type="text"
+                placeholder="Valor"
+                variant="outline"
+                mask="money"
+                error={formState.errors.value}
+              />
 
-                    <Link onClick={onRequestClose} color="gray.700" fontSize="14px">Cancelar</Link>
-                </ModalFooter>
-            </ModalContent>
-        </Modal>
-    )
+              {/* <Input register={register} name="date" value={todayYmd} type="date" placeholder="Data da movimentação" variant="outline" error={formState.errors.date}/> */}
+              <ControlledInput
+                control={control}
+                value={todayYmd}
+                name="date"
+                type="date"
+                placeholder="Data da Movimentação"
+                variant="outline"
+                error={formState.errors.date}
+                focusBorderColor="blue.400"
+              />
+            </HStack>
+          </Stack>
+        </ModalBody>
+
+        <ModalFooter p="10">
+          <SolidButton
+            mr="6"
+            color="white"
+            bg="blue.400"
+            colorScheme="blue"
+            type="submit"
+            isLoading={formState.isSubmitting}
+          >
+            Cadastrar
+          </SolidButton>
+
+          <Link onClick={onRequestClose} color="gray.700" fontSize="14px">
+            Cancelar
+          </Link>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  )
 }

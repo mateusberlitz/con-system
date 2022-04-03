@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { Text, Badge as ChakraBadge, ChakraProps } from "@chakra-ui/react";
+import { Badge as ChakraBadge, ChakraProps } from "@chakra-ui/react";
 
 interface BadgeProps extends ChakraProps{
     children?: ReactNode;
@@ -8,8 +8,8 @@ interface BadgeProps extends ChakraProps{
 }
 
 export default function Badge({children, colorScheme, onClick, ...rest}: BadgeProps){
-    const color = colorScheme === 'purple' ? 'purple.500' 
-                : (colorScheme === 'blue' ? 'blue.500' 
+    const color = colorScheme === 'purple' ? 'purple.500'
+                : (colorScheme === 'blue' ? 'blue.500'
                 : (colorScheme === 'green' ? 'green.400'
                 : (colorScheme === 'yellow' ? 'yellow.500'
                 : (colorScheme === 'orange' ? 'orange.400'
