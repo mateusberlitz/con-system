@@ -1,32 +1,23 @@
-import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Divider, Flex, HStack, IconButton, Spinner, Stack, Tbody, Td, Text, Th, Thead, Table, Tr, Link, useToast } from "@chakra-ui/react";
-import { Quota, QuotaSale } from "../../../types";
+import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Divider, Flex, HStack, IconButton, Stack, Tbody, Td, Text, Th, Thead, Table, Tr, useToast } from "@chakra-ui/react";
+import { QuotaSale } from "../../../types";
 
-import { ReactComponent as PlusIcon } from '../../../assets/icons/Plus.svg';
 import { ReactComponent as MinusIcon } from '../../../assets/icons/Minus.svg';
 import { ReactComponent as StrongPlusIcon } from '../../../assets/icons/StrongPlus.svg';
-import { ReactComponent as EllipseIcon } from '../../../assets/icons/Ellipse.svg';
-import { ReactComponent as TagIcon } from '../../../assets/icons/Tag.svg';
 import { ReactComponent as CheckIcon } from '../../../assets/icons/Check.svg';
-import { ReactComponent as FileIcon } from '../../../assets/icons/File.svg';
 import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
 import { ReactComponent as RefreshIcon } from '../../../assets/icons/Refresh.svg';
 import { ReactComponent as HomeIcon } from '../../../assets/icons/Home.svg';
-import { ReactComponent as BackArrow } from '../../../assets/icons/Back Arrow.svg';
 
 import { OutlineButton } from "../../../components/Buttons/OutlineButton";
 import { EditButton } from "../../../components/Buttons/EditButton";
 import { RemoveButton } from "../../../components/Buttons/RemoveButton";
-import { UseQueryResult } from "react-query";
 import { formatBRDate } from "../../../utils/Date/formatBRDate";
 import { useState } from "react";
-// import { EditQuota, EditQuotaSaleModal } from "./EditSaleModal";
-// import { ConfirmPaymentRemoveModal, cancelQuotaSaleData } from "./ConfirmSaleRemoveModal";
-import { Router, useHistory } from "react-router";
+import { useHistory } from "react-router";
 import { CancelQuotaSaleData, ConfirmQuotaSaleCancelModal } from "./ConfirmQuotaSaleCancelModal";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { ResumedBill } from "./EditQuotaSale";
 import { ConfirmQuotaSaleRemoveModal, RemoveQuotaSaleData } from "./ConfirmQuotaSaleRemoveModal";
-import { PayPaymentFormData, PayPaymentModal } from "../../Financial/Payments/PayPaymentModal";
 import { ReceiveBillFormData, ReceiveBillModal } from "../../Financial/Bills/ReceiveBillModal";
 import { api } from "../../../services/api";
 import { showErrors } from "../../../hooks/useErrors";
