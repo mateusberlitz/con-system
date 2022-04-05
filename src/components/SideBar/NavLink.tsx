@@ -1,4 +1,4 @@
-import { Icon, Text, LinkProps, Flex, ChakraProps} from "@chakra-ui/react";
+import { Icon, Text, Flex, ChakraProps} from "@chakra-ui/react";
 import { ElementType } from "react";
 import { useLocation } from "react-router";
 import { Link } from "react-router-dom";
