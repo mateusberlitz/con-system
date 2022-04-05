@@ -1,4 +1,4 @@
-import { FormLabel, HStack, Stack, Switch } from '@chakra-ui/react'
+import { Box, Flex, FormLabel, HStack, Stack, Switch, Text } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { CompanySelectMaster } from '../../components/CompanySelect/companySelectMaster'
 import { MainBoard } from '../../components/MainBoard'
@@ -35,7 +35,9 @@ export default function Commercial() {
     return data
   })
 
-  const tasks = useTasks(tasksFilter, page)
+  const tasks = useTasks(tasksFilter, page);
+
+  const [isManager, setIsManager] = useState(true);
 
   useEffect(() => {
     setTasksFilter({
@@ -43,15 +45,22 @@ export default function Commercial() {
       company: workingCompany.company?.id,
       branch: workingBranch.branch?.id
     })
-  }, [workingCompany, workingBranch])
+  }, [workingCompany, workingBranch]);
+
+  //left={isManager ? "8px" : "auto"} right={!isManager ? "8px" : "auto"}
 
   return (
     <MainBoard sidebar="commercial" header={<CompanySelectMaster />}>
       <Stack fontSize="13px" spacing="12">
-        <HStack>
-          <FormLabel htmlFor="isChecked">Gerente:</FormLabel>
-          <Switch id="isChecked" isChecked />
-        </HStack>
+
+        <Flex alignItems="center" h="45px" bg="gray.200" borderRadius="full" w="180px" pos="relative" cursor="pointer" onClick={() => setIsManager(!isManager)}>
+          <Box h="32px" w={isManager ? "77px" : "73px"} bg="orange.400" pos="absolute" transform={isManager ? "translateX(8px)" : "translateX(98px)"} transition={"all ease 0.3s"} borderRadius="full"/>
+
+          <HStack justifyContent="space-between" w="100%" px="5" pos="absolute">
+            <Text color={isManager ? "white" : "auto"} transition={"all ease 0.3s"}>Gerente</Text>
+            <Text color={!isManager ? "white" : "auto"} transition={"all ease 0.3s"}>Pessoal</Text>
+          </HStack>
+        </Flex>
 
         <Stack
           direction={['column', 'column', 'row']}

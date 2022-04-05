@@ -1,4 +1,4 @@
-import { Box, Icon, Img, Stack, Text } from '@chakra-ui/react'
+import { Box, Icon, Stack, Text } from '@chakra-ui/react'
 import { NavLink } from './NavLink'
 
 import { ReactComponent as HomeIcon } from '../../assets/icons/Home.svg'
@@ -20,6 +20,7 @@ import LogoBranco from '../../assets/icons/Logo-Branco.svg'
 import { HasPermission, useProfile } from '../../hooks/useProfile'
 import { useTenant } from '../../hooks/useTenant'
 import { Link } from 'react-router-dom'
+import { Logo } from '../Logo'
 
 interface SideBarNavProps {
   desk: 'configs' | 'financial' | 'commercial' | 'quotas'
@@ -38,7 +39,7 @@ export function SideBarNav({ desk }: SideBarNavProps) {
       borderBottomRightRadius="10px"
       borderTopRightRadius="10px"
     >
-      <Img src={LogoBranco} px="7" mt="9" mb="14" />
+      <Logo isWhite={true} pl="5"/>
 
       {HasPermission(permissions, 'Usuários') && (
         <NavLink color="purple.300" href={`/usuarios`} icon={ProfileIcon}>
@@ -83,7 +84,7 @@ export function SideBarNav({ desk }: SideBarNavProps) {
       borderBottomRightRadius="10px"
       borderTopRightRadius="10px"
     >
-      <Img src={LogoBranco} px="7" mt="9" mb="14" />
+      <Logo isWhite={true} pl="5"/>
 
       <NavLink href={`/financeiro`} icon={ChartPieIcon} color="blue.400">
         Dashboard
@@ -145,7 +146,7 @@ export function SideBarNav({ desk }: SideBarNavProps) {
       borderBottomRightRadius="10px"
       borderTopRightRadius="10px"
     >
-      <Img src={LogoBranco} px="7" mt="9" mb="14" />
+      <Logo isWhite={true} pl="5"/>
 
       <NavLink href={`/comercial`} icon={ChartPieIcon} color="orange.400">
         Dashboard
@@ -203,7 +204,7 @@ export function SideBarNav({ desk }: SideBarNavProps) {
       borderBottomRightRadius="10px"
       borderTopRightRadius="10px"
     >
-      <Img src={LogoBranco} px="7" mt="9" mb="14" />
+      <Logo isWhite={true} pl="5"/>
 
       {/* <NavLink href="/financeiro" icon={ChartPieIcon}>Dashboard</NavLink>  */}
       <NavLink

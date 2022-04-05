@@ -5,19 +5,17 @@ import { Button } from "@chakra-ui/button";
 import { Checkbox } from "@chakra-ui/checkbox";
 import { FormControl, FormErrorMessage, FormLabel } from "@chakra-ui/form-control";
 import { Input as ChakraInput, InputGroup, InputLeftElement } from "@chakra-ui/input";
-import { Flex, Heading, Link, Stack } from "@chakra-ui/layout";
+import { Flex, Heading, Link, Stack, HStack, Text } from "@chakra-ui/react";
 
 import { ReactComponent as MailIcon } from '../assets/icons/Mail.svg';
 import { ReactComponent as LockIcon } from '../assets/icons/Lock.svg';
-import Logo from '../assets/icons/Logo.svg';
-import { Img } from "@chakra-ui/image";
-
 
 import { useForm } from "react-hook-form";
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useToast } from "@chakra-ui/react";
 import { Alert } from "../components/Alert";
+import { Logo } from "../components/Logo";
 import { useProfile } from "../hooks/useProfile";
 import { useEffect, } from "react";
 import { useTenant } from "../hooks/useTenant";
@@ -99,7 +97,7 @@ export default function Login(){
     //HTML  
     return(
         <Flex w="100vw" h="100vh" align="center" justify="center" flexDir="column">
-            <Img src={Logo}/>
+            <Logo />
 
             <Alert/>
 
