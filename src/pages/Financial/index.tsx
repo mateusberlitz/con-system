@@ -15,10 +15,11 @@ import { ReceiveBillFormData, ReceiveBillModal } from './Bills/ReceiveBillModal'
 import { BillsSummary } from './BillsSummary'
 import { PendenciesSummary } from './PendenciesSummary'
 import { useCompanies } from '../../hooks/useCompanies'
-import { CashFlowsFilterData } from '../../hooks/useCashFlows'
+import { CashFlowsFilterData, useCashFlows } from '../../hooks/useCashFlows'
 import { TaskFilterData, useTasks } from '../../hooks/useTasks'
 import { CompanySelectMaster } from '../../components/CompanySelect/companySelectMaster'
 import { useWorkingBranch } from '../../hooks/useWorkingBranch'
+import { CashFlowSummary } from './CashFlowSummary'
 
 export default function Financial() {
   const { profile, permissions } = useProfile()
@@ -41,7 +42,8 @@ export default function Financial() {
     setFilter(newFilter)
   }
 
-  const payments = usePayments(filter, 1)
+  const payments = usePayments(filter, 1);
+  const cashflow = useCashFlows({}, 50, 1);
 
   const [isPayPaymentModalOpen, setIsPayPaymentModalOpen] = useState(false)
   const [toPayPaymentData, setToPayPaymentData] = useState<PayPaymentFormData>(
@@ -243,10 +245,16 @@ export default function Financial() {
             />
 
             {HasPermission(permissions, 'Financeiro Completo') && (
-              <CashSummary
-                company={workingCompany.company}
-                branch={workingBranch.branch}
-              />
+              <>
+                <CashSummary
+                  company={workingCompany.company}
+                  branch={workingBranch.branch}
+                />
+
+                <CashFlowSummary
+                  cashFlows={cashflow}
+                />
+              </>
             )}
           </Stack>
         </Stack>

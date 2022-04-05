@@ -13,6 +13,7 @@ interface CashFlowSummaryProps{
     cashFlows: UseQueryResult<{
         data: any;
         total: number;
+        initialCash: number;
     }, unknown>;
 }
 
@@ -21,7 +22,7 @@ export function CashFlowSummary({cashFlows} : CashFlowSummaryProps){
     return (
         <>
         
-                <Stack w="60%" min-width="300px" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8">
+                <Stack w="100%" min-width="300px" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8">
                     
 
                     <HStack>
