@@ -8,6 +8,7 @@ import Users from './pages/configs/Users';
 import Roles from './pages/configs/Roles';
 import { isAuthenticated } from './services/auth';
 import { getInitialPage, HasPermission, useProfile } from './hooks/useProfile';
+import Commissions from './pages/Commissions'
 import Financial from './pages/Financial';
 import Payments from './pages/Financial/Payments';
 import PaymentCategories from './pages/Financial/PaymentCategories';
@@ -64,7 +65,7 @@ const PrivateRoute = ({component: Component, neededPermission = "", ...rest} : P
   return <Route {...rest} render={props => (
                 !isAuthenticated ? (
                     <Redirect to={{ pathname: `/` , state: "Por favor, acesse sua conta."}}/>
-                    
+
                 ) : ( neededPermission !== "" && !HasPermission(permissions, neededPermission) ? (
                         <Redirect to={{ pathname: `${initialPage}` , state: "Você não tem permissão para essa página"}}/>
                       )
@@ -75,7 +76,7 @@ const PrivateRoute = ({component: Component, neededPermission = "", ...rest} : P
 
                 //<Component {...props} />
               )
-            } 
+            }
           />
 }
 
@@ -83,7 +84,7 @@ const TenantRoutes = (): JSX.Element => {
   return (
     <Switch>
         <Route path="/:tenant/" component={Routes} />
-    </Switch> 
+    </Switch>
   );
 }
 
@@ -115,7 +116,7 @@ const Routes = (): JSX.Element => {
       <Flex w="100vw" h="100vh" alignItems="center" justifyContent="center">
         <Spinner/>
       </Flex>
-    ) 
+    )
     : tenant && Object.keys(tenant).length ? (
       <BrowserRouter basename={`/${params.tenant}`}>
         <Switch>
@@ -162,6 +163,8 @@ const Routes = (): JSX.Element => {
           <PrivateRoute path={`/agenda`} neededPermission="Comercial Limitado" exact component={Schedules} />
           <PrivateRoute path={`/teams`} neededPermission="Comercial Completo" exact component={Teams} />
 
+          <Route path={`/commissions`} exact component={Commissions} />
+
           {/* <PrivateRoute path="/empresas" component={Roles} /> */}
         </Switch>
       </BrowserRouter>
@@ -169,12 +172,12 @@ const Routes = (): JSX.Element => {
       <Flex w="100vw" h="100vh" alignItems="center" justifyContent="center">
         <Text>Ambiente não encontrado</Text>
       </Flex>
-      
+
     ) : (
       <Flex w="100vw" h="100vh" alignItems="center" justifyContent="center">
         <Text>Ambiente não encontrado</Text>
       </Flex>
     );
 };
-  
+
 export default TenantRoutes;

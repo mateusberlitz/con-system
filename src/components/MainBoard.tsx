@@ -6,7 +6,7 @@ import { OpenButton } from "./SideBar/OpenButton";
 import { Profile } from "./Profile";
 
 interface MainBoardProps{
-    sidebar: "configs" | "financial" | "commercial" | "quotas";
+    sidebar: "configs" | "financial" | "commercial" | "quotas" | "commissions";
     header?: ReactNode;
     children: ReactNode;
 }
@@ -36,6 +36,6 @@ export function MainBoard({ header = null, children, sidebar } : MainBoardProps)
                     {children}
                 </Flex>
             </Flex>
-        </Box>    
+        </Box>
     );
 }
