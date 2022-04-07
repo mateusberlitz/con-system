@@ -9,37 +9,37 @@ import ChargeBacks from './ChargeBacks'
 import CommissionsReceived from './CommissionsReceived'
 import ReversedCommissions from './ReversedCommissions'
 import CommissionsPaid from './CommissionsPaid'
+import RulesRanking from './RulesRanking'
 
 export default function Commissions() {
   const { profile, permissions } = useProfile()
 
   return (
     <MainBoard sidebar="commissions" header={<CompanySelectMaster />}>
-      <Flex align="center" justify="center">
+      <Stack fontSize="13px" spacing="12" alignItems="center" justify="center">
         <Stack
           direction={['column', 'row']}
-          spacing="16"
+          spacing="20"
           alignItems="flex-start"
         >
-          <CommissionsGrafic />
+          {/* Tables */}
+          <Stack spacing="12" w={['100%', '100%']}>
+            <CommissionsGrafic />
+            <LastComissionsTable />
+            <ChargeBacks />
+          </Stack>
 
-          <HStack>
-            <Stack spacing="4" w={['100%', '100%']}>
-              <CommissionsReceived />
+          {/* Comissões */}
 
-              <ReversedCommissions />
+          <Stack spacing="1" w={['100%', '55%']}>
+            <CommissionsReceived />
 
-              <CommissionsPaid />
-            </Stack>
-          </HStack>
+            <CommissionsPaid />
+            <ReversedCommissions />
+            <RulesRanking />
+          </Stack>
         </Stack>
-      </Flex>
-      <Flex>
-        <LastComissionsTable />
-      </Flex>
-      <Flex>
-        <ChargeBacks />
-      </Flex>
+      </Stack>
     </MainBoard>
   )
 }

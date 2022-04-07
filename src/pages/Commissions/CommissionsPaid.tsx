@@ -1,9 +1,9 @@
-import { Flex, HStack, Stack, Text, Th, Tr } from '@chakra-ui/react'
+import { Flex, HStack, Stack, Text } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { useProfile } from '../../hooks/useProfile'
 
-import { ReactComponent as PlusIcon } from '../../assets/icons/Plus.svg'
 import { ReactComponent as ChartBarIcon } from '../../assets/icons/Chart-bar.svg'
+import { ReactComponent as Minus } from '../../assets/icons/Minus.svg'
 
 import { Link } from 'react-router-dom'
 
@@ -29,13 +29,8 @@ export default function CommissionsPaid() {
           Comissões Pagas
         </Text>
         <HStack alignItems="center" justify="center" spacing="4">
-          <Text
-            color="#F4B740"
-            fontSize="xl"
-            w="100%"
-            align="center"
-            justify="center"
-          >
+          <Minus width="4rem" height="4rem" stroke="#F4B740" fill="none" />
+          <Text color="#F4B740" fontSize="2rem" align="center" justify="center">
             {' '}
             R$ 2.200.500,00
           </Text>

@@ -29,13 +29,8 @@ export default function ReversedCommissions() {
           Comissões estornadas
         </Text>
         <HStack alignItems="center" justify="center" spacing="4">
-          <Text
-            color="#C30052"
-            fontSize="xl"
-            w="100%"
-            align="center"
-            justify="center"
-          >
+          <PlusIcon width="4rem" height="4rem" stroke="#C30052" fill="none" />
+          <Text color="#C30052" fontSize="2rem" align="center" justify="center">
             {' '}
             R$ 1.200.500,00
           </Text>

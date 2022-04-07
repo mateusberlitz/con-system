@@ -1,5 +1,4 @@
-import { Flex, HStack, Stack, Text, Th, Tr } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
+import { Flex, HStack, Stack, Text } from '@chakra-ui/react'
 import { useProfile } from '../../hooks/useProfile'
 
 import { ReactComponent as PlusIcon } from '../../assets/icons/Plus.svg'
@@ -29,14 +28,8 @@ export default function CommissionsReceived() {
           Comissões Recebidas
         </Text>
         <HStack alignItems="center" justify="center" spacing="4">
-          <Text
-            color="#00A878"
-            fontSize="xl"
-            w="100%"
-            align="center"
-            justify="center"
-          >
-            {' '}
+          <PlusIcon width="4rem" height="4rem" stroke="#00A878" fill="none" />
+          <Text color="#00A878" fontSize="2rem">
             R$ 1.200.500,00
           </Text>
         </HStack>
