@@ -7,9 +7,9 @@ export default function CommissionsGrafic() {
   const { profile, permissions } = useProfile()
 
   return (
-    <Flex>
+    <Flex align="center" justify="center">
       <Stack
-        w="634px"
+        width="100%"
         min-width="300px"
         spacing="6"
         justify="space-between"

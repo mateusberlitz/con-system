@@ -19,11 +19,11 @@ export default function RulesRanking() {
   const { profile, permissions } = useProfile()
 
   return (
-    <Flex>
+    <Flex align="center" justify="center">
       <Stack
-        w="634px"
+        w="100%"
         min-width="300px"
-        spacing="7"
+        spacing="4"
         justify="space-between"
         alignItems="left"
         bg="white"
@@ -38,7 +38,7 @@ export default function RulesRanking() {
         </Text>
         <Divider />
 
-        <HStack spacing="8" align="center">
+        <HStack spacing="6" align="center">
           <Text
             color="#000"
             fontSize="xl"

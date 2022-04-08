@@ -8,8 +8,9 @@ export default function LastComissionsTable() {
   const { profile, permissions } = useProfile()
 
   return (
-    <Flex>
+    <Flex align="center" justify="center">
       <Stack
+        width="100%"
         min-width="300px"
         spacing="6"
         justify="space-between"

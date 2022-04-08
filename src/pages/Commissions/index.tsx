@@ -19,11 +19,11 @@ export default function Commissions() {
       <Stack fontSize="13px" spacing="12" alignItems="center" justify="center">
         <Stack
           direction={['column', 'row']}
-          spacing="20"
+          spacing="6"
           alignItems="flex-start"
         >
           {/* Tables */}
-          <Stack spacing="12" w={['100%', '100%']}>
+          <Stack spacing="6" w={['100%', '55%']}>
             <CommissionsGrafic />
             <LastComissionsTable />
             <ChargeBacks />
@@ -31,7 +31,7 @@ export default function Commissions() {
 
           {/* Comissões */}
 
-          <Stack spacing="1" w={['100%', '55%']}>
+          <Stack spacing="9" w={['100%', '45%']}>
             <CommissionsReceived />
 
             <CommissionsPaid />
