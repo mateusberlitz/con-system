@@ -1,10 +1,12 @@
 import {
   Avatar,
+  Button,
   Divider,
   Flex,
   Heading,
   HStack,
-  Link,
+  Icon,
+  IconButton,
   Spinner,
   Stack,
   Td,
@@ -13,7 +15,7 @@ import {
   useBreakpointValue
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
-import { useHistory, useParams } from 'react-router-dom'
+import { Link, useHistory, useParams } from 'react-router-dom'
 import { MainBoard } from '../../../components/MainBoard'
 import { api } from '../../../services/api'
 import { Branch as BranchInterface, Team, User } from '../../../types'
@@ -22,10 +24,11 @@ import { Board } from '../../../components/Board'
 
 import { ReactComponent as BackArrow } from '../../../assets/icons/Back Arrow.svg'
 import { ReactComponent as ProfileIcon } from '../../../assets/icons/Profile.svg'
-import { ReactComponent as LocationIcon } from '../../../assets/icons/Location.svg'
 import { ReactComponent as PlusIcon } from '../../../assets/icons/Plus.svg'
-import { ReactComponent as HomeIcon } from '../../../assets/icons/Home.svg'
 import { ReactComponent as PasteIcon } from '../../../assets/icons/Paste.svg'
+import { ReactComponent as EditIcon } from '../../../assets/icons/Edit.svg';
+import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
+
 import { RemoveButton } from '../../../components/Buttons/RemoveButton'
 import { EditButton } from '../../../components/Buttons/EditButton'
 import { UserFilterData, useUsers } from '../../../hooks/useUsers'
@@ -41,6 +44,8 @@ import {
 } from '../Teams/ConfirmTeamRemoveModal'
 import { EditTeamFormData, EditTeamModal } from '../Teams/EditTeamModal'
 import IncludeUserModal, { IncludeUserData } from '../Users/IncludeUserModal'
+import { TeamUsersListModal } from './TeamUsersListModal'
+import { ConfirmUnicludeUserModal } from './ConfirmUnicludeUserModal'
 
 interface BranchParams {
   id: string
@@ -85,7 +90,7 @@ export default function Branch() {
     return data
   })
 
-  const { data, isLoading, refetch, error } = useUsers(filter)
+  const { data, isLoading, refetch, error } = useUsers(filter);
 
   const [editUserData, setEditUserData] = useState<EditUserFormData>(() => {
     const data: EditUserFormData = {
@@ -190,6 +195,7 @@ export default function Branch() {
     team: 0,
     teamName: ''
   })
+  const [afterIncludeUser, setAfterIncludeUser] = useState<() => void>(() => refetch);
 
   function OpenIncludeUserModal() {
     setIncludeUserData({
@@ -202,18 +208,81 @@ export default function Branch() {
     setIsIncludeUserModalOpen(false)
   }
 
+  function OpenTeamIncludeUserModal(teamId: number, afterIncludeUser?:() => void) {
+    setIncludeUserData({
+      branch: branch && branch.id,
+      company: branch && branch.company.id,
+      team: teamId
+    });
+
+    setIsIncludeUserModalOpen(true);
+
+    if(afterIncludeUser){
+      const afterIncludeActions = () => {
+        afterIncludeUser();
+        refetch();
+      }
+
+      setAfterIncludeUser(() => afterIncludeActions);
+    }
+  }
+
+  const [isUnicludeUserModalOpen, setIsUnicludeUserModalOpen] = useState(false)
+  const [unicludeUserData, setUnicludeUserData] = useState<IncludeUserData>({
+    company: 0,
+    companyName: '',
+    branch: 0,
+    branchName: '',
+    team: 0,
+    teamName: ''
+  })
+
+  function OpenUnicludeUserModal(teamId?:number) {
+    setIncludeUserData({
+      branch: branch && branch.id,
+      company: branch && branch.company.id,
+      team: teamId && teamId
+    })
+    setIsUnicludeUserModalOpen(true)
+  }
+  function CloseUnicludeUserModal() {
+    setIsUnicludeUserModalOpen(false)
+  }
+
+  const [isTeamUsersListModalOpen, setIsTeamUsersListModalOpen] = useState(false)
+  const [team, setTeam] = useState<Team>();
+
+  function OpenTeamUsersListModal(team: Team) {
+    setTeam(team);
+    setIsTeamUsersListModalOpen(true)
+  }
+  function CloseTeamUsersListModal() {
+    setIsTeamUsersListModalOpen(false)
+  }
+
+  const [user, setUser] = useState<User>();
+  const [isConfirmUnicludeUserModalOpen, setIsConfirmUnicludeUserModalOpen] = useState(false)
+
+  function OpenConfirmUnicludeUserModal(user: User) {
+    setUser(user);
+    setIsConfirmUnicludeUserModalOpen(true)
+  }
+  function CloseConfirmUnicludeUserModal() {
+    setIsConfirmUnicludeUserModalOpen(false)
+  }
+
   return (
     <MainBoard
       sidebar="configs"
       header={
         branch && (
           <HStack>
-            <Link href={`/empresas/${branch.company.id}`}>
+            <Link to={`/empresas/${branch.company.id}`}>
               <BackArrow width="20px" stroke="#4e4b66" fill="none" />
             </Link>
-            <Text color="gray.800" ml="4">
+            <Text color="gray.800" ml="4" whiteSpace="nowrap">
               /{' '}
-              <Link href={`/empresas/${branch.company.id}`}>
+              <Link to={`/empresas/${branch.company.id}`}>
                 {branch.company.name}
               </Link>
               / <strong>{branch.name}</strong>
@@ -254,17 +323,40 @@ export default function Branch() {
       />
 
       <IncludeUserModal
-        afterEdit={refetch}
+        afterEdit={afterIncludeUser}
         toIncludeUserProps={includeUserData}
         isOpen={isIncludeUserModalOpen}
         onRequestClose={CloseIncludeUserModal}
       />
 
+      <TeamUsersListModal
+        afterEdit={refetch}
+        handleUnicludeUser={OpenUnicludeUserModal}
+        handleOpenIncludeUserModal={OpenTeamIncludeUserModal}
+        isOpen={isTeamUsersListModalOpen}
+        team={team}
+        onRequestClose={CloseTeamUsersListModal}
+      />
+
+      {
+        branch && user && (
+          <ConfirmUnicludeUserModal
+            afterRemove={refetch}
+            toRemoveUser={user}
+            toRemoveBranchId={branch.id}
+            isOpen={isConfirmUnicludeUserModalOpen}
+            onRequestClose={CloseConfirmUnicludeUserModal}
+          />
+        )
+      }
+
       <Stack spacing="8">
         <HStack justifyContent="space-between">
           <HStack>
-            <Text>{branch && branch.company.name} -</Text>{' '}
-            <Heading fontSize="2xl">{branch && branch.name}</Heading>
+            <Link to={`/empresas/${branch && branch.company.id}`}>
+              <Text>{branch && branch.company.name} -</Text>{' '}
+            </Link>
+            <Heading fontSize="2xl" whiteSpace="nowrap">{branch && branch.name}</Heading>
           </HStack>
           <HStack>
             <ProfileIcon width="20px" stroke="#4e4b66" fill="none" />
@@ -345,19 +437,23 @@ export default function Branch() {
                           fontSize="sm"
                           color="gray.700"
                           fontWeight="600"
+                          whiteSpace="nowrap"
                         >
                           {team.name}
                         </Text>
                       </Td>
 
-                      <Td fontSize="sm" color="gray.800">
+                      <Td fontSize="sm" color="gray.800" whiteSpace="nowrap">
                         {team.desk.name}
                       </Td>
                       {/* <Td fontSize="sm" color="gray.800">{branch.email}</Td>
                                         <Td fontSize="sm" color="gray.800">{branch.phone}</Td> */}
 
-                      <Td fontSize="sm" color="gray.800">
-                        {team.users.length > 0 ? team.users.length : 'Nenhum'}
+                      <Td fontSize="sm" color="gray.800" whiteSpace="nowrap" cursor="pointer" onClick={() => OpenTeamUsersListModal(team)}>
+                        <HStack>
+                          <Text>{team.users.length > 0 ? team.users.length : 'Nenhum'}</Text>
+                          <IconButton h="24px" w="20px !important" p="0" float="right" aria-label="Incluir participantes" border="none" icon={ <EditIcon width="20px" stroke="#d69e2e" fill="none"/>} variant="outline"/>
+                        </HStack>
                       </Td>
 
                       <Td alignItems="center" display="flex">
@@ -368,8 +464,10 @@ export default function Branch() {
                           w="fit-content"
                           bgGradient="linear(to-r, purple.600, blue.300)"
                           p="2px"
+                          whiteSpace="nowrap"
                         >
                           <Avatar
+                            whiteSpace="nowrap"
                             borderColor="gray.600"
                             border="2px"
                             size="sm"
@@ -390,6 +488,7 @@ export default function Branch() {
                           fontSize="sm"
                           color="gray.700"
                           fontWeight="600"
+                          whiteSpace="nowrap"
                         >
                           {team.manager.name}{' '}
                           {team.manager.last_name && team.manager.last_name}
@@ -525,14 +624,6 @@ export default function Branch() {
                       </Td>
                       <Td>
                         <HStack spacing="4">
-                          <RemoveButton
-                            onClick={() =>
-                              OpenConfirmUserRemoveModal({
-                                id: user.id,
-                                name: user.name
-                              })
-                            }
-                          />
                           <EditButton
                             onClick={() =>
                               OpenEditModal({
@@ -544,6 +635,22 @@ export default function Branch() {
                               })
                             }
                           />
+
+                          <Button
+                            color="red.400"
+                            fontWeight="500"
+                            variant="unstyled"
+                            size="sm"
+                            fontSize="12px"
+                            borderRadius="full"
+                            pl="4"
+                            pr="4"
+                            height="7"
+                            onClick={() => OpenConfirmUnicludeUserModal(user)}
+                          >
+                            <Icon as={CloseIcon} stroke="#C30052" fill="none" mr="2" />
+                              Desvincular
+                          </Button>
                         </HStack>
                       </Td>
                     </Tr>

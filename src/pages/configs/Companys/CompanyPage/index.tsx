@@ -5,7 +5,6 @@ import {
   Heading,
   HStack,
   Icon,
-  Link,
   Spinner,
   Stack,
   Td,
@@ -13,7 +12,7 @@ import {
   Tr
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
-import { useHistory, useParams } from 'react-router-dom'
+import { Link, useHistory, useParams } from 'react-router-dom'
 import { SolidButton } from '../../../../components/Buttons/SolidButton'
 import { MainBoard } from '../../../../components/MainBoard'
 import { useBranches } from '../../../../hooks/useBranches'
@@ -35,6 +34,7 @@ import {
 } from './ConfirmBranchRemoveModal'
 import { OutlineButton } from '../../../../components/Buttons/OutlineButton'
 import { useUsers } from '../../../../hooks/useUsers'
+import { CompanyRules } from './CompanyRules'
 
 interface CompanyParams {
   id: string
@@ -58,8 +58,8 @@ export default function CompanyPage() {
 
   console.log(id)
 
-  const branches = useBranches({ company: parseInt(id) }, 1)
-  const users = useUsers({ company: parseInt(id) })
+  const branches = useBranches({ company: parseInt(id) }, 1);
+  const users = useUsers({ company: parseInt(id) });
 
   const [removeBranch, setRemoveBranch] = useState<RemoveBranchData>(() => {
     const data: RemoveBranchData = {
@@ -141,10 +141,12 @@ export default function CompanyPage() {
         header={
           company && (
             <HStack>
-              <Link href="/empresas">
-                <BackArrow width="20px" stroke="#4e4b66" fill="none" />
+              <Link to="/empresas">
+                <Flex>
+                  <BackArrow width="20px" stroke="#4e4b66" fill="none" />
+                </Flex>
               </Link>
-              <Text color="gray.800" ml="4">
+              <Text color="gray.800" ml="2" whiteSpace="nowrap">
                 / {company.name}
               </Text>
             </HStack>
@@ -245,15 +247,16 @@ export default function CompanyPage() {
                                 fontSize="sm"
                                 color="gray.700"
                                 fontWeight="600"
+                                whiteSpace="nowrap"
                               >
                                 {branch.name}
                               </Text>
                             </Td>
-                            <Td fontSize="sm" color="gray.800">
-                              {branch.state.name}
+                            <Td fontSize="sm" color="gray.800" whiteSpace="nowrap">
+                              {branch.state.uf}
                             </Td>
                             <Td fontSize="sm" color="gray.800">
-                              <Text fontSize="">{branch.city.name}</Text>
+                              <Text fontSize="" whiteSpace="nowrap">{branch.city.name}</Text>
                             </Td>
 
                             <Td fontSize="sm" color="gray.800">
@@ -324,22 +327,7 @@ export default function CompanyPage() {
                 )}
             </Board>
 
-            <Board>
-              <HStack mb="4" justifyContent="space-between">
-                <Text fontSize="xl">Regras de comissão</Text>
-
-                <SolidButton
-                  onClick={() => OpenNewBranchModal()}
-                  mb="12"
-                  color="white"
-                  bg="purple.300"
-                  icon={PlusIcon}
-                  colorScheme="purple"
-                >
-                  Adicionar regra
-                </SolidButton>
-              </HStack>
-            </Board>
+            <CompanyRules/>
 
             {/* <SolidButton onClick={OpenNewBranchModal} mb="12" color="white" bg="purple.300" icon={PlusIcon} colorScheme="purple">
                                 Adicionar Filial

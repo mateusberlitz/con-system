@@ -32,7 +32,7 @@ export function LogoutModal({ isOpen, onRequestClose }: LogoutModalProps) {
     if (logout()) {
       setLogoutState('logged off')
 
-      history.push(`/${prefix}`)
+      history.push(`/`)
     }
   }
 

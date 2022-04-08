@@ -299,7 +299,7 @@ export default function CashDesks() {
           </HStack>
         )}
 
-        <Box
+        <Box w="100%"
           display={
             isWideVersion || (!isWideVersion && toggleFilter) ? 'flex' : 'none'
           }
@@ -314,7 +314,7 @@ export default function CashDesks() {
               error={formState.errors.search}
             />
 
-            <Stack direction={['column', 'row']} spacing="6">
+            <Stack w="100%" direction={['column', 'row']} spacing="6">
               <Input
                 register={register}
                 name="start_date"

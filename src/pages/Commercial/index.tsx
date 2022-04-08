@@ -47,8 +47,6 @@ export default function Commercial() {
     })
   }, [workingCompany, workingBranch]);
 
-  //left={isManager ? "8px" : "auto"} right={!isManager ? "8px" : "auto"}
-
   return (
     <MainBoard sidebar="commercial" header={<CompanySelectMaster />}>
       <Stack fontSize="13px" spacing="12">

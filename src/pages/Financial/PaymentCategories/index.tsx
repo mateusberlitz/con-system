@@ -9,7 +9,7 @@ import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
 import { ReactComponent as BackArrow } from '../../../assets/icons/Back Arrow.svg';
 import { ReactComponent as LinkIcon } from '../../../assets/icons/Link.svg';
 
-import { Flex, HStack, Link, SimpleGrid, Text, Stack } from "@chakra-ui/layout";
+import { Flex, HStack, SimpleGrid, Text, Stack } from "@chakra-ui/layout";
 import { IconButton } from "@chakra-ui/button";
 import { Input } from "../../../components/Forms/Inputs/Input";
 import { ColorPicker } from "../../../components/Forms/ColorPicker";
@@ -29,6 +29,7 @@ import { Checkbox, Divider, useBreakpointValue } from "@chakra-ui/react";
 import { CompanySelectMaster } from "../../../components/CompanySelect/companySelectMaster";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { useWorkingBranch } from "../../../hooks/useWorkingBranch";
+import { Link } from "react-router-dom";
 
 interface CreateNewPaymentCategoryFormData{
     name: string;
@@ -161,8 +162,8 @@ export default function PaymentCategories(){
                     <CompanySelectMaster />
 
                     <HStack>
-                        <Link href="/pagamentos"><BackArrow width="20px" stroke="#4e4b66" fill="none"/></Link>
-                        <Text color="gray.800" ml="4">
+                        <Link to="/pagamentos"><BackArrow width="20px" stroke="#4e4b66" fill="none"/></Link>
+                        <Text color="gray.800" ml="4" whiteSpace="nowrap">
                             / Categorias de Pagamentos
                         </Text>
                     </HStack>

@@ -28,7 +28,7 @@ import { Select } from '../../../../components/Forms/Selects/Select'
 import { useUsers } from '../../../../hooks/useUsers'
 import { Company, State, User } from '../../../../types'
 import { useCompanies } from '../../../../hooks/useCompanies'
-import { useStates } from '../../../../hooks/useCompanies copy'
+import { useStates } from '../../../../hooks/useStates'
 
 interface NewCompanyModalProps {
   isOpen: boolean

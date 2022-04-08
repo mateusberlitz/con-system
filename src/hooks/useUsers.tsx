@@ -5,6 +5,7 @@ export interface UserFilterData{
     search?: string;
     company?: number;
     branch?: number;
+    team?: number;
     role?: number;
     goals?: boolean;
 }
@@ -17,7 +18,8 @@ export const getUsers = async (filter?: UserFilterData) => {
               role: filter.role,
               company: filter.company,
               branch: filter.branch,
-              goals: filter.goals
+              goals: filter.goals,
+              team: filter.team,
             }
         });
 

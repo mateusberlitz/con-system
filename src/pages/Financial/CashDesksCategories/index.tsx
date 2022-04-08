@@ -8,7 +8,7 @@ import { ReactComponent as EllipseIcon } from '../../../assets/icons/Ellipse.svg
 import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
 import { ReactComponent as BackArrow } from '../../../assets/icons/Back Arrow.svg';
 
-import { Flex, HStack, Link, SimpleGrid, Text } from "@chakra-ui/layout";
+import { Flex, HStack, SimpleGrid, Text } from "@chakra-ui/layout";
 import { IconButton } from "@chakra-ui/button";
 import { Input } from "../../../components/Forms/Inputs/Input";
 import { ColorPicker } from "../../../components/Forms/ColorPicker";
@@ -24,6 +24,7 @@ import { useHistory } from "react-router";
 import { Spinner } from "@chakra-ui/spinner";
 import { EditCashDeskCategoryModal } from "./EditCashDeskCategoryModal";
 import { ConfirmCashDeskCategoryRemoveModal } from "./ConfirmCashDeskCategoryRemoveModal";
+import { Link } from "react-router-dom";
 
 interface CreateNewCashDeskCategoryFormData{
     name: string;
@@ -130,7 +131,7 @@ export default function CashDeskCategories(){
 
             reset();
             loadCategories();
-        }catch(error) {
+        }catch(error: any) {
             showErrors(error, toast);
 
             if(error.response.data.access){
@@ -143,8 +144,8 @@ export default function CashDeskCategories(){
         <MainBoard sidebar="financial" header={
             (
                 <>
-                    <Link href="/caixa"><BackArrow width="20px" stroke="#4e4b66" fill="none"/></Link>
-                    <Text color="gray.800" ml="4">
+                    <Link to="/caixa"><BackArrow width="20px" stroke="#4e4b66" fill="none"/></Link>
+                    <Text color="gray.800" ml="4" whiteSpace="nowrap">
                         / Categorias do Caixa
                     </Text>
                 </>

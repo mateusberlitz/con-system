@@ -557,7 +557,7 @@ export default function Payments(){
                     )
                 }
 
-                <Box display={(isWideVersion || (!isWideVersion && toggleFilter)) ? 'flex' : 'none'}>
+                <Box w="100%" display={(isWideVersion || (!isWideVersion && toggleFilter)) ? 'flex' : 'none'}>
                     <Stack spacing="6" w="100%">
                         <Stack direction={["column", "row"]} spacing="6">
                             <Input register={register} name="search" type="text" placeholder="Procurar" variant="filled" error={formState.errors.search}/>

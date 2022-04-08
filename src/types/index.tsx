@@ -32,6 +32,7 @@ export interface User{
     updated_at?: Date;
     companies: Company[];
     branches: Branch[];
+    rule: SellerCommissionRule;
     teams: Team[];
     goals: Goal[];
     goal_amount?: number;
@@ -447,4 +448,59 @@ export interface Tenant{
     id: number;
     name: string;
     prefix: string;
+}
+
+export interface ChargeBackType{
+    id: number;
+    description: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface CompanyCommissionRule{
+    id: number;
+    name: string;
+    company_id: number;
+    company: Company;
+    half_installment?: boolean;
+    pay_in_contemplation: boolean,
+    percentage_paid_in_contemplation: number;
+    chargeback_type: ChargeBackType;
+    chargeback_type_id: number;
+    initial_value?: number;
+    final_value?: number;
+    created_at: string;
+    updated_at: string;
+    company_commission_rule_parcels: CompanyCommissionRuleParcel[];
+}
+
+export interface CompanyCommissionRuleParcel{
+    id: number;
+    parcel_number: number;
+    percentage_to_pay: number;
+    chargeback_percentage: number;
+}
+
+export interface SellerCommissionRule{
+    id: number;
+    name: string;
+    company_id: number;
+    company: Company;
+    half_installment?: boolean;
+    pay_in_contemplation: boolean,
+    percentage_paid_in_contemplation: number;
+    chargeback_type: ChargeBackType;
+    chargeback_type_id: number;
+    initial_value?: number;
+    final_value?: number;
+    created_at: string;
+    updated_at: string;
+    company_commission_rule_parcels: CompanyCommissionRuleParcel[];
+}
+
+export interface SellerCommissionRuleParcel{
+    id: number;
+    parcel_number: number;
+    percentage_to_pay: number;
+    chargeback_percentage: number;
 }

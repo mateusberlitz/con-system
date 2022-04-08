@@ -9,7 +9,7 @@ import { ReactComponent as BackArrow } from '../../../assets/icons/Back Arrow.sv
 import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg'
 import { ReactComponent as LinkIcon } from '../../../assets/icons/Link.svg'
 
-import { Flex, HStack, Link, SimpleGrid, Text } from '@chakra-ui/layout'
+import { Flex, HStack, SimpleGrid, Text } from '@chakra-ui/layout'
 import { IconButton } from '@chakra-ui/button'
 import { Input } from '../../../components/Forms/Inputs/Input'
 import { ColorPicker } from '../../../components/Forms/ColorPicker'
@@ -30,6 +30,7 @@ import { useWorkingCompany } from '../../../hooks/useWorkingCompany'
 import { Stack } from '@chakra-ui/react'
 import { CompanySelectMaster } from '../../../components/CompanySelect/companySelectMaster'
 import { useWorkingBranch } from '../../../hooks/useWorkingBranch'
+import { Link } from 'react-router-dom'
 
 interface CreateNewBillCategoryFormData {
   name: string
@@ -171,10 +172,10 @@ export default function BillCategories() {
           <CompanySelectMaster />
 
           <HStack>
-            <Link href="/receber">
+            <Link to="/receber">
               <BackArrow width="20px" stroke="#4e4b66" fill="none" />
             </Link>
-            <Text color="gray.800" ml="4">
+            <Text color="gray.800" ml="4" whiteSpace="nowrap">
               / Categorias de Contas a Receber
             </Text>
           </HStack>

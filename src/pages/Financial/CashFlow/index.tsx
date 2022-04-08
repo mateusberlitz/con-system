@@ -273,7 +273,7 @@ export default function CashFlow() {
           </HStack>
         )}
 
-        <Box
+        <Box w="100%"
           display={
             isWideVersion || (!isWideVersion && toggleFilter) ? 'flex' : 'none'
           }

@@ -27,7 +27,7 @@ import { isAuthenticated } from '../../../../services/auth'
 import { ControlledSelect } from '../../../../components/Forms/Selects/ControlledSelect'
 import { useUsers } from '../../../../hooks/useUsers'
 import { useCompanies } from '../../../../hooks/useCompanies'
-import { useStates } from '../../../../hooks/useCompanies copy'
+import { useStates } from '../../../../hooks/useStates'
 
 interface EditBranchModalProps {
   isOpen: boolean

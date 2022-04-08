@@ -42,6 +42,7 @@ interface EditUserFormData {
   phone: string
   email: string
   role: number
+  rule_id: number;
 }
 
 interface RemoveUserData {
@@ -68,7 +69,8 @@ export default function Users() {
       id: 0,
       email: '',
       phone: '',
-      role: 0
+      role: 0,
+      rule_id: 0,
     }
 
     return data
@@ -389,7 +391,8 @@ export default function Users() {
                             name: user.name,
                             phone: user.phone,
                             email: user.email,
-                            role: user.role.id
+                            role: user.role.id,
+                            rule_id: user.rule.id,
                           })
                         }
                       />

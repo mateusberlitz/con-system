@@ -81,8 +81,6 @@ export default function IncludeUserModal({
         .get(`users/${userData.user}`)
         .then(response => response.data)
 
-      //console.log(user, toIncludeUserProps.branch);
-
       if (toIncludeUserProps.company) {
         const companyData: Sync = user.companies.reduce(
           (syncCompanies: Sync, company: Company) => {
@@ -92,13 +90,10 @@ export default function IncludeUserModal({
           {} as Sync
         )
 
-        console.log(companyData)
         companyData[toIncludeUserProps.company] = 'on'
 
         await api.post(`/users/${userData.user}/sync`, companyData)
       }
-
-      //console.log(toIncludeUserProps.branch);
 
       if (toIncludeUserProps.branch) {
         const branchData: Sync = user.branches.reduce(
@@ -109,9 +104,7 @@ export default function IncludeUserModal({
           {} as Sync
         )
 
-        branchData[toIncludeUserProps.branch] = 'on'
-
-        console.log(branchData)
+        branchData[toIncludeUserProps.branch] = 'on';
 
         await api.post(`/users/${userData.user}/sync_branches`, branchData)
       }
@@ -125,14 +118,14 @@ export default function IncludeUserModal({
           {} as Sync
         )
 
-        teamData[toIncludeUserProps.team] = 'on'
+        teamData[toIncludeUserProps.team] = 'on';
 
         await api.post(`/users/${userData.user}/sync_teams`, teamData)
       }
 
       toast({
         title: 'Sucesso',
-        description: `O usuário ${userData.name} foi cadastrado.`,
+        description: `O usuário foi adicionado.`,
         status: 'success',
         duration: 12000,
         isClosable: true
@@ -173,7 +166,6 @@ export default function IncludeUserModal({
         })
       })
 
-      console.log(newLeadOptions)
       setUsersOptions(newLeadOptions)
     }
   }, [data])

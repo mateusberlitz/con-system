@@ -7,7 +7,7 @@ import { ReactComponent as PlusIcon } from '../../../assets/icons/Plus.svg';
 import { ReactComponent as BackArrow } from '../../../assets/icons/Back Arrow.svg';
 import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
 
-import { Flex, HStack, Link, SimpleGrid, Text } from "@chakra-ui/layout";
+import { Flex, HStack, SimpleGrid, Text } from "@chakra-ui/layout";
 import { IconButton } from "@chakra-ui/button";
 import { Input } from "../../../components/Forms/Inputs/Input";
 import {  useState } from "react";
@@ -23,6 +23,7 @@ import { Spinner } from "@chakra-ui/spinner";
 import { EditProviderModal } from "./EditProviderModal";
 import { ConfirmProviderRemoveModal } from "./ConfirmProviderRemoveModal";
 import { useProviders } from "../../../hooks/useProviders";
+import { Link } from "react-router-dom";
 
 interface CreateNewProviderFormData{
     name: string;
@@ -109,8 +110,8 @@ export default function Providers(){
         <MainBoard sidebar="financial" header={
             (
                 <>
-                    <Link href="/receber"><BackArrow width="20px" stroke="#4e4b66" fill="none"/></Link>
-                    <Text color="gray.800" ml="4">
+                    <Link to="/pagamentos"><BackArrow width="20px" stroke="#4e4b66" fill="none"/></Link>
+                    <Text color="gray.800" ml="4" whiteSpace="nowrap">
                         / Fornecedores
                     </Text>
                 </>
