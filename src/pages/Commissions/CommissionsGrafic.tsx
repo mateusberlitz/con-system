@@ -8,20 +8,8 @@ export default function CommissionsGrafic() {
 
   return (
     <Flex align="center" justify="center">
-      <Stack
-        width="100%"
-        min-width="300px"
-        spacing="6"
-        justify="space-between"
-        alignItems="left"
-        bg="white"
-        borderRadius="16px"
-        shadow="xl"
-        px="8"
-        py="8"
-        mt={8}
-      >
-        <Text color="gray.700" fontSize="xl" fontWeight="normal">
+      <Stack width="100%" min-width="300px" spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8" mt={8}>
+        <Text color="#000" fontSize="xl" fontWeight="400">
           Comissões
         </Text>
         <HStack alignItems="center" justify="center" spacing="4">

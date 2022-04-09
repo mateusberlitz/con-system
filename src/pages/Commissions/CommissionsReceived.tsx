@@ -10,26 +10,14 @@ export default function CommissionsReceived() {
   const { profile, permissions } = useProfile()
 
   return (
-    <Flex align="center" justify="center">
-      <Stack
-        w="100%"
-        min-width="300px"
-        spacing="6"
-        justify="space-between"
-        alignItems="left"
-        bg="white"
-        borderRadius="16px"
-        shadow="xl"
-        px="8"
-        py="8"
-        mt={8}
-      >
-        <Text color="gray.700" fontSize="xl" fontWeight="normal">
+    <Flex align="left" justify="left">
+      <Stack w="100%" min-width="300px" spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8" mt={8}>
+        <Text color="#000" fontSize="xl" fontWeight="400">
           Comissões Recebidas
         </Text>
-        <HStack alignItems="center" justify="center" spacing="4">
-          <PlusIcon width="4rem" height="4rem" stroke="#00A878" fill="none" />
-          <Text color="#00A878" fontSize="2rem">
+        <HStack alignItems="left" justify="left" spacing="4">
+          <PlusIcon width="2.5rem" height="2.5rem" stroke="#00A878" fill="none" />
+          <Text color="#00A878" fontSize="24px" fontWeight="600">
             R$ 1.200.500,00
           </Text>
         </HStack>
