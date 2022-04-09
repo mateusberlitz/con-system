@@ -4,16 +4,16 @@ import {  useForm } from "react-hook-form";
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useEffect } from "react";
-import { ChargeBackType, Company, CompanyCommissionRule } from "../../../../../types";
-import { ControlledInput } from "../../../../../components/Forms/Inputs/ControlledInput";
-import { SolidButton } from "../../../../../components/Buttons/SolidButton";
-import { isAuthenticated } from "../../../../../services/auth";
-import { redirectMessages } from "../../../../../utils/redirectMessages";
+import { ChargeBackType, Company, CompanyCommissionRule } from "../../../types";
+import { ControlledInput } from "../../../components/Forms/Inputs/ControlledInput";
+import { SolidButton } from "../../../components/Buttons/SolidButton";
+import { isAuthenticated } from "../../../services/auth";
+import { redirectMessages } from "../../../utils/redirectMessages";
 import { useHistory } from "react-router-dom";
-import { useErrors } from "../../../../../hooks/useErrors";
-import { api } from "../../../../../services/api";
-import { ControlledSelect } from "../../../../../components/Forms/Selects/ControlledSelect";
-import { useChargeBackTypes } from "../../../../../hooks/useChargeBackTypes";
+import { useErrors } from "../../../hooks/useErrors";
+import { api } from "../../../services/api";
+import { ControlledSelect } from "../../../components/Forms/Selects/ControlledSelect";
+import { useChargeBackTypes } from "../../../hooks/useChargeBackTypes";
 
 interface EditCompanyRuleParcelModalProps{
     isOpen: boolean;

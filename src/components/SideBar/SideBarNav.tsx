@@ -1,20 +1,26 @@
 import { Box, Icon, Stack, Text } from '@chakra-ui/react'
 import { NavLink } from './NavLink'
 
-import { ReactComponent as HomeIcon } from '../../assets/icons/Home.svg'
-import { ReactComponent as ProfileIcon } from '../../assets/icons/Profile.svg'
-import { ReactComponent as ConfigureIcon } from '../../assets/icons/Configure.svg'
-import { ReactComponent as BackArrowIcon } from '../../assets/icons/Back Arrow.svg'
-import { ReactComponent as ChartPieIcon } from '../../assets/icons/Chart-pie.svg'
-import { ReactComponent as CardIcon } from '../../assets/icons/Card.svg'
-import { ReactComponent as TagIcon } from '../../assets/icons/Tag.svg'
-import { ReactComponent as ChartBarIcon } from '../../assets/icons/Chart-bar.svg'
-import { ReactComponent as ScrollIcon } from '../../assets/icons/Scroll.svg'
-import { ReactComponent as PrinterIcon } from '../../assets/icons/Printer.svg'
-import { ReactComponent as FolderIcon } from '../../assets/icons/Folder.svg'
-import { ReactComponent as BagIcon } from '../../assets/icons/Bag.svg'
-import { ReactComponent as AtsignIcon } from '../../assets/icons/At-sign.svg'
-import { ReactComponent as CalendarIcon } from '../../assets/icons/Calandar.svg'
+import { ReactComponent as HomeIcon } from '../../assets/icons/Home.svg';
+import { ReactComponent as ProfileIcon } from '../../assets/icons/Profile.svg';
+import { ReactComponent as ConfigureIcon } from '../../assets/icons/Configure.svg';
+import { ReactComponent as BackArrowIcon } from '../../assets/icons/Back Arrow.svg';
+import { ReactComponent as ChartPieIcon } from '../../assets/icons/Chart-pie.svg';
+import { ReactComponent as CardIcon } from '../../assets/icons/Card.svg';
+import { ReactComponent as TagIcon } from '../../assets/icons/Tag.svg';
+import { ReactComponent as ChartBarIcon } from '../../assets/icons/Chart-bar.svg';
+import { ReactComponent as SettingsIcon } from '../../assets/icons/Settings.svg';
+import { ReactComponent as ScrollIcon } from '../../assets/icons/Scroll.svg';
+import { ReactComponent as PrinterIcon } from '../../assets/icons/Printer.svg';
+import { ReactComponent as FolderIcon } from '../../assets/icons/Folder.svg';
+import { ReactComponent as BagIcon } from '../../assets/icons/Bag.svg';
+import { ReactComponent as AtsignIcon } from '../../assets/icons/At-sign.svg';
+import { ReactComponent as CalendarIcon } from '../../assets/icons/Calandar.svg';
+import { ReactComponent as FileText } from '../../assets/icons/file-text.svg';
+import { ReactComponent as PercentIcon } from '../../assets/icons/percent.svg';
+import { ReactComponent as ClipBoardIcon } from '../../assets/icons/clipboard.svg';
+
+
 
 import LogoBranco from '../../assets/icons/Logo-Branco.svg'
 import { HasPermission, useProfile } from '../../hooks/useProfile'
@@ -22,8 +28,8 @@ import { useTenant } from '../../hooks/useTenant'
 import { Link } from 'react-router-dom'
 import { Logo } from '../Logo'
 
-interface SideBarNavProps {
-  desk: 'configs' | 'financial' | 'commercial' | 'quotas'
+interface SideBarNavProps{
+    desk: "configs" | "financial" | "commercial" | "quotas" | "commissions";
 }
 
 export function SideBarNav({ desk }: SideBarNavProps) {
@@ -164,6 +170,67 @@ export function SideBarNav({ desk }: SideBarNavProps) {
 
       {HasPermission(permissions, 'Vendas Completo') && (
         <NavLink href={`/vendedores`} icon={ProfileIcon} color="orange.400">
+          Vendedores
+        </NavLink>
+      )}
+
+      {(HasPermission(permissions, 'Usuários') ||
+        HasPermission(permissions, 'Configurações') ||
+        HasPermission(permissions, 'Contempladas')) && (
+        <Link to={`/home`}>
+          <Box
+            mt="24"
+            display="flex"
+            h="16"
+            alignItems="center"
+            w="100%"
+            px="7"
+            color="white"
+            _hover={{ textDecor: 'none' }}
+          >
+            <Icon
+              as={BackArrowIcon}
+              fontSize="20"
+              stroke="#ffffff"
+              fill="none"
+            />
+            <Text ml="4" fontWeight="medium">
+              Início
+            </Text>
+          </Box>
+        </Link>
+      )}
+    </Stack>
+  ) : desk === 'commissions' ? (
+    <Stack
+      spacing="2"
+      align="flex-start"
+      h="100vh"
+      bg="red.400"
+      borderBottomRightRadius="10px"
+      borderTopRightRadius="10px"
+    >
+      <Logo isWhite={true} pl="5"/>
+
+      <NavLink href={`/comissões`} icon={ChartPieIcon} color="red.400">
+        Dashboard
+      </NavLink>
+      <NavLink href={`/comissões-vendedores`} icon={PercentIcon} color="red.400">
+        Comissões
+      </NavLink>
+      <NavLink href={`/comissões-empresa`} icon={HomeIcon} color="red.400">
+        Empresa
+      </NavLink>
+      <NavLink href={`/contratos`} icon={FolderIcon} color="red.400">
+        Contratos
+      </NavLink>
+      <NavLink href={`/relatorio-comissões`} icon={ScrollIcon} color="red.400">
+        Relatórios
+      </NavLink>
+      {/* <NavLink href="/calculadora" icon={ConfigureIcon}>Calculadora</NavLink> */}
+
+      {HasPermission(permissions, 'Vendas Completo') && (
+        <NavLink href={`/vendedores`} icon={ProfileIcon} color="red.400">
           Vendedores
         </NavLink>
       )}

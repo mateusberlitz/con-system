@@ -45,6 +45,7 @@ import { useEffect, useState } from 'react'
 import { Flex, Spinner, Text } from '@chakra-ui/react'
 import { useTenant } from './hooks/useTenant'
 import { Tenant } from './types'
+import Commissions from './pages/Commissions'
 
 interface PrivateRouteProps extends RouteProps {
   component: any
@@ -61,9 +62,6 @@ const PrivateRoute = ({
   const initialPage = getInitialPage(permissions)
 
   useEffect(() => {}, [isAuthenticated])
-
-  console.log(isAuthenticated)
-
   return (
     <Route
       {...rest}
@@ -83,8 +81,6 @@ const PrivateRoute = ({
         ) : (
           <Component {...props} />
         )
-
-        //<Component {...props} />
       }
     />
   )
@@ -329,6 +325,8 @@ const Routes = (): JSX.Element => {
           exact
           component={Teams}
         />
+
+        <Route path={`/comissões`} exact component={Commissions} />
 
         {/* <PrivateRoute path="/empresas" component={Roles} /> */}
       </Switch>

@@ -158,6 +158,37 @@ export default function ConfigHome() {
                 </Flex>
               </Link>
           )}
+
+          {(HasPermission(permissions, 'Comercial Limitado') ||
+            HasPermission(permissions, 'Comercial Completo')) && (
+              <Link to={`/comissões`}>
+                <Flex
+                  w="200px"
+                  borderRadius="4px"
+                  borderLeft="3px solid"
+                  borderColor="red.400"
+                  fontSize="md"
+                  bg="white"
+                  _hover={{ textDecor: 'none', boxShadow: 'md' }}
+                  px="6"
+                  py="3"
+                  boxShadow="sm"
+                  color="red.400"
+                  display="flex"
+                  direction="row"
+                >
+                  <BagIcon stroke="#4e4b66" fill="none" width="20"/>
+                  <Text
+                    fontWeight="regular"
+                    ml="3"
+                    color="gray.800"
+                    lineHeight="25px"
+                  >
+                    Comissões
+                  </Text>
+                </Flex>
+              </Link>
+          )}
         </Stack>
 
         {/* <SimpleGrid flex="1" templateColumns="repeat(5, 1fr)" gap="5" minChildWidth="320px" align="flex-start">

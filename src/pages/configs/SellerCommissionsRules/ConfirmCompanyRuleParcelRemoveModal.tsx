@@ -11,18 +11,18 @@ import {
   Text,
   useToast
 } from '@chakra-ui/react'
-import { SolidButton } from '../../../../../components/Buttons/SolidButton'
+import { SolidButton } from '../../../components/Buttons/SolidButton'
 
-import { ReactComponent as CloseIcon } from '../../../../../assets/icons/Close.svg'
-import { showErrors } from '../../../../../hooks/useErrors'
-import { api } from '../../../../../services/api'
-import { isAuthenticated } from '../../../../../services/auth'
+import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg'
+import { showErrors } from '../../../hooks/useErrors'
+import { api } from '../../../services/api'
+import { isAuthenticated } from '../../../services/auth'
 import { useEffect, useState } from 'react'
-import { redirectMessages } from '../../../../../utils/redirectMessages'
+import { redirectMessages } from '../../../utils/redirectMessages'
 import { useHistory } from 'react-router-dom'
-import { useWorkingCompany } from '../../../../../hooks/useWorkingCompany'
-import { useProfile } from '../../../../../hooks/useProfile'
-import { Input } from '../../../../../components/Forms/Inputs/Input'
+import { useWorkingCompany } from '../../../hooks/useWorkingCompany'
+import { useProfile } from '../../../hooks/useProfile'
+import { Input } from '../../../components/Forms/Inputs/Input'
 
 export interface RemoveCompanyRuleParcelData {
   id: number;

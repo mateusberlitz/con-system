@@ -11,26 +11,26 @@ import {
   Stack,
   useToast
 } from '@chakra-ui/react'
-import { SolidButton } from '../../../../../components/Buttons/SolidButton'
+import { SolidButton } from '../../../components/Buttons/SolidButton'
 
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { api } from '../../../../../services/api'
+import { api } from '../../../services/api'
 import { useHistory } from 'react-router'
-import { useErrors } from '../../../../../hooks/useErrors'
+import { useErrors } from '../../../hooks/useErrors'
 
 import { useParams } from 'react-router-dom';
 
-import { Input } from '../../../../../components/Forms/Inputs/Input'
-import { isAuthenticated } from '../../../../../services/auth'
+import { Input } from '../../../components/Forms/Inputs/Input'
+import { isAuthenticated } from '../../../services/auth'
 import { useEffect } from 'react'
-import { redirectMessages } from '../../../../../utils/redirectMessages'
-import { Select } from '../../../../../components/Forms/Selects/Select'
-import { useUsers } from '../../../../../hooks/useUsers'
-import { ChargeBackType, Company, State, User } from '../../../../../types'
-import { useCompanies } from '../../../../../hooks/useCompanies'
-import { useChargeBackTypes } from '../../../../../hooks/useChargeBackTypes'
+import { redirectMessages } from '../../../utils/redirectMessages'
+import { Select } from '../../../components/Forms/Selects/Select'
+import { useUsers } from '../../../hooks/useUsers'
+import { ChargeBackType, Company, State, User } from '../../../types'
+import { useCompanies } from '../../../hooks/useCompanies'
+import { useChargeBackTypes } from '../../../hooks/useChargeBackTypes'
 
 interface NewCompanyRuleParcelModalProps {
   companyCommissionRuleId: number;

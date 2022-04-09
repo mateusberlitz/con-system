@@ -5,10 +5,10 @@ import { SideBar } from './SideBar'
 import { OpenButton } from './SideBar/OpenButton'
 import { Profile } from './Profile'
 
-interface MainBoardProps {
-  sidebar: 'configs' | 'financial' | 'commercial' | 'quotas'
-  header?: ReactNode
-  children: ReactNode
+interface MainBoardProps{
+    sidebar: "configs" | "financial" | "commercial" | "quotas" | "commissions";
+    header?: ReactNode;
+    children: ReactNode;
 }
 
 export function MainBoard({

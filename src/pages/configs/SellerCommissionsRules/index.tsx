@@ -1,17 +1,17 @@
 import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Box, Flex, HStack, Stack, Td, Text, Tr } from "@chakra-ui/react";
-import { Board } from "../../../../../components/Board";
-import { SolidButton } from "../../../../../components/Buttons/SolidButton";
+import { Board } from "../../../components/Board";
+import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { useEffect, useState } from "react";
 
 import { ReactComponent as PlusIcon } from '../../../../../assets/icons/Plus.svg';
 import { ReactComponent as MinusIcon } from '../../../../../assets/icons/Minus.svg';
 import { ReactComponent as StrongPlusIcon } from '../../../../../assets/icons/StrongPlus.svg';
-import { OutlineButton } from "../../../../../components/Buttons/OutlineButton";
-import { EditButton } from "../../../../../components/Buttons/EditButton";
-import { Table } from "../../../../../components/Table";
-import { RemoveButton } from "../../../../../components/Buttons/RemoveButton";
-import { CompanyCommissionRule, CompanyCommissionRuleParcel } from "../../../../../types";
-import { api } from "../../../../../services/api";
+import { OutlineButton } from "../../../components/Buttons/OutlineButton";
+import { EditButton } from "../../../components/Buttons/EditButton";
+import { Table } from "../../../components/Table";
+import { RemoveButton } from "../../../components/Buttons/RemoveButton";
+import { CompanyCommissionRule, CompanyCommissionRuleParcel } from "../../../types";
+import { api } from "../../../services/api";
 import { NewCompanyRuleModal } from "./NewCompanyRuleModal";
 import { useParams } from "react-router-dom";
 import { EditCompanyRuleModal, EditNewCompanyRuleFormData } from "./EditCompanyRuleModal";
