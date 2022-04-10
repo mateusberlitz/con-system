@@ -1,5 +1,4 @@
-import { Flex, HStack, Text, Stack } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
+import { Stack } from '@chakra-ui/react'
 import { MainBoard } from '../../components/MainBoard'
 import { useProfile } from '../../hooks/useProfile'
 import { CompanySelectMaster } from '../../components/CompanySelect/companySelectMaster'

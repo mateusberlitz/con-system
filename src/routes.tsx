@@ -46,6 +46,7 @@ import { Flex, Spinner, Text } from '@chakra-ui/react'
 import { useTenant } from './hooks/useTenant'
 import { Tenant } from './types'
 import Commissions from './pages/Commissions'
+import CommissionsSalesman from './pages/Commissions/CommissionsSalesman'
 
 interface PrivateRouteProps extends RouteProps {
   component: any
@@ -327,6 +328,7 @@ const Routes = (): JSX.Element => {
         />
 
         <Route path={`/comissões`} exact component={Commissions} />
+        <Route path={`/comissões-vendedores`} exact component={CommissionsSalesman} />
 
         {/* <PrivateRoute path="/empresas" component={Roles} /> */}
       </Switch>

@@ -9,16 +9,13 @@ import { ReactComponent as ChartPieIcon } from '../../assets/icons/Chart-pie.svg
 import { ReactComponent as CardIcon } from '../../assets/icons/Card.svg';
 import { ReactComponent as TagIcon } from '../../assets/icons/Tag.svg';
 import { ReactComponent as ChartBarIcon } from '../../assets/icons/Chart-bar.svg';
-import { ReactComponent as SettingsIcon } from '../../assets/icons/Settings.svg';
 import { ReactComponent as ScrollIcon } from '../../assets/icons/Scroll.svg';
 import { ReactComponent as PrinterIcon } from '../../assets/icons/Printer.svg';
 import { ReactComponent as FolderIcon } from '../../assets/icons/Folder.svg';
 import { ReactComponent as BagIcon } from '../../assets/icons/Bag.svg';
 import { ReactComponent as AtsignIcon } from '../../assets/icons/At-sign.svg';
 import { ReactComponent as CalendarIcon } from '../../assets/icons/Calandar.svg';
-import { ReactComponent as FileText } from '../../assets/icons/file-text.svg';
 import { ReactComponent as PercentIcon } from '../../assets/icons/percent.svg';
-import { ReactComponent as ClipBoardIcon } from '../../assets/icons/clipboard.svg';
 
 
 
