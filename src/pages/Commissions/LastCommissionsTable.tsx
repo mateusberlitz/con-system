@@ -16,7 +16,7 @@ export default function LastComissionsTable() {
         </HStack>
         <Flex align="center" justify="center">
         <TableContainer border="2px solid #D6D8E7" borderRadius={15}>
-          <Table variant='simple' size="md">
+          <Table variant='simple' size="sm">
             <Thead backgroundColor="#EFF0F7" maxWidth="100%" whiteSpace="nowrap">
               <Tr>
                 <Th></Th>
@@ -27,7 +27,7 @@ export default function LastComissionsTable() {
               </Tr>
             </Thead>
             <Tbody>
-              <Tr color="gray.800" fontWeight="normal">
+              <Tr color="gray.800" fontWeight="normal" py="4">
                 <Th>
                   <Text fontSize="8px">Grupo-Costa</Text>
                   <Text fontSize="11px">1080-320</Text>

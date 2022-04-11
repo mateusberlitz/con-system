@@ -713,7 +713,7 @@ export default function Payments(){
                                                             <HStack spacing={["5", "5"]} justifyContent="space-between">
                                                                 <HStack spacing={["3", "4"]}>
                                                                     <AccordionButton p="0" height="fit-content" w="auto">
-                                                                        <Flex alignItems="center" justifyContent="center" h={["20px", "24px"]} w={["24px", "30px"]} p="0" borderRadius="full" border="2px" borderColor="blue.400" variant="outline">
+                                                                        <Flex alignItems="center" justifyContent="center" h={["20px", "24px"]} w={["24px", "30px"]} p="0" borderRadius="full" border="2px" borderColor="blue.400">
                                                                         { 
                                                                                 !isExpanded ? <StrongPlusIcon stroke="#2097ed" fill="none" width="12px"/> :
                                                                                 <MinusIcon stroke="#2097ed" fill="none" width="12px"/>
