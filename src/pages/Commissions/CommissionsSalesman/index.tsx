@@ -1,4 +1,4 @@
-import { Link, Flex, HStack, Stack, Spinner, IconButton, Text, Accordion, AccordionItem, AccordionButton, AccordionPanel, useToast, Divider, Table, Thead, Th, Td, Tbody, Tr, Checkbox, useBreakpointValue, Icon, Box } from "@chakra-ui/react";
+import { Stack, Box } from "@chakra-ui/react";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { MainBoard } from "../../../components/MainBoard";
 
@@ -9,6 +9,7 @@ import { CompanySelectMaster } from "../../../components/CompanySelect/companySe
 import { OutlineButton } from "../../../components/Buttons/OutlineButton";
 import { Input } from "../../../components/Forms/Inputs/Input";
 import { Select } from "../../../components/Forms/Selects/Select";
+import CommissionsSalesmanTable from "./CommissionsSalesmanTable";
 
 
 
@@ -65,7 +66,7 @@ export default function CommissionsSalesman(){
             </Stack>
 
             <Stack fontSize="13px" spacing="12">
-
+                <CommissionsSalesmanTable />
                 {/* <Pagination registerPerPage={50} currentPage={page} onPageChange={setPage}/> */}
             </Stack>
 

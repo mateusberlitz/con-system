@@ -8,19 +8,7 @@ export default function ReversedCommissionsTable() {
 
   return (
     <Flex align="center" justify="center">
-      <Stack
-        w="100%"
-        min-width="300px"
-        spacing="6"
-        justify="space-between"
-        alignItems="left"
-        bg="white"
-        borderRadius="16px"
-        shadow="xl"
-        px="8"
-        py="8"
-        mt={8}
-      >
+      <Stack w="100%" min-width="300px" spacing="6" justify="space-between" alignItems="left"  bg="white" borderRadius="16px" shadow="xl" px="8" py="8" mt={8}>
         <Text color="gray.700" fontSize="xl" fontWeight="normal">
           Comissões
         </Text>

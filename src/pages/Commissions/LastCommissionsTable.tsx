@@ -1,5 +1,4 @@
-import { Flex, HStack, Stack, Text, Th, Tr, Td, Link, Table, Thead, Tbody, Tfoot, TableContainer} from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
+import { Flex, HStack, Stack, Text, Th, Tr, Link, Table, Thead, Tbody, Tfoot, TableContainer} from '@chakra-ui/react'
 import { useProfile } from '../../hooks/useProfile'
 import { ReactComponent as PercentIcon } from '../../assets/icons/percent.svg'
 import Badge from '../../components/Badge'
