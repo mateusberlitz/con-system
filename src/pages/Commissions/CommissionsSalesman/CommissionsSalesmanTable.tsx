@@ -1,217 +1,292 @@
-import { Table, Stack, Thead, Tr, Td, Tbody, HStack, TableContainer, Text, Flex, Divider } from "@chakra-ui/react";
+import { Flex, HStack, Stack, Text, Th, Tr, Link, Table, Thead, Tbody, IconButton, TableContainer, Accordion, AccordionItem, AccordionButton, AccordionPanel, Divider, Td } from '@chakra-ui/react'
+import { useProfile } from '../../../hooks/useProfile'
 
+import { ReactComponent as EditIcon } from '../../../assets/icons/Edit.svg';
+import { ReactComponent as CheckIcon } from '../../../assets/icons/Check.svg';
 import { ReactComponent as MinusIcon } from '../../../assets/icons/Minus.svg';
 import { ReactComponent as StrongPlusIcon } from '../../../assets/icons/StrongPlus.svg';
-import Badge from "../../../components/Badge";
+import { ReactComponent as EllipseIcon } from '../../../assets/icons/Ellipse.svg';
+import { ReactComponent as TagIcon } from '../../../assets/icons/Tag.svg';
+import { ReactComponent as CloseIcon } from '../../../assets/icons/Close.svg';
+import { ReactComponent as FileIcon } from '../../../assets/icons/File.svg';
+import { ReactComponent as AttachIcon } from '../../../assets/icons/Attach.svg';
+import { ReactComponent as RefreshIcon } from '../../../assets/icons/Refresh.svg';
 
 
-export default function CommissionsSalesmanTable() {
+
+import Badge from '../../../components/Badge'
+import { SolidButton } from '../../../components/Buttons/SolidButton';
+import { OutlineButton } from '../../../components/Buttons/OutlineButton';
+import { EditButton } from '../../../components/Buttons/EditButton';
+import { RemoveButton } from '../../../components/Buttons/RemoveButton';
+
+export default function LastComissionsTable() {
+    const { profile, permissions } = useProfile()
+
     return (
-        <Stack direction={['column', 'row']} spacing="6" justifyContent="space-between" alignItems="center">
-            <TableContainer border="2px solid #D6D8E7" borderRadius={15}>
-                <Table variant='simple' size="lg">
-                    <Thead backgroundColor="#EFF0F7" maxWidTd="100%" whiteSpace="nowrap">
-                        <HStack spacing={["5", "5"]} justifyContent="space-between">
-                            <HStack spacing={["3", "4"]}>
-                                <Tr>
-                                    <Td color="#000">Fevereiro</Td>
-                                    <Td color="#000">3 contratos</Td>
-                                    <Td></Td>
-                                    <Td></Td>
-                                    <Td></Td>
-                                    <Td>Créditos: R$2.800.000,00</Td>
-                                    <Td></Td>
-                                    <Td></Td>
-                                    <Td></Td>
-                                    <Td px="2px" isNumeric color="red.400">- R$ 3.000,00</Td>
-                                </Tr>
-                            </HStack>
-                        </HStack>
-                    </Thead>
-                    <Tbody>
-                        <Tr color="gray.800" fontWeight="normal">
-                            <HStack spacing={["5", "5"]} justifyContent="space-between">
-                                <HStack spacing={["3", "4"]}>
-                                    <Td>
-                                        <Text fontSize="8px">
-                                            <Flex alignItems="center" justifyContent="center" h={["20px", "24px"]} w={["24px", "30px"]} p="0" borderRadius="full" border="2px" borderColor="red.400" variant="outline">
-                                                <StrongPlusIcon stroke="#C30052" fill="none" width="12px" />
-                                            </Flex>
-                                        </Text>
-                                    </Td>
-                                    <Td>
-                                        <Text fontSize="8px" color="#6E7191">Data da venda</Text>
-                                        <Text fontSize="11px" color="#4E4B66" fontWeight="400">22/01/2022</Text>
-                                    </Td>
-                                    <Td>
-                                        <Text fontSize="8px" color="#6E7191">Parcela</Text>
-                                        <Text fontSize="11px" color="#4E4B66" fontWeight="400">1</Text>
-                                    </Td>
-                                    <Td>
-                                        <Text fontSize="8px" color="#6E7191">Crédito</Text>
-                                        <Text fontSize="11px" color="#4E4B66" fontWeight="400">R$500.000,00</Text>
-                                    </Td>
-                                    <Td>
-                                        <Text fontSize="8px" color="#6E7191">Critério</Text>
-                                        <Text fontSize="11px" color="#4E4B66" fontWeight="400">Regra Geral</Text>
-                                    </Td>
-                                    <Td>
-                                        <Badge colorScheme='yellow' px="28px">Pendente</Badge>
-                                    </Td>
-                                    <Td isNumeric color="#4E4B66" fontWeight="regular" fontSize="11px" textTransform="capitalize">
-                                        R$ 1.250,00
-                                    </Td>
-                                </HStack>
-                            </HStack>
-                        </Tr>
-                        <Divider />
-                        <Tr color="gray.800" fontWeight="normal">
-                            <HStack spacing={["5", "5"]} justifyContent="space-between">
-                                <HStack spacing={["3", "4"]}>
-                                    <Td>
-                                        <Text fontSize="8px">
-                                            <Flex alignItems="center" justifyContent="center" h={["20px", "24px"]} w={["24px", "30px"]} p="0" borderRadius="full" border="2px" borderColor="red.400" variant="outline">
-                                                <MinusIcon stroke="#C30052" fill="none" width="12px" />
-                                            </Flex>
-                                        </Text>
-                                    </Td>
-                                    <Td>
-                                        <Text fontSize="8px" color="#6E7191">Data da venda</Text>
-                                        <Text fontSize="11px" color="#4E4B66" fontWeight="400">22/01/2022</Text>
-                                    </Td>
+        <Accordion w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" spacing="0" allowMultiple>
+            <HStack spacing="8" justify="space-between" paddingX={["4", "8"]} paddingY="3" bg="gray.200">
+                <Stack direction={["column", "row"]} spacing={["4", "6"]} alignItems="baseline" mt={["1", "0"]}>
+                    <Text fontWeight="bold">Fevereiro</Text>
 
-                                    <Td>
-                                        <Text fontSize="8px" color="#6E7191">Parcela</Text>
-                                        <Text fontSize="11px" color="#4E4B66" fontWeight="400">1</Text>
-                                    </Td>
-                                    <Td>
-                                        <Text fontSize="8px" color="#6E7191">Crédito</Text>
-                                        <Text fontSize="11px" color="#4E4B66" fontWeight="400">R$500.000,00</Text>
-                                    </Td>
-                                    <Td>
-                                        <Text fontSize="8px" color="#6E7191">Critério</Text>
-                                        <Text fontSize="11px" color="#4E4B66" fontWeight="400">Regra Geral</Text>
-                                    </Td>
-                                    <Td>
-                                        <Badge colorScheme='green'>Confirmada</Badge>
-                                    </Td>
-                                    <Td color="#00BA88" fontWeight="regular" fontSize="11px" textTransform="capitalize">
-                                        R$ 750,00
-                                    </Td>
-                                </HStack>
-                            </HStack>
-                        </Tr>
-                        <Divider />
-                        <Tr color="gray.800" fontWeight="normal">
-                            <HStack spacing={["5", "5"]} justifyContent="space-between">
-                                <HStack spacing={["3", "4"]}>
-                                    <Td>
-                                        <Text fontSize="11px" fontWeight="bold">
-                                            Percentual:
-                                        </Text>
-                                    </Td>
-                                    <Td px="5px">
-                                        <Text fontSize="11px" color="#4E4B66" fontWeight="400">4%</Text>
-                                    </Td>
-                                    <Td></Td>
-                                    <Td px="0">
-                                        <Text fontSize="11px" color="#4E4B66" fontWeight="bold">Parcela:</Text>
-                                    </Td>
-                                    <Td>
-                                        <Text fontSize="11px" color="#4E4B66" fontWeight="400">4</Text>
-                                    </Td>
-                                    <Td px="25px">
-                                        <Text fontSize="11px" color="#4E4B66" fontWeight="bold">Parcela:</Text>
-                                    </Td>
-                                    <Td>
-                                        <Text fontSize="11px" color="#4E4B66" fontWeight="400">Meia Parcela</Text>
-                                    </Td>
-                                    <Td></Td>
-                                    <Td>
-                                        <Text fontSize="11px" color="#4E4B66" fontWeight="bold">Restante:</Text>
-                                    </Td>
-                                    <Td px="15px">
-                                        <Text fontSize="11px" color="#4E4B66">R$ 0</Text>
-                                    </Td>
-                                </HStack>
-                            </HStack>
-                        </Tr>
-                        <Divider />
-                        <Tr color="gray.800" fontWeight="normal">
-                            <HStack spacing={["5", "5"]} justifyContent="space-between">
-                                <HStack spacing={["3", "4"]}>
-                                    <Td>
-                                        <Text fontSize="11px" fontWeight="bold">
-                                            Contrato:
-                                        </Text>
-                                    </Td>
-                                    <Td px="5px">
-                                        <Text fontSize="11px" color="#4E4B66" fontWeight="400">230495</Text>
-                                    </Td>
-                                    <Td>
-                                        <Text fontSize="11px" color="#4E4B66" fontWeight="bold">Grupo:</Text>
-                                    </Td>
-                                    <Td px="-5px">
-                                        <Text fontSize="11px" color="#4E4B66" fontWeight="400">1080</Text>
-                                    </Td>
-                                    <Td>
-                                        <Text fontSize="11px" color="#4E4B66" fontWeight="bold">Cota:</Text>
-                                    </Td>
-                                    <Td px="-5px">
-                                        <Text fontSize="11px" color="#4E4B66" fontWeight="400">874</Text>
-                                    </Td>
-                                    <Td>
-                                        <Text fontSize="11px" color="#4E4B66" fontWeight="bold">Bem:</Text>
-                                    </Td>
-                                    <Td px="15px">
-                                        <Text fontSize="11px" color="#4E4B66" fontWeight="400">Imóvel</Text>
-                                    </Td>
-                                    <Td px="45px">
-                                        <Text fontSize="11px" color="#4E4B66" fontWeight="bold">Cliente:</Text>
-                                    </Td>
-                                    <Td px="15px">
-                                        <Text fontSize="11px" color="#4E4B66" fontWeight="400">João Beltrano</Text>
-                                    </Td>
-                                </HStack>
-                            </HStack>
-                        </Tr>
-                        <Tr color="gray.800" fontWeight="normal">
-                            <HStack spacing={["5", "5"]} justifyContent="space-between">
-                                <HStack spacing={["3", "4"]}>
-                                    <Td>
-                                        <Text fontSize="8px">
-                                            <Flex alignItems="center" justifyContent="center" h={["20px", "24px"]} w={["24px", "30px"]} p="0" borderRadius="full" border="2px" borderColor="red.400" variant="outline">
-                                                <StrongPlusIcon stroke="#C30052" fill="none" width="12px" />
-                                            </Flex>
-                                        </Text>
-                                    </Td>
-                                    <Td>
-                                        <Text fontSize="8px" color="#6E7191">Data da venda</Text>
-                                        <Text fontSize="11px" color="#4E4B66">22/01/2022</Text>
-                                    </Td>
-                                    <Td color="#C30052" fontWeight="400" fontSize="11px" textTransform="capitalize">
-                                        Estorno
-                                    </Td>
+                    <Text fontWeight="bold" px="6rem">3 contratos</Text>
 
-                                    <Td>
-                                        <Text fontSize="8px" color="#6E7191">Crédito</Text>
-                                        <Text fontSize="11px" color="#4E4B66">R$500.000,00</Text>
-                                    </Td>
-                                    <Td></Td>
-                                    <Td>
-                                        <Text fontSize="8px" color="#6E7191">Critério</Text>
-                                        <Text fontSize="11px" color="#4E4B66">Regra 2m</Text>
-                                    </Td>
-                                    <Td></Td>
-                                    <Td px="55px" isNumeric color="#C30052" fontWeight="regular" fontSize="11px" textTransform="capitalize">
-                                       - R$ 1.250,00
-                                    </Td>
+                    <Text fontWeight="bold" px="6rem" color="#6E7191">Créditos: R$2.800.000,00</Text>
+                </Stack>
+                <Stack direction={["column", "row"]} spacing={["3", "6"]} alignItems={["flex-end", "center"]}>
+                    <Text float="right" textAlign="right" px="40px" color="red.400"><strong>- R$ 3.000,00</strong></Text>
+                </Stack>
+            </HStack>
+            <AccordionItem display="flex" flexDir="column" paddingX={["4", "8"]} paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
+                {({ isExpanded }) => (
+                    <>
+                        <Stack spacing={["5", ""]} direction={['column', 'row']} justify="space-between" mb="3" alignItems={["", "center"]}>
+                            <HStack spacing={["5", "5"]} justifyContent="space-between">
+                                <HStack spacing={["3", "4"]}>
+                                    <AccordionButton p="0" height="fit-content" w="auto">
+                                        <Flex alignItems="center" justifyContent="center" h={["20px", "24px"]} w={["24px", "30px"]} p="0" borderRadius="full" border="2px" borderColor="red.400" variant="outline">
+                                            {
+                                                !isExpanded ? <StrongPlusIcon stroke="#C30052" fill="none" width="12px" /> :
+                                                    <MinusIcon stroke="#C30052" fill="none" width="12px" />
+                                            }
+                                        </Flex>
+                                    </AccordionButton>
+                                </HStack>
+
+                                <Stack direction={['column', 'row']} spacing={["1", "4"]}>
+                                    <Stack fontWeight="500" alignItems="center">
+                                        <Text ml="2" color="#6E7191" fontSize="10px">Data da venda</Text>
+                                        <Text ml="2" color="#4e4b66" fontSize="13px">22/01/2022</Text>
+                                    </Stack>
+                                </Stack>
+                            </HStack>
+                            <HStack spacing={["5", "5"]} justifyContent="space-between">
+                                <HStack spacing={["3", "4"]}>
+                                    <Stack fontWeight="500" alignItems="center">
+                                        <Text ml="2" color="#6E7191" fontSize="10px">Parcela</Text>
+                                        <Text ml="2" color="#4e4b66" fontSize="13px">2</Text>
+                                    </Stack>
                                 </HStack>
                             </HStack>
-                        </Tr>
-                    </Tbody>
-                </Table>
-            </TableContainer>
-        </Stack>
+                            <HStack spacing={["5", "5"]} justifyContent="space-between" fontSize={["11px", "13px"]}>
+                                <HStack>
+                                    <Stack direction={['column', 'row']} spacing={["1", "4"]}>
+                                        <Stack fontWeight="500" alignItems="center">
+                                            <Text ml="2" color="#6E7191" fontSize="10px">Crédito</Text>
+                                            <Text ml="2" color="#4e4b66" fontSize="13px">R$500.000,00</Text>
+                                        </Stack>
+                                    </Stack>
+                                </HStack>
+                            </HStack>
+                            <Stack direction={['column', 'row']} spacing={["1", "4"]}>
+                                <Stack fontWeight="500" alignItems="center">
+                                    <Text ml="2" color="#6E7191" fontSize="10px">Critério</Text>
+                                    <Text ml="2" color="#4e4b66" fontSize="13px">Regra Geral</Text>
+                                </Stack>
+                            </Stack>
+                            <Stack direction={['column', 'row']} spacing={["1", "4"]}>
+                                <Stack fontWeight="500" alignItems="center">
+                                    <Badge colorScheme='yellow' width="110px" px="27px">Pendente</Badge>
+                                </Stack>
+                                <Stack fontWeight="500" alignItems="center">
+                                    <Text float="right" px="2rem">R$ 1.250,00</Text>
+                                </Stack>
+                            </Stack>
+                        </Stack>
+
+                        <AccordionPanel flexDir="column" borderTop="2px" borderColor="gray.500" px="0" py="5" fontSize={["11px", "small"]}>
+                            <Stack direction={['column', 'row']} spacing={["5", "4"]} justifyContent="space-between" mb="4">
+                                <HStack spacing="2">
+                                    <strong color="#4e4b66">Percentual:</strong>
+                                    <Text>
+                                        1%
+                                    </Text>
+                                </HStack>
+                                <HStack spacing="4">
+                                    <strong color="#4e4b66">Parcelas:</strong>
+                                    <Text>
+                                        4
+                                    </Text>
+                                </HStack>
+                                <HStack spacing="4">
+                                    <strong color="#4e4b66">Parcela:</strong>
+                                    <Text>
+                                        Meia Parcela
+                                    </Text>
+                                </HStack>
+
+                                <HStack spacing="2" px="1rem">
+                                    <strong color="#4e4b66">Restante:</strong>
+                                    <Text>
+                                        R$ 0,00
+                                    </Text>
+                                </HStack>
+                            </Stack>
+
+                            <Divider mb="3" />
+
+                            <Stack direction={['column', 'row']} spacing={["5", "4"]} justifyContent="space-between" mb="4">
+                                <HStack spacing="2">
+                                    <strong color="#4e4b66">Contrato:</strong>
+                                    <Text>
+                                        230495
+                                    </Text>
+                                </HStack>
+                                <HStack spacing="4">
+                                    <strong color="#4e4b66">Grupo:</strong>
+                                    <Text>
+                                        1080
+                                    </Text>
+                                </HStack>
+                                <HStack spacing="4">
+                                    <strong color="#4e4b66">Cota:</strong>
+                                    <Text>
+                                        874
+                                    </Text>
+                                </HStack>
+
+                                <HStack spacing="2" px="1rem">
+                                    <strong color="#4e4b66">Bem:</strong>
+                                    <Text>
+                                        imóvel
+                                    </Text>
+                                </HStack>
+                                <HStack spacing="2" px="0rem">
+                                    <strong color="#4e4b66">Cliente:</strong>
+                                    <Text>
+                                        João Beltrano
+                                    </Text>
+                                </HStack>
+                            </Stack>
+                        </AccordionPanel>
+                    </>
+                )}
+            </AccordionItem>
+            <AccordionItem display="flex" flexDir="column" paddingX={["4", "8"]} paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
+                {({ isExpanded }) => (
+                    <>
+                        <Stack spacing={["5", ""]} direction={['column', 'row']} justify="space-between" mb="3" alignItems={["", "center"]}>
+                            <HStack spacing={["5", "5"]} justifyContent="space-between">
+                                <HStack spacing={["3", "4"]}>
+                                    <AccordionButton p="0" height="fit-content" w="auto">
+                                        <Flex alignItems="center" justifyContent="center" h={["20px", "24px"]} w={["24px", "30px"]} p="0" borderRadius="full" border="2px" borderColor="red.400" variant="outline">
+                                            {
+                                                !isExpanded ? <StrongPlusIcon stroke="#C30052" fill="none" width="12px" /> :
+                                                    <MinusIcon stroke="#C30052" fill="none" width="12px" />
+                                            }
+                                        </Flex>
+                                    </AccordionButton>
+                                </HStack>
+
+                                <Stack direction={['column', 'row']} spacing={["1", "4"]}>
+                                    <Stack fontWeight="500" alignItems="center">
+                                        <Text ml="2" color="#6E7191" fontSize="10px">Data da venda</Text>
+                                        <Text ml="2" color="#4e4b66" fontSize="13px">22/01/2022</Text>
+                                    </Stack>
+                                </Stack>
+                            </HStack>
+                            <HStack spacing={["5", "5"]} justifyContent="space-between">
+                                <HStack spacing={["3", "4"]}>
+                                    <Stack fontWeight="500" alignItems="center">
+                                        <Text ml="2" color="#6E7191" fontSize="10px">Parcela</Text>
+                                        <Text ml="2" color="#4e4b66" fontSize="13px">2</Text>
+                                    </Stack>
+                                </HStack>
+                            </HStack>
+                            <HStack spacing={["5", "5"]} justifyContent="space-between" fontSize={["11px", "13px"]}>
+                                <HStack>
+                                    <Stack direction={['column', 'row']} spacing={["1", "4"]}>
+                                        <Stack fontWeight="500" alignItems="center">
+                                            <Text ml="2" color="#6E7191" fontSize="10px">Crédito</Text>
+                                            <Text ml="2" color="#4e4b66" fontSize="13px">R$500.000,00</Text>
+                                        </Stack>
+                                    </Stack>
+                                </HStack>
+                            </HStack>
+                            <Stack direction={['column', 'row']} spacing={["1", "4"]}>
+                                <Stack fontWeight="500" alignItems="center">
+                                    <Text ml="2" color="#6E7191" fontSize="10px">Critério</Text>
+                                    <Text ml="2" color="#4e4b66" fontSize="13px">Regra Geral</Text>
+                                </Stack>
+                            </Stack>
+                            <Stack direction={['column', 'row']} spacing={["1", "4"]}>
+                                <Stack fontWeight="500" alignItems="center">
+                                    <Badge colorScheme='green'>Confirmada</Badge>
+                                </Stack>
+                                <Stack fontWeight="500" alignItems="center">
+                                    <Text float="right" px="2rem" color="green.400">R$ 1.000,00</Text>
+                                </Stack>
+                            </Stack>
+                        </Stack>
+
+                        <AccordionPanel flexDir="column" borderTop="2px" borderColor="gray.500" px="0" py="5" fontSize={["11px", "small"]}>
+                            <Stack direction={['column', 'row']} spacing={["5", "4"]} justifyContent="space-between" mb="4">
+                                <HStack spacing="2">
+                                    <strong color="#4e4b66">Percentual:</strong>
+                                    <Text>
+                                        1%
+                                    </Text>
+                                </HStack>
+                                <HStack spacing="4">
+                                    <strong color="#4e4b66">Parcelas:</strong>
+                                    <Text>
+                                        4
+                                    </Text>
+                                </HStack>
+                                <HStack spacing="4">
+                                    <strong color="#4e4b66">Parcela:</strong>
+                                    <Text>
+                                        Meia Parcela
+                                    </Text>
+                                </HStack>
+
+                                <HStack spacing="2" px="1rem">
+                                    <strong color="#4e4b66">Restante:</strong>
+                                    <Text>
+                                        R$ 0,00
+                                    </Text>
+                                </HStack>
+                            </Stack>
+
+                            <Divider mb="3" />
+
+                            <Stack direction={['column', 'row']} spacing={["5", "4"]} justifyContent="space-between" mb="4">
+                                <HStack spacing="2">
+                                    <strong color="#4e4b66">Contrato:</strong>
+                                    <Text>
+                                        230495
+                                    </Text>
+                                </HStack>
+                                <HStack spacing="4">
+                                    <strong color="#4e4b66">Grupo:</strong>
+                                    <Text>
+                                        1080
+                                    </Text>
+                                </HStack>
+                                <HStack spacing="4">
+                                    <strong color="#4e4b66">Cota:</strong>
+                                    <Text>
+                                        874
+                                    </Text>
+                                </HStack>
+
+                                <HStack spacing="2" px="1rem">
+                                    <strong color="#4e4b66">Bem:</strong>
+                                    <Text>
+                                        imóvel
+                                    </Text>
+                                </HStack>
+                                <HStack spacing="2" px="0rem">
+                                    <strong color="#4e4b66">Cliente:</strong>
+                                    <Text>
+                                        João Beltrano
+                                    </Text>
+                                </HStack>
+                            </Stack>
+                        </AccordionPanel>
+                    </>
+                )}
+            </AccordionItem>
+        </Accordion>
     )
 }

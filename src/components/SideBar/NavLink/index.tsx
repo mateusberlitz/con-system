@@ -17,7 +17,9 @@ export function NavLink({icon, color, children, href, ...rest} : NavLinkProps){
 
     let isActive = false;
 
-    if(pathname.startsWith(String(href))){
+    //console.log(pathname.split('/')[1]);
+
+    if(`/${pathname.split('/')[1]}` === href){
         isActive = true;
     }
 
