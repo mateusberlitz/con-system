@@ -313,7 +313,7 @@ export default function LastComissionsTable() {
                             <HStack spacing={["5", "5"]} justifyContent="space-between">
                                 <HStack spacing={["3", "4"]}>
                                     <Stack fontWeight="500" alignItems="center">
-                                        <Text ml="2" color="red.400" fontSize="10px">Estorno</Text>
+                                        <Text px="0px" color="red.400" fontSize="13px">Estorno</Text>
                                     </Stack>
                                 </HStack>
                             </HStack>
