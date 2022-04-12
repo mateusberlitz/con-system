@@ -15,7 +15,7 @@ export default function LastComissionsTable() {
           </Text>
         </HStack>
         <Flex align="center" justify="center">
-        <TableContainer border="2px solid #D6D8E7" borderRadius={15}>
+        <TableContainer border="2px solid #D6D8E7" borderRadius={26} height="2vw">
           <Table variant='simple' size="sm">
             <Thead backgroundColor="#EFF0F7" maxWidth="100%" whiteSpace="nowrap">
               <Tr>
@@ -29,58 +29,58 @@ export default function LastComissionsTable() {
             <Tbody>
               <Tr color="gray.800" fontWeight="normal" py="4">
                 <Th>
-                  <Text fontSize="8px">Grupo-Costa</Text>
-                  <Text fontSize="11px">1080-320</Text>
+                  <Text fontSize="10px">Grupo-Costa</Text>
+                  <Text fontSize="13px">1080-320</Text>
                 </Th>
                 <Th>
-                  <Text fontSize="8px">Parcela</Text>
-                  <Text fontSize="11px">1</Text>
+                  <Text fontSize="10px">Parcela</Text>
+                  <Text fontSize="13px">1</Text>
                 </Th>
-                <Th color="gray.800" fontWeight="normal" fontSize="11px">
+                <Th color="gray.800" fontWeight="normal" fontSize="13px">
                   1%
                 </Th>
                 <Th>
                   <Badge colorScheme='yellow'>Pendente</Badge>
                 </Th>
-                <Th color="#00BA88" fontWeight="500" fontSize="11px" textTransform="capitalize">
+                <Th color="#00BA88" fontWeight="500" fontSize="13px" textTransform="capitalize">
                   R$ 1.250,00
                 </Th>
               </Tr>
               <Tr>
                 <Th color="gray.800" fontWeight="normal">
-                  <Text fontSize="8px">Grupo-Costa</Text>
-                  <Text fontSize="11px">1080-320</Text>
+                  <Text fontSize="10px">Grupo-Costa</Text>
+                  <Text fontSize="13px">1080-320</Text>
                 </Th>
                 <Th color="gray.800" fontWeight="normal">
-                  <Text fontSize="8px">Parcela</Text>
-                  <Text fontSize="11px">1</Text>
+                  <Text fontSize="10px">Parcela</Text>
+                  <Text fontSize="13px">1</Text>
                 </Th>
-                <Th color="gray.800" fontWeight="normal" fontSize="11px">
+                <Th color="gray.800" fontWeight="normal" fontSize="13px">
                   1%
                 </Th>
                 <Th>
                   <Badge colorScheme='yellow'>Pendente</Badge>
                 </Th>
-                <Th color="#00BA88" fontWeight="500" fontSize="11px" textTransform="capitalize">
+                <Th color="#00BA88" fontWeight="500" fontSize="13px" textTransform="capitalize">
                   R$ 1.250,00
                 </Th>
               </Tr>
             <Tr>
                 <Th color="gray.800" fontWeight="normal">
-                  <Text fontSize="8px">Grupo-Costa</Text>
-                  <Text fontSize="11px">1080-320</Text>
+                  <Text fontSize="10px">Grupo-Costa</Text>
+                  <Text fontSize="13px">1080-320</Text>
                 </Th>
                 <Th color="gray.800" fontWeight="normal">
-                  <Text fontSize="8px">Parcela</Text>
-                  <Text fontSize="11px">1</Text>
+                  <Text fontSize="10px">Parcela</Text>
+                  <Text fontSize="13px">1</Text>
                 </Th>
-                <Th color="gray.800" fontWeight="normal" fontSize="11px">
+                <Th color="gray.800" fontWeight="normal" fontSize="13px">
                   1%
                 </Th>
                 <Th>
                     <Badge colorScheme="red" px="25px">Estorno</Badge>
                 </Th>
-                <Th color="#C30052" fontWeight="500" fontSize="11px" textTransform="capitalize">
+                <Th color="#C30052" fontWeight="500" fontSize="13px" textTransform="capitalize">
                   R$ 1.250,00
                 </Th>
               </Tr>
@@ -88,20 +88,20 @@ export default function LastComissionsTable() {
             <Tfoot>
             <Tr>
                 <Th color="gray.800" fontWeight="normal">
-                  <Text fontSize="8px">Grupo-Costa</Text>
-                  <Text fontSize="11px">1080-320</Text>
+                  <Text fontSize="10px">Grupo-Costa</Text>
+                  <Text fontSize="13px">1080-320</Text>
                 </Th>
                 <Th color="gray.800" fontWeight="normal">
-                  <Text fontSize="8px">Parcela</Text>
-                  <Text fontSize="11px">1</Text>
+                  <Text fontSize="10px">Parcela</Text>
+                  <Text fontSize="13px">1</Text>
                 </Th>
-                <Th color="gray.800" fontWeight="normal" fontSize="11px">
+                <Th color="gray.800" fontWeight="normal" fontSize="13px">
                   1%
                 </Th>
                 <Th>
                   <Badge colorScheme='green'>Pendente</Badge>
                 </Th>
-                <Th color="#00BA88" fontWeight="500" fontSize="11px" textTransform="capitalize">
+                <Th color="#00BA88" fontWeight="bold" fontSize="13px" textTransform="capitalize">
                   R$ 1.250,00
                 </Th>
               </Tr>

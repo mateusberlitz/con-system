@@ -47,6 +47,7 @@ import { useTenant } from './hooks/useTenant'
 import { Tenant } from './types'
 import Commissions from './pages/Commissions'
 import CommissionsSalesman from './pages/Commissions/CommissionsSalesman'
+import Company from './pages/Commissions/Company'
 
 interface PrivateRouteProps extends RouteProps {
   component: any
@@ -329,6 +330,7 @@ const Routes = (): JSX.Element => {
 
         <Route path={`/comissões`} exact component={Commissions} />
         <Route path={`/comissões-vendedores`} exact component={CommissionsSalesman} />
+        <Route path={`/comissões-empresa`} exact component={Company} />
 
         {/* <PrivateRoute path="/empresas" component={Roles} /> */}
       </Switch>
