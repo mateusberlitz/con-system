@@ -24,7 +24,7 @@ import { useWorkingCompany } from '../../../hooks/useWorkingCompany'
 import { useProfile } from '../../../hooks/useProfile'
 import { Input } from '../../../components/Forms/Inputs/Input'
 
-export interface RemoveCompanyRuleParcelData {
+export interface RemoveSellerRuleParcelData {
   id: number;
   company_commission_rule_id: number;
   parcel_number: number;
@@ -32,19 +32,19 @@ export interface RemoveCompanyRuleParcelData {
   chargeback_percentage?: number;
 }
 
-interface ConfirmBranchRemoveModalProps {
+interface ConfirmSellerRuleParcelRemoveModalProps {
   isOpen: boolean
-  toRemoveCompanyRuleParcelData: RemoveCompanyRuleParcelData
+  toRemoveSellerRuleParcelData: RemoveSellerRuleParcelData
   onRequestClose: () => void
   afterRemove: () => void
 }
 
-export function ConfirmCompanyRuleParcelRemoveModal({
+export function ConfirmSellerRuleParcelRemoveModal({
   isOpen,
-  toRemoveCompanyRuleParcelData,
+  toRemoveSellerRuleParcelData,
   afterRemove,
   onRequestClose
-}: ConfirmBranchRemoveModalProps) {
+}: ConfirmSellerRuleParcelRemoveModalProps) {
   const workingCompany = useWorkingCompany()
   const { profile, permissions } = useProfile()
   const toast = useToast()
@@ -53,17 +53,17 @@ export function ConfirmCompanyRuleParcelRemoveModal({
 
   const [name, setName] = useState('')
 
-  const handleRemoveCompanyRuleParcel = async () => {
+  const handleRemoveSellerRuleParcel = async () => {
     try {
       if (!profile) {
         return
       }
 
-      await api.delete(`/company-commission-rule-parcels/${toRemoveCompanyRuleParcelData.id}`)
+      await api.delete(`/seller-commission-rule-parcels/${toRemoveSellerRuleParcelData.id}`)
 
       toast({
         title: 'Sucesso',
-        description: `A parcela ${toRemoveCompanyRuleParcelData.parcel_number} foi removida`,
+        description: `A parcela ${toRemoveSellerRuleParcelData.parcel_number} foi removida`,
         status: 'success',
         duration: 12000,
         isClosable: true
@@ -90,13 +90,13 @@ export function ConfirmCompanyRuleParcelRemoveModal({
       <ModalOverlay />
       <ModalContent borderRadius="24px">
         <ModalHeader p="10" fontWeight="700" fontSize="2xl">
-          Remover a parcela {toRemoveCompanyRuleParcelData.parcel_number}?
+          Remover a parcela {toRemoveSellerRuleParcelData.parcel_number}?
         </ModalHeader>
 
         <ModalCloseButton top="10" right="5" />
 
         <ModalBody pl="10" pr="10">
-            <SolidButton onClick={handleRemoveCompanyRuleParcel} mr="6" color="white" bg="red.400" _hover={{filter: "brightness(90%)"}} rightIcon={<CloseIcon stroke="#ffffff" fill="none" width="18px" strokeWidth="3px"/>}>
+            <SolidButton onClick={handleRemoveSellerRuleParcel} mr="6" color="white" bg="red.400" _hover={{filter: "brightness(90%)"}} rightIcon={<CloseIcon stroke="#ffffff" fill="none" width="18px" strokeWidth="3px"/>}>
                 Confirmar e Remover
             </SolidButton>
         </ModalBody>

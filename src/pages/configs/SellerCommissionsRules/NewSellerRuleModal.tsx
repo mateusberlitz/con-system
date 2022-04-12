@@ -32,7 +32,7 @@ import { ChargeBackType, Company, State, User } from '../../../types'
 import { useCompanies } from '../../../hooks/useCompanies'
 import { useChargeBackTypes } from '../../../hooks/useChargeBackTypes'
 
-interface NewCompanyRuleModalProps {
+interface NewSellerRuleModalProps {
   isOpen: boolean
   onRequestClose: () => void
   afterCreate: () => void
@@ -42,7 +42,7 @@ interface CompanyParams {
   id: string
 }
 
-interface CreateNewCompanyRuleFormData {
+interface CreateNewSellerRuleFormData {
   name: string;
   company_id: number;
   chargeback_type_id: number;
@@ -53,7 +53,7 @@ interface CreateNewCompanyRuleFormData {
   pay_in_contemplation?: boolean;
 }
 
-const CreateNewCompanyRuleFormSchema = yup.object().shape({
+const CreateNewSellerRuleFormSchema = yup.object().shape({
   name: yup.string().required('Nome da regra é obrigatório'),
   //company_id: yup.number().required('A qual empresa essa filial pertence?'),
   chargeback_type_id: yup.number().required('Tipo de estorno obrigatório'),
@@ -64,11 +64,11 @@ const CreateNewCompanyRuleFormSchema = yup.object().shape({
   final_value: yup.number().nullable(),
 })
 
-export function NewCompanyRuleModal({
+export function NewSellerRuleModal({
   isOpen,
   onRequestClose,
   afterCreate
-}: NewCompanyRuleModalProps) {
+}: NewSellerRuleModalProps) {
   const history = useHistory()
   const toast = useToast()
   const { showErrors } = useErrors()
@@ -76,19 +76,19 @@ export function NewCompanyRuleModal({
   const { id } = useParams<CompanyParams>();
 
   const { register, handleSubmit, reset, formState } =
-    useForm<CreateNewCompanyRuleFormData>({
-      resolver: yupResolver(CreateNewCompanyRuleFormSchema)
+    useForm<CreateNewSellerRuleFormData>({
+      resolver: yupResolver(CreateNewSellerRuleFormSchema)
     })
 
-  const handleCreateNewBranch = async (companyRuleData: CreateNewCompanyRuleFormData) => {
+  const handleCreateNewSellerRule = async (sellerRuleData: CreateNewSellerRuleFormData) => {
     try {
-      companyRuleData.company_id = parseInt(id);
+      sellerRuleData.company_id = parseInt(id);
 
-      await api.post('/company-commission-rules', companyRuleData)
+      await api.post('/seller-commission-rules', sellerRuleData)
 
       toast({
         title: 'Sucesso',
-        description: `A regra ${companyRuleData.name} foi cadastrada`,
+        description: `A regra ${sellerRuleData.name} foi cadastrada`,
         status: 'success',
         duration: 12000,
         isClosable: true
@@ -123,7 +123,7 @@ export function NewCompanyRuleModal({
       <ModalContent
         as="form"
         borderRadius="24px"
-        onSubmit={handleSubmit(handleCreateNewBranch)}
+        onSubmit={handleSubmit(handleCreateNewSellerRule)}
       >
         <ModalHeader p="10" fontWeight="700" fontSize="2xl">
           Cadastrar Regra

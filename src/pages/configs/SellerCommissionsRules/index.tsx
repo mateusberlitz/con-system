@@ -12,14 +12,17 @@ import { Table } from "../../../components/Table";
 import { RemoveButton } from "../../../components/Buttons/RemoveButton";
 import { CompanyCommissionRule, CompanyCommissionRuleParcel } from "../../../types";
 import { api } from "../../../services/api";
-import { NewCompanyRuleModal } from "./NewCompanyRuleModal";
+import { NewSellerRuleModal } from "./NewSellerRuleModal";
 import { useParams } from "react-router-dom";
-import { EditCompanyRuleModal, EditNewCompanyRuleFormData } from "./EditCompanyRuleModal";
-import { NewCompanyRuleParcelModal } from "./NewCompanyRuleParcelModal";
-import { EditCompanyRuleParcelModal, EditNewCompanyRuleParcelFormData } from "./EditCompanyRuleParcelModal";
-import { ConfirmCompanyRuleParcelRemoveModal } from "./ConfirmCompanyRuleParcelRemoveModal";
+import { EditSellerRuleModal, EditNewSellerRuleFormData } from "./EditSellerRuleModal";
+import { NewSellerRuleParcelModal } from "./NewSellerRuleParcelModal";
+import { EditSellerRuleParcelModal, EditNewSellerRuleParcelFormData } from "./EditSellerRuleParcelModal";
+import { ConfirmSellerRuleParcelRemoveModal } from "./ConfirmSellerRuleParcelRemoveModal";
+import { useSellerCommissionRules } from "../../../hooks/useSellerCommissionRules";
 
 export function CompanyRules(){
+    const sellerRules = useSellerCommissionRules({});
+
     const [isNewCompanyRuleModalOpen, setIsNewCompanyRuleModalOpen] = useState(false);
 
     function OpenNewCompanyRuleModal() {
@@ -29,8 +32,8 @@ export function CompanyRules(){
         setIsNewCompanyRuleModalOpen(false)
     }
 
-    const [editCompanyRuleData, setEditCompanyRuleData] = useState<EditNewCompanyRuleFormData>(() => {
-        const data: EditNewCompanyRuleFormData = {
+    const [editCompanyRuleData, setEditCompanyRuleData] = useState<EditNewSellerRuleFormData>(() => {
+        const data: EditNewSellerRuleFormData = {
             id: 0,
             name: '',
             company_id: 0,
@@ -44,13 +47,57 @@ export function CompanyRules(){
     });
     const [isEditCompanyRuleModalOpen, setIsEditCompanyRuleModalOpen] = useState(false);
 
-    function OpenEditCompanyRuleModal(companyRuleData: EditNewCompanyRuleFormData) {
+    function OpenEditCompanyRuleModal(companyRuleData: EditNewSellerRuleFormData) {
         setIsEditCompanyRuleModalOpen(true)
         setEditCompanyRuleData(companyRuleData);
     }
     function CloseEditCompanyRuleModal() {
         setIsEditCompanyRuleModalOpen(false)
     }
+
+    const [companyCommissionRuleId, setCompanyCommissionRuleId] = useState(1);
+    const [isNewCompanyRuleParcelModalOpen, setIsNewCompanyRuleParcelModalOpen] = useState(false);
+
+    function OpenNewCompanyRuleParcelModal(companyCommissionRuleId: number) {
+        setCompanyCommissionRuleId(companyCommissionRuleId);
+        setIsNewCompanyRuleParcelModalOpen(true)
+    }
+    function CloseNewCompanyRuleParcelModal() {
+        setIsNewCompanyRuleParcelModalOpen(false)
+    }
+
+    const [editCompanyRuleParcelData, setEditCompanyRuleParcelData] = useState<EditNewSellerRuleParcelFormData>(() => {
+        const data: EditNewSellerRuleParcelFormData = {
+            id: 0,
+            parcel_number: 0,
+            percentage_to_pay: 0,
+            chargeback_percentage: 0,
+            company_commission_rule_id: rule ? rule.id : 0
+        };
+        
+        return data;
+    });
+    const [isEditCompanyRuleParcelModalOpen, setIsEditCompanyRuleParcelModalOpen] = useState(false);
+
+    function OpenEditCompanyRuleParcelModal(companyRuleData: EditNewSellerRuleParcelFormData) {
+        setIsEditCompanyRuleParcelModalOpen(true)
+        setEditCompanyRuleParcelData(companyRuleData);
+    }
+    function CloseEditCompanyRuleParcelModal() {
+        setIsEditCompanyRuleParcelModalOpen(false)
+    }
+
+    const [isConfirmCompanyRuleParcelRemoveModalOpen, setIsConfirmCompanyRuleParcelRemoveModalOpen] = useState(false);
+
+    function OpenConfirmCompanyRuleParcelRemoveModal(companyRuleData: EditNewSellerRuleParcelFormData) {
+        setIsConfirmCompanyRuleParcelRemoveModalOpen(true)
+        setEditCompanyRuleParcelData(companyRuleData);
+    }
+    function CloseConfirmCompanyRuleParcelRemoveModal() {
+        setIsConfirmCompanyRuleParcelRemoveModalOpen(false)
+    }
+
+
 
     const [rule, setRule] = useState<CompanyCommissionRule>();
 
@@ -64,60 +111,20 @@ export function CompanyRules(){
         }
     }
 
+
+
     useEffect(() => {
         getRule();
     }, []);
 
-    const [companyCommissionRuleId, setCompanyCommissionRuleId] = useState(1);
-    const [isNewCompanyRuleParcelModalOpen, setIsNewCompanyRuleParcelModalOpen] = useState(false);
-
-    function OpenNewCompanyRuleParcelModal(companyCommissionRuleId: number) {
-        setCompanyCommissionRuleId(companyCommissionRuleId);
-        setIsNewCompanyRuleParcelModalOpen(true)
-    }
-    function CloseNewCompanyRuleParcelModal() {
-        setIsNewCompanyRuleParcelModalOpen(false)
-    }
-
-    const [editCompanyRuleParcelData, setEditCompanyRuleParcelData] = useState<EditNewCompanyRuleParcelFormData>(() => {
-        const data: EditNewCompanyRuleParcelFormData = {
-            id: 0,
-            parcel_number: 0,
-            percentage_to_pay: 0,
-            chargeback_percentage: 0,
-            company_commission_rule_id: rule ? rule.id : 0
-        };
-        
-        return data;
-    });
-    const [isEditCompanyRuleParcelModalOpen, setIsEditCompanyRuleParcelModalOpen] = useState(false);
-
-    function OpenEditCompanyRuleParcelModal(companyRuleData: EditNewCompanyRuleParcelFormData) {
-        setIsEditCompanyRuleParcelModalOpen(true)
-        setEditCompanyRuleParcelData(companyRuleData);
-    }
-    function CloseEditCompanyRuleParcelModal() {
-        setIsEditCompanyRuleParcelModalOpen(false)
-    }
-
-    const [isConfirmCompanyRuleParcelRemoveModalOpen, setIsConfirmCompanyRuleParcelRemoveModalOpen] = useState(false);
-
-    function OpenConfirmCompanyRuleParcelRemoveModal(companyRuleData: EditNewCompanyRuleParcelFormData) {
-        setIsConfirmCompanyRuleParcelRemoveModalOpen(true)
-        setEditCompanyRuleParcelData(companyRuleData);
-    }
-    function CloseConfirmCompanyRuleParcelRemoveModal() {
-        setIsConfirmCompanyRuleParcelRemoveModalOpen(false)
-    }
-
     return(
         <Board p="0" overflow="hidden">
-            <NewCompanyRuleModal afterCreate={() => getRule()} isOpen={isNewCompanyRuleModalOpen} onRequestClose={CloseNewCompanyRuleModal}/>
-            <EditCompanyRuleModal toEditCompanyRuleData={editCompanyRuleData} afterEdit={() => getRule()} isOpen={isEditCompanyRuleModalOpen} onRequestClose={CloseEditCompanyRuleModal}/>
+            <NewSellerRuleModal afterCreate={() => getRule()} isOpen={isNewCompanyRuleModalOpen} onRequestClose={CloseNewCompanyRuleModal}/>
+            <EditSellerRuleModal toEditSellerRuleData={editCompanyRuleData} afterEdit={() => getRule()} isOpen={isEditCompanyRuleModalOpen} onRequestClose={CloseEditCompanyRuleModal}/>
 
-            <NewCompanyRuleParcelModal companyCommissionRuleId={companyCommissionRuleId} afterCreate={() => getRule()} isOpen={isNewCompanyRuleParcelModalOpen} onRequestClose={CloseNewCompanyRuleParcelModal}/>
-            <EditCompanyRuleParcelModal toEditCompanyRuleParcelData={editCompanyRuleParcelData} afterEdit={() => getRule()} isOpen={isEditCompanyRuleParcelModalOpen} onRequestClose={CloseEditCompanyRuleParcelModal}/>
-            <ConfirmCompanyRuleParcelRemoveModal toRemoveCompanyRuleParcelData={editCompanyRuleParcelData} afterRemove={() => getRule()} isOpen={isConfirmCompanyRuleParcelRemoveModalOpen} onRequestClose={CloseConfirmCompanyRuleParcelRemoveModal}/>
+            <NewSellerRuleParcelModal sellerCommissionRuleId={companyCommissionRuleId} afterCreate={() => getRule()} isOpen={isNewCompanyRuleParcelModalOpen} onRequestClose={CloseNewCompanyRuleParcelModal}/>
+            <EditSellerRuleParcelModal toEditSellerRuleParcelData={editCompanyRuleParcelData} afterEdit={() => getRule()} isOpen={isEditCompanyRuleParcelModalOpen} onRequestClose={CloseEditCompanyRuleParcelModal}/>
+            <ConfirmSellerRuleParcelRemoveModal toRemoveSellerRuleParcelData={editCompanyRuleParcelData} afterRemove={() => getRule()} isOpen={isConfirmCompanyRuleParcelRemoveModalOpen} onRequestClose={CloseConfirmCompanyRuleParcelRemoveModal}/>
 
             <HStack justifyContent="space-between" p={[4, 4, 9]}>
                 <Text fontSize="xl">Regra de comissão de RECEBIMENTO</Text>

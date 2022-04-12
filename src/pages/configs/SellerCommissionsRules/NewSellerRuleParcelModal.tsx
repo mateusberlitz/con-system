@@ -32,51 +32,51 @@ import { ChargeBackType, Company, State, User } from '../../../types'
 import { useCompanies } from '../../../hooks/useCompanies'
 import { useChargeBackTypes } from '../../../hooks/useChargeBackTypes'
 
-interface NewCompanyRuleParcelModalProps {
-  companyCommissionRuleId: number;
+interface NewSellerRuleParcelModalProps {
+  sellerCommissionRuleId: number;
   isOpen: boolean
   onRequestClose: () => void
   afterCreate: () => void
 }
 
-interface CreateNewCompanyRuleParcelFormData {
+interface CreateNewSellerRuleParcelFormData {
   company_commission_rule_id: number;
   parcel_number: number;
   percentage_to_pay: number;
   chargeback_percentage?: number;
 }
 
-const CreateNewCompanyRuleFormSchema = yup.object().shape({
+const CreateNewSellerRuleFormSchema = yup.object().shape({
   //company_commission_rule_id: yup.number().required('Tipo de estorno obrigatório'),
   parcel_number: yup.number().required('Tipo de estorno obrigatório'),
   percentage_to_pay: yup.number().required('Tipo de estorno obrigatório'),
   chargeback_percentage: yup.number().required('Tipo de estorno obrigatório'),
 })
 
-export function NewCompanyRuleParcelModal({
+export function NewSellerRuleParcelModal({
   isOpen,
-  companyCommissionRuleId,
+  sellerCommissionRuleId,
   onRequestClose,
   afterCreate
-}: NewCompanyRuleParcelModalProps) {
+}: NewSellerRuleParcelModalProps) {
   const history = useHistory()
   const toast = useToast()
   const { showErrors } = useErrors()
 
   const { register, handleSubmit, reset, formState } =
-    useForm<CreateNewCompanyRuleParcelFormData>({
-      resolver: yupResolver(CreateNewCompanyRuleFormSchema)
+    useForm<CreateNewSellerRuleParcelFormData>({
+      resolver: yupResolver(CreateNewSellerRuleFormSchema)
     })
 
-  const handleCreateNewCompanyRuleParcel = async (companyRuleParcelData: CreateNewCompanyRuleParcelFormData) => {
+  const handleCreateNewSellerRuleParcel = async (sellerRuleParcelData: CreateNewSellerRuleParcelFormData) => {
     try {
-      companyRuleParcelData.company_commission_rule_id = companyCommissionRuleId;
+      sellerRuleParcelData.company_commission_rule_id = sellerCommissionRuleId;
 
-      await api.post('/company-commission-rule-parcels', companyRuleParcelData)
+      await api.post('/seller-commission-rule-parcels', sellerRuleParcelData)
 
       toast({
         title: 'Sucesso',
-        description: `A parcela ${companyRuleParcelData.parcel_number} foi cadastrada`,
+        description: `A parcela ${sellerRuleParcelData.parcel_number} foi cadastrada`,
         status: 'success',
         duration: 12000,
         isClosable: true
@@ -109,7 +109,7 @@ export function NewCompanyRuleParcelModal({
       <ModalContent
         as="form"
         borderRadius="24px"
-        onSubmit={handleSubmit(handleCreateNewCompanyRuleParcel)}
+        onSubmit={handleSubmit(handleCreateNewSellerRuleParcel)}
       >
         <ModalHeader p="10" fontWeight="700" fontSize="2xl">
           Cadastrar parcela

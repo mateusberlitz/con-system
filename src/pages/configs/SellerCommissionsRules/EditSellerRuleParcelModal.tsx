@@ -17,12 +17,12 @@ import { useChargeBackTypes } from "../../../hooks/useChargeBackTypes";
 
 interface EditCompanyRuleParcelModalProps{
     isOpen: boolean;
-    toEditCompanyRuleParcelData: EditNewCompanyRuleParcelFormData;
+    toEditSellerRuleParcelData: EditNewSellerRuleParcelFormData;
     onRequestClose: () => void;
     afterEdit: () => void;
 }
 
-export interface EditNewCompanyRuleParcelFormData{
+export interface EditNewSellerRuleParcelFormData{
     id: number;
     company_commission_rule_id: number;
     parcel_number: number;
@@ -30,26 +30,26 @@ export interface EditNewCompanyRuleParcelFormData{
     chargeback_percentage?: number;
 }
 
-const EditNewCompanyRuleFormSchema = yup.object().shape({
+const EditNewSellerRuleFormSchema = yup.object().shape({
     parcel_number: yup.number().required('Tipo de estorno obrigatório'),
     percentage_to_pay: yup.number().required('Tipo de estorno obrigatório'),
     chargeback_percentage: yup.number().required('Tipo de estorno obrigatório'),
 });
 
-export function EditCompanyRuleParcelModal( { isOpen, toEditCompanyRuleParcelData, afterEdit, onRequestClose } : EditCompanyRuleParcelModalProps){
+export function EditSellerRuleParcelModal( { isOpen, toEditSellerRuleParcelData, afterEdit, onRequestClose } : EditCompanyRuleParcelModalProps){
     const history = useHistory();
     const toast = useToast();
     const { showErrors } = useErrors();
 
-    const { handleSubmit, formState, control} = useForm<EditNewCompanyRuleParcelFormData>({
-        resolver: yupResolver(EditNewCompanyRuleFormSchema),
+    const { handleSubmit, formState, control} = useForm<EditNewSellerRuleParcelFormData>({
+        resolver: yupResolver(EditNewSellerRuleFormSchema),
     });
 
-    const handleEditCompanyRuleParcel = async (companyRuleParcelData : EditNewCompanyRuleParcelFormData) => {
+    const handleEditCompanyRuleParcel = async (companyRuleParcelData : EditNewSellerRuleParcelFormData) => {
         try{
-            companyRuleParcelData.company_commission_rule_id = toEditCompanyRuleParcelData.company_commission_rule_id;
+            companyRuleParcelData.company_commission_rule_id = toEditSellerRuleParcelData.company_commission_rule_id;
 
-            await api.put(`/company-commission-rule-parcels/${toEditCompanyRuleParcelData.id}`, companyRuleParcelData);
+            await api.put(`/seller-commission-rule-parcels/${toEditSellerRuleParcelData.id}`, companyRuleParcelData);
 
             toast({
                 title: "Sucesso",
@@ -85,18 +85,18 @@ export function EditCompanyRuleParcelModal( { isOpen, toEditCompanyRuleParcelDat
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
             <ModalOverlay />
             <ModalContent as="form" borderRadius="24px" onSubmit={handleSubmit(handleEditCompanyRuleParcel)}>
-                <ModalHeader p="10" fontWeight="700" fontSize="2xl">Alterar parcela {toEditCompanyRuleParcelData.parcel_number}</ModalHeader>
+                <ModalHeader p="10" fontWeight="700" fontSize="2xl">Alterar parcela {toEditSellerRuleParcelData.parcel_number}</ModalHeader>
 
                 <ModalCloseButton top="10" right="5"/>
                 
                 <ModalBody pl="10" pr="10">
                     <Stack spacing="6">
                         
-                        <ControlledInput control={control} name="parcel_number" type="number" max={180} placeholder="Número da parcela" variant="outline" value={toEditCompanyRuleParcelData.parcel_number.toLocaleString()} error={formState.errors.parcel_number} focusBorderColor="purple.600"/>
+                        <ControlledInput control={control} name="parcel_number" type="number" max={180} placeholder="Número da parcela" variant="outline" value={toEditSellerRuleParcelData.parcel_number.toString()} error={formState.errors.parcel_number} focusBorderColor="purple.600"/>
                         
                         <HStack>
-                            <ControlledInput control={control} name="percentage_to_pay" type="number" max={100} placeholder="Percentual a receber" variant="outline" value={toEditCompanyRuleParcelData.percentage_to_pay.toLocaleString()} error={formState.errors.percentage_to_pay} focusBorderColor="purple.600"/>
-                            <ControlledInput control={control} name="chargeback_percentage" type="number" max={100} placeholder="Percentual de estorno" variant="outline" value={toEditCompanyRuleParcelData.chargeback_percentage ? toEditCompanyRuleParcelData.chargeback_percentage.toLocaleString() : ""} error={formState.errors.chargeback_percentage} focusBorderColor="purple.600"/>
+                            <ControlledInput control={control} name="percentage_to_pay" type="number" max={100} placeholder="Percentual a receber" variant="outline" value={toEditSellerRuleParcelData.percentage_to_pay.toString()} error={formState.errors.percentage_to_pay} focusBorderColor="purple.600"/>
+                            <ControlledInput control={control} name="chargeback_percentage" type="number" max={100} placeholder="Percentual de estorno" variant="outline" value={toEditSellerRuleParcelData.chargeback_percentage ? toEditSellerRuleParcelData.chargeback_percentage.toLocaleString() : ""} error={formState.errors.chargeback_percentage} focusBorderColor="purple.600"/>
                         </HStack>
                     </Stack>
                 </ModalBody>

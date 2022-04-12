@@ -170,15 +170,6 @@ export function CompanyRules(){
 
                                         <Text>Ativa</Text>
 
-                                        <OutlineButton
-                                            size="sm"
-                                            colorScheme="purple"
-                                            h="28px"
-                                            px="5"
-                                        >
-                                            Visualizar
-                                        </OutlineButton>
-
                                         <EditButton onClick={() => OpenEditCompanyRuleModal(rule)}></EditButton>
                                     </Stack>
 
