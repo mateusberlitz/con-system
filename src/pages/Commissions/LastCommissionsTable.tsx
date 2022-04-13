@@ -14,20 +14,20 @@ export default function LastComissionsTable() {
             Ultimas Comissões
           </Text>
         </HStack>
-        <Flex align="center" justify="center">
-        <TableContainer border="2px solid #D6D8E7" borderRadius={26} height="2vw">
-          <Table variant='simple' size="sm">
-            <Thead backgroundColor="#EFF0F7" maxWidth="100%" whiteSpace="nowrap">
+        <Flex align="center" justify="center" min-width="100%">
+        <TableContainer border="2px solid #D6D8E7" borderRadius={26}>
+          <Table variant='simple' size="sm"  height="280px">
+            <Thead backgroundColor="#EFF0F7" whiteSpace="nowrap" height="62px">
               <Tr>
                 <Th></Th>
                 <Th></Th>
                 <Th></Th>
                 <Th></Th>
-                <Th isNumeric>total:</Th>
+                <Th isNumeric color="#000" fontSize="13px" px="5">total:</Th>
               </Tr>
             </Thead>
             <Tbody>
-              <Tr color="gray.800" fontWeight="normal" py="4">
+              <Tr color="gray.800" fontWeight="normal">
                 <Th>
                   <Text fontSize="10px">Grupo-Costa</Text>
                   <Text fontSize="13px">1080-320</Text>
@@ -42,7 +42,7 @@ export default function LastComissionsTable() {
                 <Th>
                   <Badge colorScheme='yellow'>Pendente</Badge>
                 </Th>
-                <Th color="#00BA88" fontWeight="500" fontSize="13px" textTransform="capitalize">
+                <Th color="#00BA88" fontWeight="600" fontSize="13px" textTransform="capitalize">
                   R$ 1.250,00
                 </Th>
               </Tr>
@@ -61,7 +61,7 @@ export default function LastComissionsTable() {
                 <Th>
                   <Badge colorScheme='yellow'>Pendente</Badge>
                 </Th>
-                <Th color="#00BA88" fontWeight="500" fontSize="13px" textTransform="capitalize">
+                <Th color="#00BA88" fontWeight="600" fontSize="13px" textTransform="capitalize">
                   R$ 1.250,00
                 </Th>
               </Tr>
@@ -80,13 +80,13 @@ export default function LastComissionsTable() {
                 <Th>
                     <Badge colorScheme="red" px="25px">Estorno</Badge>
                 </Th>
-                <Th color="#C30052" fontWeight="500" fontSize="13px" textTransform="capitalize">
+                <Th color="#C30052" fontWeight="600" fontSize="13px" textTransform="capitalize">
                   R$ 1.250,00
                 </Th>
               </Tr>
             </Tbody>
             <Tfoot>
-            <Tr>
+            <Tr height="60px">
                 <Th color="gray.800" fontWeight="normal">
                   <Text fontSize="10px">Grupo-Costa</Text>
                   <Text fontSize="13px">1080-320</Text>
@@ -101,7 +101,7 @@ export default function LastComissionsTable() {
                 <Th>
                   <Badge colorScheme='green'>Pendente</Badge>
                 </Th>
-                <Th color="#00BA88" fontWeight="bold" fontSize="13px" textTransform="capitalize">
+                <Th color="#00BA88" fontWeight="600" fontSize="13px" textTransform="capitalize">
                   R$ 1.250,00
                 </Th>
               </Tr>
