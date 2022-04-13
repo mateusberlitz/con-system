@@ -35,6 +35,7 @@ import {
 import { OutlineButton } from '../../../../components/Buttons/OutlineButton'
 import { useUsers } from '../../../../hooks/useUsers'
 import { CompanyRules } from './CompanyRules'
+import { SellerCommissionRules } from '../../SellerCommissionsRules'
 
 interface CompanyParams {
   id: string
@@ -328,6 +329,8 @@ export default function CompanyPage() {
             </Board>
 
             <CompanyRules/>
+
+            <SellerCommissionRules/>
 
             {/* <SolidButton onClick={OpenNewBranchModal} mb="12" color="white" bg="purple.300" icon={PlusIcon} colorScheme="purple">
                                 Adicionar Filial

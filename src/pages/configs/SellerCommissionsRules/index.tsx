@@ -1,16 +1,16 @@
-import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Box, Flex, HStack, Stack, Td, Text, Tr } from "@chakra-ui/react";
+import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Box, Flex, HStack, Spinner, Stack, Td, Text, Tr } from "@chakra-ui/react";
 import { Board } from "../../../components/Board";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { useEffect, useState } from "react";
 
-import { ReactComponent as PlusIcon } from '../../../../../assets/icons/Plus.svg';
-import { ReactComponent as MinusIcon } from '../../../../../assets/icons/Minus.svg';
-import { ReactComponent as StrongPlusIcon } from '../../../../../assets/icons/StrongPlus.svg';
+import { ReactComponent as PlusIcon } from '../../../assets/icons/Plus.svg';
+import { ReactComponent as MinusIcon } from '../../../assets/icons/Minus.svg';
+import { ReactComponent as StrongPlusIcon } from '../../../assets/icons/StrongPlus.svg';
 import { OutlineButton } from "../../../components/Buttons/OutlineButton";
 import { EditButton } from "../../../components/Buttons/EditButton";
 import { Table } from "../../../components/Table";
 import { RemoveButton } from "../../../components/Buttons/RemoveButton";
-import { CompanyCommissionRule, CompanyCommissionRuleParcel } from "../../../types";
+import { CompanyCommissionRule, CompanyCommissionRuleParcel, SellerCommissionRule } from "../../../types";
 import { api } from "../../../services/api";
 import { NewSellerRuleModal } from "./NewSellerRuleModal";
 import { useParams } from "react-router-dom";
@@ -20,7 +20,7 @@ import { EditSellerRuleParcelModal, EditNewSellerRuleParcelFormData } from "./Ed
 import { ConfirmSellerRuleParcelRemoveModal } from "./ConfirmSellerRuleParcelRemoveModal";
 import { useSellerCommissionRules } from "../../../hooks/useSellerCommissionRules";
 
-export function CompanyRules(){
+export function SellerCommissionRules(){
     const sellerRules = useSellerCommissionRules({});
 
     const [isNewCompanyRuleModalOpen, setIsNewCompanyRuleModalOpen] = useState(false);
@@ -72,7 +72,7 @@ export function CompanyRules(){
             parcel_number: 0,
             percentage_to_pay: 0,
             chargeback_percentage: 0,
-            company_commission_rule_id: rule ? rule.id : 0
+            company_commission_rule_id: 0
         };
         
         return data;
@@ -97,178 +97,171 @@ export function CompanyRules(){
         setIsConfirmCompanyRuleParcelRemoveModalOpen(false)
     }
 
-
-
-    const [rule, setRule] = useState<CompanyCommissionRule>();
-
-    const getRule = async () => {
-        try{
-            const { data } = await api.get('/company-commission-rules');
-
-            setRule(data.data[0]);
-        }catch(error:any){
-            console.log(error);
-        }
-    }
-
-
-
-    useEffect(() => {
-        getRule();
-    }, []);
+    console.log(sellerRules);
 
     return(
-        <Board p="0" overflow="hidden">
-            <NewSellerRuleModal afterCreate={() => getRule()} isOpen={isNewCompanyRuleModalOpen} onRequestClose={CloseNewCompanyRuleModal}/>
-            <EditSellerRuleModal toEditSellerRuleData={editCompanyRuleData} afterEdit={() => getRule()} isOpen={isEditCompanyRuleModalOpen} onRequestClose={CloseEditCompanyRuleModal}/>
+        <Board p="0" pb="8" overflow="hidden">
+            <NewSellerRuleModal afterCreate={sellerRules.refetch} isOpen={isNewCompanyRuleModalOpen} onRequestClose={CloseNewCompanyRuleModal}/>
+            <EditSellerRuleModal toEditSellerRuleData={editCompanyRuleData} afterEdit={sellerRules.refetch} isOpen={isEditCompanyRuleModalOpen} onRequestClose={CloseEditCompanyRuleModal}/>
 
-            <NewSellerRuleParcelModal sellerCommissionRuleId={companyCommissionRuleId} afterCreate={() => getRule()} isOpen={isNewCompanyRuleParcelModalOpen} onRequestClose={CloseNewCompanyRuleParcelModal}/>
-            <EditSellerRuleParcelModal toEditSellerRuleParcelData={editCompanyRuleParcelData} afterEdit={() => getRule()} isOpen={isEditCompanyRuleParcelModalOpen} onRequestClose={CloseEditCompanyRuleParcelModal}/>
-            <ConfirmSellerRuleParcelRemoveModal toRemoveSellerRuleParcelData={editCompanyRuleParcelData} afterRemove={() => getRule()} isOpen={isConfirmCompanyRuleParcelRemoveModalOpen} onRequestClose={CloseConfirmCompanyRuleParcelRemoveModal}/>
+            <NewSellerRuleParcelModal sellerCommissionRuleId={companyCommissionRuleId} afterCreate={sellerRules.refetch} isOpen={isNewCompanyRuleParcelModalOpen} onRequestClose={CloseNewCompanyRuleParcelModal}/>
+            <EditSellerRuleParcelModal toEditSellerRuleParcelData={editCompanyRuleParcelData} afterEdit={sellerRules.refetch} isOpen={isEditCompanyRuleParcelModalOpen} onRequestClose={CloseEditCompanyRuleParcelModal}/>
+            <ConfirmSellerRuleParcelRemoveModal toRemoveSellerRuleParcelData={editCompanyRuleParcelData} afterRemove={sellerRules.refetch} isOpen={isConfirmCompanyRuleParcelRemoveModalOpen} onRequestClose={CloseConfirmCompanyRuleParcelRemoveModal}/>
 
             <HStack justifyContent="space-between" p={[4, 4, 9]}>
-                <Text fontSize="xl">Regra de comissão de RECEBIMENTO</Text>
+                <Text fontSize="xl">Regras de comissão de PAGAMENTO</Text>
 
-                {
-                    !rule && (
-                        <SolidButton
-                            onClick={() => OpenNewCompanyRuleModal()}
-                            mb="12"
-                            color="white"
-                            bg="purple.300"
-                            icon={PlusIcon}
-                            colorScheme="purple"
-                        >
-                            Adicionar regra
-                        </SolidButton>
-                    )
-                }
+                <SolidButton
+                    onClick={() => OpenNewCompanyRuleModal()}
+                    mb="12"
+                    color="white"
+                    bg="purple.300"
+                    icon={PlusIcon}
+                    colorScheme="purple"
+                >
+                    Adicionar regra
+                </SolidButton>
             </HStack>
 
+            {   sellerRules.isLoading ? (
+                    <Flex justify="left" px="8">
+                        <Spinner/>
+                    </Flex>
+                ) : ( sellerRules.isError ? (
+                    <Flex justify="left" mt="4" mb="4" px="8">
+                        <Text>Erro listar as regras de comissão da empresa</Text>
+                    </Flex>
+                ) : (sellerRules.data?.data.length === 0) && (
+                    <Flex justify="left" px="8">
+                        <Text>Nenhuma regra de comissão da empresa encontrada.</Text>
+                    </Flex>
+                ) ) 
+            }
+
             {
-                !rule ? (
-                    <Text p="8">Adicione a regra principal</Text>
-                ): (
-                    <Accordion w="100%" overflow="hidden" spacing="0" allowMultiple>
-                        <HStack spacing="8" justify="space-between" paddingX={["4", "8"]} paddingY="3" color="gray.700" fontSize="sm">
-                            <Box w="30px"/>
+                (!sellerRules.isLoading && !sellerRules.error) && sellerRules.data?.data.map((rule: SellerCommissionRule) => {
+                    return(
+                        <Accordion key={rule.id} w="100%" overflow="hidden" spacing="0" allowMultiple>
+                            <HStack spacing="8" justify="space-between" paddingX={["4", "8"]} paddingY="3" color="gray.700" fontSize="sm">
+                                <Box w="30px"/>
 
-                            <Text>Título</Text>
-                            <Text>Status</Text>
-                            <Text>Usuários</Text>
+                                <Text>Título</Text>
+                                <Text>Status</Text>
+                                <Text>Usuários</Text>
 
-                            <Box w="30px"/>
-                        </HStack>
+                                <Box w="30px"/>
+                            </HStack>
 
-                        <AccordionItem display="flex" flexDir="column" paddingX={["4", "8"]} paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
-                            {({ isExpanded }) => (
-                                <>
-                                    <Stack spacing={["5", ""]} direction={['column', 'row']} justify="space-between" mb="3" alignItems={["", "center"]}>
-                                        <AccordionButton p="0" height="50" w="auto">
-                                            <Flex alignItems="center" justifyContent="center" h={["20px", "24px"]} w={["24px", "30px"]} p="0" borderRadius="full" border="2px" borderColor="purple.300" variant="outline">
-                                            { 
-                                                    !isExpanded ? <StrongPlusIcon stroke="#5f2eea" fill="none" width="12px"/> :
-                                                    <MinusIcon stroke="#5f2eea" fill="none" width="12px"/>
-                                            } 
-                                            </Flex>
-                                        </AccordionButton>
+                            <AccordionItem display="flex" flexDir="column" paddingX={["4", "8"]} paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
+                                {({ isExpanded }) => (
+                                    <>
+                                        <Stack spacing={["5", ""]} direction={['column', 'row']} justify="space-between" mb="3" alignItems={["", "center"]}>
+                                            <AccordionButton p="0" height="50" w="auto">
+                                                <Flex alignItems="center" justifyContent="center" h={["20px", "24px"]} w={["24px", "30px"]} p="0" borderRadius="full" border="2px" borderColor="purple.300" variant="outline">
+                                                { 
+                                                        !isExpanded ? <StrongPlusIcon stroke="#5f2eea" fill="none" width="12px"/> :
+                                                        <MinusIcon stroke="#5f2eea" fill="none" width="12px"/>
+                                                } 
+                                                </Flex>
+                                            </AccordionButton>
 
-                                        <Text>{rule.name}</Text>
+                                            <Text>{rule.name}</Text>
 
-                                        <Text>Ativa</Text>
+                                            <Text>Ativa</Text>
 
-                                        <OutlineButton
-                                            size="sm"
-                                            colorScheme="purple"
-                                            h="28px"
-                                            px="5"
-                                        >
-                                            Visualizar
-                                        </OutlineButton>
-
-                                        <EditButton onClick={() => OpenEditCompanyRuleModal(rule)}></EditButton>
-                                    </Stack>
-
-                                    <AccordionPanel flexDir="column" borderTop="2px" borderColor="gray.500" px="0" py="5" fontSize={["11px", "small"]}>
-                                        <Stack direction={['column', 'row']} spacing={["5", "4"]} justifyContent="space-between" mb="5">
-                                            <Stack fontSize="sm">
-                                                <Text color="gray.700">Forma de estorno</Text>
-                                                <Text>{rule.chargeback_type.description}</Text>
-                                            </Stack>
-
-                                            <Stack fontSize="sm">
-                                                <Text color="gray.700">Meia parcela</Text>
-                                                <Text>{rule.half_installment ? "Sim" : "Não"}</Text>
-                                            </Stack>
-
-                                            <Stack fontSize="sm">
-                                                <Text color="gray.700">Pago na contemplação</Text>
-                                                <Text>{rule.pay_in_contemplation ? "Sim" : "Não"}</Text>
-                                            </Stack>
-
-                                            <Stack fontSize="sm">
-                                                <Text color="gray.700">Percentual na contemplação</Text>
-                                                <Text>{rule.percentage_paid_in_contemplation}</Text>
-                                            </Stack>
-                                        </Stack>
-
-                                        <Stack borderTop="2px" borderColor="gray.200" spacing={["5", "4"]} justifyContent="space-between" mb="4" pt="5">
-                                            <HStack justifyContent="space-between" w="100%">
-                                                <Text fontSize="lg">Parcelas</Text>
-
-                                                <SolidButton
-                                                    onClick={() => OpenNewCompanyRuleParcelModal(rule.id)}
-                                                    mb="12"
-                                                    color="white"
-                                                    bg="purple.300"
-                                                    icon={PlusIcon}
-                                                    colorScheme="purple"
-                                                >
-                                                    Adicionar parcela
-                                                </SolidButton>
-                                            </HStack>
-
-                                            <Table
-                                                header={[
-                                                {
-                                                    text: 'Número'
-                                                },
-                                                {
-                                                    text: 'Percentual a receber'
-                                                },
-                                                {
-                                                    text: 'Percentual de estorno'
-                                                },
-                                                {
-                                                    text: ''
-                                                }
-                                                ]}
+                                            <OutlineButton
+                                                size="sm"
+                                                colorScheme="purple"
+                                                h="28px"
+                                                px="5"
                                             >
-                                                {
-                                                    rule.company_commission_rule_parcels.map((companyCommissionRuleParcel: CompanyCommissionRuleParcel) => {
-                                                        return(
-                                                            <Tr borderTop="1px" borderColor="gray.200">
-                                                                <Td>{companyCommissionRuleParcel.parcel_number}</Td>
-                                                                <Td>{companyCommissionRuleParcel.percentage_to_pay}%</Td>
-                                                                <Td>{companyCommissionRuleParcel.chargeback_percentage}%</Td>
-                                                                <Td>
-                                                                    <HStack>
-                                                                        <EditButton onClick={() => OpenEditCompanyRuleParcelModal({...companyCommissionRuleParcel, company_commission_rule_id: rule.id})}/>
-                                                                        <RemoveButton onClick={() => OpenConfirmCompanyRuleParcelRemoveModal({...companyCommissionRuleParcel, company_commission_rule_id: rule.id})}/>
-                                                                    </HStack>
-                                                                </Td>
-                                                            </Tr>
-                                                        )
-                                                    })
-                                                }
-                                            </Table>
+                                                Visualizar
+                                            </OutlineButton>
+
+                                            <EditButton onClick={() => OpenEditCompanyRuleModal(rule)}></EditButton>
                                         </Stack>
-                                    </AccordionPanel>
-                                </>
-                            )}
-                        </AccordionItem>
-                    </Accordion>
-                )
+
+                                        <AccordionPanel flexDir="column" borderTop="2px" borderColor="gray.500" px="0" py="5" fontSize={["11px", "small"]}>
+                                            <Stack direction={['column', 'row']} spacing={["5", "4"]} justifyContent="space-between" mb="5">
+                                                <Stack fontSize="sm">
+                                                    <Text color="gray.700">Forma de estorno</Text>
+                                                    <Text>{rule.chargeback_type.description}</Text>
+                                                </Stack>
+
+                                                <Stack fontSize="sm">
+                                                    <Text color="gray.700">Meia parcela</Text>
+                                                    <Text>{rule.half_installment ? "Sim" : "Não"}</Text>
+                                                </Stack>
+
+                                                <Stack fontSize="sm">
+                                                    <Text color="gray.700">Pago na contemplação</Text>
+                                                    <Text>{rule.pay_in_contemplation ? "Sim" : "Não"}</Text>
+                                                </Stack>
+
+                                                <Stack fontSize="sm">
+                                                    <Text color="gray.700">Percentual na contemplação</Text>
+                                                    <Text>{rule.percentage_paid_in_contemplation}</Text>
+                                                </Stack>
+                                            </Stack>
+
+                                            <Stack borderTop="2px" borderColor="gray.200" spacing={["5", "4"]} justifyContent="space-between" mb="4" pt="5">
+                                                <HStack justifyContent="space-between" w="100%">
+                                                    <Text fontSize="lg">Parcelas</Text>
+
+                                                    <SolidButton
+                                                        onClick={() => OpenNewCompanyRuleParcelModal(rule.id)}
+                                                        mb="12"
+                                                        color="white"
+                                                        bg="purple.300"
+                                                        icon={PlusIcon}
+                                                        colorScheme="purple"
+                                                    >
+                                                        Adicionar parcela
+                                                    </SolidButton>
+                                                </HStack>
+
+                                                <Table
+                                                    header={[
+                                                    {
+                                                        text: 'Número'
+                                                    },
+                                                    {
+                                                        text: 'Percentual a receber'
+                                                    },
+                                                    {
+                                                        text: 'Percentual de estorno'
+                                                    },
+                                                    {
+                                                        text: ''
+                                                    }
+                                                    ]}
+                                                >
+                                                    {
+                                                        rule.company_commission_rule_parcels.map((companyCommissionRuleParcel: CompanyCommissionRuleParcel) => {
+                                                            return(
+                                                                <Tr borderTop="1px" borderColor="gray.200">
+                                                                    <Td>{companyCommissionRuleParcel.parcel_number}</Td>
+                                                                    <Td>{companyCommissionRuleParcel.percentage_to_pay}%</Td>
+                                                                    <Td>{companyCommissionRuleParcel.chargeback_percentage}%</Td>
+                                                                    <Td>
+                                                                        <HStack>
+                                                                            <EditButton onClick={() => OpenEditCompanyRuleParcelModal({...companyCommissionRuleParcel, company_commission_rule_id: rule.id})}/>
+                                                                            <RemoveButton onClick={() => OpenConfirmCompanyRuleParcelRemoveModal({...companyCommissionRuleParcel, company_commission_rule_id: rule.id})}/>
+                                                                        </HStack>
+                                                                    </Td>
+                                                                </Tr>
+                                                            )
+                                                        })
+                                                    }
+                                                </Table>
+                                            </Stack>
+                                        </AccordionPanel>
+                                    </>
+                                )}
+                            </AccordionItem>
+                        </Accordion>
+                    )
+                })
             }
         </Board>
     )

@@ -126,7 +126,7 @@ export function NewSellerRuleModal({
         onSubmit={handleSubmit(handleCreateNewSellerRule)}
       >
         <ModalHeader p="10" fontWeight="700" fontSize="2xl">
-          Cadastrar Regra
+          Cadastrar Regra de PAGAMENTO
         </ModalHeader>
 
         <ModalCloseButton top="10" right="5" />
