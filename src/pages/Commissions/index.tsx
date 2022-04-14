@@ -22,7 +22,7 @@ export default function Commissions() {
           alignItems="flex-start"
         >
           {/* Tables */}
-          <Stack spacing="6" w={['100%', '55%']}>
+          <Stack spacing="6" w={['100%', '60%']}>
             <CommissionsGrafic />
             <LastComissionsTable />
             <ChargeBacks />

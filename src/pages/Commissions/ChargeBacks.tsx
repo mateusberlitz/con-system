@@ -8,94 +8,94 @@ export default function CargeBacks() {
 
   return (
     <Flex align="center" justify="center">
-      <Stack w="100%" min-width="300px" spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8" mt={8}>
+      <Stack width="100%" min-width="300px" spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8" mt={8}>
         <HStack align="center" justify="space-between" spacing="4">
           <Text color="#000" fontSize="xl" fontWeight="400">
             Estornos
           </Text>
         </HStack>
-        <Flex align="center" justify="center">
-        <TableContainer border="2px solid #D6D8E7" borderRadius={15}>
-          <Table variant='simple' size="md">
-            <Thead backgroundColor="#EFF0F7" maxWidth="100%" whiteSpace="nowrap">
+        <Flex align="center" justify="center" min-width="100%">
+        <TableContainer border="2px solid #D6D8E7" borderRadius={26}>
+          <Table variant='simple' size="sm" height="280px">
+            <Thead backgroundColor="#EFF0F7" whiteSpace="nowrap"  height="62px">
               <Tr>
                 <Th></Th>
                 <Th></Th>
                 <Th></Th>
-                <Th isNumeric>total:</Th>
+                <Th isNumeric color="#000" fontSize="13px">total:</Th>
               </Tr>
             </Thead>
             <Tbody>
             <Tr>
               <Th color="gray.800" fontWeight="normal">
-                <Text fontSize="8px">Data</Text>
-                <Text fontSize="11px">22/01/2022</Text>
+                <Text fontSize="10px">Data</Text>
+                <Text fontSize="13px">22/01/2022</Text>
               </Th>
               <Th color="gray.800" fontWeight="normal">
-                <Text fontSize="8px">Grupo-Costa</Text>
-                <Text fontSize="11px">1080-320</Text>
+                <Text fontSize="10px">Grupo-Costa</Text>
+                <Text fontSize="13px">1080-320</Text>
               </Th>
               <Th color="gray.800" fontWeight="normal" fontSize="sm">
-                <Text fontSize="8px">Cliente</Text>
-                <Text fontSize="11px">João Garcia</Text>
+                <Text fontSize="10px">Cliente</Text>
+                <Text fontSize="13px">João Garcia</Text>
               </Th>
-              <Th color="green.700" fontWeight="normal" fontSize="11px" textTransform="capitalize">
+              <Th color="green.700" fontWeight="normal" fontSize="13px" textTransform="capitalize">
                 R$ 1.250,00
               </Th>
             </Tr>
             <Tr>
               <Th color="gray.800" fontWeight="normal">
-                <Text fontSize="8px">Data</Text>
-                <Text fontSize="11px">22/01/2022</Text>
+                <Text fontSize="10px">Data</Text>
+                <Text fontSize="13px">22/01/2022</Text>
               </Th>
               <Th color="gray.800" fontWeight="normal">
-                <Text fontSize="8px">Grupo-Costa</Text>
-                <Text fontSize="11px">1080-320</Text>
+                <Text fontSize="10px">Grupo-Costa</Text>
+                <Text fontSize="13px">1080-320</Text>
               </Th>
-              <Th color="gray.800" fontWeight="normal" fontSize="11px">
-                <Text fontSize="8px">Cliente</Text>
-                <Text fontSize="11px">João Garcia</Text>
+              <Th color="gray.800" fontWeight="normal" fontSize="13px">
+                <Text fontSize="10px">Cliente</Text>
+                <Text fontSize="13px">João Garcia</Text>
               </Th>
-              <Th color="green.700" fontWeight="normal" fontSize="11px" textTransform="capitalize">
+              <Th color="green.700" fontWeight="normal" fontSize="13px" textTransform="capitalize">
                 R$ 1.250,00
               </Th>
             </Tr>
             <Tr>
               <Th color="gray.800" fontWeight="normal">
-                <Text fontSize="8px">Data</Text>
-                <Text fontSize="11px">22/01/2022</Text>
+                <Text fontSize="10px">Data</Text>
+                <Text fontSize="13px">22/01/2022</Text>
               </Th>
               <Th color="gray.800" fontWeight="normal">
-                <Text fontSize="8px">Grupo-Costa</Text>
-                <Text fontSize="11px">1080-320</Text>
+                <Text fontSize="10px">Grupo-Costa</Text>
+                <Text fontSize="13px">1080-320</Text>
               </Th>
-              <Th color="gray.800" fontWeight="normal" fontSize="11px">
-                <Text fontSize="8px">Cliente</Text>
-                <Text fontSize="11px">João Garcia</Text>
+              <Th color="gray.800" fontWeight="normal" fontSize="13px">
+                <Text fontSize="10px">Cliente</Text>
+                <Text fontSize="13px">João Garcia</Text>
               </Th>
-              <Th color="green.700" fontWeight="normal" fontSize="11px" textTransform="capitalize">
+              <Th color="green.700" fontWeight="normal" fontSize="13px" textTransform="capitalize">
                 R$ 1.250,00
               </Th>
             </Tr>
             </Tbody>
             <Tfoot>
-            <Tr>
+            <Tr height="50px">
               <Th color="gray.800" fontWeight="normal">
-                <Text fontSize="8px">Data</Text>
-                <Text fontSize="11px">22/01/2022</Text>
+                <Text fontSize="10px">Data</Text>
+                <Text fontSize="13px">22/01/2022</Text>
               </Th>
               <Th color="gray.800" fontWeight="normal">
-                <Text fontSize="8px">Grupo-Costa</Text>
-                <Text fontSize="11px">1080-320</Text>
+                <Text fontSize="10px">Grupo-Costa</Text>
+                <Text fontSize="13px">1080-320</Text>
               </Th>
-              <Th color="gray.800" fontWeight="normal" fontSize="11px">
-                <Text fontSize="8px">Cliente</Text>
-                <Text fontSize="11px">João Garcia</Text>
+              <Th color="gray.800" fontWeight="normal" fontSize="13px">
+                <Text fontSize="10px">Cliente</Text>
+                <Text fontSize="13px">João Garcia</Text>
               </Th>
               <Th
                 color="green.700"
                 fontWeight="normal"
-                fontSize="11px"
+                fontSize="13px"
                 textTransform="capitalize"
               >
                 R$ 1.250,00
