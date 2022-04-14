@@ -495,7 +495,7 @@ export interface SellerCommissionRule{
     final_value?: number;
     created_at: string;
     updated_at: string;
-    company_commission_rule_parcels: CompanyCommissionRuleParcel[];
+    seller_commission_rule_parcels: SellerCommissionRuleParcel[];
 }
 
 export interface SellerCommissionRuleParcel{

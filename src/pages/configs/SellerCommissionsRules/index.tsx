@@ -10,7 +10,7 @@ import { OutlineButton } from "../../../components/Buttons/OutlineButton";
 import { EditButton } from "../../../components/Buttons/EditButton";
 import { Table } from "../../../components/Table";
 import { RemoveButton } from "../../../components/Buttons/RemoveButton";
-import { CompanyCommissionRule, CompanyCommissionRuleParcel, SellerCommissionRule } from "../../../types";
+import { CompanyCommissionRule, CompanyCommissionRuleParcel, SellerCommissionRule, SellerCommissionRuleParcel } from "../../../types";
 import { api } from "../../../services/api";
 import { NewSellerRuleModal } from "./NewSellerRuleModal";
 import { useParams } from "react-router-dom";
@@ -97,7 +97,7 @@ export function SellerCommissionRules(){
         setIsConfirmCompanyRuleParcelRemoveModalOpen(false)
     }
 
-    console.log(sellerRules);
+    console.log(sellerRules.isLoading, sellerRules.data?.data);
 
     return(
         <Board p="0" pb="8" overflow="hidden">
@@ -237,16 +237,16 @@ export function SellerCommissionRules(){
                                                     ]}
                                                 >
                                                     {
-                                                        rule.company_commission_rule_parcels.map((companyCommissionRuleParcel: CompanyCommissionRuleParcel) => {
+                                                        rule.seller_commission_rule_parcels.map((sellerCommissionRuleParcel: SellerCommissionRuleParcel) => {
                                                             return(
                                                                 <Tr borderTop="1px" borderColor="gray.200">
-                                                                    <Td>{companyCommissionRuleParcel.parcel_number}</Td>
-                                                                    <Td>{companyCommissionRuleParcel.percentage_to_pay}%</Td>
-                                                                    <Td>{companyCommissionRuleParcel.chargeback_percentage}%</Td>
+                                                                    <Td>{sellerCommissionRuleParcel.parcel_number}</Td>
+                                                                    <Td>{sellerCommissionRuleParcel.percentage_to_pay}%</Td>
+                                                                    <Td>{sellerCommissionRuleParcel.chargeback_percentage}%</Td>
                                                                     <Td>
                                                                         <HStack>
-                                                                            <EditButton onClick={() => OpenEditCompanyRuleParcelModal({...companyCommissionRuleParcel, company_commission_rule_id: rule.id})}/>
-                                                                            <RemoveButton onClick={() => OpenConfirmCompanyRuleParcelRemoveModal({...companyCommissionRuleParcel, company_commission_rule_id: rule.id})}/>
+                                                                            <EditButton onClick={() => OpenEditCompanyRuleParcelModal({...sellerCommissionRuleParcel, company_commission_rule_id: rule.id})}/>
+                                                                            <RemoveButton onClick={() => OpenConfirmCompanyRuleParcelRemoveModal({...sellerCommissionRuleParcel, company_commission_rule_id: rule.id})}/>
                                                                         </HStack>
                                                                     </Td>
                                                                 </Tr>
