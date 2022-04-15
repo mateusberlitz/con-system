@@ -19,6 +19,7 @@ import { ReactComponent as PercentIcon } from '../../assets/icons/percent.svg';
 
 
 
+import LogoBranco from '../../assets/icons/Logo-Branco.svg'
 import { HasPermission, useProfile } from '../../hooks/useProfile'
 import { useTenant } from '../../hooks/useTenant'
 import { Link } from 'react-router-dom'

@@ -32,12 +32,12 @@ export const getSellerCommissionRules = async (filter?: sellerCommissionsRulesFi
             }
         });
 
-        return {data, total: Number(headers['x-total-count'])};
+        return data;
     }
     
     const { data, headers } = await api.get('/seller-commission-rules');
 
-    return {data, total: Number(headers['x-total-count'])};
+    return data;
 }
 
 export function useSellerCommissionRules(filter: sellerCommissionsRulesFilterData, page?: number){

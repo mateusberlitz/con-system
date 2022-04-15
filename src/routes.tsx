@@ -350,4 +350,4 @@ const Routes = (): JSX.Element => {
   )
 }
 
-export default TenantRoutes
+export default TenantRoutes;
