@@ -9,7 +9,7 @@ import { useWorkingBranch } from "../../../hooks/useWorkingBranch";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { api } from "../../../services/api";
 
-export default function CommissionsReceivedReport() {
+export default function RulesReport() {
     const { permissions, profile } = useProfile();
     const workingCompany = useWorkingCompany();
     const workingBranch = useWorkingBranch();
@@ -38,7 +38,7 @@ export default function CommissionsReceivedReport() {
     return (
             <Board mb="12">
                 <HStack as="form" spacing="12" w="100%" mb="6" justifyContent="left">
-                    <Text fontWeight="bold" w="100%" fontSize="13px">RELATÓRIO DE COMISSÕES RECEBIDAS</Text>
+                    <Text fontWeight="bold" w="100%" fontSize="13px">RELATÓRIO DE COMISSÕES PAGAS</Text>
 
                     <FormControl display="flex" justifyContent="flex-end" align="flex-end" minW="150px">
                         <ChakraSelect defaultValue={workingCompany.company?.id} h="45px" name="selected_company" maxW="200px" fontSize="sm" focusBorderColor="purple.600" bg="gray.400" variant="filled" _hover={{ bgColor: 'gray.500' }} size="lg" borderRadius="full">

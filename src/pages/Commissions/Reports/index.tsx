@@ -3,6 +3,9 @@ import { MainBoard } from '../../../components/MainBoard'
 import { useProfile } from '../../../hooks/useProfile'
 import { CompanySelectMaster } from '../../../components/CompanySelect/companySelectMaster'
 import CommissionsReceivedReport from './CommissionsReceivedReport'
+import CommissionsPaidReport from './CommissionsPaidReport'
+import ContractReport from './ContractReport'
+import RulesReport from './RulesReport'
 
 
 export default function ReportsCommissions() {
@@ -15,6 +18,11 @@ export default function ReportsCommissions() {
           <Stack spacing="9" w={['100%', '100%']}>
             <CommissionsReceivedReport />
 
+            <CommissionsPaidReport />
+
+            <ContractReport />
+
+            <RulesReport />
           </Stack>
         </Stack>
     </MainBoard>
