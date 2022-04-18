@@ -48,6 +48,7 @@ import { Tenant } from './types'
 import Commissions from './pages/Commissions'
 import CommissionsSalesman from './pages/Commissions/CommissionsSalesman'
 import Company from './pages/Commissions/Company'
+import ReportsCommissions from './pages/Commissions/Reports'
 import Contracts from './pages/Commissions/Contracts'
 
 interface PrivateRouteProps extends RouteProps {
@@ -333,6 +334,7 @@ const Routes = (): JSX.Element => {
         <Route path={`/comissões-vendedores`} exact component={CommissionsSalesman} />
         <Route path={`/comissões-empresa`} exact component={Company} />
         <Route path={`/contratos`} exact component={Contracts} />
+        <Route path={`/relatorio-comissões`} exact component={ReportsCommissions} />
 
         {/* <PrivateRoute path="/empresas" component={Roles} /> */}
       </Switch>
