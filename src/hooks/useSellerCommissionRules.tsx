@@ -5,8 +5,8 @@ export interface sellerCommissionsRulesFilterData{
     search?: string;
     start_date?: string;
     end_date?: string;
-    company?: number;
-    branch?: number;
+    company_id?: number;
+    branch_id?: number;
     user?: number;
     value?: string;
     status?: number;
@@ -22,8 +22,8 @@ export const getSellerCommissionRules = async (filter?: sellerCommissionsRulesFi
               search: filter.search,
               status: filter.status,
               origin: filter.origin,
-              company: filter.company,
-              branch: filter.branch,
+              company_id: filter.company_id,
+              branch_id: filter.branch_id,
               start_date: filter.start_date,
               end_date: filter.end_date,
               user: filter.user,

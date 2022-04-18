@@ -24,10 +24,10 @@ interface EditCompanyRuleParcelModalProps{
 
 export interface EditNewSellerRuleParcelFormData{
     id: number;
-    company_commission_rule_id: number;
+    seller_commission_rule_id: number;
     parcel_number: number;
     percentage_to_pay: number;
-    chargeback_percentage?: number;
+    chargeback_percentage: number;
 }
 
 const EditNewSellerRuleFormSchema = yup.object().shape({
@@ -45,11 +45,11 @@ export function EditSellerRuleParcelModal( { isOpen, toEditSellerRuleParcelData,
         resolver: yupResolver(EditNewSellerRuleFormSchema),
     });
 
-    const handleEditCompanyRuleParcel = async (companyRuleParcelData : EditNewSellerRuleParcelFormData) => {
+    const handleEditCompanyRuleParcel = async (sellerRuleParcelData : EditNewSellerRuleParcelFormData) => {
         try{
-            companyRuleParcelData.company_commission_rule_id = toEditSellerRuleParcelData.company_commission_rule_id;
+            sellerRuleParcelData.seller_commission_rule_id = toEditSellerRuleParcelData.seller_commission_rule_id;
 
-            await api.put(`/seller-commission-rule-parcels/${toEditSellerRuleParcelData.id}`, companyRuleParcelData);
+            await api.put(`/seller-commission-rule-parcels/${toEditSellerRuleParcelData.id}`, sellerRuleParcelData);
 
             toast({
                 title: "Sucesso",
@@ -81,6 +81,8 @@ export function EditSellerRuleParcelModal( { isOpen, toEditSellerRuleParcelData,
 
   const chargeBackTypes = useChargeBackTypes();
 
+  console.log(toEditSellerRuleParcelData.chargeback_percentage);
+
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
             <ModalOverlay />
@@ -96,7 +98,7 @@ export function EditSellerRuleParcelModal( { isOpen, toEditSellerRuleParcelData,
                         
                         <HStack>
                             <ControlledInput control={control} name="percentage_to_pay" type="number" max={100} placeholder="Percentual a receber" variant="outline" value={toEditSellerRuleParcelData.percentage_to_pay.toString()} error={formState.errors.percentage_to_pay} focusBorderColor="purple.600"/>
-                            <ControlledInput control={control} name="chargeback_percentage" type="number" max={100} placeholder="Percentual de estorno" variant="outline" value={toEditSellerRuleParcelData.chargeback_percentage ? toEditSellerRuleParcelData.chargeback_percentage.toLocaleString() : ""} error={formState.errors.chargeback_percentage} focusBorderColor="purple.600"/>
+                            <ControlledInput control={control} name="chargeback_percentage" type="number" max={100} placeholder="Percentual de estorno" variant="outline" value={toEditSellerRuleParcelData.chargeback_percentage.toString()} error={formState.errors.chargeback_percentage} focusBorderColor="purple.600"/>
                         </HStack>
                     </Stack>
                 </ModalBody>

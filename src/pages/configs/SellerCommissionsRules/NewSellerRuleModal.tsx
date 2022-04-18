@@ -33,18 +33,17 @@ import { useCompanies } from '../../../hooks/useCompanies'
 import { useChargeBackTypes } from '../../../hooks/useChargeBackTypes'
 
 interface NewSellerRuleModalProps {
-  isOpen: boolean
-  onRequestClose: () => void
-  afterCreate: () => void
-}
-
-interface CompanyParams {
-  id: string
+  isOpen: boolean;
+  onRequestClose: () => void;
+  afterCreate: () => void;
+  companyId?: number;
+  branchId?: number;
 }
 
 interface CreateNewSellerRuleFormData {
   name: string;
   company_id: number;
+  branch_id?: number;
   chargeback_type_id: number;
   percentage_paid_in_contemplation: number;
   initial_value?: number;
@@ -66,14 +65,14 @@ const CreateNewSellerRuleFormSchema = yup.object().shape({
 
 export function NewSellerRuleModal({
   isOpen,
+  companyId,
+  branchId,
   onRequestClose,
   afterCreate
 }: NewSellerRuleModalProps) {
   const history = useHistory()
   const toast = useToast()
   const { showErrors } = useErrors()
-
-  const { id } = useParams<CompanyParams>();
 
   const { register, handleSubmit, reset, formState } =
     useForm<CreateNewSellerRuleFormData>({
@@ -82,7 +81,13 @@ export function NewSellerRuleModal({
 
   const handleCreateNewSellerRule = async (sellerRuleData: CreateNewSellerRuleFormData) => {
     try {
-      sellerRuleData.company_id = parseInt(id);
+      if(companyId){
+        sellerRuleData.company_id = companyId;
+      }
+
+      if(branchId){
+        sellerRuleData.branch_id = branchId;
+      }
 
       await api.post('/seller-commission-rules', sellerRuleData)
 
@@ -92,7 +97,7 @@ export function NewSellerRuleModal({
         status: 'success',
         duration: 12000,
         isClosable: true
-      })
+      });
 
       onRequestClose()
       afterCreate()

@@ -97,17 +97,17 @@ export function CompleteScheduleModal({
         return
       }
 
-      saleData.company = workingCompany.company.id
-      saleData.user = profile.id
+      saleData.company_id = workingCompany.company.id
+      saleData.seller_id = profile.id
 
-      saleData.date = formatInputDate(saleData.date)
-      saleData.value = moneyToBackend(saleData.value)
+      saleData.date_sale = formatInputDate(saleData.date_sale)
+      saleData.credit = moneyToBackend(saleData.credit)
 
       if (
         toCompleteScheduleData.lead &&
-        saleData.value &&
-        saleData.date &&
-        saleData.segment
+        saleData.credit &&
+        saleData.date_sale &&
+        saleData.type_sale
       ) {
         saleData.lead = toCompleteScheduleData.lead
 
@@ -193,23 +193,23 @@ export function CompleteScheduleModal({
           <Stack spacing="6">
             <Input
               register={register}
-              name="value"
+              name="credit"
               type="text"
               placeholder="Valor do crédito"
               focusBorderColor="orange.400"
               variant="outline"
-              error={formState.errors.value}
+              error={formState.errors.credit}
             />
 
             <Input
               register={register}
-              name="date"
-              type="date"
+              name="date_sale"
+              type="date_sale"
               placeholder="Data da venda"
               focusBorderColor="orange.400"
               variant="outline"
               mask=""
-              error={formState.errors.date}
+              error={formState.errors.date_sale}
             />
 
             <HStack spacing="4" align="baseline">
@@ -226,7 +226,7 @@ export function CompleteScheduleModal({
                 _hover={{ bgColor: 'gray.500' }}
                 size="lg"
                 borderRadius="full"
-                error={formState.errors.segment}
+                error={formState.errors.type_sale}
               >
                 <option value="Imóvel">Imóvel</option>
                 <option value="Veículo">Veículo</option>

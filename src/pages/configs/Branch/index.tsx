@@ -46,6 +46,7 @@ import { EditTeamFormData, EditTeamModal } from '../Teams/EditTeamModal'
 import IncludeUserModal, { IncludeUserData } from '../Users/IncludeUserModal'
 import { TeamUsersListModal } from './TeamUsersListModal'
 import { ConfirmUnicludeUserModal } from './ConfirmUnicludeUserModal'
+import { SellerCommissionRules } from '../SellerCommissionsRules'
 
 interface BranchParams {
   id: string
@@ -675,6 +676,9 @@ export default function Branch() {
             )
           )}
         </Board>
+
+        <SellerCommissionRules branchId={parseInt(id)}/>
+
       </Stack>
     </MainBoard>
   )

@@ -64,6 +64,8 @@ const PrivateRoute = ({
 
   const initialPage = getInitialPage(permissions)
 
+  console.log(permissions);
+
   useEffect(() => {}, [isAuthenticated])
   return (
     <Route

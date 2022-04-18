@@ -24,7 +24,8 @@ interface EditSellerRuleModalProps{
 
 export interface EditNewSellerRuleFormData{
     id: number;
-    company_id: number;
+    company_id?: number;
+    branch_id?: number;
     name: string;
     chargeback_type_id: number;
     percentage_paid_in_contemplation: number;
@@ -55,8 +56,7 @@ export function EditSellerRuleModal( { isOpen, toEditSellerRuleData, afterEdit, 
 
     const handleEditSellerRule = async (sellerData : EditNewSellerRuleFormData) => {
         try{
-            sellerData.company_id = toEditSellerRuleData.company_id;
-
+            //sellerData.company_id = toEditSellerRuleData.company_id;
             await api.put(`/seller-commission-rules/${toEditSellerRuleData.id}`, sellerData);
 
             toast({
@@ -88,6 +88,8 @@ export function EditSellerRuleModal( { isOpen, toEditSellerRuleData, afterEdit, 
     }, [isOpen])
 
   const chargeBackTypes = useChargeBackTypes();
+
+  console.log(toEditSellerRuleData.pay_in_contemplation ? (toEditSellerRuleData.pay_in_contemplation == true ? 1 : 0) : undefined);
 
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
@@ -133,7 +135,7 @@ export function EditSellerRuleModal( { isOpen, toEditSellerRuleData, afterEdit, 
                             control={control}
                             h="45px"
                             name="half_installment"
-                            value={toEditSellerRuleData.half_installment ? (toEditSellerRuleData.half_installment === true ? 1 : 0) : undefined}
+                            value={toEditSellerRuleData.half_installment ? (toEditSellerRuleData.half_installment == true ? 1 : 0) : 0}
                             w="100%"
                             fontSize="sm"
                             focusBorderColor="purple.300"
@@ -142,7 +144,7 @@ export function EditSellerRuleModal( { isOpen, toEditSellerRuleData, afterEdit, 
                             _hover={{ bgColor: 'gray.500' }}
                             size="lg"
                             borderRadius="full"
-                            placeholder="Tipo de estorno"
+                            placeholder="Meia parcela"
                             error={formState.errors.half_installment}
                             >
                             <option value={1}>Sim</option>
@@ -153,7 +155,7 @@ export function EditSellerRuleModal( { isOpen, toEditSellerRuleData, afterEdit, 
                             control={control}
                             h="45px"
                             name="pay_in_contemplation"
-                            value={toEditSellerRuleData.pay_in_contemplation ? (toEditSellerRuleData.pay_in_contemplation === true ? 1 : 0) : undefined}
+                            value={toEditSellerRuleData.pay_in_contemplation ? (toEditSellerRuleData.pay_in_contemplation == true ? 1 : 0) : 0}
                             w="100%"
                             fontSize="sm"
                             focusBorderColor="purple.300"

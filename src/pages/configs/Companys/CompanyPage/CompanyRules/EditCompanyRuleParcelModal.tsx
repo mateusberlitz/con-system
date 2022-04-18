@@ -96,7 +96,7 @@ export function EditCompanyRuleParcelModal( { isOpen, toEditCompanyRuleParcelDat
                         
                         <HStack>
                             <ControlledInput control={control} name="percentage_to_pay" type="number" max={100} placeholder="Percentual a receber" variant="outline" value={toEditCompanyRuleParcelData.percentage_to_pay.toString()} error={formState.errors.percentage_to_pay} focusBorderColor="purple.600"/>
-                            <ControlledInput control={control} name="chargeback_percentage" type="number" max={100} placeholder="Percentual de estorno" variant="outline" value={toEditCompanyRuleParcelData.chargeback_percentage ? toEditCompanyRuleParcelData.chargeback_percentage.toLocaleString() : ""} error={formState.errors.chargeback_percentage} focusBorderColor="purple.600"/>
+                            <ControlledInput control={control} name="chargeback_percentage" type="number" max={100} placeholder="Percentual de estorno" variant="outline" value={toEditCompanyRuleParcelData.chargeback_percentage ? toEditCompanyRuleParcelData.chargeback_percentage.toString() : ""} error={formState.errors.chargeback_percentage} focusBorderColor="purple.600"/>
                         </HStack>
                     </Stack>
                 </ModalBody>

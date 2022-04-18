@@ -15,7 +15,9 @@ import {
   Accordion,
   AccordionItem,
   AccordionButton,
-  AccordionPanel
+  AccordionPanel,
+  Flex,
+  Text
 } from '@chakra-ui/react'
 import { SolidButton } from '../../../components/Buttons/SolidButton'
 
@@ -31,16 +33,19 @@ import { Select } from '../../../components/Forms/Selects/Select'
 import { useWorkingCompany } from '../../../hooks/useWorkingCompany'
 import { formatInputDate } from '../../../utils/Date/formatInputDate'
 import moneyToBackend from '../../../utils/moneyToBackend'
-import { useProfile } from '../../../hooks/useProfile'
+import { HasPermission, useProfile } from '../../../hooks/useProfile'
 import { useEffect, useState } from 'react'
 import { isAuthenticated } from '../../../services/auth'
 import { redirectMessages } from '../../../utils/redirectMessages'
+import { ReactSelect, SelectOption } from '../../../components/Forms/ReactSelect'
+import { LeadsFilterData, useLeads } from '../../../hooks/useLeads'
+import { Lead } from '../../../types'
 
 interface NewSaleModalProps {
   isOpen: boolean
   onRequestClose: () => void
-  toAddLeadData: toAddSaleLeadData
-  afterCreate: () => void
+  toAddLeadData?: toAddSaleLeadData
+  afterCreate?: () => void
 }
 
 export interface toAddSaleLeadData {
@@ -49,17 +54,32 @@ export interface toAddSaleLeadData {
 }
 
 export interface CreateNewSaleFormData {
-  value: string
-  lead: number
-  company: number
-  user: number
-  segment: string
-  contract: string
-  group: string
-  quota: string
-  recommender_commission: number
-  commission: number
-  date: string
+  company_id: number;
+  branch_id?: number;
+  seller_id: number;
+
+  number_contract: string; //contract
+  credit: string;
+  group: string;
+  quota: string;
+  date_sale: string;
+  type_sale: string; //segment
+
+  lead?: number;
+  name?: string;
+  email?: string;
+  phone?: string;
+  cpf_cnpj?: string;
+  type_customer?: "PF" | "PJ";
+  birth_date?: string;
+  civil_status: string;
+  city_id: number;
+  cep: string;
+  address: string;
+  neighborhood: string;
+  number?: string;
+
+  recommender_commission: number;
 }
 
 const CreateNewSaleFormSchema = yup.object().shape({
@@ -106,18 +126,21 @@ export function NewSaleModal({
 
       //const isManager = HasPermission(permissions, 'Vendas Completo');
 
-      saleData.company = workingCompany.company.id
-      saleData.user = profile.id
-      saleData.lead = toAddLeadData.id
+      saleData.company_id = workingCompany.company.id;
+      saleData.seller_id = profile.id
+      
+      if(toAddLeadData){
+        saleData.lead = toAddLeadData.id
+      }
 
-      saleData.date = formatInputDate(saleData.date)
-      saleData.value = moneyToBackend(saleData.value)
+      saleData.date_sale = formatInputDate(saleData.date_sale)
+      saleData.credit = moneyToBackend(saleData.credit)
 
       const response = await api.post('/sales/store', saleData)
 
       toast({
         title: 'Sucesso',
-        description: `Venda cadastrada para o lead/cliente ${toAddLeadData.name}`,
+        description: `Venda cadastrada`,
         status: 'success',
         duration: 12000,
         isClosable: true
@@ -130,7 +153,9 @@ export function NewSaleModal({
       })
 
       onRequestClose()
-      afterCreate()
+      if(afterCreate){
+        afterCreate();
+      }
       reset()
     } catch (error: any) {
       showErrors(error, toast)
@@ -141,6 +166,27 @@ export function NewSaleModal({
     }
   }
 
+  const isManager = HasPermission(permissions, 'Comercial Completo');
+
+  const [leadFilter, setLeadFilter] = useState<LeadsFilterData>(() => {
+    const data: LeadsFilterData = {
+      search: '',
+      status: 0,
+      user: isManager ? undefined : profile?.id,
+    }
+
+    return data
+  })
+
+  const leads = useLeads(leadFilter, 1);
+
+  const [leadsOptions, setLeadsOptions] = useState<Array<SelectOption>>([
+    {
+      value: '',
+      label: 'Selecionar Lead'
+    }
+  ]);
+
   useEffect(() => {
     if (!isAuthenticated()) {
       history.push({
@@ -148,7 +194,17 @@ export function NewSaleModal({
         state: redirectMessages.auth
       })
     }
-  }, [isOpen])
+  }, [isOpen]);
+
+  useEffect(() => {
+    const newLeadsOptions = leadsOptions;
+    
+    if(leads.data){
+      leads.data?.data.data.map((lead: Lead) => {
+        newLeadsOptions.push({ value: lead.id.toString(), label: lead.name })
+      })
+    }
+  }, [leads]);
 
   const [otherValue, setOtherValue] = useState(false)
 
@@ -182,7 +238,7 @@ export function NewSaleModal({
                   _hover={{ bgColor: 'gray.500' }}
                   size="lg"
                   borderRadius="full"
-                  error={formState.errors.value}
+                  error={formState.errors.credit}
                 >
                   <option value="25000">R$25.000,00</option>
                   <option value="35000">R$35.000,00</option>
@@ -211,7 +267,7 @@ export function NewSaleModal({
                   placeholder="Valor do crédito"
                   focusBorderColor="orange.400"
                   variant="outline"
-                  error={formState.errors.value}
+                  error={formState.errors.credit}
                 />
               )}
 
@@ -235,22 +291,21 @@ export function NewSaleModal({
                             <Input register={register} name="quota" type="text" placeholder="Cota" focusBorderColor="orange.400" variant="outline" mask="" error={formState.errors.quota}/>
                         </HStack> */}
 
-            <Input
-              register={register}
-              name="date"
-              type="date"
-              placeholder="Data da venda"
-              focusBorderColor="orange.400"
-              variant="outline"
-              mask=""
-              error={formState.errors.date}
-            />
-
-            <HStack spacing="4" align="baseline">
+            <HStack spacing="4" alignItems="flex-start">
+              <Input
+                register={register}
+                name="date_sale"
+                type="date"
+                placeholder="Data da venda"
+                focusBorderColor="orange.400"
+                variant="outline"
+                mask=""
+                error={formState.errors.date_sale}
+              />
               <Select
                 register={register}
                 h="45px"
-                name="segment"
+                name="type_sale"
                 w="100%"
                 fontSize="sm"
                 focusBorderColor="orange.400"
@@ -259,7 +314,7 @@ export function NewSaleModal({
                 _hover={{ bgColor: 'gray.500' }}
                 size="lg"
                 borderRadius="full"
-                error={formState.errors.segment}
+                error={formState.errors.type_sale}
               >
                 <option value="Imóvel" selected>
                   Imóvel
@@ -267,6 +322,28 @@ export function NewSaleModal({
                 <option value="Veículo">Veículo</option>
               </Select>
             </HStack>
+
+            <HStack spacing="4" alignItems="flex-start">
+              {!leads ? (
+                  <Flex justify="center">
+                    <Text>Nenhum lead disponível</Text>
+                  </Flex>
+                ) : (
+                  <ReactSelect
+                    options={leadsOptions}
+                    control={control}
+                    label="Contato"
+                    name="lead"
+                    bg="gray.400"
+                    variant="outline"
+                    _hover={{ bgColor: 'gray.500' }}
+                    borderRadius="full"
+                    error={formState.errors.lead}
+                  />
+                )}
+            </HStack>
+
+            
           </Stack>
         </ModalBody>
 

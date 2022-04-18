@@ -40,14 +40,14 @@ interface NewSellerRuleParcelModalProps {
 }
 
 interface CreateNewSellerRuleParcelFormData {
-  company_commission_rule_id: number;
+  seller_commission_rule_id: number;
   parcel_number: number;
   percentage_to_pay: number;
   chargeback_percentage?: number;
 }
 
 const CreateNewSellerRuleFormSchema = yup.object().shape({
-  //company_commission_rule_id: yup.number().required('Tipo de estorno obrigatório'),
+  //seller_commission_rule_id: yup.number().required('Tipo de estorno obrigatório'),
   parcel_number: yup.number().required('Tipo de estorno obrigatório'),
   percentage_to_pay: yup.number().required('Tipo de estorno obrigatório'),
   chargeback_percentage: yup.number().required('Tipo de estorno obrigatório'),
@@ -70,7 +70,7 @@ export function NewSellerRuleParcelModal({
 
   const handleCreateNewSellerRuleParcel = async (sellerRuleParcelData: CreateNewSellerRuleParcelFormData) => {
     try {
-      sellerRuleParcelData.company_commission_rule_id = sellerCommissionRuleId;
+      sellerRuleParcelData.seller_commission_rule_id = sellerCommissionRuleId;
 
       await api.post('/seller-commission-rule-parcels', sellerRuleParcelData)
 

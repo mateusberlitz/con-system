@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { ReactComponent as PlusIcon } from '../../../assets/icons/Plus.svg';
 import { ReactComponent as MinusIcon } from '../../../assets/icons/Minus.svg';
 import { ReactComponent as StrongPlusIcon } from '../../../assets/icons/StrongPlus.svg';
+import { ReactComponent as ForwardArrow } from '../../../assets/icons/Forward Arrow.svg'
 import { OutlineButton } from "../../../components/Buttons/OutlineButton";
 import { EditButton } from "../../../components/Buttons/EditButton";
 import { Table } from "../../../components/Table";
@@ -19,24 +20,38 @@ import { NewSellerRuleParcelModal } from "./NewSellerRuleParcelModal";
 import { EditSellerRuleParcelModal, EditNewSellerRuleParcelFormData } from "./EditSellerRuleParcelModal";
 import { ConfirmSellerRuleParcelRemoveModal } from "./ConfirmSellerRuleParcelRemoveModal";
 import { useSellerCommissionRules } from "../../../hooks/useSellerCommissionRules";
+import { ConfirmSellerRuleRemoveModal } from "./ConfirmSellerRuleRemoveModal";
 
-export function SellerCommissionRules(){
-    const sellerRules = useSellerCommissionRules({});
+interface CompanyParams {
+    id: string
+}
 
-    const [isNewCompanyRuleModalOpen, setIsNewCompanyRuleModalOpen] = useState(false);
+interface SellerCommissionRulesProps{
+    companyId?:number;
+    branchId?:number;
+}
 
-    function OpenNewCompanyRuleModal() {
-        setIsNewCompanyRuleModalOpen(true)
+export function SellerCommissionRules({companyId, branchId}: SellerCommissionRulesProps){
+    const sellerRules = useSellerCommissionRules({
+        company_id: companyId,
+        branch_id: branchId
+    });
+
+    const [isNewSellerRuleModalOpen, setIsNewSellerRuleModalOpen] = useState(false);
+
+    function OpenNewSellerRuleModal() {
+        setIsNewSellerRuleModalOpen(true)
     }
-    function CloseNewCompanyRuleModal() {
-        setIsNewCompanyRuleModalOpen(false)
+    function CloseNewSellerRuleModal() {
+        setIsNewSellerRuleModalOpen(false)
     }
 
-    const [editCompanyRuleData, setEditCompanyRuleData] = useState<EditNewSellerRuleFormData>(() => {
+    const [sellerSellerRuleData, setEditSellerRuleData] = useState<EditNewSellerRuleFormData>(() => {
         const data: EditNewSellerRuleFormData = {
             id: 0,
             name: '',
             company_id: 0,
+            branch_id: 0,
             chargeback_type_id: 0,
             half_installment: false,
             pay_in_contemplation: false,
@@ -45,74 +60,86 @@ export function SellerCommissionRules(){
         
         return data;
     });
-    const [isEditCompanyRuleModalOpen, setIsEditCompanyRuleModalOpen] = useState(false);
+    const [isEditSellerRuleModalOpen, setIsEditSellerRuleModalOpen] = useState(false);
 
-    function OpenEditCompanyRuleModal(companyRuleData: EditNewSellerRuleFormData) {
-        setIsEditCompanyRuleModalOpen(true)
-        setEditCompanyRuleData(companyRuleData);
+    function OpenEditSellerRuleModal(sellerRuleData: EditNewSellerRuleFormData) {
+        setIsEditSellerRuleModalOpen(true)
+        setEditSellerRuleData(sellerRuleData);
     }
-    function CloseEditCompanyRuleModal() {
-        setIsEditCompanyRuleModalOpen(false)
-    }
-
-    const [companyCommissionRuleId, setCompanyCommissionRuleId] = useState(1);
-    const [isNewCompanyRuleParcelModalOpen, setIsNewCompanyRuleParcelModalOpen] = useState(false);
-
-    function OpenNewCompanyRuleParcelModal(companyCommissionRuleId: number) {
-        setCompanyCommissionRuleId(companyCommissionRuleId);
-        setIsNewCompanyRuleParcelModalOpen(true)
-    }
-    function CloseNewCompanyRuleParcelModal() {
-        setIsNewCompanyRuleParcelModalOpen(false)
+    function CloseEditSellerRuleModal() {
+        setIsEditSellerRuleModalOpen(false)
     }
 
-    const [editCompanyRuleParcelData, setEditCompanyRuleParcelData] = useState<EditNewSellerRuleParcelFormData>(() => {
+    const [sellerCommissionRuleId, setSellerCommissionRuleId] = useState(1);
+    const [isNewSellerRuleParcelModalOpen, setIsNewSellerRuleParcelModalOpen] = useState(false);
+
+    function OpenNewSellerRuleParcelModal(SellerCommissionRuleId: number) {
+        setSellerCommissionRuleId(SellerCommissionRuleId);
+        setIsNewSellerRuleParcelModalOpen(true)
+    }
+    function CloseNewSellerRuleParcelModal() {
+        setIsNewSellerRuleParcelModalOpen(false)
+    }
+
+    const [editCompanyRuleParcelData, setEditSellerRuleParcelData] = useState<EditNewSellerRuleParcelFormData>(() => {
         const data: EditNewSellerRuleParcelFormData = {
             id: 0,
             parcel_number: 0,
             percentage_to_pay: 0,
             chargeback_percentage: 0,
-            company_commission_rule_id: 0
+            seller_commission_rule_id: 0
         };
         
         return data;
     });
     const [isEditCompanyRuleParcelModalOpen, setIsEditCompanyRuleParcelModalOpen] = useState(false);
 
-    function OpenEditCompanyRuleParcelModal(companyRuleData: EditNewSellerRuleParcelFormData) {
+    function OpenEditCompanyRuleParcelModal(sellerRuleParcel: EditNewSellerRuleParcelFormData) {
         setIsEditCompanyRuleParcelModalOpen(true)
-        setEditCompanyRuleParcelData(companyRuleData);
+        setEditSellerRuleParcelData(sellerRuleParcel);
     }
     function CloseEditCompanyRuleParcelModal() {
         setIsEditCompanyRuleParcelModalOpen(false)
     }
 
-    const [isConfirmCompanyRuleParcelRemoveModalOpen, setIsConfirmCompanyRuleParcelRemoveModalOpen] = useState(false);
+    const [isConfirmSellerRuleParcelRemoveModalOpen, setIsConfirmSellerRuleParcelRemoveModalOpen] = useState(false);
 
-    function OpenConfirmCompanyRuleParcelRemoveModal(companyRuleData: EditNewSellerRuleParcelFormData) {
-        setIsConfirmCompanyRuleParcelRemoveModalOpen(true)
-        setEditCompanyRuleParcelData(companyRuleData);
+    function OpenConfirmSellerRuleParcelRemoveModal(sellerRuleParcel: EditNewSellerRuleParcelFormData) {
+        setIsConfirmSellerRuleParcelRemoveModalOpen(true)
+        setEditSellerRuleParcelData(sellerRuleParcel);
     }
-    function CloseConfirmCompanyRuleParcelRemoveModal() {
-        setIsConfirmCompanyRuleParcelRemoveModalOpen(false)
+    function CloseConfirmSellerRuleParcelRemoveModal() {
+        setIsConfirmSellerRuleParcelRemoveModalOpen(false)
     }
 
-    console.log(sellerRules.isLoading, sellerRules.data?.data);
+    const [isConfirmCompanyRuleRemoveModalOpen, setIsConfirmSellerRuleRemoveModalOpen] = useState(false);
+
+    function OpenConfirmSellerRuleRemoveModal(sellerRule: EditNewSellerRuleFormData) {
+        setIsConfirmSellerRuleRemoveModalOpen(true)
+        setEditSellerRuleData(sellerRule);
+    }
+    function CloseConfirmSellerRuleRemoveModal() {
+        setIsConfirmSellerRuleRemoveModalOpen(false)
+    }
 
     return(
         <Board p="0" pb="8" overflow="hidden">
-            <NewSellerRuleModal afterCreate={sellerRules.refetch} isOpen={isNewCompanyRuleModalOpen} onRequestClose={CloseNewCompanyRuleModal}/>
-            <EditSellerRuleModal toEditSellerRuleData={editCompanyRuleData} afterEdit={sellerRules.refetch} isOpen={isEditCompanyRuleModalOpen} onRequestClose={CloseEditCompanyRuleModal}/>
+            <NewSellerRuleModal companyId={companyId} branchId={branchId} afterCreate={sellerRules.refetch} isOpen={isNewSellerRuleModalOpen} onRequestClose={CloseNewSellerRuleModal}/>
+            <EditSellerRuleModal toEditSellerRuleData={sellerSellerRuleData} afterEdit={sellerRules.refetch} isOpen={isEditSellerRuleModalOpen} onRequestClose={CloseEditSellerRuleModal}/>
+            <ConfirmSellerRuleRemoveModal toRemoveSellerRuleData={sellerSellerRuleData} afterRemove={sellerRules.refetch} isOpen={isConfirmCompanyRuleRemoveModalOpen} onRequestClose={CloseConfirmSellerRuleRemoveModal}/>
 
-            <NewSellerRuleParcelModal sellerCommissionRuleId={companyCommissionRuleId} afterCreate={sellerRules.refetch} isOpen={isNewCompanyRuleParcelModalOpen} onRequestClose={CloseNewCompanyRuleParcelModal}/>
+            <NewSellerRuleParcelModal sellerCommissionRuleId={sellerCommissionRuleId} afterCreate={sellerRules.refetch} isOpen={isNewSellerRuleParcelModalOpen} onRequestClose={CloseNewSellerRuleParcelModal}/>
             <EditSellerRuleParcelModal toEditSellerRuleParcelData={editCompanyRuleParcelData} afterEdit={sellerRules.refetch} isOpen={isEditCompanyRuleParcelModalOpen} onRequestClose={CloseEditCompanyRuleParcelModal}/>
-            <ConfirmSellerRuleParcelRemoveModal toRemoveSellerRuleParcelData={editCompanyRuleParcelData} afterRemove={sellerRules.refetch} isOpen={isConfirmCompanyRuleParcelRemoveModalOpen} onRequestClose={CloseConfirmCompanyRuleParcelRemoveModal}/>
+            <ConfirmSellerRuleParcelRemoveModal toRemoveSellerRuleParcelData={editCompanyRuleParcelData} afterRemove={sellerRules.refetch} isOpen={isConfirmSellerRuleParcelRemoveModalOpen} onRequestClose={CloseConfirmSellerRuleParcelRemoveModal}/>
 
             <HStack justifyContent="space-between" p={[4, 4, 9]}>
-                <Text fontSize="xl">Regras de comissão de PAGAMENTO</Text>
+                <HStack spacing="4">
+                    <ForwardArrow stroke="#C30052" fill="none" width="20px"/>
+                    <Text fontSize="xl">Regra de comissão de PAGAMENTO</Text>
+                </HStack>
 
                 <SolidButton
-                    onClick={() => OpenNewCompanyRuleModal()}
+                    onClick={() => OpenNewSellerRuleModal()}
                     mb="12"
                     color="white"
                     bg="purple.300"
@@ -178,7 +205,10 @@ export function SellerCommissionRules(){
                                                 Visualizar
                                             </OutlineButton>
 
-                                            <EditButton onClick={() => OpenEditCompanyRuleModal(rule)}></EditButton>
+                                            <HStack>
+                                                <EditButton onClick={() => OpenEditSellerRuleModal(rule)}></EditButton>
+                                                <RemoveButton onClick={() => OpenConfirmSellerRuleRemoveModal(rule)}/>
+                                            </HStack>
                                         </Stack>
 
                                         <AccordionPanel flexDir="column" borderTop="2px" borderColor="gray.500" px="0" py="5" fontSize={["11px", "small"]}>
@@ -209,7 +239,7 @@ export function SellerCommissionRules(){
                                                     <Text fontSize="lg">Parcelas</Text>
 
                                                     <SolidButton
-                                                        onClick={() => OpenNewCompanyRuleParcelModal(rule.id)}
+                                                        onClick={() => OpenNewSellerRuleParcelModal(rule.id)}
                                                         mb="12"
                                                         color="white"
                                                         bg="purple.300"
@@ -245,8 +275,8 @@ export function SellerCommissionRules(){
                                                                     <Td>{sellerCommissionRuleParcel.chargeback_percentage}%</Td>
                                                                     <Td>
                                                                         <HStack>
-                                                                            <EditButton onClick={() => OpenEditCompanyRuleParcelModal({...sellerCommissionRuleParcel, company_commission_rule_id: rule.id})}/>
-                                                                            <RemoveButton onClick={() => OpenConfirmCompanyRuleParcelRemoveModal({...sellerCommissionRuleParcel, company_commission_rule_id: rule.id})}/>
+                                                                            <EditButton onClick={() => OpenEditCompanyRuleParcelModal({...sellerCommissionRuleParcel, seller_commission_rule_id: rule.id})}/>
+                                                                            <RemoveButton onClick={() => OpenConfirmSellerRuleParcelRemoveModal({...sellerCommissionRuleParcel, seller_commission_rule_id: rule.id})}/>
                                                                         </HStack>
                                                                     </Td>
                                                                 </Tr>

@@ -330,7 +330,7 @@ export default function CompanyPage() {
 
             <CompanyRules/>
 
-            <SellerCommissionRules/>
+            <SellerCommissionRules companyId={parseInt(id)}/>
 
             {/* <SolidButton onClick={OpenNewBranchModal} mb="12" color="white" bg="purple.300" icon={PlusIcon} colorScheme="purple">
                                 Adicionar Filial

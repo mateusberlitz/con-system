@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import { ReactComponent as PlusIcon } from '../../../../../assets/icons/Plus.svg';
 import { ReactComponent as MinusIcon } from '../../../../../assets/icons/Minus.svg';
 import { ReactComponent as StrongPlusIcon } from '../../../../../assets/icons/StrongPlus.svg';
+import { ReactComponent as BackArrow } from '../../../../../assets/icons/Back Arrow.svg';
+
 import { OutlineButton } from "../../../../../components/Buttons/OutlineButton";
 import { EditButton } from "../../../../../components/Buttons/EditButton";
 import { Table } from "../../../../../components/Table";
@@ -120,7 +122,10 @@ export function CompanyRules(){
             <ConfirmCompanyRuleParcelRemoveModal toRemoveCompanyRuleParcelData={editCompanyRuleParcelData} afterRemove={() => getRule()} isOpen={isConfirmCompanyRuleParcelRemoveModalOpen} onRequestClose={CloseConfirmCompanyRuleParcelRemoveModal}/>
 
             <HStack justifyContent="space-between" p={[4, 4, 9]}>
-                <Text fontSize="xl">Regra de comissão de RECEBIMENTO</Text>
+                <HStack spacing="4">
+                    <BackArrow stroke="#00A878" fill="none" width="20px"/>
+                    <Text fontSize="xl">Regra de comissão de RECEBIMENTO</Text>
+                </HStack>
 
                 {
                     !rule && (

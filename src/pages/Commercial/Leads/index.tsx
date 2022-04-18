@@ -70,7 +70,7 @@ export default function Leads() {
   const toast = useToast()
   const { permissions, profile } = useProfile()
 
-  const isManager = HasPermission(permissions, 'Vendas Completo')
+  const isManager = HasPermission(permissions, 'Comercial Completo');
 
   const [statuses, setStatuses] = useState<LeadStatus[]>([])
 

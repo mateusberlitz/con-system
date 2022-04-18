@@ -133,7 +133,7 @@ export function EditCompanyRuleModal( { isOpen, toEditCompanyRuleData, afterEdit
                             control={control}
                             h="45px"
                             name="half_installment"
-                            value={toEditCompanyRuleData.half_installment ? (toEditCompanyRuleData.half_installment === true ? 1 : 0) : undefined}
+                            value={toEditCompanyRuleData.half_installment ? (toEditCompanyRuleData.half_installment == true ? 1 : 0) : undefined}
                             w="100%"
                             fontSize="sm"
                             focusBorderColor="purple.300"
@@ -142,7 +142,7 @@ export function EditCompanyRuleModal( { isOpen, toEditCompanyRuleData, afterEdit
                             _hover={{ bgColor: 'gray.500' }}
                             size="lg"
                             borderRadius="full"
-                            placeholder="Tipo de estorno"
+                            placeholder="Meia parcela"
                             error={formState.errors.half_installment}
                             >
                             <option value={1}>Sim</option>
@@ -153,7 +153,7 @@ export function EditCompanyRuleModal( { isOpen, toEditCompanyRuleData, afterEdit
                             control={control}
                             h="45px"
                             name="pay_in_contemplation"
-                            value={toEditCompanyRuleData.pay_in_contemplation ? (toEditCompanyRuleData.pay_in_contemplation === true ? 1 : 0) : undefined}
+                            value={toEditCompanyRuleData.pay_in_contemplation ? (toEditCompanyRuleData.pay_in_contemplation == true ? 1 : 0) : undefined}
                             w="100%"
                             fontSize="sm"
                             focusBorderColor="purple.300"
