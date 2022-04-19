@@ -50,6 +50,7 @@ import CommissionsSalesman from './pages/Commissions/CommissionsSalesman'
 import Company from './pages/Commissions/Company'
 import ReportsCommissions from './pages/Commissions/Reports'
 import Contracts from './pages/Commissions/Contracts'
+import Customers from './pages/Commercial/Customers'
 
 interface PrivateRouteProps extends RouteProps {
   component: any
@@ -324,6 +325,12 @@ const Routes = (): JSX.Element => {
           neededPermission="Comercial Limitado"
           exact
           component={Schedules}
+        />
+        <PrivateRoute
+          path={`/clientes`}
+          neededPermission="Comercial Limitado"
+          exact
+          component={Customers}
         />
         <PrivateRoute
           path={`/teams`}

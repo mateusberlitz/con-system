@@ -20,7 +20,7 @@ interface FormInputProps extends InputProps {
   icon?: React.FunctionComponent<React.SVGProps<SVGSVGElement>>
   register?: UseFormRegister<any>
   control?: any
-  mask?: 'phone' | 'cpf' | 'cnpj' | 'money' | ''
+  mask?: 'phone' | 'cpf' | 'cnpj' | 'money' | 'cep' | '';
   error?: FieldError
   onChange?: (value: any) => void
   inputRef?: Ref<any>
@@ -57,6 +57,8 @@ export function Input({
             ? '999.999.999-99'
             : mask === 'cnpj'
             ? '99.999.999/9999-99'
+            : mask === 'cep'
+            ? '99.999-999'
             : ''
 
         value = applyMask(value, maskPattern)

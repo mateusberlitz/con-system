@@ -30,11 +30,11 @@ interface QuotasListProps{
 export function QuotasList({quotas, refetchQuotas}: QuotasListProps){
     const history = useHistory();
 
-    const totalQuotasCount = quotas.reduce((sumAmount:number, quota:Quota) => {
+    const totalQuotasCount = quotas.reduce((sumAmount:number, quota:ReadyQuota) => {
         return sumAmount + 1;
     }, 0);
 
-    const totalRealtyCost = quotas.reduce((sumAmount:number, quota:Quota) => {
+    const totalRealtyCost = quotas.reduce((sumAmount:number, quota:ReadyQuota) => {
         if(quota.segment === "Imóvel"){
             return sumAmount + quota.cost;
         }
@@ -42,7 +42,7 @@ export function QuotasList({quotas, refetchQuotas}: QuotasListProps){
         return sumAmount;
     }, 0);
 
-    const totalVehicleCost = quotas.reduce((sumAmount:number, quota:Quota) => {
+    const totalVehicleCost = quotas.reduce((sumAmount:number, quota:ReadyQuota) => {
         if(quota.segment === "Veículo"){
             return sumAmount + quota.cost;
         }
@@ -50,7 +50,7 @@ export function QuotasList({quotas, refetchQuotas}: QuotasListProps){
         return sumAmount;
     }, 0);
 
-    const totalRealtyCredit = quotas.reduce((sumAmount:number, quota:Quota) => {
+    const totalRealtyCredit = quotas.reduce((sumAmount:number, quota:ReadyQuota) => {
         if(quota.segment === "Imóvel"){
             return sumAmount + quota.credit;
         }
@@ -58,7 +58,7 @@ export function QuotasList({quotas, refetchQuotas}: QuotasListProps){
         return sumAmount;
     }, 0);
 
-    const totalVehicleCredit = quotas.reduce((sumAmount:number, quota:Quota) => {
+    const totalVehicleCredit = quotas.reduce((sumAmount:number, quota:ReadyQuota) => {
         if(quota.segment === "Veículo"){
             return sumAmount + quota.credit;
         }
@@ -66,7 +66,7 @@ export function QuotasList({quotas, refetchQuotas}: QuotasListProps){
         return sumAmount;
     }, 0);
 
-    const totalRealtyCount = quotas.reduce((sumAmount:number, quota:Quota) => {
+    const totalRealtyCount = quotas.reduce((sumAmount:number, quota:ReadyQuota) => {
         if(quota.segment === "Imóvel"){
             return sumAmount + 1;
         }
@@ -74,7 +74,7 @@ export function QuotasList({quotas, refetchQuotas}: QuotasListProps){
         return sumAmount;
     }, 0);
 
-    const totalVehicleCount = quotas.reduce((sumAmount:number, quota:Quota) => {
+    const totalVehicleCount = quotas.reduce((sumAmount:number, quota:ReadyQuota) => {
         if(quota.segment === "Veículo"){
             return sumAmount + 1;
         }
@@ -178,7 +178,7 @@ export function QuotasList({quotas, refetchQuotas}: QuotasListProps){
                     </HStack>
                 </HStack>
 
-                { quotas.map((quota:Quota) => {
+                { quotas.map((quota:ReadyQuota) => {
                         const toEditQuotaData:EditQuota = {
                             id: quota.id,
                             sold: quota.sold,

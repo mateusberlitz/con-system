@@ -160,9 +160,14 @@ export function SideBarNav({ desk }: SideBarNavProps) {
       <NavLink href={`/agenda`} icon={CalendarIcon} color="orange.400">
         Agendamentos
       </NavLink>
-      <NavLink href={`/team`} icon={CalendarIcon} color="orange.400">
-        Equipe
+      <NavLink href={`/clientes`} icon={CalendarIcon} color="orange.400">
+        Clientes
       </NavLink>
+      {HasPermission(permissions, 'Comercial Completo') && (
+        <NavLink href={`/team`} icon={CalendarIcon} color="orange.400">
+          Equipe
+        </NavLink>
+      )}
       {/* <NavLink href="/calculadora" icon={ConfigureIcon}>Calculadora</NavLink> */}
 
       {HasPermission(permissions, 'Vendas Completo') && (

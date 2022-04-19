@@ -231,32 +231,6 @@ export interface CashDeskInterface{
     updated_at?: Date;
 }
 
-export interface Quota{
-    id: number;
-    sold: boolean;
-    company: Company;
-    segment: string;
-    value?: number;
-    credit: number;
-    group: string;
-    quota: string;
-    cost: number;
-    partner?: string;
-    partner_cost?: number;
-    passed_cost?: number;
-    total_cost: number;
-    seller?: string;
-    cpf_cnpj: string;
-    paid_percent: string;
-    partner_commission?: string;
-    tax?: number;
-    contemplated_type: string;
-    description?: string;
-    purchase_date: string;
-    created_at?: Date;
-    updated_at?: Date;
-}
-
 export interface ReadyQuota{
     id: number;
     sold: boolean;
@@ -288,7 +262,7 @@ export interface QuotaSale{
     cancelled: boolean;
     company: Company;
     bills: ResumedBill[];
-    ready_quota: Quota;
+    ready_quota: ReadyQuota;
     value: number;
     passed_value: number;
     partner_value: number;
@@ -503,4 +477,77 @@ export interface SellerCommissionRuleParcel{
     parcel_number: number;
     percentage_to_pay: number;
     chargeback_percentage: number;
+}
+
+export interface Customer{
+    id:number;
+    name:string;
+    email:string;
+    phone: string;
+    cpf_cnpj: string;
+    type_customer: string;
+    birth_date: string;
+    civil_status: string;
+    city: City;
+    state: State;
+    cep: string;
+    address: string;
+    neighborhood: string;
+    number: string;
+    quotas: Quota[];
+    created_at: string;
+    updated_at: string;
+}
+
+export interface ConsortiumType{
+    id:number;
+    description: string;
+}
+
+export interface Contract{
+    id: number;
+    customer: Customer;
+    number_contract: number;
+}
+
+export interface Quota{
+    id:number;
+    consortium_type_id: ConsortiumType;
+    contract: Contract;
+    credit: number;
+    installments_paid: number;
+    group: string;
+    quota: string;
+    date_contemplation:string;
+    date_sale: string;
+    type_sale: string;
+    active: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface CompanyCommission{
+    id:number;
+    company_commission_rule_parcel: CompanyCommissionRuleParcel;
+    company: Company;
+    branch?: Branch;
+    quota: Quota;
+    seller: User;
+    value: number;
+    comission_date: string;
+    base_value: number;
+    percentage: number;
+    half_installment: boolean;
+    period: string;
+    confirmed: boolean;
+}
+
+export interface SellerCommission{
+    id:number;
+    seller_commission_rule_parcel: SellerCommissionRuleParcel;
+    quota: Quota
+    seller: User;
+    value: number;
+    comission_date: string;
+    confirmed: boolean;
 }
