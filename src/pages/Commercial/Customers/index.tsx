@@ -412,13 +412,13 @@ import { useCustomers } from '../../../hooks/useCustomers'
   
                         {/* <ControlledCheckbox label="Pendência" control={control} defaultIsChecked={toEditPaymentData.pendency} name="pendency" error={formState.errors.pendency}/> */}
                         
-                        <Checkbox
+                        {/* <Checkbox
                             label=""
                             name="delegate"
                             checked={delegateList.includes(customer.id)}
                             value={customer.id}
                             onChange={handleSelect}
-                        />
+                        /> */}
   
                         {/* {isWideVersion && (
                           <Stack spacing="0">
@@ -571,23 +571,6 @@ import { useCustomers } from '../../../hooks/useCustomers'
                                         fontWeight="normal"
                                         color="gray.800"
                                     >
-                                        Bairro
-                                    </Text>
-                                        <Text
-                                        fontSize="sm"
-                                        fontWeight="normal"
-                                        color="gray.800"
-                                    >
-                                        {customer.neighborhood}
-                                    </Text>
-                                </Stack>
-
-                                <Stack spacing="0">
-                                    <Text
-                                        fontSize="11px"
-                                        fontWeight="normal"
-                                        color="gray.800"
-                                    >
                                         Número
                                     </Text>
                                         <Text
@@ -599,18 +582,134 @@ import { useCustomers } from '../../../hooks/useCustomers'
                                     </Text>
                                 </Stack>
 
+                                <Stack spacing="0">
+                                    <Text
+                                        fontSize="11px"
+                                        fontWeight="normal"
+                                        color="gray.800"
+                                    >
+                                        {customer.type_customer === "PF" ? "CPF" : "CNPJ" }
+                                    </Text>
+                                        <Text
+                                        fontSize="sm"
+                                        fontWeight="normal"
+                                        color="gray.800"
+                                    >
+                                        {customer.cpf_cnpj}
+                                    </Text>
+                                </Stack>
+
+                                <Stack spacing="0">
+                                    <Text
+                                        fontSize="11px"
+                                        fontWeight="normal"
+                                        color="gray.800"
+                                    >
+                                        Estado civil
+                                    </Text>
+                                        <Text
+                                        fontSize="sm"
+                                        fontWeight="normal"
+                                        color="gray.800"
+                                    >
+                                        {customer.civil_status}
+                                    </Text>
+                                </Stack>
+
                             </Stack>
 
                           <Stack fontSize="sm" spacing="3">
-                            <Text fontWeight="bold">Anotações</Text>
+                            <Text fontWeight="bold">Cotas</Text>
   
                             {customer.quotas.map(quota => {
                               return (
-                                <HStack key={quota.id}>
-                                  <Text color="gray.800" fontWeight="semibold">
-                                    {quota.group} - {quota.quota}
-                                  </Text>
-                                  <Text color="gray.800">{quota.credit}</Text>
+                                <HStack key={quota.id} justifyContent="space-between" borderTop="1px solid" borderColor="gray.200" pt="3">
+                                    <Stack spacing="0">
+                                        <Text
+                                            fontSize="11px"
+                                            fontWeight="normal"
+                                            color="gray.800"
+                                        >
+                                            Contrato
+                                        </Text>
+                                            <Text
+                                            fontSize="sm"
+                                            fontWeight="normal"
+                                            color="gray.800"
+                                        >
+                                            {quota.contract.number_contract}
+                                        </Text>
+                                    </Stack>
+
+                                    <Stack spacing="0">
+                                        <Text
+                                            fontSize="11px"
+                                            fontWeight="normal"
+                                            color="gray.800"
+                                        >
+                                            Grupo e cota
+                                        </Text>
+                                            <Text
+                                            fontSize="sm"
+                                            fontWeight="normal"
+                                            color="gray.800"
+                                        >
+                                            {quota.group} - {quota.quota}
+                                        </Text>
+                                    </Stack>
+
+                                    <Stack spacing="0">
+                                        <Text
+                                            fontSize="11px"
+                                            fontWeight="normal"
+                                            color="gray.800"
+                                        >
+                                            Segmento
+                                        </Text>
+                                            <Text
+                                            fontSize="sm"
+                                            fontWeight="normal"
+                                            color="gray.800"
+                                        >
+                                            {quota.consortium_type.description}
+                                        </Text>
+                                    </Stack>
+
+                                    <Stack spacing="0">
+                                        <Text
+                                            fontSize="11px"
+                                            fontWeight="normal"
+                                            color="gray.800"
+                                        >
+                                            Parcelas pagas
+                                        </Text>
+                                            <Text
+                                            fontSize="sm"
+                                            fontWeight="normal"
+                                            color="gray.800"
+                                        >
+                                            {quota.installments_paid} parcelas
+                                        </Text>
+                                    </Stack>
+
+                                    <Stack spacing="0">
+                                        <Text
+                                            fontSize="11px"
+                                            fontWeight="normal"
+                                            color="gray.800"
+                                        >
+                                            Contemplação
+                                        </Text>
+                                            <Text
+                                            fontSize="sm"
+                                            fontWeight="normal"
+                                            color="gray.800"
+                                        >
+                                            {quota.date_contemplation ? quota.date_contemplation : "Não contemplado"}
+                                        </Text>
+                                    </Stack>
+
+                                    <Text color="gray.900" fontWeight="semibold">{Intl.NumberFormat('pt-BR', {style: 'currency',currency: 'BRL'}).format(quota.credit)}</Text>
                                 </HStack>
                               )
                             })}

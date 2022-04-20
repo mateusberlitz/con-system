@@ -508,11 +508,13 @@ export interface Contract{
     id: number;
     customer: Customer;
     number_contract: number;
+    quota: Quota;
+    quotas: Quota[];
 }
 
 export interface Quota{
     id:number;
-    consortium_type_id: ConsortiumType;
+    consortium_type: ConsortiumType;
     contract: Contract;
     credit: number;
     installments_paid: number;

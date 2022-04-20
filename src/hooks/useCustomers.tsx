@@ -1,7 +1,7 @@
 import { useQuery } from "react-query";
 import { api } from "../services/api";
 
-export interface PaymentFilterData{
+export interface CustomersFilterData{
     search?: string;
     start_date?: string;
     end_date?: string;
@@ -14,12 +14,12 @@ export interface PaymentFilterData{
     quote?: string;
     group_by?: string;
     status?: number;
-    pendency?: number;
+    type_customer?: number;
     city_id?: number;
     state_id?: number;
 }
 
-export const getCustomers = async (filter?: PaymentFilterData, page: number = 0) => {
+export const getCustomers = async (filter?: CustomersFilterData, page: number = 0) => {
     if(filter){
         const {data, headers} = await api.get('/customers', {
             params: {
@@ -36,6 +36,7 @@ export const getCustomers = async (filter?: PaymentFilterData, page: number = 0)
               city_id: filter.city_id,
               state_id: filter.state_id,
               group_by: filter.group_by,
+              type_customer: filter.type_customer,
             }
         });
 
@@ -47,7 +48,7 @@ export const getCustomers = async (filter?: PaymentFilterData, page: number = 0)
     return {data, total: Number(headers['x-total-count'])};
 }
 
-export function useCustomers(filter: PaymentFilterData, page?: number){
+export function useCustomers(filter: CustomersFilterData, page?: number){
     return useQuery(['customers', [filter, page]], () => getCustomers(filter, page), {
         staleTime: 1000 * 5 * 60, //fresh
     });
