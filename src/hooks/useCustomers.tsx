@@ -9,12 +9,12 @@ export interface CustomersFilterData{
     company?: number;
     branch?: number;
     contract?: number;
-    cpf?: string;
+    cpf_cnpj?: string;
     group?: string;
     quote?: string;
     group_by?: string;
     status?: number;
-    type_customer?: number;
+    type_customer?: string;
     city_id?: number;
     state_id?: number;
 }
@@ -30,7 +30,7 @@ export const getCustomers = async (filter?: CustomersFilterData, page: number = 
               start_date: filter.start_date,
               end_date: filter.end_date,
               contract: filter.contract,
-              cpf: filter.cpf,
+              cpf_cnpj: filter.cpf_cnpj,
               group: filter.group,
               quote: filter.quote,
               city_id: filter.city_id,

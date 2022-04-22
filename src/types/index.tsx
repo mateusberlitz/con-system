@@ -488,6 +488,8 @@ export interface Customer{
     type_customer: string;
     birth_date: string;
     civil_status: string;
+    city_id: number;
+    state_id: number;
     city: City;
     state: State;
     cep: string;

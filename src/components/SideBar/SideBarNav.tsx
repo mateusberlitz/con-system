@@ -18,12 +18,12 @@ import { ReactComponent as CalendarIcon } from '../../assets/icons/Calandar.svg'
 import { ReactComponent as PercentIcon } from '../../assets/icons/percent.svg';
 
 
-
 import LogoBranco from '../../assets/icons/Logo-Branco.svg'
 import { HasPermission, useProfile } from '../../hooks/useProfile'
 import { useTenant } from '../../hooks/useTenant'
 import { Link } from 'react-router-dom'
 import { Logo } from '../Logo'
+import { Users } from 'react-feather';
 
 interface SideBarNavProps{
     desk: "configs" | "financial" | "commercial" | "quotas" | "commissions";
@@ -160,11 +160,11 @@ export function SideBarNav({ desk }: SideBarNavProps) {
       <NavLink href={`/agenda`} icon={CalendarIcon} color="orange.400">
         Agendamentos
       </NavLink>
-      <NavLink href={`/clientes`} icon={CalendarIcon} color="orange.400">
+      <NavLink href={`/clientes`} icon={Users} color="orange.400" isFeatherIcon={true}>
         Clientes
       </NavLink>
       {HasPermission(permissions, 'Comercial Completo') && (
-        <NavLink href={`/team`} icon={CalendarIcon} color="orange.400">
+        <NavLink href={`/team`} icon={ProfileIcon} color="orange.400">
           Equipe
         </NavLink>
       )}

@@ -10,9 +10,10 @@ interface NavLinkProps extends ChakraProps{
     children: string;
     color?: string;
     href: string;
+    isFeatherIcon?: boolean;
 }
 
-export function NavLink({icon, color, children, href, ...rest} : NavLinkProps){
+export function NavLink({icon, color, children, href, isFeatherIcon = false, ...rest} : NavLinkProps){
     const { pathname } = useLocation();
 
     let isActive = false;
@@ -33,7 +34,7 @@ export function NavLink({icon, color, children, href, ...rest} : NavLinkProps){
                         )
                     }
 
-                    <Icon as={icon} fontSize="20" stroke={isActive ? "gray.800" : "#e2e8f0"} fill={isActive ? "gray.800" : "#e2e8f0"}/>
+                    <Icon as={icon} fontSize="20" stroke={isActive ? "gray.800" : "#e2e8f0"} fill={!isFeatherIcon ? ( isActive ? "gray.800" : "#e2e8f0") : ""}/>
                     <Text ml="4" fontWeight="medium" fontSize="15px">{children}</Text>
 
                     {

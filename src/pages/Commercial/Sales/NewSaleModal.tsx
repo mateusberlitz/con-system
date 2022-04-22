@@ -41,7 +41,7 @@ import { isAuthenticated } from '../../../services/auth'
 import { redirectMessages } from '../../../utils/redirectMessages'
 import { ReactSelect, SelectOption } from '../../../components/Forms/ReactSelect'
 import { LeadsFilterData, useLeads } from '../../../hooks/useLeads'
-import { City, Lead, State } from '../../../types'
+import { City, Customer, Lead, State } from '../../../types'
 import { useStates } from '../../../hooks/useStates'
 import { useCities } from '../../../hooks/useCities'
 import { useWorkingBranch } from '../../../hooks/useWorkingBranch'
@@ -49,7 +49,8 @@ import { useWorkingBranch } from '../../../hooks/useWorkingBranch'
 interface NewSaleModalProps {
   isOpen: boolean
   onRequestClose: () => void
-  toAddLeadData?: toAddSaleLeadData
+  toAddLeadData?: toAddSaleLeadData;
+  toAddCustomerData?: Customer;
   afterCreate?: () => void
 }
 
@@ -114,7 +115,8 @@ export function NewSaleModal({
   isOpen,
   onRequestClose,
   afterCreate,
-  toAddLeadData
+  toAddLeadData,
+  toAddCustomerData
 }: NewSaleModalProps) {
   const workingCompany = useWorkingCompany();
   const workingBranch = useWorkingBranch();
@@ -262,10 +264,8 @@ export function NewSaleModal({
     }
   }, [leads]);
 
-  const [otherValue, setOtherValue] = useState(false)
+  const [otherValue, setOtherValue] = useState(false);
   const [isPF, setIsPF] = useState(true);
-
-  console.log(formState);
 
   return (
     <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
@@ -279,6 +279,11 @@ export function NewSaleModal({
       >
         <ModalHeader p="10" fontWeight="700" fontSize="2xl">
           Cadastrar nova venda
+          {
+            toAddCustomerData && (
+              <Text fontSize="md" fontWeight="normal" color="gray.700">Adicionar plano ao cliente <b>{toAddCustomerData.name}</b></Text>
+            )
+          }
         </ModalHeader>
 
         <ModalCloseButton top="10" right="5" />
@@ -439,196 +444,202 @@ export function NewSaleModal({
               />
             </HStack>
 
-            <HStack spacing="4" alignItems="flex-start">
-              <Checkbox isChecked={isPF} onChange={() => setIsPF(true)}>Pessoa física</Checkbox>
-              <Checkbox isChecked={!isPF} onChange={() => setIsPF(false)}>Pessoa jurídica</Checkbox>
-            </HStack>
+            {
+              !toAddCustomerData && (
+                <>
+                  <HStack spacing="4" alignItems="flex-start">
+                    <Checkbox isChecked={isPF} onChange={() => setIsPF(true)}>Pessoa física</Checkbox>
+                    <Checkbox isChecked={!isPF} onChange={() => setIsPF(false)}>Pessoa jurídica</Checkbox>
+                  </HStack>
 
-            <Input
-                register={register}
-                name="cpf_cnpj"
-                type="text"
-                placeholder={isPF ? "CPF" : "CNPJ"}
-                focusBorderColor="orange.400"
-                variant="outline"
-                mask={isPF ? "cpf" : "cnpj"}
-                error={formState.errors.cpf_cnpj}
-              />
+                  <Input
+                      register={register}
+                      name="cpf_cnpj"
+                      type="text"
+                      placeholder={isPF ? "CPF" : "CNPJ"}
+                      focusBorderColor="orange.400"
+                      variant="outline"
+                      mask={isPF ? "cpf" : "cnpj"}
+                      error={formState.errors.cpf_cnpj}
+                    />
 
-            <Input
-                register={register}
-                name="name"
-                type="text"
-                placeholder="Nome completo"
-                focusBorderColor="orange.400"
-                variant="outline"
-                mask=""
-                error={formState.errors.name}
-              />
+                  <Input
+                      register={register}
+                      name="name"
+                      type="text"
+                      placeholder="Nome completo"
+                      focusBorderColor="orange.400"
+                      variant="outline"
+                      mask=""
+                      error={formState.errors.name}
+                    />
 
-            <HStack spacing="4" alignItems="flex-start">
-              <Input
-                register={register}
-                name="email"
-                type="text"
-                placeholder="E-mail"
-                focusBorderColor="orange.400"
-                variant="outline"
-                mask=""
-                error={formState.errors.email}
-              />
+                  <HStack spacing="4" alignItems="flex-start">
+                    <Input
+                      register={register}
+                      name="email"
+                      type="text"
+                      placeholder="E-mail"
+                      focusBorderColor="orange.400"
+                      variant="outline"
+                      mask=""
+                      error={formState.errors.email}
+                    />
 
-              <Input
-                register={register}
-                name="phone"
-                type="text"
-                placeholder="Telefone"
-                focusBorderColor="orange.400"
-                variant="outline"
-                mask="phone"
-                error={formState.errors.phone}
-              />
-            </HStack>
+                    <Input
+                      register={register}
+                      name="phone"
+                      type="text"
+                      placeholder="Telefone"
+                      focusBorderColor="orange.400"
+                      variant="outline"
+                      mask="phone"
+                      error={formState.errors.phone}
+                    />
+                  </HStack>
 
-            <HStack spacing="4" alignItems="flex-start">
-              <Select
-                register={register}
-                h="45px"
-                name="state_id"
-                value="0"
-                w="100%"
-                fontSize="sm"
-                focusBorderColor="purple.300"
-                bg="gray.400"
-                variant="outline"
-                _hover={{ bgColor: 'gray.500' }}
-                size="lg"
-                borderRadius="full"
-                placeholder="Estado"
-                error={formState.errors.state_id}
-              >
-                {!states.isLoading &&
-                  !states.error &&
-                  states.data.map((state: State) => {
-                    return (
-                      <option key={state.id} value={state.id}>
-                        {state.name}
-                      </option>
-                    )
-                  })}
-              </Select>
+                  <HStack spacing="4" alignItems="flex-start">
+                    <Select
+                      register={register}
+                      h="45px"
+                      name="state_id"
+                      value="0"
+                      w="100%"
+                      fontSize="sm"
+                      focusBorderColor="purple.300"
+                      bg="gray.400"
+                      variant="outline"
+                      _hover={{ bgColor: 'gray.500' }}
+                      size="lg"
+                      borderRadius="full"
+                      placeholder="Estado"
+                      error={formState.errors.state_id}
+                    >
+                      {!states.isLoading &&
+                        !states.error &&
+                        states.data.map((state: State) => {
+                          return (
+                            <option key={state.id} value={state.id}>
+                              {state.name}
+                            </option>
+                          )
+                        })}
+                    </Select>
 
-              {cities.isLoading ? (
-                <Flex justify="center" mt="4">
-                  <Spinner />
-                </Flex>
-              ) : cities.isError ? (
-                <Text fontSize="11px">Erro listar as cidades</Text>
-              ) : (
-                cities.data?.length === 0 && (
-                  <Text fontSize="11px">Selecione um estado.</Text>
-                )
-              )}
-              {
-                (!cities.isLoading && !cities.isError && cities.data?.length !== 0) && (
-                  <Select
-                    register={register}
-                    h="45px"
-                    name="city_id"
-                    value="0"
-                    w="100%"
-                    fontSize="sm"
-                    focusBorderColor="purple.300"
-                    bg="gray.400"
-                    variant="outline"
-                    _hover={{ bgColor: 'gray.500' }}
-                    size="lg"
-                    borderRadius="full"
-                    placeholder="Cidade"
-                    error={formState.errors.city_id}
-                  >
-                    {!cities.isLoading &&
-                      !cities.error &&
-                      cities.data.map((city: City) => {
-                        return (
-                          <option key={city.id} value={city.id}>
-                            {city.name}
-                          </option>
-                        )
-                      })}
-                  </Select>
-                )
-              }
-            </HStack>
+                    {cities.isLoading ? (
+                      <Flex justify="center" mt="4">
+                        <Spinner />
+                      </Flex>
+                    ) : cities.isError ? (
+                      <Text fontSize="11px">Erro listar as cidades</Text>
+                    ) : (
+                      cities.data?.length === 0 && (
+                        <Text fontSize="11px">Selecione um estado.</Text>
+                      )
+                    )}
+                    {
+                      (!cities.isLoading && !cities.isError && cities.data?.length !== 0) && (
+                        <Select
+                          register={register}
+                          h="45px"
+                          name="city_id"
+                          value="0"
+                          w="100%"
+                          fontSize="sm"
+                          focusBorderColor="purple.300"
+                          bg="gray.400"
+                          variant="outline"
+                          _hover={{ bgColor: 'gray.500' }}
+                          size="lg"
+                          borderRadius="full"
+                          placeholder="Cidade"
+                          error={formState.errors.city_id}
+                        >
+                          {!cities.isLoading &&
+                            !cities.error &&
+                            cities.data.map((city: City) => {
+                              return (
+                                <option key={city.id} value={city.id}>
+                                  {city.name}
+                                </option>
+                              )
+                            })}
+                        </Select>
+                      )
+                    }
+                  </HStack>
 
-            <HStack spacing="4" alignItems="flex-start">
-              <Input
-                register={register}
-                name="birth_date"
-                type="date"
-                placeholder="Data de nascimento"
-                focusBorderColor="orange.400"
-                variant="outline"
-                mask=""
-                error={formState.errors.birth_date}
-              />
-              <Input
-                register={register}
-                name="civil_status"
-                type="text"
-                placeholder="Estado Civil"
-                focusBorderColor="orange.400"
-                variant="outline"
-                mask=""
-                error={formState.errors.civil_status}
-              />
-            </HStack>
+                  <HStack spacing="4" alignItems="flex-start">
+                    <Input
+                      register={register}
+                      name="birth_date"
+                      type="date"
+                      placeholder="Data de nascimento"
+                      focusBorderColor="orange.400"
+                      variant="outline"
+                      mask=""
+                      error={formState.errors.birth_date}
+                    />
+                    <Input
+                      register={register}
+                      name="civil_status"
+                      type="text"
+                      placeholder="Estado Civil"
+                      focusBorderColor="orange.400"
+                      variant="outline"
+                      mask=""
+                      error={formState.errors.civil_status}
+                    />
+                  </HStack>
 
-            <HStack spacing="4" alignItems="flex-start">
-              <Input
-                register={register}
-                name="cep"
-                type="text"
-                placeholder="CEP"
-                focusBorderColor="orange.400"
-                variant="outline"
-                mask="cep"
-                error={formState.errors.cep}
-              />
-              <Input
-                register={register}
-                name="address"
-                type="text"
-                placeholder="Rua"
-                focusBorderColor="orange.400"
-                variant="outline"
-                mask=""
-                error={formState.errors.address}
-              />
-            </HStack>
+                  <HStack spacing="4" alignItems="flex-start">
+                    <Input
+                      register={register}
+                      name="cep"
+                      type="text"
+                      placeholder="CEP"
+                      focusBorderColor="orange.400"
+                      variant="outline"
+                      mask="cep"
+                      error={formState.errors.cep}
+                    />
+                    <Input
+                      register={register}
+                      name="address"
+                      type="text"
+                      placeholder="Rua"
+                      focusBorderColor="orange.400"
+                      variant="outline"
+                      mask=""
+                      error={formState.errors.address}
+                    />
+                  </HStack>
 
-            <HStack spacing="4" alignItems="flex-start">
-              <Input
-                register={register}
-                name="neighborhood"
-                type="text"
-                placeholder="Bairro"
-                focusBorderColor="orange.400"
-                variant="outline"
-                mask=""
-                error={formState.errors.neighborhood}
-              />
-              <Input
-                register={register}
-                name="number"
-                type="text"
-                placeholder="Número"
-                focusBorderColor="orange.400"
-                variant="outline"
-                mask=""
-                error={formState.errors.number}
-              />
-            </HStack>
+                  <HStack spacing="4" alignItems="flex-start">
+                    <Input
+                      register={register}
+                      name="neighborhood"
+                      type="text"
+                      placeholder="Bairro"
+                      focusBorderColor="orange.400"
+                      variant="outline"
+                      mask=""
+                      error={formState.errors.neighborhood}
+                    />
+                    <Input
+                      register={register}
+                      name="number"
+                      type="text"
+                      placeholder="Número"
+                      focusBorderColor="orange.400"
+                      variant="outline"
+                      mask=""
+                      error={formState.errors.number}
+                    />
+                  </HStack>
+                </>
+              )
+            }
             
           </Stack>
         </ModalBody>

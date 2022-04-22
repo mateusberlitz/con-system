@@ -39,7 +39,7 @@ import {
   import { formatBRDate } from '../../../utils/Date/formatBRDate'
   import { getHour } from '../../../utils/Date/getHour'
   import { useUsers } from '../../../hooks/useUsers'
-  import { NewSaleModal, toAddSaleLeadData } from '../Sales/NewSaleModal'
+  import { NewSaleModal } from '../Sales/NewSaleModal'
   import { EditSaleFormData, EditSaleModal } from '../Sales/EditSaleModal'
   import {
     ConfirmSaleRemoveModal,
@@ -48,6 +48,8 @@ import {
   import { useWorkingCompany } from '../../../hooks/useWorkingCompany'
   import { useWorkingBranch } from '../../../hooks/useWorkingBranch'
 import { useCustomers } from '../../../hooks/useCustomers'
+import { SearchCustomers } from './SearchCustomers'
+import { EditCustomerModal } from './EditCustomerModal'
   
   export default function Customers() {
     const workingCompany = useWorkingCompany()
@@ -78,15 +80,6 @@ import { useCustomers } from '../../../hooks/useCustomers'
       loadOrigins()
     }, [])
   
-    const [isNewLeadModalOpen, setIsNewLeadModalOpen] = useState(false)
-  
-    function OpenNewPaymentModal() {
-      setIsNewLeadModalOpen(true)
-    }
-    function CloseNewPaymentModal() {
-      setIsNewLeadModalOpen(false)
-    }
-  
     const [filter, setFilter] = useState<LeadsFilterData>(() => {
       const data: LeadsFilterData = {
         search: '',
@@ -110,123 +103,29 @@ import { useCustomers } from '../../../hooks/useCustomers'
         : profile?.id
       setFilter(newFilter)
     }
-  
-    const customers = useCustomers(filter, 1)
-  
-    const [isEditLeadModalOpen, setIsEditLeadModalOpen] = useState(false)
 
-    const [isRemoveLeadModalOpen, setIsRemoveLeadModalOpen] = useState(false)
-  
-    const users = useUsers({ role: 5 })
-  
-    const [delegateList, setDelegateList] = useState<number[]>([])
-    const [delegate, setDelegate] = useState(0)
-    const [isDelegateLeadModalOpen, setIsDelegateLeadModalOpen] = useState(false)
-  
-    function CloseDelegateLeadModal() {
-      setIsDelegateLeadModalOpen(false)
-      setDelegate(0)
-    }
-  
-    const handleSelect = (event: ChangeEvent<HTMLInputElement>) => {
-      console.log(event.target?.value, event.target?.checked)
-      if (event.target?.checked) {
-        setDelegateList([...delegateList, parseInt(event.target?.value)])
-      } else {
-        setDelegateList(
-          delegateList.filter(leadId => leadId !== parseInt(event.target?.value))
-        )
-      }
-    }
-  
-    const delegateSelected = () => {
-      if (delegateList.length > 0) {
-        setIsDelegateLeadModalOpen(true)
-        return
-      }
-  
-      toast({
-        title: 'Ops',
-        description: `Nenhum lead selecionado.`,
-        status: 'warning',
-        duration: 12000,
-        isClosable: true
-      })
-  
-      console.log(delegateList)
-    }
-  
-    const delegateOne = (id: number) => {
-      setDelegate(id)
-      setIsDelegateLeadModalOpen(true)
-    }
-
-  
     const [isNewSaleModalOpen, setIsNewSaleModalOpen] = useState(false)
-    const [addSaleToLeadData, setAddSaleToLeadData] = useState<toAddSaleLeadData>(
-      () => {
-        const data: toAddSaleLeadData = {
-          name: '',
-          id: 0
-        }
+    const [addSaleToCustomerData, setAddSaleToCustomerData] = useState<Customer>()
   
-        return data
-      }
-    )
-  
-    function OpenNewSaleModal(leadData: toAddSaleLeadData) {
-      setAddSaleToLeadData(leadData)
+    function OpenNewSaleModal(customer?: Customer) {
+      setAddSaleToCustomerData(customer)
       setIsNewSaleModalOpen(true)
     }
     function CloseNewSaleModal() {
       setIsNewSaleModalOpen(false)
     }
+
+    const customers = useCustomers(filter, 1);
   
-    const [isEditSaleModalOpen, setIsEditSaleModalOpen] = useState(false)
-    const [editSaleFormData, setEditSaleFormData] = useState<EditSaleFormData>(
-      () => {
-        const data: EditSaleFormData = {
-          id: 0,
-          value: '',
-          group: '',
-          quota: '',
-          contract: '',
-          segment: '',
-          date: ''
-        }
+    const [isEditCustomerModalOpen, setIsEditCustomerModalOpen] = useState(false)
+    const [editCustomerFormData, setEditCustomerFormData] = useState<Customer>()
   
-        return data
-      }
-    )
-  
-    function OpenEditSaleModal(leadData: EditSaleFormData) {
-      setEditSaleFormData(leadData)
-      setIsEditSaleModalOpen(true)
+    function OpenEditCustomerModal(customerData: Customer) {
+      setEditCustomerFormData(customerData)
+      setIsEditCustomerModalOpen(true)
     }
-    function CloseNewEditModal() {
-      setIsEditSaleModalOpen(false)
-    }
-  
-    const [isConfirmSaleRemoveModalOpen, setIsConfirmSaleRemoveModalOpen] =
-      useState(false)
-    const [removeSaleFormData, setRemoveSaleFormData] = useState<RemoveSaleData>(
-      () => {
-        const data: RemoveSaleData = {
-          id: 0,
-          group: '',
-          quota: ''
-        }
-  
-        return data
-      }
-    )
-  
-    function OpenRemoveSaleModal(leadData: RemoveSaleData) {
-      setRemoveSaleFormData(leadData)
-      setIsConfirmSaleRemoveModalOpen(true)
-    }
-    function CloseRemoveEditModal() {
-      setIsConfirmSaleRemoveModalOpen(false)
+    function CloseEditCustomerModal() {
+      setIsEditCustomerModalOpen(false)
     }
   
     const pendingCustomersCount = 0;
@@ -258,6 +157,18 @@ import { useCustomers } from '../../../hooks/useCustomers'
   
     return (
       <MainBoard sidebar="commercial" header={<CompanySelectMaster />}>
+        <NewSaleModal
+          isOpen={isNewSaleModalOpen}
+          onRequestClose={CloseNewSaleModal}
+          toAddCustomerData={addSaleToCustomerData}
+        />
+
+        <EditCustomerModal
+          toEditCustomerData={editCustomerFormData}
+          afterEdit={customers.refetch}
+          isOpen={isEditCustomerModalOpen}
+          onRequestClose={CloseEditCustomerModal}
+        />
   
         <SolidButton
           color="white"
@@ -265,19 +176,16 @@ import { useCustomers } from '../../../hooks/useCustomers'
           icon={PlusIcon}
           colorScheme="orange"
           mb="10"
-          onClick={OpenNewPaymentModal}
+          onClick={() => OpenNewSaleModal()}
         >
-          Cadastrar cliente
+          Cadastrar venda
         </SolidButton>
   
         {isWideVersion ? (
-            <></>
-        //   <SearchLeads
-        //     filter={filter}
-        //     handleSearchLeads={handleChangeFilter}
-        //     origins={origins}
-        //     statuses={statuses}
-        //   />
+            <SearchCustomers
+              filter={filter}
+              handleSearchCustomers={handleChangeFilter}
+            />
         ) : (
           <>
             <Link
@@ -288,13 +196,10 @@ import { useCustomers } from '../../../hooks/useCustomers'
             </Link>
   
             {showingFilterMobile && (
-                <></>
-            //   <SearchLeads
-            //     filter={filter}
-            //     handleSearchLeads={handleChangeFilter}
-            //     origins={origins}
-            //     statuses={statuses}
-            //   />
+              <SearchCustomers
+                filter={filter}
+                handleSearchCustomers={handleChangeFilter}
+              />
             )}
           </>
         )}
@@ -339,33 +244,6 @@ import { useCustomers } from '../../../hooks/useCustomers'
   
             {customers.data?.data.data.map((customer: Customer) => {
                 console.log(customer);
-            //   const customerToEditData: EditLeadFormData = {
-            //     id: lead.id,
-            //     name: lead.name,
-            //     email: lead.email,
-            //     phone: lead.phone,
-            //     company: lead.company.id,
-            //     accept_newsletter: lead.accept_newsletter,
-            //     user: lead.user?.id,
-            //     status: lead.status?.id,
-            //     birthday: lead.birthday,
-            //     cnpj: lead.cnpj,
-            //     cpf: lead.cpf,
-            //     origin: lead.origin?.id,
-  
-            //     address: lead.address,
-            //     address_code: lead.address_code,
-            //     address_country: lead.address_country,
-            //     address_uf: lead.address_uf,
-            //     address_city: lead.address_city,
-            //     address_number: lead.address_number,
-  
-            //     recommender: lead.recommender,
-            //     commission: lead.commission,
-  
-            //     value: lead.value ? lead.value.toString().replace('.', ',') : '',
-            //     segment: lead.segment
-            //   }
   
               return (
                 <AccordionItem
@@ -492,7 +370,7 @@ import { useCustomers } from '../../../hooks/useCustomers'
                             </Text>
                         </Stack>
 
-                        <EditButton />
+                        <EditButton onClick={() => OpenEditCustomerModal(customer)}/>
                       </HStack>
   
                       <AccordionPanel
@@ -619,7 +497,24 @@ import { useCustomers } from '../../../hooks/useCustomers'
                             </Stack>
 
                           <Stack fontSize="sm" spacing="3">
-                            <Text fontWeight="bold">Cotas</Text>
+                            <HStack justifyContent="space-between">
+                              <Text fontWeight="bold">Cotas</Text>
+
+                              <SolidButton
+                                color="white"
+                                bg="orange.400"
+                                icon={PlusIcon}
+                                pr="4"
+                                pl="4"
+                                fontSize="12px"
+                                colorScheme="orange"
+                                height="8"
+                                size="sm"
+                                onClick={() => OpenNewSaleModal(customer)}
+                              >
+                                Cadastrar venda
+                              </SolidButton>
+                            </HStack>
   
                             {customer.quotas.map(quota => {
                               return (
