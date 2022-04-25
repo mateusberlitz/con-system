@@ -10,11 +10,33 @@ import { OutlineButton } from "../../../components/Buttons/OutlineButton";
 import { Input } from "../../../components/Forms/Inputs/Input";
 import { Select } from "../../../components/Forms/Selects/Select";
 import CommissionsCompany from "./CommissionsCompany";
+import { CompanyCommissionsFilterData, useCompanyCommissions } from "../../../hooks/useCompanyCommissions";
+import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
+import { useWorkingBranch } from "../../../hooks/useWorkingBranch";
+import { useState } from "react";
+import getMonthName from "../../../utils/Date/getMonthName";
 
 
 
 export default function Company(){
     const history = useHistory();
+    const workingCompany = useWorkingCompany();
+    const workingBranch = useWorkingBranch();
+
+    const [filter, setFilter] = useState<CompanyCommissionsFilterData>(() => {
+        const data: CompanyCommissionsFilterData = {
+            search: '',
+            company: workingCompany.company?.id,
+            branch: workingBranch.branch?.id,
+            group_by: 'commission_date',
+        };
+        
+        return data;
+    })
+
+    const [page, setPage] = useState(1);
+
+    const companyCommissions = useCompanyCommissions(filter, page);
 
     return(
         <MainBoard sidebar="commissions" header={ <CompanySelectMaster/>}>
@@ -66,7 +88,14 @@ export default function Company(){
             </Stack>
 
             <Stack fontSize="13px" spacing="12">
-                <CommissionsCompany />
+                {
+                    (!companyCommissions.isLoading && !companyCommissions.error) && Object.keys(companyCommissions.data?.data.data).map((monthYear:string) => {
+                        const monthNumber = parseInt(monthYear.split('-')[0]);
+                        return (
+                            <CommissionsCompany key={monthYear} monthName={getMonthName(monthNumber)} companyCommissions={companyCommissions.data?.data.data[monthYear]}/>
+                        )
+                    })
+                }
                 {/* <Pagination registerPerPage={50} currentPage={page} onPageChange={setPage}/> */}
             </Stack>
 
