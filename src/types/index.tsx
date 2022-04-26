@@ -544,6 +544,7 @@ export interface CompanyCommission{
     half_installment: boolean;
     period: string;
     confirmed: boolean;
+    is_chargeback?: boolean;
 }
 
 export interface SellerCommission{

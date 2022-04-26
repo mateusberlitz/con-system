@@ -6,6 +6,7 @@ import { ReactComponent as StrongPlusIcon } from '../../../assets/icons/StrongPl
 
 import Badge from '../../../components/Badge'
 import { CompanyCommission } from '../../../types';
+import { formatBRDate } from '../../../utils/Date/formatBRDate';
 
 interface CommissionsCompanyProps{
     monthName: string;
@@ -18,8 +19,6 @@ export default function CommissionsCompany({monthName, companyCommissions}: Comm
     const totalMonthAmount = companyCommissions.reduce((sumAmount:number, companyCommission:CompanyCommission) => {
         return sumAmount + companyCommission.value;
     }, 0);
-
-    console.log(companyCommissions)
 
     return (
         <Accordion w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" spacing="0" allowMultiple>
@@ -57,7 +56,7 @@ export default function CommissionsCompany({monthName, companyCommissions}: Comm
                                                 <Stack direction={['column', 'row']} spacing={["1", "4"]}>
                                                     <Stack fontWeight="500" alignItems="center">
                                                         <Text ml="2" color="#6E7191" fontSize="10px">Data da venda</Text>
-                                                        <Text ml="2" color="#4e4b66" fontSize="13px">{companyCommission.quota.date_sale}</Text>
+                                                        <Text ml="2" color="#4e4b66" fontSize="13px">{formatBRDate(companyCommission.quota.date_sale)}</Text>
                                                     </Stack>
                                                 </Stack>
                                             </HStack>
@@ -65,7 +64,7 @@ export default function CommissionsCompany({monthName, companyCommissions}: Comm
                                                 <HStack spacing={["3", "4"]}>
                                                     <Stack fontWeight="500" alignItems="center">
                                                         <Text ml="2" color="#6E7191" fontSize="10px">Parcela</Text>
-                                                        <Text ml="2" color="#4e4b66" fontSize="13px">2</Text>
+                                                        <Text ml="2" color="#4e4b66" fontSize="13px">{companyCommission.company_commission_rule_parcel.parcel_number}</Text>
                                                     </Stack>
                                                 </HStack>
                                             </HStack>
@@ -74,7 +73,7 @@ export default function CommissionsCompany({monthName, companyCommissions}: Comm
                                                     <Stack direction={['column', 'row']} spacing={["1", "4"]}>
                                                         <Stack fontWeight="500" alignItems="center">
                                                             <Text ml="2" color="#6E7191" fontSize="10px">Crédito</Text>
-                                                            <Text ml="2" color="#4e4b66" fontSize="13px">R$500.000,00</Text>
+                                                            <Text ml="2" color="#4e4b66" fontSize="13px">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(companyCommission.quota.credit)}</Text>
                                                         </Stack>
                                                     </Stack>
                                                 </HStack>
@@ -82,15 +81,21 @@ export default function CommissionsCompany({monthName, companyCommissions}: Comm
                                             <Stack direction={['column', 'row']} spacing={["1", "4"]}>
                                                 <Stack fontWeight="500" alignItems="center">
                                                     <Text ml="2" color="#6E7191" fontSize="10px">Percentual</Text>
-                                                    <Text ml="2" color="#4e4b66" fontSize="13px">3%</Text>
+                                                    <Text ml="2" color="#4e4b66" fontSize="13px">{companyCommission.percentage.toFixed(2)}%</Text>
                                                 </Stack>
                                             </Stack>
                                             <Stack direction={['column', 'row']} spacing={["1", "4"]}>
                                                 <Stack fontWeight="500" alignItems="center">
-                                                    <Badge colorScheme='yellow' width="110px" px="27px">Pendente</Badge>
+                                                    {
+                                                        !companyCommission.is_chargeback ? (
+                                                            <Badge colorScheme={companyCommission.confirmed ? "green" : "yellow"} width="110px" px="27px">{companyCommission.confirmed ? "Confirmada" : "Pendente"}</Badge>
+                                                        ) : (
+                                                            <Badge colorScheme="red" width="110px" px="27px">Estorno</Badge>
+                                                        )
+                                                    }
                                                 </Stack>
-                                                <Stack fontWeight="500" alignItems="center">
-                                                    <Text float="right" px="2rem">R$ 1.250,00</Text>
+                                                <Stack fontWeight="500" alignItems="center" color={companyCommission.is_chargeback ? "red.400" : companyCommission.confirmed ? "green.400" : "gray.800"}>
+                                                    <Text float="right" px="2rem">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(companyCommission.value)}</Text>
                                                 </Stack>
                                             </Stack>
                                         </Stack>
@@ -100,26 +105,26 @@ export default function CommissionsCompany({monthName, companyCommissions}: Comm
                                                 <HStack spacing="2">
                                                     <strong color="#4e4b66">Percentual:</strong>
                                                     <Text>
-                                                        1%
+                                                        {companyCommission.company_commission_rule_parcel.percentage_to_pay.toFixed(2)}%
                                                     </Text>
                                                 </HStack>
                                                 <HStack spacing="4">
-                                                    <strong color="#4e4b66">Parcela:</strong>
+                                                    <strong color="#4e4b66">Meia parcela:</strong>
                                                     <Text>
-                                                        Meia Parcela
+                                                        {companyCommission.company_commission_rule_parcel.id}
                                                     </Text>
                                                 </HStack>
                                                 <HStack spacing="4">
                                                     <strong color="#4e4b66">Vendedor:</strong>
                                                     <Text>
-                                                        Robson Seibel
+                                                        {companyCommission.seller.name}
                                                     </Text>
                                                 </HStack>
 
                                                 <HStack spacing="2" px="1rem">
                                                     <strong color="#4e4b66">Tabela:</strong>
                                                     <Text>
-                                                        071
+                                                        {companyCommission.period}
                                                     </Text>
                                                 </HStack>
                                             </Stack>
@@ -130,26 +135,26 @@ export default function CommissionsCompany({monthName, companyCommissions}: Comm
                                                 <HStack spacing="2">
                                                     <strong color="#4e4b66">Contrato:</strong>
                                                     <Text>
-                                                        230495
+                                                        {companyCommission.quota.contract.number_contract}
                                                     </Text>
                                                 </HStack>
                                                 <HStack spacing="4">
                                                     <strong color="#4e4b66">Grupo:</strong>
                                                     <Text>
-                                                        1080
+                                                        {companyCommission.quota.group}
                                                     </Text>
                                                 </HStack>
                                                 <HStack spacing="4">
                                                     <strong color="#4e4b66">Cota:</strong>
                                                     <Text>
-                                                        874
+                                                        {companyCommission.quota.quota}
                                                     </Text>
                                                 </HStack>
 
                                                 <HStack spacing="2" px="1rem">
                                                     <strong color="#4e4b66">Bem:</strong>
                                                     <Text>
-                                                        imóvel
+                                                        {companyCommission.quota.consortium_type.description}
                                                     </Text>
                                                 </HStack>
                                             </Stack>
@@ -160,249 +165,6 @@ export default function CommissionsCompany({monthName, companyCommissions}: Comm
                         )
                     })
                 }
-                
-            <AccordionItem display="flex" flexDir="column" paddingX={["4", "8"]} paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
-                {({ isExpanded }) => (
-                    <>
-                        <Stack spacing={["5", ""]} direction={['column', 'row']} justify="space-between" mb="3" alignItems={["", "center"]}>
-                            <HStack spacing={["5", "5"]} justifyContent="space-between">
-                                <HStack spacing={["3", "4"]}>
-                                    <AccordionButton p="0" height="fit-content" w="auto">
-                                        <Flex alignItems="center" justifyContent="center" h={["20px", "24px"]} w={["24px", "30px"]} p="0" borderRadius="full" border="2px" borderColor="red.400" variant="outline">
-                                            {
-                                                !isExpanded ? <StrongPlusIcon stroke="#C30052" fill="none" width="12px" /> :
-                                                    <MinusIcon stroke="#C30052" fill="none" width="12px" />
-                                            }
-                                        </Flex>
-                                    </AccordionButton>
-                                </HStack>
-
-                                <Stack direction={['column', 'row']} spacing={["1", "4"]}>
-                                    <Stack fontWeight="500" alignItems="center">
-                                        <Text ml="2" color="#6E7191" fontSize="10px">Data da venda</Text>
-                                        <Text ml="2" color="#4e4b66" fontSize="13px">22/01/2022</Text>
-                                    </Stack>
-                                </Stack>
-                            </HStack>
-                            <HStack spacing={["5", "5"]} justifyContent="space-between">
-                                <HStack spacing={["3", "4"]}>
-                                    <Stack fontWeight="500" alignItems="center">
-                                        <Text ml="2" color="#6E7191" fontSize="10px">Parcela</Text>
-                                        <Text ml="2" color="#4e4b66" fontSize="13px">2</Text>
-                                    </Stack>
-                                </HStack>
-                            </HStack>
-                            <HStack spacing={["5", "5"]} justifyContent="space-between" fontSize={["11px", "13px"]}>
-                                <HStack>
-                                    <Stack direction={['column', 'row']} spacing={["1", "4"]}>
-                                        <Stack fontWeight="500" alignItems="center">
-                                            <Text ml="2" color="#6E7191" fontSize="10px">Crédito</Text>
-                                            <Text ml="2" color="#4e4b66" fontSize="13px">R$500.000,00</Text>
-                                        </Stack>
-                                    </Stack>
-                                </HStack>
-                            </HStack>
-                            <Stack direction={['column', 'row']} spacing={["1", "4"]}>
-                                <Stack fontWeight="500" alignItems="center">
-                                    <Text ml="2" color="#6E7191" fontSize="10px">Percentual</Text>
-                                    <Text ml="2" color="#4e4b66" fontSize="13px">3%</Text>
-                                </Stack>
-                            </Stack>
-                            <Stack direction={['column', 'row']} spacing={["1", "4"]}>
-                                <Stack fontWeight="500" alignItems="center">
-                                    <Badge colorScheme='green' width="110px" px="20px">Confirmada</Badge>
-                                </Stack>
-                                <Stack fontWeight="500" alignItems="center">
-                                    <Text float="right" px="2rem" color="green.400">R$ 1.250,00</Text>
-                                </Stack>
-                            </Stack>
-                        </Stack>
-
-                        <AccordionPanel flexDir="column" borderTop="2px" borderColor="gray.500" px="0" py="5" fontSize={["11px", "small"]}>
-                            <Stack direction={['column', 'row']} spacing={["5", "4"]} justifyContent="space-between" mb="4">
-                                <HStack spacing="2">
-                                    <strong color="#4e4b66">Percentual:</strong>
-                                    <Text>
-                                        1%
-                                    </Text>
-                                </HStack>
-                                <HStack spacing="4">
-                                    <strong color="#4e4b66">Parcela:</strong>
-                                    <Text>
-                                        Meia Parcela
-                                    </Text>
-                                </HStack>
-                                <HStack spacing="4">
-                                    <strong color="#4e4b66">Vendedor:</strong>
-                                    <Text>
-                                        Robson Seibel
-                                    </Text>
-                                </HStack>
-
-                                <HStack spacing="2" px="1rem">
-                                    <strong color="#4e4b66">Tabela:</strong>
-                                    <Text>
-                                        071
-                                    </Text>
-                                </HStack>
-                            </Stack>
-
-                            <Divider mb="3" />
-
-                            <Stack direction={['column', 'row']} spacing={["5", "4"]} justifyContent="space-between" mb="4">
-                                <HStack spacing="2">
-                                    <strong color="#4e4b66">Contrato:</strong>
-                                    <Text>
-                                        230495
-                                    </Text>
-                                </HStack>
-                                <HStack spacing="4">
-                                    <strong color="#4e4b66">Grupo:</strong>
-                                    <Text>
-                                        1080
-                                    </Text>
-                                </HStack>
-                                <HStack spacing="4">
-                                    <strong color="#4e4b66">Cota:</strong>
-                                    <Text>
-                                        874
-                                    </Text>
-                                </HStack>
-
-                                <HStack spacing="2" px="1rem">
-                                    <strong color="#4e4b66">Bem:</strong>
-                                    <Text>
-                                        imóvel
-                                    </Text>
-                                </HStack>
-                            </Stack>
-                        </AccordionPanel>
-                    </>
-                )}
-            </AccordionItem>
-            <AccordionItem display="flex" flexDir="column" paddingX={["4", "8"]} paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
-                {({ isExpanded }) => (
-                    <>
-                        <Stack spacing={["5", ""]} direction={['column', 'row']} justify="space-between" mb="3" alignItems={["", "center"]}>
-                            <HStack spacing={["5", "5"]} justifyContent="space-between">
-                                <HStack spacing={["3", "4"]}>
-                                    <AccordionButton p="0" height="fit-content" w="auto">
-                                        <Flex alignItems="center" justifyContent="center" h={["20px", "24px"]} w={["24px", "30px"]} p="0" borderRadius="full" border="2px" borderColor="red.400" variant="outline">
-                                            {
-                                                !isExpanded ? <StrongPlusIcon stroke="#C30052" fill="none" width="12px" /> :
-                                                    <MinusIcon stroke="#C30052" fill="none" width="12px" />
-                                            }
-                                        </Flex>
-                                    </AccordionButton>
-                                </HStack>
-
-                                <Stack direction={['column', 'row']} spacing={["1", "4"]}>
-                                    <Stack fontWeight="500" alignItems="center">
-                                        <Text ml="2" color="#6E7191" fontSize="10px">Data da venda</Text>
-                                        <Text ml="2" color="#4e4b66" fontSize="13px">22/01/2022</Text>
-                                    </Stack>
-                                </Stack>
-                            </HStack>
-                            <HStack spacing={["5", "5"]} justifyContent="space-between">
-                                <HStack spacing={["3", "4"]}>
-                                    <Stack fontWeight="500" alignItems="center">
-                                        <Text px="0px" color="red.400" fontSize="13px">Estorno</Text>
-                                    </Stack>
-                                </HStack>
-                            </HStack>
-                            <HStack spacing={["5", "5"]} justifyContent="space-between" fontSize={["11px", "13px"]}>
-                                <HStack>
-                                    <Stack direction={['column', 'row']} spacing={["1", "4"]}>
-                                        <Stack fontWeight="500" alignItems="center">
-                                            <Text ml="2" color="#6E7191" fontSize="10px">Crédito</Text>
-                                            <Text ml="2" color="#4e4b66" fontSize="13px">R$500.000,00</Text>
-                                        </Stack>
-                                    </Stack>
-                                </HStack>
-                            </HStack>
-                            <Stack direction={['column', 'row']} spacing={["1", "4"]}>
-                                <Stack fontWeight="500" alignItems="center">
-                                    <Stack fontWeight="500" alignItems="center">
-                                        <Text ml="2" color="#6E7191" fontSize="10px">Percentual</Text>
-                                        <Text ml="2" color="#4e4b66" fontSize="13px">3%</Text>
-                                    </Stack>
-                                </Stack>
-                            </Stack>
-                            <Stack direction={['column', 'row']} spacing={["1", "4"]}>
-                                <Stack fontWeight="500" alignItems="center">
-                                    <Text float="right" px="2rem" color="red.400">R$ 20.000,00</Text>
-                                </Stack>
-                            </Stack>
-                        </Stack>
-
-                        <AccordionPanel flexDir="column" borderTop="2px" borderColor="gray.500" px="0" py="5" fontSize={["11px", "small"]}>
-                            <Stack direction={['column', 'row']} spacing={["5", "4"]} justifyContent="space-between" mb="4">
-                                <HStack spacing="2">
-                                    <strong color="#4e4b66">Percentual:</strong>
-                                    <Text>
-                                        1%
-                                    </Text>
-                                </HStack>
-                                <HStack spacing="4">
-                                    <strong color="#4e4b66">Parcelas:</strong>
-                                    <Text>
-                                        4
-                                    </Text>
-                                </HStack>
-                                <HStack spacing="4">
-                                    <strong color="#4e4b66">Parcela:</strong>
-                                    <Text>
-                                        Meia Parcela
-                                    </Text>
-                                </HStack>
-
-                                <HStack spacing="2" px="1rem">
-                                    <strong color="#4e4b66">Restante:</strong>
-                                    <Text>
-                                        R$ 0,00
-                                    </Text>
-                                </HStack>
-                            </Stack>
-
-                            <Divider mb="3" />
-
-                            <Stack direction={['column', 'row']} spacing={["5", "4"]} justifyContent="space-between" mb="4">
-                                <HStack spacing="2">
-                                    <strong color="#4e4b66">Contrato:</strong>
-                                    <Text>
-                                        230495
-                                    </Text>
-                                </HStack>
-                                <HStack spacing="4">
-                                    <strong color="#4e4b66">Grupo:</strong>
-                                    <Text>
-                                        1080
-                                    </Text>
-                                </HStack>
-                                <HStack spacing="4">
-                                    <strong color="#4e4b66">Cota:</strong>
-                                    <Text>
-                                        874
-                                    </Text>
-                                </HStack>
-
-                                <HStack spacing="2" px="1rem">
-                                    <strong color="#4e4b66">Bem:</strong>
-                                    <Text>
-                                        imóvel
-                                    </Text>
-                                </HStack>
-                                <HStack spacing="2" px="0rem">
-                                    <strong color="#4e4b66">Cliente:</strong>
-                                    <Text>
-                                        João Beltrano
-                                    </Text>
-                                </HStack>
-                            </Stack>
-                        </AccordionPanel>
-                    </>
-                )}
-            </AccordionItem>
         </Accordion>
     )
 }
