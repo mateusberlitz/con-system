@@ -555,4 +555,5 @@ export interface SellerCommission{
     value: number;
     comission_date: string;
     confirmed: boolean;
+    is_chargeback?: boolean;
 }

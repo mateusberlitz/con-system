@@ -5,14 +5,16 @@ export interface CommissionsSellerFilterData{
     search?: string;
     start_date?: string;
     end_date?: string;
-    reversal?: string;
-    contract?: string;
-    quote?: string;
-    status?: string;
-    group?: string;
-    parcel?: string;
+    parcel_number?: number;
     company?: number;
     branch?: number;
+    chargeback?: number;
+    group?: number;
+    quota?: number;
+    contract_number?: number;
+    confirmed?: boolean;
+    group_by?: string
+    is_chargeback?: boolean;
 }
 
 export const getCommissionsSeller = async (filter?: CommissionsSellerFilterData, page: number = 0) => {
@@ -21,16 +23,17 @@ export const getCommissionsSeller = async (filter?: CommissionsSellerFilterData,
             params: {
                 page: page,
                 search: filter.search,
+                company: filter.company,
+                branch: filter.branch,
                 start_date: filter.start_date,
                 end_date: filter.end_date,
-                reversal: filter.reversal,
-                contract: filter.contract,
-                quote: filter.quote,
-                status: filter.status,
+                parcel_number: filter.parcel_number,
+                confirmed: filter.confirmed,
                 group: filter.group,
-                parcel: filter.parcel,
-                company: filter.company,
-                branch: filter.branch
+                quota: filter.quota,
+                contract_number: filter.contract_number,
+                is_chargeback: filter.is_chargeback,
+                group_by: filter.group_by,
             }
         });
 
