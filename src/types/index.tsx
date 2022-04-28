@@ -512,6 +512,8 @@ export interface Contract{
     number_contract: number;
     quota: Quota;
     quotas: Quota[];
+    confirmed: boolean;
+    is_chargeback?: boolean;
 }
 
 export interface Quota{
