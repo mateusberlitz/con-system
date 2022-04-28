@@ -9,24 +9,24 @@ import { formatBRDate } from '../../../utils/Date/formatBRDate';
 import {  Contract } from "../../../types";
 
 interface CommissionsContractProps{
-    monthName: string;
     commissionsContract: Contract[];
 }
 
 
-export default function CommissionsContracts({monthName, commissionsContract}: CommissionsContractProps) {
+export default function CommissionsContracts({commissionsContract}: CommissionsContractProps) {
     const { profile, permissions } = useProfile()
 
-    const totalMonthAmount = commissionsContract.reduce((sumAmount:number, commissionsContract:Contract) => {
-        return sumAmount + commissionsContract.value;0
+    console.log(commissionsContract);
 
+    const totalMonthAmount = commissionsContract.reduce((sumAmount:number, commissionsContract:Contract) => {
+        return sumAmount + commissionsContract.quota.credit;
     }, 0);
 
     return (
         <Accordion w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" spacing="0" allowMultiple>
             <HStack spacing="8" justify="space-between" paddingX={["4", "8"]} paddingY="3" bg="gray.200">
                 <Stack direction={["column", "row"]} spacing={["4", "6"]} alignItems="baseline" mt={["1", "0"]}>
-                    <Text fontWeight="bold" fontSize="11px">{monthName}</Text>
+                    <Text fontWeight="bold" fontSize="11px">Data inicial e final</Text>
 
                     <Text fontWeight="bold" px="6rem">{commissionsContract.length} contratos</Text>
 

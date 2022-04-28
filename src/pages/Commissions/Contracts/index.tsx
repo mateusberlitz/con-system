@@ -117,12 +117,9 @@ export default function CommissionsSalesman(){
 
             <Stack fontSize="13px" spacing="12">
             {
-                    (!commissionsContract.isLoading && !commissionsContract.error) && Object.keys(commissionsContract.data?.data.data).map((monthYear:string) => {
-                        const monthNumber = parseInt(monthYear.split('-')[0]);
-                        return (
-                            <CommissionsContracts key={monthYear} monthName={getMonthName(monthNumber)} commissionsContract={commissionsContract.data?.data.data[monthYear]}/>
-                        )
-                    })
+                    (!commissionsContract.isLoading && !commissionsContract.error) && (
+                        <CommissionsContracts commissionsContract={commissionsContract.data?.data.data}/>
+                    )
                 }
             </Stack>
 

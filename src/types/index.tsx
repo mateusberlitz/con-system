@@ -552,7 +552,7 @@ export interface CompanyCommission{
 export interface SellerCommission{
     id:number;
     seller_commission_rule_parcel: SellerCommissionRuleParcel;
-    quota: Quota
+    quota: Quota;
     seller: User;
     value: number;
     comission_date: string;
