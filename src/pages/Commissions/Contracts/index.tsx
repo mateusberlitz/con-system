@@ -17,8 +17,8 @@ import { useWorkingBranch } from "../../../hooks/useWorkingBranch";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import getMonthName from "../../../utils/Date/getMonthName";
-import { CommissionsContractFilterData, useCommissionsCompany } from "../../../hooks/useCommissionsContract";
 import CommissionsContracts from "./CommissionsContracts";
+import { CommissionsContractFilterData, useCommissionsContract } from "../../../hooks/useCommissionsContract";
 
 
 const FilterCommissionsContractFormSchema = yup.object().shape({
@@ -62,7 +62,7 @@ export default function CommissionsSalesman(){
 
     const [page, setPage] = useState(1);
 
-    const commissionsCompany = useCommissionsCompany(filter, page);
+    const commissionsContract = useCommissionsContract(filter, page);
 
     return(
         <MainBoard sidebar="commissions" header={ <CompanySelectMaster/>}>
@@ -117,10 +117,10 @@ export default function CommissionsSalesman(){
 
             <Stack fontSize="13px" spacing="12">
             {
-                    (!commissionsCompany.isLoading && !commissionsCompany.error) && Object.keys(commissionsCompany.data?.data.data).map((monthYear:string) => {
+                    (!commissionsContract.isLoading && !commissionsContract.error) && Object.keys(commissionsContract.data?.data.data).map((monthYear:string) => {
                         const monthNumber = parseInt(monthYear.split('-')[0]);
                         return (
-                            <CommissionsContracts key={monthYear} monthName={getMonthName(monthNumber)} commissionsCompany={commissionsCompany.data?.data.data[monthYear]}/>
+                            <CommissionsContracts key={monthYear} monthName={getMonthName(monthNumber)} commissionsContract={commissionsContract.data?.data.data[monthYear]}/>
                         )
                     })
                 }

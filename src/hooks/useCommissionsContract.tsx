@@ -17,7 +17,7 @@ export interface CommissionsContractFilterData{
     is_chargeback?: string;
 }
 
-export const getCommissionsCompany = async (filter?: CommissionsContractFilterData, page: number = 0) => {
+export const getCommissionsContract = async (filter?: CommissionsContractFilterData, page: number = 0) => {
     if(filter){
         const { data, headers } = await api.get("/contracts", {
             params: {
@@ -46,8 +46,8 @@ export const getCommissionsCompany = async (filter?: CommissionsContractFilterDa
     return { data, total: Number(headers['x-total-count'])};
 };
 
-export function useCommissionsCompany(filter: CommissionsContractFilterData, page?: number){
-    return useQuery(['commissions', [filter, page]], () => getCommissionsCompany(filter, page), {
+export function useCommissionsContract(filter: CommissionsContractFilterData, page?: number){
+    return useQuery(['commissions-contract', [filter, page]], () => getCommissionsContract(filter, page), {
         staleTime: 1000 * 5 * 60, //fresh
     });
 }
