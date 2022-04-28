@@ -28,6 +28,8 @@ import { CompanySelectMaster } from "../../../components/CompanySelect/companySe
 import { useWorkingBranch } from "../../../hooks/useWorkingBranch";
 import { CommissionsSellerFilterData, useCommissionsSeller } from "../../../hooks/useCommissionsSeller";
 import { Select } from "../../../components/Forms/Selects/Select";
+import { profile } from "console";
+import { useProfile } from "../../../hooks/useProfile";
 
 const FilterCommissionsFormSchema = yup.object().shape({
     search: yup.string(),
@@ -46,6 +48,7 @@ const FilterCommissionsFormSchema = yup.object().shape({
 export default function CommissionsSalesman(){
     const workingCompany = useWorkingCompany();
     const workingBranch = useWorkingBranch();
+    const { profile } = useProfile();
     const history = useHistory();
     const isWideVersion = useBreakpointValue({base: false, lg: true});
 

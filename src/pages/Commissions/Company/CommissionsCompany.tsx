@@ -94,7 +94,7 @@ export default function CommissionsCompany({monthName, companyCommissions}: Comm
                                                         )
                                                     }
                                                 </Stack>
-                                                <Stack fontWeight="500" alignItems="center" color={companyCommission.is_chargeback ? "red.400" : companyCommission.confirmed ? "green.400" : "gray.800"}>
+                                                <Stack fontWeight="500" alignItems="center" justifyContent="center" color={companyCommission.is_chargeback ? "red.400" : companyCommission.confirmed ? "green.400" : "gray.800"}>
                                                     <Text float="right" px="2rem">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(companyCommission.value)}</Text>
                                                 </Stack>
                                             </Stack>

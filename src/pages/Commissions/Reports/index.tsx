@@ -20,7 +20,7 @@ export default function ReportsCommissions() {
 
             <CommissionsPaidReport />
 
-            <ContractReport />
+            {/* <ContractReport /> */}
 
             <RulesReport />
           </Stack>

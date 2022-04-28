@@ -1,9 +1,10 @@
-import { Divider, FormControl, HStack, Select as ChakraSelect, Text, Th, Tr } from "@chakra-ui/react";
+import { Divider, Flex, FormControl, HStack, Select as ChakraSelect, Spinner, Text, Th, Tr } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Board } from "../../../components/Board";
 import { Table } from "../../../components/Table";
 import { useCompanies } from "../../../hooks/useCompanies";
+import { CompanyCommissionsReportFilterData, useCompanyCommissionsReport } from "../../../hooks/useCompanyCommissionsReport";
 import { useProfile } from "../../../hooks/useProfile";
 import { useWorkingBranch } from "../../../hooks/useWorkingBranch";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
@@ -13,27 +14,50 @@ export default function CommissionsReceivedReport() {
     const { permissions, profile } = useProfile();
     const workingCompany = useWorkingCompany();
     const workingBranch = useWorkingBranch();
+    const dateObject = new Date;
 
     const history = useHistory();
 
     const [years, setYears] = useState<Number[]>([]);
-    const [selectedYear, setSelectedYear] = useState<string>('');
+    const [selectedYear, setSelectedYear] = useState<string>(dateObject.getFullYear().toString());
 
     const loadYears = async () => {
-        const { data } = await api.get('/transactionsYears');
+        const { data } = await api.get('/company-commissions-report-years');
 
         setYears(data);
     }
 
     useEffect(() => {
         loadYears();
-    }, [])
-
-    const dateObject = new Date;
+    }, []);
 
     const companies = useCompanies();
 
+    const [filterCompanyCommissionsReport, setFilterCompanyCommissionsReport] = useState<CompanyCommissionsReportFilterData>(() => {
+        const data: CompanyCommissionsReportFilterData = {
+            company: workingCompany.company?.id,
+            branch: workingBranch.branch?.id,
+            year: dateObject.getFullYear().toString(),
+        };
+        
+        return data;
+    })
+
     const [page, setPage] = useState(1);
+
+    const companyCommissionsReport = useCompanyCommissionsReport(filterCompanyCommissionsReport, page);
+
+    useEffect(() => {
+        setFilterCompanyCommissionsReport({...filterCompanyCommissionsReport, company: workingCompany.company?.id, branch: workingBranch.branch?.id, year: selectedYear});
+    }, [workingCompany, workingBranch, selectedYear]);
+
+    function handleChangeYear(event:any){
+        const newYear = (event?.target.value ? event?.target.value : selectedYear);
+
+        setSelectedYear(newYear);
+    }
+
+    console.log(selectedYear);
 
     return (
             <Board mb="12">
@@ -41,11 +65,13 @@ export default function CommissionsReceivedReport() {
                     <Text fontWeight="bold" w="100%" fontSize="13px">RELATÓRIO DE COMISSÕES RECEBIDAS</Text>
 
                     <FormControl display="flex" justifyContent="flex-end" align="flex-end" minW="150px">
-                        <ChakraSelect defaultValue={workingCompany.company?.id} h="45px" name="selected_company" maxW="200px" fontSize="sm" focusBorderColor="purple.600" bg="gray.400" variant="filled" _hover={{ bgColor: 'gray.500' }} size="lg" borderRadius="full">
+                        <ChakraSelect onChange={handleChangeYear} defaultValue={selectedYear} h="45px" name="selected_company" maxW="200px" fontSize="sm" focusBorderColor="purple.600" bg="gray.400" variant="filled" _hover={{ bgColor: 'gray.500' }} size="lg" borderRadius="full">
+                            <option key={"2021"} value={"2021"}>2021</option>
                             {
                                 years.map((year: Number) => {
+                                    console.log(year.toString());
                                     return (
-                                        <option key={year.toString()} value={year.toString()}>{year}</option>
+                                        <option key={year.toString()} value={year.toString()} selected={selectedYear === year.toString()}>{year}</option>
                                     )
                                 })
                             }
@@ -55,6 +81,24 @@ export default function CommissionsReceivedReport() {
                 </HStack>
 
                 <Divider mb="6" />
+
+                { companyCommissionsReport.isLoading ? (
+                        <Flex justify="center">
+                            <Spinner/>
+                        </Flex>
+                    ) : ( companyCommissionsReport.isError ? (
+                        <Flex justify="center" mt="4" mb="4">
+                            <Text>Erro listar as comissões recebidas</Text>
+                        </Flex>
+                    ) : (companyCommissionsReport.data?.data.length === 0) && (
+                        <Flex justify="center">
+                            <Text>Nenhuma comissão encontrada.</Text>
+                        </Flex>
+                    ) ) 
+                }
+
+                {
+                    (!companyCommissionsReport.isLoading && !companyCommissionsReport.error) && (
 
                         <Table header={[
                             { text: 'Tipo', bold: true },
@@ -75,58 +119,39 @@ export default function CommissionsReceivedReport() {
                                 <Th></Th>
                             </Tr>
                             <Tr>
-                                <Th color="gray.900" fontSize="sm" position="sticky" left="0">Entradas</Th>
-                                <Th color="green.400">R$58.000,00</Th>
-                                <Th color="green.400">R$R$91.000,00</Th>
-                                <Th color="green.400">R$102.000,00</Th>
-                                <Th color="green.400">R$83.000,00</Th>
-                                <Th color="green.400">R$R$145.000,00</Th>
-                                <Th color="green.400">R$177.000,00</Th>
-                                <Th color="green.400">R$198.000,00</Th>
-                                <Th color="green.400">R$256.000,00</Th>
-                                <Th color="green.400">R$102.000,00</Th>
-                                <Th color="green.400">R$102.000,00</Th>
-                                <Th color="green.400">R$102.000,00</Th>
-                                <Th color="green.400">R$102.000,00</Th>
+                                <Th color="gray.900" fontSize="sm" position="sticky" bg="white" left="0" fontWeight={500} textTransform="capitalize">Entradas</Th>
+                                {
+                                    Object.keys(companyCommissionsReport.data?.data.company_commissions).map((month:string) => {
+                                        return (
+                                            <Th color="green.400">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(companyCommissionsReport.data?.data.company_commissions[month])}</Th>
+                                        )
+                                    })
+                                }
                             </Tr>
                             <Tr>
-                                <Th></Th>
-                            </Tr>
-                            <Tr>
-                                <Th color="gray.900" fontSize="sm" position="sticky" left="0">Estornos</Th>
-                                <Th color="red.400">R$1.000,00</Th>
-                                <Th color="red.400">R$5.000,00</Th>
-                                <Th color="red.400">R$9.000,00</Th>
-                                <Th color="red.400">R$83.000,00</Th>
-                                <Th color="red.400">R$6.000,00</Th>
-                                <Th color="red.400">R$8.000,00</Th>
-                                <Th color="red.400">R$14.000,00</Th>
-                                <Th color="red.400">R$11.000,00</Th>
-                                <Th color="red.400">R$25.000,00</Th>
-                                <Th color="red.400">R$13.000,00</Th>
-                                <Th color="red.400">R$13.000,00</Th>
-                                <Th color="red.400">R$13.000,00</Th>
-                            </Tr>
-                            <Tr>
-                                <Th></Th>
+                                <Th color="gray.900" fontSize="sm" position="sticky" bg="white" left="0" fontWeight={500} textTransform="capitalize">Estornos</Th>
+                                {
+                                    Object.keys(companyCommissionsReport.data?.data.company_chargeback_commissions).map((month:string) => {
+                                        return (
+                                            <Th color="red.400">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(companyCommissionsReport.data?.data.company_chargeback_commissions[month])}</Th>
+                                        )
+                                    })
+                                }
                             </Tr>
 
                             <Tr>
-                                <Th position="sticky" fontSize="sm" left="0" bg="white" color="black">TOTAL</Th>
-                                <Th color="green.400">R$57.000,00</Th>
-                                <Th color="green.400">R$57.000,00</Th>
-                                <Th color="green.400">R$57.000,00</Th>
-                                <Th color="green.400">R$57.000,00</Th>
-                                <Th color="green.400">R$57.000,00</Th>
-                                <Th color="green.400">R$57.000,00</Th>
-                                <Th color="green.400">R$57.000,00</Th>
-                                <Th color="green.400">R$57.000,00</Th>
-                                <Th color="green.400">R$57.000,00</Th>
-                                <Th color="green.400">R$57.000,00</Th>
-                                <Th color="green.400">R$57.000,00</Th>
-                                <Th color="green.400">R$57.000,00</Th>
+                                <Th color="gray.900" fontSize="sm" position="sticky" bg="white" left="0" fontWeight={500} textTransform="capitalize">TOTAL</Th>
+                                {
+                                    Object.keys(companyCommissionsReport.data?.data.totals).map((month:string) => {
+                                        return (
+                                            <Th color="green.400">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(companyCommissionsReport.data?.data.totals[month])}</Th>
+                                        )
+                                    })
+                                }
                             </Tr>
                         </Table>
+                    )
+                }
             </Board>
     );
 }

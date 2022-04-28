@@ -1,10 +1,11 @@
-import { Divider, FormControl, HStack, Select as ChakraSelect, Text, Th, Tr } from "@chakra-ui/react";
+import { Divider, Flex, FormControl, HStack, Select as ChakraSelect, Spinner, Text, Th, Tr } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Board } from "../../../components/Board";
 import { Table } from "../../../components/Table";
 import { useCompanies } from "../../../hooks/useCompanies";
 import { useProfile } from "../../../hooks/useProfile";
+import { RulesCommissionsReportFilterData, useRulesCommissionsReport } from "../../../hooks/useRulesCommissionsReport";
 import { useWorkingBranch } from "../../../hooks/useWorkingBranch";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { api } from "../../../services/api";
@@ -20,7 +21,7 @@ export default function RulesReport() {
     const [selectedYear, setSelectedYear] = useState<string>('');
 
     const loadYears = async () => {
-        const { data } = await api.get('/transactionsYears');
+        const { data } = await api.get('/seller-commissions-report-years');
 
         setYears(data);
     }
@@ -31,21 +32,41 @@ export default function RulesReport() {
 
     const dateObject = new Date;
 
-    const companies = useCompanies();
+    const [filterRulesCommissionsReport, setFilterRulesCommissionsReport] = useState<RulesCommissionsReportFilterData>(() => {
+        const data: RulesCommissionsReportFilterData = {
+            company: workingCompany.company?.id,
+            branch: workingBranch.branch?.id,
+            year: dateObject.getFullYear().toString(),
+        };
+        
+        return data;
+    })
 
     const [page, setPage] = useState(1);
+
+    const rulesCommissionsReport = useRulesCommissionsReport(filterRulesCommissionsReport, page);
+
+    useEffect(() => {
+        setFilterRulesCommissionsReport({...filterRulesCommissionsReport, company: workingCompany.company?.id, branch: workingBranch.branch?.id, year: selectedYear});
+    }, [workingCompany, workingBranch, selectedYear]);
+
+    function handleChangeYear(event:any){
+        const newYear = (event?.target.value ? event?.target.value : selectedYear);
+
+        setSelectedYear(newYear);
+    }
 
     return (
             <Board mb="12">
                 <HStack as="form" spacing="12" w="100%" mb="6" justifyContent="left">
-                    <Text fontWeight="bold" w="100%" fontSize="13px">RELATÓRIO DE COMISSÕES PAGAS</Text>
+                    <Text fontWeight="bold" w="100%" fontSize="13px">RELATÓRIO DE REGRAS</Text>
 
                     <FormControl display="flex" justifyContent="flex-end" align="flex-end" minW="150px">
-                        <ChakraSelect defaultValue={workingCompany.company?.id} h="45px" name="selected_company" maxW="200px" fontSize="sm" focusBorderColor="purple.600" bg="gray.400" variant="filled" _hover={{ bgColor: 'gray.500' }} size="lg" borderRadius="full">
+                        <ChakraSelect onChange={handleChangeYear} defaultValue={workingCompany.company?.id} h="45px" name="selected_company" maxW="200px" fontSize="sm" focusBorderColor="purple.600" bg="gray.400" variant="filled" _hover={{ bgColor: 'gray.500' }} size="lg" borderRadius="full">
                             {
                                 years.map((year: Number) => {
                                     return (
-                                        <option key={year.toString()} value={year.toString()}>{year}</option>
+                                        <option key={year.toString()} value={year.toString()} selected={selectedYear === year.toString()}>{year}</option>
                                     )
                                 })
                             }
@@ -55,9 +76,25 @@ export default function RulesReport() {
                 </HStack>
 
                 <Divider mb="6" />
+                    { rulesCommissionsReport.isLoading ? (
+                            <Flex justify="center">
+                                <Spinner/>
+                            </Flex>
+                        ) : ( rulesCommissionsReport.isError ? (
+                            <Flex justify="center" mt="4" mb="4">
+                                <Text>Erro listar as comissões das regras</Text>
+                            </Flex>
+                        ) : (rulesCommissionsReport.data?.data.length === 0) && (
+                            <Flex justify="center">
+                                <Text>Nenhuma comissão encontrada.</Text>
+                            </Flex>
+                        ) ) 
+                    }
 
+                {
+                    (!rulesCommissionsReport.isLoading && !rulesCommissionsReport.error) && (
                         <Table header={[
-                            { text: 'Tipo', bold: true },
+                            { text: 'Regra', bold: true },
                             { text: 'Janeiro' },
                             { text: 'Fevereiro' },
                             { text: 'Março' },
@@ -74,7 +111,22 @@ export default function RulesReport() {
                             <Tr>
                                 <Th></Th>
                             </Tr>
-                            <Tr>
+                            {
+                                Object.keys(rulesCommissionsReport.data?.data).map((rule:string) => {
+                                    return(
+                                        <Tr key={`${rule}`}>
+                                            <Th color="gray.900" fontSize="sm" position="sticky" bg="white" left="0" fontWeight={500} textTransform="capitalize">{rule}</Th>
+
+                                            {
+                                                Object.keys(rulesCommissionsReport.data?.data[rule]).map((month:string, index: number) => {
+                                                    return <Th fontWeight="bold" whiteSpace="nowrap" color={rulesCommissionsReport.data?.data[rule][month] > 0 ? 'green.400' : (rulesCommissionsReport.data?.data[rule][month] < 0 ? 'red.400' : 'gray.800')} key={`${rule}-${month}-${rulesCommissionsReport.data?.data[rule][month]}`}>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(rulesCommissionsReport.data?.data[rule][month])}</Th>
+                                                })
+                                            }
+                                        </Tr>
+                                    )
+                                })
+                            }
+                            {/* <Tr>
                                 <Th color="gray.900" fontSize="sm" position="sticky" left="0">Entradas</Th>
                                 <Th color="green.400">R$58.000,00</Th>
                                 <Th color="green.400">R$R$91.000,00</Th>
@@ -125,8 +177,10 @@ export default function RulesReport() {
                                 <Th color="green.400">R$57.000,00</Th>
                                 <Th color="green.400">R$57.000,00</Th>
                                 <Th color="green.400">R$57.000,00</Th>
-                            </Tr>
+                            </Tr> */}
                         </Table>
+                    )
+                }
             </Board>
     );
 }
