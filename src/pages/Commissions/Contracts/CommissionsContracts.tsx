@@ -1,29 +1,45 @@
-import { Flex, HStack, Stack, Text, Th, Tr, Link, Table, Thead, Tbody, IconButton, TableContainer, Accordion, AccordionItem, AccordionButton, AccordionPanel, Divider, Td } from '@chakra-ui/react'
+import { Flex, HStack, Stack, Text, Accordion, AccordionItem, AccordionButton, AccordionPanel, Divider } from '@chakra-ui/react'
 import { useProfile } from '../../../hooks/useProfile'
 
 import { ReactComponent as MinusIcon } from '../../../assets/icons/Minus.svg';
 import { ReactComponent as StrongPlusIcon } from '../../../assets/icons/StrongPlus.svg';
 
 import Badge from '../../../components/Badge'
+import { formatBRDate } from '../../../utils/Date/formatBRDate';
+import { CompanyCommission } from "../../../types";
 
-export default function CommissionsContracts() {
+interface CommissionsCompanyProps{
+    monthName: string;
+    commissionsCompany: CompanyCommission[];
+}
+
+
+export default function CommissionsContracts({monthName, commissionsCompany}: CommissionsCompanyProps) {
     const { profile, permissions } = useProfile()
+
+    const totalMonthAmount = commissionsCompany.reduce((sumAmount:number, commissionsCompany:CompanyCommission) => {
+        return sumAmount + commissionsCompany.value;
+    }, 0);
 
     return (
         <Accordion w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" spacing="0" allowMultiple>
             <HStack spacing="8" justify="space-between" paddingX={["4", "8"]} paddingY="3" bg="gray.200">
                 <Stack direction={["column", "row"]} spacing={["4", "6"]} alignItems="baseline" mt={["1", "0"]}>
-                    <Text fontWeight="bold" fontSize="11px">15/03/2016 - 24/03/2022</Text>
+                    <Text fontWeight="bold" fontSize="11px">{monthName}</Text>
 
-                    <Text fontWeight="bold" px="6rem">3 contratos</Text>
+                    <Text fontWeight="bold" px="6rem">{commissionsCompany.length} contratos</Text>
 
-                    <Text fontWeight="bold" px="2rem" color="#6E7191">Créditos: R$2.800.000,00</Text>
+                    <Text fontWeight="bold" px="2rem" color="#6E7191">Créditos: {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalMonthAmount)}</Text>
                 </Stack>
                 <Stack direction={["column", "row"]} spacing={["3", "6"]} alignItems={["flex-end", "center"]}>
 
-                    <Text float="right" textAlign="right" px="40px" color="red.400"><strong>- R$ 3.000,00</strong></Text>
+                    <Text float="right" textAlign="right" px="40px" color="red.400"><strong>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalMonthAmount)}</strong></Text>
                 </Stack>
             </HStack>
+            {
+                    commissionsCompany.map((commissionsCompany:CompanyCommission) => {
+                return (
+             <>
             <AccordionItem display="flex" flexDir="column" paddingX={["4", "8"]} paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
                 {({ isExpanded }) => (
                     <>
@@ -50,7 +66,7 @@ export default function CommissionsContracts() {
                                 <HStack spacing={["3", "4"]}>
                                     <Stack fontWeight="500" alignItems="center">
                                         <Text ml="2" color="#6E7191" fontSize="10px">Data da venda</Text>
-                                        <Text ml="2" color="#4e4b66" fontSize="13px">22/01/2022</Text>
+                                        <Text ml="2" color="#4e4b66" fontSize="13px">{formatBRDate(commissionsCompany.quota.date_sale)}</Text>
                                     </Stack>
                                 </HStack>
                             </HStack>
@@ -67,16 +83,22 @@ export default function CommissionsContracts() {
                             <Stack direction={['column', 'row']} spacing={["1", "4"]}>
                                 <Stack fontWeight="500" alignItems="center">
                                     <Text ml="2" color="#6E7191" fontSize="10px">Grupo-Cota</Text>
-                                    <Text ml="2" color="#4e4b66" fontSize="13px">780-976</Text>
+                                    <Text ml="2" color="#4e4b66" fontSize="13px">{commissionsCompany.quota.group}</Text>
                                 </Stack>
                             </Stack>
                             <Stack direction={['column', 'row']} spacing={["1", "4"]}>
                                 <Stack fontWeight="500" alignItems="center">
-                                    <Badge colorScheme='yellow' width="110px" px="27px">Pendente</Badge>
+                                {
+                                                        !commissionsCompany.is_chargeback ? (
+                                                            <Badge colorScheme={commissionsCompany.confirmed ? "green" : "yellow"} width="110px" px="27px">{commissionsCompany.confirmed ? "Confirmada" : "Pendente"}</Badge>
+                                                        ) : (
+                                                            <Badge colorScheme="red" width="110px" px="27px">Estorno</Badge>
+                                                        )
+                                                    }
                                 </Stack>
                                 <Stack fontWeight="500" alignItems="center">
                                     <Text float="right" px="2rem">Crédito</Text>
-                                    <Text float="right" px="2rem">R$1.000.000,00</Text>
+                                    <Text float="right" px="2rem">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(commissionsCompany.quota.credit)}</Text>
                                 </Stack>
                             </Stack>
                         </Stack>
@@ -86,7 +108,7 @@ export default function CommissionsContracts() {
                                 <HStack spacing="2">
                                     <strong color="#4e4b66">Grupo-Cota:</strong>
                                     <Text>
-                                        1080
+                                    {commissionsCompany.quota.group}
                                     </Text>
                                 </HStack>
                                 <HStack spacing="2"></HStack>
@@ -94,14 +116,14 @@ export default function CommissionsContracts() {
                                 <HStack spacing="4">
                                     <strong color="#4e4b66">Bem:</strong>
                                     <Text>
-                                        Imóvel
+                                    {commissionsCompany.quota.consortium_type.description}
                                     </Text>
                                 </HStack>
 
                                 <HStack spacing="2" px="1rem">
                                     <strong color="#4e4b66">Crédito:</strong>
                                     <Text>
-                                        R$200.000,00
+                                    {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(commissionsCompany.quota.credit)}
                                     </Text>
                                 </HStack>
                             </Stack>
@@ -112,7 +134,7 @@ export default function CommissionsContracts() {
                                 <HStack spacing="2">
                                     <strong color="#A0A3BD">Grupo-Cota:</strong>
                                     <Text>
-                                        560-620
+                                    {commissionsCompany.quota.group}
                                     </Text>
                                 </HStack>
                                 <HStack spacing="4">
@@ -124,14 +146,14 @@ export default function CommissionsContracts() {
                                 <HStack spacing="4">
                                     <strong color="#A0A3BD">Bem:</strong>
                                     <Text>
-                                        Veículo
+                                    {commissionsCompany.quota.consortium_type.description}
                                     </Text>
                                 </HStack>
 
                                 <HStack spacing="2" px="1rem">
                                     <strong color="#A0A3BD">Crédito:</strong>
                                     <Text>
-                                        R$200.000,00
+                                    {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(commissionsCompany.quota.credit)}
                                     </Text>
                                 </HStack>
                             </Stack>
@@ -165,7 +187,7 @@ export default function CommissionsContracts() {
                                 <HStack spacing={["3", "4"]}>
                                     <Stack fontWeight="500" alignItems="center">
                                         <Text ml="2" color="#6E7191" fontSize="10px">Data da venda</Text>
-                                        <Text ml="2" color="#4e4b66" fontSize="13px">22/01/2022</Text>
+                                        <Text ml="2" color="#4e4b66" fontSize="13px">{formatBRDate(commissionsCompany.quota.date_sale)}</Text>
                                     </Stack>
                                 </HStack>
                             </HStack>
@@ -182,16 +204,22 @@ export default function CommissionsContracts() {
                             <Stack direction={['column', 'row']} spacing={["1", "4"]}>
                                 <Stack fontWeight="500" alignItems="center">
                                     <Text ml="2" color="#6E7191" fontSize="10px">Grupo-Cota</Text>
-                                    <Text ml="2" color="#4e4b66" fontSize="13px">780-976</Text>
+                                    <Text ml="2" color="#4e4b66" fontSize="13px">{commissionsCompany.quota.group}</Text>
                                 </Stack>
                             </Stack>
                             <Stack direction={['column', 'row']} spacing={["1", "4"]}>
                                 <Stack fontWeight="500" alignItems="center">
-                                    <Badge colorScheme='green' width="110px" px="20px">Confirmado</Badge>
+                                {
+                                                        !commissionsCompany.is_chargeback ? (
+                                                            <Badge colorScheme={commissionsCompany.confirmed ? "green" : "yellow"} width="110px" px="27px">{commissionsCompany.confirmed ? "Confirmada" : "Pendente"}</Badge>
+                                                        ) : (
+                                                            <Badge colorScheme="red" width="110px" px="27px">Estorno</Badge>
+                                                        )
+                                                    }
                                 </Stack>
                                 <Stack fontWeight="500" alignItems="center">
                                     <Text float="right" px="2rem">Crédito</Text>
-                                    <Text float="right" px="2rem">R$1.000.000,00</Text>
+                                    <Text float="right" px="2rem">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(commissionsCompany.quota.credit)}</Text>
                                 </Stack>
                             </Stack>
                         </Stack>
@@ -201,7 +229,7 @@ export default function CommissionsContracts() {
                                 <HStack spacing="2">
                                     <strong color="#4e4b66">Grupo-Cota:</strong>
                                     <Text>
-                                        1080
+                                    {commissionsCompany.quota.group}
                                     </Text>
                                 </HStack>
                                 <HStack spacing="2"></HStack>
@@ -209,14 +237,14 @@ export default function CommissionsContracts() {
                                 <HStack spacing="4">
                                     <strong color="#4e4b66">Bem:</strong>
                                     <Text>
-                                        Imóvel
+                                    {commissionsCompany.quota.consortium_type.description}
                                     </Text>
                                 </HStack>
 
                                 <HStack spacing="2" px="1rem">
                                     <strong color="#4e4b66">Crédito:</strong>
                                     <Text>
-                                        R$200.000,00
+                                    {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(commissionsCompany.quota.credit)}
                                     </Text>
                                 </HStack>
                             </Stack>
@@ -227,7 +255,7 @@ export default function CommissionsContracts() {
                                 <HStack spacing="2">
                                     <strong color="#A0A3BD">Grupo-Cota:</strong>
                                     <Text>
-                                        560-620
+                                    {commissionsCompany.quota.group}
                                     </Text>
                                 </HStack>
                                 <HStack spacing="4">
@@ -239,14 +267,14 @@ export default function CommissionsContracts() {
                                 <HStack spacing="4">
                                     <strong color="#A0A3BD">Bem:</strong>
                                     <Text>
-                                        Veículo
+                                    {commissionsCompany.quota.consortium_type.description}
                                     </Text>
                                 </HStack>
 
                                 <HStack spacing="2" px="1rem">
                                     <strong color="#A0A3BD">Crédito:</strong>
                                     <Text>
-                                        R$200.000,00
+                                    {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(commissionsCompany.quota.credit)}
                                     </Text>
                                 </HStack>
                             </Stack>
@@ -280,7 +308,7 @@ export default function CommissionsContracts() {
                                 <HStack spacing={["3", "4"]}>
                                     <Stack fontWeight="500" alignItems="center">
                                         <Text ml="2" color="#6E7191" fontSize="10px">Data da venda</Text>
-                                        <Text ml="2" color="#4e4b66" fontSize="13px">22/01/2022</Text>
+                                        <Text ml="2" color="#4e4b66" fontSize="13px">{formatBRDate(commissionsCompany.quota.date_sale)}</Text>
                                     </Stack>
                                 </HStack>
                             </HStack>
@@ -297,16 +325,22 @@ export default function CommissionsContracts() {
                             <Stack direction={['column', 'row']} spacing={["1", "4"]}>
                                 <Stack fontWeight="500" alignItems="center">
                                     <Text ml="2" color="#6E7191" fontSize="10px">Grupo-Cota</Text>
-                                    <Text ml="2" color="#4e4b66" fontSize="13px">780-976</Text>
+                                    <Text ml="2" color="#4e4b66" fontSize="13px">{commissionsCompany.quota.group}</Text>
                                 </Stack>
                             </Stack>
                             <Stack direction={['column', 'row']} spacing={["1", "4"]}>
                                 <Stack fontWeight="500" alignItems="center">
-                                    <Badge colorScheme='green' width="110px" px="20px">Confirmado</Badge>
+                                {
+                                                        !commissionsCompany.is_chargeback ? (
+                                                            <Badge colorScheme={commissionsCompany.confirmed ? "green" : "yellow"} width="110px" px="27px">{commissionsCompany.confirmed ? "Confirmada" : "Pendente"}</Badge>
+                                                        ) : (
+                                                            <Badge colorScheme="red" width="110px" px="27px">Estorno</Badge>
+                                                        )
+                                                    }
                                 </Stack>
                                 <Stack fontWeight="500" alignItems="center">
                                     <Text float="right" px="2rem">Crédito</Text>
-                                    <Text float="right" px="2rem">R$1.000.000,00</Text>
+                                    <Text float="right" px="2rem"> {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalMonthAmount)}</Text>
                                 </Stack>
                             </Stack>
                         </Stack>
@@ -316,7 +350,7 @@ export default function CommissionsContracts() {
                                 <HStack spacing="2">
                                     <strong color="#4e4b66">Grupo-Cota:</strong>
                                     <Text>
-                                        1080
+                                    {commissionsCompany.quota.group}
                                     </Text>
                                 </HStack>
                                 <HStack spacing="2"></HStack>
@@ -324,14 +358,14 @@ export default function CommissionsContracts() {
                                 <HStack spacing="4">
                                     <strong color="#4e4b66">Bem:</strong>
                                     <Text>
-                                        Imóvel
+                                    {commissionsCompany.quota.consortium_type.description}
                                     </Text>
                                 </HStack>
 
                                 <HStack spacing="2" px="1rem">
                                     <strong color="#4e4b66">Crédito:</strong>
                                     <Text>
-                                        R$200.000,00
+                                    {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalMonthAmount)}
                                     </Text>
                                 </HStack>
                             </Stack>
@@ -342,7 +376,7 @@ export default function CommissionsContracts() {
                                 <HStack spacing="2">
                                     <strong color="#A0A3BD">Grupo-Cota:</strong>
                                     <Text>
-                                        560-620
+                                    {commissionsCompany.quota.group}
                                     </Text>
                                 </HStack>
                                 <HStack spacing="4">
@@ -354,14 +388,14 @@ export default function CommissionsContracts() {
                                 <HStack spacing="4">
                                     <strong color="#A0A3BD">Bem:</strong>
                                     <Text>
-                                        Veículo
+                                    {commissionsCompany.quota.consortium_type.description}
                                     </Text>
                                 </HStack>
 
                                 <HStack spacing="2" px="1rem">
                                     <strong color="#A0A3BD">Crédito:</strong>
                                     <Text>
-                                        R$200.000,00
+                                    {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalMonthAmount)}
                                     </Text>
                                 </HStack>
                             </Stack>
@@ -369,6 +403,10 @@ export default function CommissionsContracts() {
                     </>
                 )}
             </AccordionItem>
+            </>
+        )
+    })
+}
         </Accordion>
     )
 }
