@@ -220,15 +220,20 @@ export function SideBarNav({ desk }: SideBarNavProps) {
       <NavLink href={`/comissões-vendedores`} icon={PercentIcon} color="red.400">
         Comissões
       </NavLink>
-      <NavLink href={`/comissões-empresa`} icon={HomeIcon} color="red.400">
-        Empresa
-      </NavLink>
+      {HasPermission(permissions, 'Comissões Completo') && (
+        <NavLink href={`/comissões-empresa`} icon={HomeIcon} color="red.400">
+          Empresa
+        </NavLink>
+      )}
       <NavLink href={`/contratos`} icon={FolderIcon} color="red.400">
         Contratos
       </NavLink>
-      <NavLink href={`/relatorio-comissões`} icon={ScrollIcon} color="red.400">
-        Relatórios
-      </NavLink>
+
+      {HasPermission(permissions, 'Comissões Gerente') && (
+        <NavLink href={`/relatorio-comissões`} icon={ScrollIcon} color="red.400">
+          Relatórios
+        </NavLink>
+      )}
       {/* <NavLink href="/calculadora" icon={ConfigureIcon}>Calculadora</NavLink> */}
 
       {HasPermission(permissions, 'Vendas Completo') && (

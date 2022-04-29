@@ -9,6 +9,7 @@ export interface CommissionsSellerFilterData{
     company?: number;
     branch?: number;
     chargeback?: number;
+    seller?: number;
     group?: number;
     quota?: number;
     contract_number?: number;
@@ -31,6 +32,7 @@ export const getCommissionsSeller = async (filter?: CommissionsSellerFilterData,
                 confirmed: filter.confirmed,
                 group: filter.group,
                 quota: filter.quota,
+                seller: filter.seller,
                 contract_number: filter.contract_number,
                 is_chargeback: filter.is_chargeback,
                 group_by: filter.group_by,

@@ -66,8 +66,6 @@ const PrivateRoute = ({
 
   const initialPage = getInitialPage(permissions)
 
-  console.log(permissions);
-
   useEffect(() => {}, [isAuthenticated])
   return (
     <Route
@@ -339,11 +337,11 @@ const Routes = (): JSX.Element => {
           component={Teams}
         />
 
-        <Route path={`/comissões`} exact component={Commissions} />
-        <Route path={`/comissões-vendedores`} exact component={CommissionsSalesman} />
-        <Route path={`/comissões-empresa`} exact component={Company} />
-        <Route path={`/contratos`} exact component={Contracts} />
-        <Route path={`/relatorio-comissões`} exact component={ReportsCommissions} />
+        <PrivateRoute path={`/comissões`} neededPermission="Comissões Vendedor" exact component={Commissions} />
+        <PrivateRoute path={`/comissões-vendedores`} neededPermission="Comissões Vendedor" exact component={CommissionsSalesman} />
+        <PrivateRoute path={`/comissões-empresa`} neededPermission="Comissões Completo" exact component={Company} />
+        <PrivateRoute path={`/contratos`} neededPermission="Comissões Vendedor" exact component={Contracts} />
+        <PrivateRoute path={`/relatorio-comissões`} neededPermission="Comissões Completo" exact component={ReportsCommissions} />
 
         {/* <PrivateRoute path="/empresas" component={Roles} /> */}
       </Switch>
