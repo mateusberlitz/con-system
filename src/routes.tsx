@@ -51,6 +51,8 @@ import Company from './pages/Commissions/Company'
 import ReportsCommissions from './pages/Commissions/Reports'
 import Contracts from './pages/Commissions/Contracts'
 import Customers from './pages/Commercial/Customers'
+import RecoverPasswordEmail from './pages/RecoverPasswordEmail'
+import RecoverPassword from './pages/RecoverPassword'
 
 interface PrivateRouteProps extends RouteProps {
   component: any
@@ -139,6 +141,10 @@ const Routes = (): JSX.Element => {
         <Route path={`/`} exact component={Login} />
 
         <Route path={`/eu`} exact component={Me} />
+
+        <Route path={`/recuperar-senha-email`} exact component={RecoverPasswordEmail} />
+
+        <Route path={`/recuperar-senha`} exact component={RecoverPassword} />
 
         <PrivateRoute
           path={`/home`}
