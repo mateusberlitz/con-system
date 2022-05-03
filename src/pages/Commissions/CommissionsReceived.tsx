@@ -6,16 +6,17 @@ import { ReactComponent as ChartBarIcon } from '../../assets/icons/Chart-bar.svg
 
 import { Link } from 'react-router-dom'
 import { SellerCommission } from '../../types'
+import { useCommissionsSeller } from '../../hooks/useCommissionsSeller'
 
-interface CommissionsReceivedProps {
-  monthName: string;
-  commissionsReceived: SellerCommission[];
-}
 
-export default function CommissionsReceived({monthName: string, commissionsReceived}: CommissionsReceivedProps) {
+export default function CommissionsReceived() {
   const { profile, permissions } = useProfile()
 
-  const totalMonthAmount = commissionsReceived.reduce((sumAmount: number, commissionsReceived: SellerCommission) => {
+  const commissionsSeller = useCommissionsSeller({
+    is_chargeback: false
+  }, 1);
+
+  const totalAmount = commissionsSeller.data?.data.data.reduce((sumAmount: number, commissionsReceived: SellerCommission) => {
     console.log(sumAmount, commissionsReceived.value)
     return sumAmount + commissionsReceived.value;
   }, 0)
@@ -30,7 +31,7 @@ export default function CommissionsReceived({monthName: string, commissionsRecei
         <HStack alignItems="left" justify="left" spacing="4">
           <PlusIcon width="2.5rem" height="2.5rem" stroke="#00A878" fill="none" />
           <Text color="#00A878" fontSize="24px" fontWeight="600">
-          {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalMonthAmount)}
+          {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalAmount)}
           </Text>
         </HStack>
         <HStack align="left" justify="left" spacing="4">

@@ -9,11 +9,11 @@ import CommissionsReceived from './CommissionsReceived'
 import ReversedCommissions from './ReversedCommissions'
 import CommissionsPaid from './CommissionsPaid'
 import RulesRanking from './RulesRanking'
+import { useCommissionsSeller } from '../../hooks/useCommissionsSeller'
 
 
 export default function Commissions() {
-  const { profile, permissions } = useProfile()
-
+  const { profile, permissions } = useProfile();
 
   return (
     <MainBoard sidebar="commissions" header={<CompanySelectMaster />}>
