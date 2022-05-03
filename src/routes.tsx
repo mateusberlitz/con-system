@@ -4,7 +4,8 @@ import {
   Redirect,
   RouteProps,
   useParams,
-  BrowserRouter
+  BrowserRouter,
+  useHistory
 } from 'react-router-dom'
 
 import Login from './pages/Login'
@@ -51,6 +52,8 @@ import Company from './pages/Commissions/Company'
 import ReportsCommissions from './pages/Commissions/Reports'
 import Contracts from './pages/Commissions/Contracts'
 import Customers from './pages/Commercial/Customers'
+import Start from './pages/Start'
+import { api } from './services/api'
 
 interface PrivateRouteProps extends RouteProps {
   component: any
@@ -62,11 +65,44 @@ const PrivateRoute = ({
   neededPermission = '',
   ...rest
 }: PrivateRouteProps) => {
-  const { isAuthenticated, permissions } = useProfile()
+  const history = useHistory();
+  const { isAuthenticated, permissions } = useProfile();
+  const [isFirstSteps, setIsFirstSteps] = useState<boolean>(localStorage.getItem('@lance/firstSteps') === '1' && false);
 
-  const initialPage = getInitialPage(permissions)
+  const initialPage = getInitialPage(permissions);
 
-  useEffect(() => {}, [isAuthenticated])
+  const checkFirstSteps = async () => {
+    //console.log(localStorage.getItem('@lance/firstSteps'), localStorage.getItem('@lance/firstSteps') !== '1');
+
+    api.get('/companies').then(response => {
+      console.log(response);
+      //if(response.data.length === 0){
+        setIsFirstSteps(true);
+        localStorage.setItem('@lance/firstSteps', JSON.stringify(1));
+      //}
+    });
+
+    //console.log(response);
+
+    //localStorage.setItem('@lance/firstSteps', JSON.stringify(1));
+    //localStorage.getItem('@lance/firstSteps');
+
+    if(isFirstSteps && rest.path !== "/primeiros-passos"){
+      //console.log('redirecionar');
+      history.push('/primeiros-passos')
+    }
+  }
+
+  checkFirstSteps();
+
+  useEffect(() => {}, [isAuthenticated]);
+  useEffect(() => {
+    if(isFirstSteps){
+      console.log('redirecionar');
+      //history.push('/primeiros-passos')
+    }
+  }, [isFirstSteps]);
+
   return (
     <Route
       {...rest}
@@ -139,6 +175,8 @@ const Routes = (): JSX.Element => {
         <Route path={`/`} exact component={Login} />
 
         <Route path={`/eu`} exact component={Me} />
+
+        <PrivateRoute path={`/primeiros-passos`} exact component={Start} />
 
         <PrivateRoute
           path={`/home`}
