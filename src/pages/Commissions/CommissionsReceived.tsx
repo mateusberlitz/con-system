@@ -7,17 +7,17 @@ import { ReactComponent as ChartBarIcon } from '../../assets/icons/Chart-bar.svg
 import { Link } from 'react-router-dom'
 import { SellerCommission } from '../../types'
 import { useCommissionsSeller } from '../../hooks/useCommissionsSeller'
+import { useCompanyCommissions } from '../../hooks/useCompanyCommissions'
 
 
 export default function CommissionsReceived() {
   const { profile, permissions } = useProfile()
 
-  const commissionsSeller = useCommissionsSeller({
+  const commissionsSeller = useCompanyCommissions({
     is_chargeback: false
   }, 1);
 
   const totalAmount = commissionsSeller.data?.data.data.reduce((sumAmount: number, commissionsReceived: SellerCommission) => {
-    console.log(sumAmount, commissionsReceived.value)
     return sumAmount + commissionsReceived.value;
   }, 0)
 
