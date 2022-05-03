@@ -10,8 +10,10 @@ import ReversedCommissions from './ReversedCommissions'
 import CommissionsPaid from './CommissionsPaid'
 import RulesRanking from './RulesRanking'
 
+
 export default function Commissions() {
   const { profile, permissions } = useProfile()
+
 
   return (
     <MainBoard sidebar="commissions" header={<CompanySelectMaster />}>
@@ -31,8 +33,9 @@ export default function Commissions() {
           {/* Comissões */}
 
           <Stack spacing="8" w={['100%', '45%']}>
-            <CommissionsReceived />
-
+        
+            <CommissionsReceived/>
+    
             <CommissionsPaid />
             <ReversedCommissions />
             <RulesRanking />
