@@ -9,7 +9,6 @@ import CommissionsReceived from './CommissionsReceived'
 import ReversedCommissions from './ReversedCommissions'
 import CommissionsPaid from './CommissionsPaid'
 import RulesRanking from './RulesRanking'
-import { useCommissionsSeller } from '../../hooks/useCommissionsSeller'
 
 
 export default function Commissions() {
