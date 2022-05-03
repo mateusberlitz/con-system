@@ -5,9 +5,21 @@ import { ReactComponent as PlusIcon } from '../../assets/icons/Plus.svg'
 import { ReactComponent as ChartBarIcon } from '../../assets/icons/Chart-bar.svg'
 
 import { Link } from 'react-router-dom'
+import { SellerCommission } from '../../types'
 
-export default function CommissionsReceived() {
+interface CommissionsReceivedProps {
+  monthName: string;
+  commissionsReceived: SellerCommission[];
+}
+
+export default function CommissionsReceived({monthName: string, commissionsReceived}: CommissionsReceivedProps) {
   const { profile, permissions } = useProfile()
+
+  const totalMonthAmount = commissionsReceived.reduce((sumAmount: number, commissionsReceived: SellerCommission) => {
+    console.log(sumAmount, commissionsReceived.value)
+    return sumAmount + commissionsReceived.value;
+  }, 0)
+
 
   return (
     <Flex align="left" justify="left">
@@ -18,7 +30,7 @@ export default function CommissionsReceived() {
         <HStack alignItems="left" justify="left" spacing="4">
           <PlusIcon width="2.5rem" height="2.5rem" stroke="#00A878" fill="none" />
           <Text color="#00A878" fontSize="24px" fontWeight="600">
-            R$ 1.200.500,00
+          {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalMonthAmount)}
           </Text>
         </HStack>
         <HStack align="left" justify="left" spacing="4">
