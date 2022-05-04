@@ -81,8 +81,6 @@ export function EditSellerRuleParcelModal( { isOpen, toEditSellerRuleParcelData,
 
   const chargeBackTypes = useChargeBackTypes();
 
-  console.log(toEditSellerRuleParcelData.chargeback_percentage);
-
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
             <ModalOverlay />

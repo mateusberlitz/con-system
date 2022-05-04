@@ -89,8 +89,6 @@ export function EditSellerRuleModal( { isOpen, toEditSellerRuleData, afterEdit, 
 
   const chargeBackTypes = useChargeBackTypes();
 
-  console.log(toEditSellerRuleData.pay_in_contemplation ? (toEditSellerRuleData.pay_in_contemplation == true ? 1 : 0) : undefined);
-
     return(
         <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
             <ModalOverlay />

@@ -75,7 +75,7 @@ export default function Branch() {
   const loadBranchData = async () => {
     const { data } = await api.get(`/branches/${id}`)
 
-    setBranch(data)
+    setBranch(data);
   }
 
   useEffect(() => {

@@ -67,19 +67,29 @@ const PrivateRoute = ({
 }: PrivateRouteProps) => {
   const history = useHistory();
   const { isAuthenticated, permissions } = useProfile();
-  const [isFirstSteps, setIsFirstSteps] = useState<boolean>(localStorage.getItem('@lance/firstSteps') === '1' && false);
+  const [isFirstSteps, setIsFirstSteps] = useState<boolean>(localStorage.getItem('@lance/firstSteps') === '1' ? false : true);
 
   const initialPage = getInitialPage(permissions);
 
   const checkFirstSteps = async () => {
     //console.log(localStorage.getItem('@lance/firstSteps'), localStorage.getItem('@lance/firstSteps') !== '1');
 
-    api.get('/companies').then(response => {
-      console.log(response);
-      //if(response.data.length === 0){
-        setIsFirstSteps(true);
+    api.get('/configs').then(response => {
+
+      if(response.data.data.initiated){
         localStorage.setItem('@lance/firstSteps', JSON.stringify(1));
-      //}
+        setIsFirstSteps(false);
+
+        if(rest.path === "/primeiros-passos"){
+          history.push(initialPage);
+        }
+      }else{
+        setIsFirstSteps(true);
+
+        if(rest.path !== "/primeiros-passos"){
+          history.push('/primeiros-passos');
+        }
+      }
     });
 
     //console.log(response);
@@ -87,19 +97,32 @@ const PrivateRoute = ({
     //localStorage.setItem('@lance/firstSteps', JSON.stringify(1));
     //localStorage.getItem('@lance/firstSteps');
 
-    if(isFirstSteps && rest.path !== "/primeiros-passos"){
-      //console.log('redirecionar');
-      history.push('/primeiros-passos')
-    }
+    // if(isFirstSteps && rest.path !== "/primeiros-passos"){
+    //   console.log('redirecionar para start');
+    //   //history.push('/primeiros-passos');
+    // }else if(!isFirstSteps && rest.path === "/primeiros-passos"){
+    //   console.log('redirecionar para pagina');
+    //   //history.push(initialPage);
+    // }
   }
 
-  checkFirstSteps();
+  //console.log(localStorage.getItem('@lance/firstSteps') === null);  
+
+  // if(localStorage.getItem('@lance/firstSteps') === null){
+  //   checkFirstSteps();
+  // }else{
+  //   console.log('redirecionar para pagina');
+  //   //history.push(initialPage);
+  // }
 
   useEffect(() => {}, [isAuthenticated]);
   useEffect(() => {
-    if(isFirstSteps){
-      console.log('redirecionar');
-      //history.push('/primeiros-passos')
+    if(localStorage.getItem('@lance/firstSteps') === null){
+      checkFirstSteps();
+    }else{
+      if(rest.path === "/primeiros-passos"){
+        history.push(initialPage);
+      }
     }
   }, [isFirstSteps]);
 
