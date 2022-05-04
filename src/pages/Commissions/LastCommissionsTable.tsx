@@ -1,5 +1,4 @@
-import { Flex, HStack, Stack, Text, Th, Tr, Td, Link, Table, Thead, Tbody, Tfoot, TableContainer} from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
+import { Flex, HStack, Stack, Text, Th, Tr, Link, Table, Thead, Tbody, Tfoot, TableContainer} from '@chakra-ui/react'
 import { useProfile } from '../../hooks/useProfile'
 import { ReactComponent as PercentIcon } from '../../assets/icons/percent.svg'
 import Badge from '../../components/Badge'
@@ -8,8 +7,8 @@ export default function LastComissionsTable() {
   const { profile, permissions } = useProfile()
 
   return (
-    <Flex align="center" justify="center" width="100%">
-      <Stack spacing="8" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8" width="100%">
+    <Flex w="100%" align="center" justify="center" width="100%">
+      <Stack spacing="8" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8">
         <HStack align="center" justify="space-between" spacing="4">
           <Text color="#000" fontSize="xl" fontWeight="400">
             Ultimas Comissões

@@ -119,7 +119,7 @@ export default function CommissionsSalesman(){
             </Stack>
 
             <Stack fontSize="13px" spacing="12">
-            {
+                {
                     (!commissionsSeller.isLoading && !commissionsSeller.error) && Object.keys(commissionsSeller.data?.data.data).map((monthYear:string) => {
                         const monthNumber = parseInt(monthYear.split('-')[0]);
                         return (
