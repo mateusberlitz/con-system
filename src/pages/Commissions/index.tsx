@@ -9,6 +9,7 @@ import CommissionsReceived from './CommissionsReceived'
 import ReversedCommissions from './ReversedCommissions'
 import CommissionsPaid from './CommissionsPaid'
 import RulesRanking from './RulesRanking'
+import getMonthName from '../../utils/Date/getMonthName'
 
 
 export default function Commissions() {
@@ -25,7 +26,9 @@ export default function Commissions() {
           {/* Tables */}
           <Stack spacing="8" w={['100%', '60%']}>
             <CommissionsGrafic />
+
             <LastComissionsTable />
+             
             <ChargeBacks />
           </Stack>
 
@@ -36,7 +39,9 @@ export default function Commissions() {
             <CommissionsReceived/>
     
             <CommissionsPaid />
+
             <ReversedCommissions />
+
             <RulesRanking />
           </Stack>
         </Stack>

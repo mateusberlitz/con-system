@@ -2,9 +2,21 @@ import { Flex, HStack, Stack, Text, Th, Tr, Link, Table, Thead, Tbody, Tfoot, Ta
 import { useProfile } from '../../hooks/useProfile'
 import { ReactComponent as PercentIcon } from '../../assets/icons/percent.svg'
 import Badge from '../../components/Badge'
+import { SellerCommission } from '../../types'
 
-export default function LastComissionsTable() {
+
+interface SellerCommissionProps{
+  commissionsSeller: SellerCommission[];
+  monthName: string;
+}
+
+export default function LastComissionsTable({commissionsSeller}: SellerCommissionProps) {
   const { profile, permissions } = useProfile()
+
+  const totalMonthAmount = commissionsSeller.reduce((sumAmount:number, useCommissionsSeller:SellerCommission) => {
+    return sumAmount + useCommissionsSeller.value;
+  }, 0);
+
 
   return (
     <Flex w="100%" align="center" justify="center" width="100%">
@@ -41,10 +53,16 @@ export default function LastComissionsTable() {
                     1%
                   </Th>
                   <Th>
-                    <Badge colorScheme='yellow'>Pendente</Badge>
+                  {
+                    !commissionsSeller.is_chargeback ? (
+                      <Badge colorScheme={commissionsSeller.confirmed ? "green" : "yellow"} width="110px" px="27px">{commissionsSeller.confirmed ? "Confirmada" : "Pendente"}</Badge>
+                    ) : (
+                    <Badge colorScheme="red" width="110px" px="27px">Estorno</Badge>
+                        )
+                    }
                   </Th>
-                  <Th color="#00BA88" fontWeight="bold" fontSize="13px" textTransform="capitalize">
-                    R$ 1.250,00
+                  <Th fontWeight="bold" fontSize="13px" textTransform="capitalize" color={commissionsSeller.is_chargeback ? "red.400" : commissionsSeller.confirmed ? "green.400" : "gray.800"}>
+                    {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalMonthAmount)}
                   </Th>
                 </Tr>
                 <Tr>

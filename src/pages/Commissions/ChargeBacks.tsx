@@ -1,18 +1,21 @@
-import { Flex, HStack, Stack, Text, Th, Tr, Td, Link, Table, Thead, Tbody, Tfoot, TableContainer} from '@chakra-ui/react'
+import { Flex, HStack, Stack, Text, Th, Tr, Link, Table, Thead, Tbody, Tfoot, TableContainer} from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { useProfile } from '../../hooks/useProfile'
 import { ReactComponent as PercentIcon } from '../../assets/icons/percent.svg'
-import Badge from '../../components/Badge'
 
 export default function ChargeBacks() {
   const { profile, permissions } = useProfile()
+
+
+  
+
 
   return (
     <Flex align="center" justify="center">
       <Stack min-width="300px" spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8" mt={8}>
         <HStack align="center" justify="space-between" spacing="4">
           <Text color="#000" fontSize="xl" fontWeight="400" mb={5}>
-            Ultimas Comissões
+            Estornos
           </Text>
         </HStack>
         <Flex align="center" justify="center" height="250px">
