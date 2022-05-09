@@ -19,6 +19,7 @@ import { useState } from "react";
 import getMonthName from "../../../utils/Date/getMonthName";
 import CommissionsContracts from "./CommissionsContracts";
 import { CommissionsContractFilterData, useCommissionsContract } from "../../../hooks/useCommissionsContract";
+import { NewSaleModal } from "../../Commercial/Sales/NewSaleModal";
 
 
 const FilterCommissionsContractFormSchema = yup.object().shape({
@@ -64,13 +65,22 @@ export default function CommissionsSalesman(){
 
     const commissionsContract = useCommissionsContract(filter, page);
 
+    const [isNewSaleModalOpen, setIsNewSaleModalOpen] = useState(false)
+
+    function OpenNewSaleModal() {
+        setIsNewSaleModalOpen(true)
+    }
+    function CloseNewSaleModal() {
+        setIsNewSaleModalOpen(false)
+    }
+
     return(
         <MainBoard sidebar="commissions" header={ <CompanySelectMaster/>}>
 
-            {/* <ExportDocumentsModal /> */}
+            <NewSaleModal isOpen={isNewSaleModalOpen} onRequestClose={CloseNewSaleModal} />
 
             <Stack flexDirection={["column", "row"]} spacing={["4", "0"]} justify="space-between" mb="10">
-                <SolidButton color="white" bg="red.400" icon={PlusIcon} colorScheme="blue">
+                <SolidButton color="white" bg="red.400" icon={PlusIcon} colorScheme="red" onClick={() => OpenNewSaleModal()}>
                     Cadastrar venda
                 </SolidButton>
             </Stack>

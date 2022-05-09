@@ -1,7 +1,7 @@
 import { useQuery } from "react-query";
 import { api } from "../../services/api";
 import { getToken } from "../../services/auth";
-import { Branch, Company } from "../../types";
+import { Branch, Company, Team } from "../../types";
 import { useTenant } from "../useTenant";
 
 export interface Profile{
@@ -22,6 +22,7 @@ export interface Profile{
     };
     companies: Company[];
     branches: Branch[];
+    teams: Team[];
     created_at: Date;
     updated_at: Date;
 }

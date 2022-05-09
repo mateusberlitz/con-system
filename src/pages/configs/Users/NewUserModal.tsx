@@ -26,10 +26,12 @@ import { Input } from '../../../components/Forms/Inputs/Input'
 import { Select } from '../../../components/Forms/Selects/Select'
 import { useCompanies } from '../../../hooks/useCompanies'
 import { useRoles } from '../../../hooks/useRoles'
-import { Company, Role } from '../../../types'
+import { Company, Role, SellerCommissionRule } from '../../../types'
 import { redirectMessages } from '../../../utils/redirectMessages'
 import { useEffect } from 'react'
 import { isAuthenticated } from '../../../services/auth'
+import { useSellerCommissionRules } from '../../../hooks/useSellerCommissionRules'
+import { useSellerCommissionsRules } from '../../../hooks/useSellerCommissionsRules'
 
 interface NewUserModalProps {
   isOpen: boolean
@@ -46,6 +48,7 @@ interface CreateNewUserFormData {
   company: number
   role: number
   password: string
+  seller_commission_rule_id?: number
 }
 
 const CreateNewUserFormSchema = yup.object().shape({
@@ -59,6 +62,7 @@ const CreateNewUserFormSchema = yup.object().shape({
     .email('Informe um e-mail válido'),
   company: yup.number().required('Selecione uma Empresa'),
   role: yup.number().required('Selecione um Cargo'),
+  seller_commission_rule_id: yup.number().transform((v, o) => o === '' ? null : v).nullable(true),
   password: yup
     .string()
     .min(6, 'A senha precisa de no mínimo 6 dígitos.')
@@ -76,11 +80,12 @@ export function NewUserModal({
 
   const companies = useCompanies()
   const roles = useRoles()
+  const sellerCommissionRules = useSellerCommissionsRules();
 
   const { register, handleSubmit, reset, formState } =
     useForm<CreateNewUserFormData>({
       resolver: yupResolver(CreateNewUserFormSchema)
-    })
+  });
 
   const handleCreateNewUser = async (userData: CreateNewUserFormData) => {
     try {
@@ -247,6 +252,34 @@ export function NewUserModal({
                         </option>
                       )
                     })}
+                </Select>
+              )}
+            </HStack>
+
+            <HStack spacing="4" align="baseline">
+              {sellerCommissionRules.isLoading ? (
+                <Flex justify="center">
+                  <Spinner />
+                </Flex>
+              ) : (
+                <Select
+                  register={register}
+                  name="seller_commission_rule_id"
+                  variant="outline"
+                  error={formState.errors.seller_commission_rule_id}
+                  focusBorderColor="purple.600"
+                >
+                  <option value="">
+                    Regra de comissão
+                  </option>
+                  {sellerCommissionRules.data &&
+                    sellerCommissionRules.data.data.map((sellerCommissionRule: SellerCommissionRule) => {
+                      return (
+                        <option key={sellerCommissionRule.id} value={sellerCommissionRule.id}>
+                          {sellerCommissionRule.name}
+                        </option>
+                      )
+                  })}
                 </Select>
               )}
             </HStack>

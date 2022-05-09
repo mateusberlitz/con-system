@@ -20,15 +20,13 @@ export default function CommissionsGrafic() {
         company: workingCompany.company?.id,
         branch: workingBranch.branch?.id,
         group_by: 'commission_date',
-        seller: !HasPermission(permissions, 'Commissões completo') && !isManager ? (profile ? profile.id : 0) : undefined
+        seller_id: !HasPermission(permissions, 'Commissões completo') && !isManager ? (profile ? profile.id : 0) : undefined
     };
     
     return data;
 })
 
   const commissions = useCommissionsSeller(filter, 1);
-
-  console.log(commissions);
 
   return (
     <Flex align="center" justify="center" width="100%">

@@ -17,7 +17,6 @@ export default function CommissionsReceived() {
   }, 1);
 
   const totalAmount = commissionsSeller.data?.data.data.reduce((sumAmount: number, commissionsReceived: CompanyCommission) => {
-    console.log(sumAmount, commissionsReceived.value)
     return sumAmount + commissionsReceived.value;
   }, 0)
 

@@ -18,7 +18,7 @@ export function WorkingCompanyProvider({ children } : WorkingCompanyProviderProp
     const [company, setCompany] = useState<Company>(():Company|any => {
         const storagedCompany = localStorage.getItem('@lance/company');
     
-        if (!!storagedCompany) {
+        if (!!storagedCompany && storagedCompany !== "") {
             return JSON.parse(storagedCompany);
         }else{
             if(profile){

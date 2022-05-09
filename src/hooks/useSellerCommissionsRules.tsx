@@ -2,7 +2,7 @@ import { useQuery } from "react-query";
 import { api } from "../services/api";
 
 export const getSellerCommissionsRules = async () => {
-    const { data } = await api.get('/seller-commission-rule-parcels');
+    const { data } = await api.get('/seller-commission-rules');
 
     return data;
 }

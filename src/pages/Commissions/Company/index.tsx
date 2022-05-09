@@ -20,6 +20,7 @@ import { useForm } from "react-hook-form";
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Pagination } from "../../../components/Pagination";
+import { NewSaleModal } from "../../Commercial/Sales/NewSaleModal";
 
 const FilterCompanyCommissionsFormSchema = yup.object().shape({
     search: yup.string(),
@@ -63,13 +64,22 @@ export default function Company(){
 
     const companyCommissions = useCompanyCommissions(filter, page);
 
+    const [isNewSaleModalOpen, setIsNewSaleModalOpen] = useState(false)
+
+    function OpenNewSaleModal() {
+        setIsNewSaleModalOpen(true)
+    }
+    function CloseNewSaleModal() {
+        setIsNewSaleModalOpen(false)
+    }
+
     return(
         <MainBoard sidebar="commissions" header={<CompanySelectMaster/>}>
 
-            {/* <ExportDocumentsModal /> */}
+            <NewSaleModal isOpen={isNewSaleModalOpen} onRequestClose={CloseNewSaleModal} />
 
             <Stack flexDirection={["column", "row"]} spacing={["4", "0"]} justify="space-between" mb="10">
-                <SolidButton color="white" bg="red.400" icon={PlusIcon} colorScheme="blue">
+                <SolidButton color="white" bg="red.400" icon={PlusIcon} colorScheme="red" onClick={() => OpenNewSaleModal()}>
                     Cadastrar venda
                 </SolidButton>
             </Stack>

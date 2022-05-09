@@ -32,7 +32,8 @@ export interface User{
     updated_at?: Date;
     companies: Company[];
     branches: Branch[];
-    rule: SellerCommissionRule;
+    seller_commission_rule_id?: number;
+    //seller_commission_rule?: SellerCommissionRule;
     teams: Team[];
     goals: Goal[];
     goal_amount?: number;
@@ -453,6 +454,7 @@ export interface CompanyCommissionRuleParcel{
     parcel_number: number;
     percentage_to_pay: number;
     chargeback_percentage: number;
+    company_commission_rule: CompanyCommissionRule;
 }
 
 export interface SellerCommissionRule{
@@ -477,6 +479,7 @@ export interface SellerCommissionRuleParcel{
     parcel_number: number;
     percentage_to_pay: number;
     chargeback_percentage: number;
+    seller_commission_rule: SellerCommissionRule;
 }
 
 export interface Customer{

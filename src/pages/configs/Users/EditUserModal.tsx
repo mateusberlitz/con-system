@@ -22,13 +22,14 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { api } from '../../../services/api'
 import { useHistory } from 'react-router'
 import { useErrors } from '../../../hooks/useErrors'
-import { Role } from '../../../types'
+import { Role, SellerCommissionRule } from '../../../types'
 import { ControlledSelect } from '../../../components/Forms/Selects/ControlledSelect'
 import { useCompanies } from '../../../hooks/useCompanies'
 import { useRoles } from '../../../hooks/useRoles'
 import { useEffect } from 'react'
 import { isAuthenticated } from '../../../services/auth'
 import { redirectMessages } from '../../../utils/redirectMessages'
+import { useSellerCommissionsRules } from '../../../hooks/useSellerCommissionsRules'
 
 interface EditUserModalProps {
   isOpen: boolean
@@ -42,6 +43,7 @@ interface EditUserFormData {
   email: string
   company: number
   role: number
+  seller_commission_rule_id?: number
 }
 
 interface EditUserData {
@@ -49,6 +51,7 @@ interface EditUserData {
   name: string
   phone: string
   email: string
+  seller_commission_rule_id?: number
   role: number
 }
 
@@ -58,7 +61,8 @@ const EditUserFormSchema = yup.object().shape({
     .string()
     .required('Informe um E-mail')
     .email('Informe um e-mail válido'),
-  role: yup.number().required('Selecione um Cargo')
+  role: yup.number().required('Selecione um Cargo'),
+  seller_commission_rule_id: yup.number().transform((v, o) => o === '' ? null : v).nullable(true),
 })
 
 export function EditUserModal({
@@ -69,6 +73,7 @@ export function EditUserModal({
 }: EditUserModalProps) {
   const companies = useCompanies()
   const roles = useRoles()
+  const sellerCommissionsRules = useSellerCommissionsRules()
 
   const history = useHistory()
   const toast = useToast()
@@ -156,7 +161,7 @@ export function EditUserModal({
             </HStack>
 
             <HStack spacing="4" align="baseline">
-              {companies.isLoading ? (
+              {roles.isLoading ? (
                 <Flex justify="center">
                   <Spinner />
                 </Flex>
@@ -164,12 +169,12 @@ export function EditUserModal({
                 <ControlledSelect
                   control={control}
                   name="role"
-                  value={toEditUserData.role.toString()}
+                  value={toEditUserData.role}
                   variant="outline"
-                  error={formState.errors.email}
+                  error={formState.errors.role}
                   focusBorderColor="purple.600"
                 >
-                  <option key="0" value="0">
+                  <option value="">
                     Cargo
                   </option>
                   {roles.data &&
@@ -179,7 +184,36 @@ export function EditUserModal({
                           {role.name}
                         </option>
                       )
-                    })}
+                  })}
+                </ControlledSelect>
+              )}
+            </HStack>
+
+            <HStack spacing="4" align="baseline">
+              {sellerCommissionsRules.isLoading ? (
+                <Flex justify="center">
+                  <Spinner />
+                </Flex>
+              ) : (
+                <ControlledSelect
+                  control={control}
+                  name="seller_commission_rule_id"
+                  value={toEditUserData.seller_commission_rule_id}
+                  variant="outline"
+                  error={formState.errors.seller_commission_rule_id}
+                  focusBorderColor="purple.600"
+                >
+                  <option value="">
+                    Regra de comissão
+                  </option>
+                  {sellerCommissionsRules.data &&
+                    sellerCommissionsRules.data.data.map((sellerCommissionsRule: SellerCommissionRule) => {
+                      return (
+                        <option key={sellerCommissionsRule.id} value={sellerCommissionsRule.id}>
+                          {sellerCommissionsRule.name}
+                        </option>
+                      )
+                  })}
                 </ControlledSelect>
               )}
             </HStack>

@@ -42,7 +42,7 @@ interface EditUserFormData {
   phone: string
   email: string
   role: number
-  rule_id: number;
+  seller_commission_rule_id?: number;
 }
 
 interface RemoveUserData {
@@ -70,7 +70,6 @@ export default function Users() {
       email: '',
       phone: '',
       role: 0,
-      rule_id: 0,
     }
 
     return data
@@ -297,6 +296,7 @@ export default function Users() {
           {!isLoading &&
             !error &&
             data.map((user: User) => {
+              console.log(user);
               return (
                 <Tr key={user.id}>
                   <Td alignItems="center" display="flex">
@@ -392,7 +392,7 @@ export default function Users() {
                             phone: user.phone,
                             email: user.email,
                             role: user.role.id,
-                            rule_id: user.rule.id,
+                            seller_commission_rule_id: user.seller_commission_rule_id,
                           })
                         }
                       />

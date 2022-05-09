@@ -86,7 +86,7 @@ export default function LastComissionsTable({monthName, commissionsSeller}: Sell
                                     <Stack direction={['column', 'row']} spacing={["1", "4"]}>
                                         <Stack fontWeight="500" alignItems="center">
                                             <Text ml="2" color="#6E7191" fontSize="10px">Critério</Text>
-                                            <Text ml="2" color="#4e4b66" fontSize="13px">Regra Geral</Text>
+                                            <Text ml="2" color="#4e4b66" fontSize="13px">{commissionsSeller.seller_commission_rule_parcel.seller_commission_rule.name}</Text>
                                         </Stack>
                                     </Stack>
                                     <Stack direction={['column', 'row']} spacing={["1", "4"]}>
@@ -140,7 +140,7 @@ export default function LastComissionsTable({monthName, commissionsSeller}: Sell
                                         <HStack spacing="2">
                                             <strong color="#4e4b66">Contrato:</strong>
                                             <Text>
-                                            {/* {commissionsSeller.quota.contract.number_contract} */}
+                                            {commissionsSeller.quota.contract.number_contract}
                                             </Text>
                                         </HStack>
                                         <HStack spacing="4">
