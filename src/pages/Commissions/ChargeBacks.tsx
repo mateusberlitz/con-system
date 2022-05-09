@@ -6,13 +6,8 @@ import { ReactComponent as PercentIcon } from '../../assets/icons/percent.svg'
 export default function ChargeBacks() {
   const { profile, permissions } = useProfile()
 
-
-  
-
-
   return (
-    <Flex align="center" justify="center">
-      <Stack min-width="300px" spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8" mt={8}>
+      <Stack w="100%" min-width="300px" spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8" mt={8}>
         <HStack align="center" justify="space-between" spacing="4">
           <Text color="#000" fontSize="xl" fontWeight="400" mb={5}>
             Estornos
@@ -113,6 +108,5 @@ export default function ChargeBacks() {
           </Link>
         </HStack>
       </Stack>
-    </Flex>
   )
 }
