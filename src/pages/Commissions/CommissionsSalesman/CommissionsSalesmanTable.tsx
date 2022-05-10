@@ -108,17 +108,17 @@ export default function LastComissionsTable({monthName, commissionsSeller}: Sell
                                     </Stack>
                                     <Stack direction={['column', 'row']} spacing={["1", "4"]}>
                                     <Stack fontWeight="500" alignItems="center">
-                                                    {
-                                                        !commissionsSeller.is_chargeback ? (
-                                                            <Badge colorScheme={commissionsSeller.confirmed ? "green" : "yellow"} width="110px" px="27px">{commissionsSeller.confirmed ? "Confirmada" : "Pendente"}</Badge>
-                                                        ) : (
-                                                            <Badge colorScheme="red" width="110px" px="27px">Estorno</Badge>
-                                                        )
-                                                    }
-                                                </Stack>
-                                                <Stack fontWeight="500" alignItems="center" color={commissionsSeller.is_chargeback ? "red.400" : commissionsSeller.confirmed ? "green.400" : "gray.800"}>
-                                                    <Text float="right" px="2rem">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(commissionsSeller.value)}</Text>
-                                                </Stack>
+                                        {
+                                            !commissionsSeller.is_chargeback ? (
+                                                <Badge colorScheme={commissionsSeller.confirmed ? "green" : "yellow"} width="110px" px="27px">{commissionsSeller.confirmed ? "Confirmada" : "Pendente"}</Badge>
+                                            ) : (
+                                                <Badge colorScheme="red" width="110px" px="27px">Estorno</Badge>
+                                            )
+                                        }
+                                    </Stack>
+                                    <Stack fontWeight="500" alignItems="center" color={commissionsSeller.is_chargeback ? "red.400" : commissionsSeller.confirmed ? "green.400" : "gray.800"}>
+                                        <Text float="right" px="2rem">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(commissionsSeller.value)}</Text>
+                                    </Stack>
                                     </Stack>
                                 </Stack>
 
