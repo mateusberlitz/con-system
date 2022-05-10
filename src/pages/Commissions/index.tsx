@@ -9,6 +9,8 @@ import CommissionsReceived from './CommissionsReceived'
 import ReversedCommissions from './ReversedCommissions'
 import CommissionsPaid from './CommissionsPaid'
 import RulesRanking from './RulesRanking'
+import getMonthName from '../../utils/Date/getMonthName'
+
 
 
 export default function Commissions() {
@@ -18,16 +20,18 @@ export default function Commissions() {
 
   return (
     <MainBoard sidebar="commissions" header={<CompanySelectMaster />}>
-      <Stack fontSize="13px" spacing="12" alignItems="center" justify="center">
+      <Stack fontSize="13px" alignItems="center" flexDirection={["column", "row"]} spacing="12" justify="space-between" mb="10">
         <Stack
-          direction={['column', 'row']}
-          spacing="8"
-          alignItems="flex-start"
+         direction={['column', 'row']}
+         spacing="8"
+         alignItems="flex-start"
         >
           {/* Tables */}
-          <Stack spacing="8" w={['100%', '60%']}>
+          <Stack spacing="8" w={['100%', '55%']}>
             <CommissionsGrafic />
+
             <LastComissionsTable />
+             
             <ChargeBacks />
           </Stack>
 

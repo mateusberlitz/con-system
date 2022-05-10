@@ -10,7 +10,6 @@ import { OutlineButton } from "../../../components/Buttons/OutlineButton";
 import { Input } from "../../../components/Forms/Inputs/Input";
 import { Select } from "../../../components/Forms/Selects/Select";
 import CommissionsSalesmanTable from "./CommissionsSalesmanTable";
-import { Pagination } from "../../../components/Pagination";
 
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';

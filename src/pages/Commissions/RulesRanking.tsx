@@ -19,8 +19,7 @@ export default function RulesRanking() {
   const { profile, permissions } = useProfile()
 
   return (
-    <Flex align="center" justify="center">
-      <Stack w="100%" min-width="300px" spacing="4" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8" mt={8}>
+      <Stack width="100%" min-width="300px" spacing="3" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="10" py="10">
         <Text color="#000" fontSize="xl" fontWeight="400">
           Ranking de Regras
         </Text>
@@ -130,6 +129,5 @@ export default function RulesRanking() {
           </GridItem>
         </Grid>
       </Stack>
-    </Flex>
   )
 }
