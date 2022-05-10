@@ -523,6 +523,7 @@ export interface Quota{
     id:number;
     consortium_type: ConsortiumType;
     contract: Contract;
+    customer: Customer;
     credit: number;
     installments_paid: number;
     group: string;

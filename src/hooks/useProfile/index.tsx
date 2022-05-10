@@ -207,7 +207,7 @@ export function getInitialPage(permissions: SimplePermission[] | undefined){
         return '/contempladas'
     }
 
-    if(HasPermission(permissions, "Vendas Limitado") || HasPermission(permissions, "Vendas Completo")){
+    if(HasPermission(permissions, "Comercial Limitado") || HasPermission(permissions, "Comercial Completo")){
         return '/comercial'
     }
 

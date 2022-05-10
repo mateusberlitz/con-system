@@ -178,7 +178,10 @@ export function SideBarNav({ desk }: SideBarNavProps) {
 
       {(HasPermission(permissions, 'Usuários') ||
         HasPermission(permissions, 'Configurações') ||
-        HasPermission(permissions, 'Contempladas')) && (
+        HasPermission(permissions, 'Contempladas')||
+        HasPermission(permissions, 'Comissões Vendedor')||
+        HasPermission(permissions, 'Comissões Completo')||
+        HasPermission(permissions, 'Comissões Gerente')) && (
         <Link to={`/home`}>
           <Box
             mt="24"
@@ -229,7 +232,7 @@ export function SideBarNav({ desk }: SideBarNavProps) {
         Contratos
       </NavLink>
 
-      {HasPermission(permissions, 'Comissões Gerente') && (
+      {HasPermission(permissions, 'Comissões Completo') && (
         <NavLink href={`/relatorio-comissões`} icon={ScrollIcon} color="red.400">
           Relatórios
         </NavLink>
@@ -244,7 +247,10 @@ export function SideBarNav({ desk }: SideBarNavProps) {
 
       {(HasPermission(permissions, 'Usuários') ||
         HasPermission(permissions, 'Configurações') ||
-        HasPermission(permissions, 'Contempladas')) && (
+        HasPermission(permissions, 'Contempladas') ||
+        HasPermission(permissions, 'Comissões Vendedor')||
+        HasPermission(permissions, 'Comissões Completo')||
+        HasPermission(permissions, 'Comissões Gerente')) && (
         <Link to={`/home`}>
           <Box
             mt="24"
@@ -308,7 +314,10 @@ export function SideBarNav({ desk }: SideBarNavProps) {
       </NavLink>
       {(HasPermission(permissions, 'Usuários') ||
         HasPermission(permissions, 'Configurações') ||
-        HasPermission(permissions, 'Contempladas')) && (
+        HasPermission(permissions, 'Contempladas')||
+        HasPermission(permissions, 'Comissões Vendedor')||
+        HasPermission(permissions, 'Comissões Completo')||
+        HasPermission(permissions, 'Comissões Gerente')) && (
         <Link to={`/home`}>
           <Box
             mt="24"

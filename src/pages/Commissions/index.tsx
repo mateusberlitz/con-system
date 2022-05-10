@@ -1,6 +1,6 @@
 import { Stack } from '@chakra-ui/react'
 import { MainBoard } from '../../components/MainBoard'
-import { useProfile } from '../../hooks/useProfile'
+import { HasPermission, useProfile } from '../../hooks/useProfile'
 import { CompanySelectMaster } from '../../components/CompanySelect/companySelectMaster'
 import LastComissionsTable from './LastCommissionsTable'
 import CommissionsGrafic from './CommissionsGrafic'
@@ -13,6 +13,8 @@ import RulesRanking from './RulesRanking'
 
 export default function Commissions() {
   const { profile, permissions } = useProfile();
+
+  const isManager = HasPermission(permissions, 'Comercial Completo');
 
   return (
     <MainBoard sidebar="commissions" header={<CompanySelectMaster />}>
@@ -35,9 +37,18 @@ export default function Commissions() {
         
             <CommissionsReceived/>
     
-            <CommissionsPaid />
+            {
+              isManager || HasPermission(permissions, 'Commissões completo') && (
+                <CommissionsPaid />
+              )
+            }
             <ReversedCommissions />
-            <RulesRanking />
+
+            {
+              HasPermission(permissions, 'Commissões completo') && (
+                <RulesRanking />
+              )
+            }
           </Stack>
         </Stack>
       </Stack>

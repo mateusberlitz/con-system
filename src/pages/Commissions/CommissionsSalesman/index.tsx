@@ -48,7 +48,9 @@ export default function CommissionsSalesman(){
         resolver: yupResolver(FilterSalesmanCommissionsFormSchema),
     });
 
-    const isManager = HasPermission(permissions, 'Comercial Completo');
+    const isManager = HasPermission(permissions, 'Comercial Completo') && !HasPermission(permissions, 'Comissões Completo');
+
+    console.log(HasPermission(permissions, 'Comissões Completo'));
 
     const [filter, setFilter] = useState<CommissionsSellerFilterData>(() => {
         const data: CommissionsSellerFilterData = {
@@ -56,8 +58,8 @@ export default function CommissionsSalesman(){
             company: workingCompany.company?.id,
             branch: workingBranch.branch?.id,
             group_by: 'commission_date',
-            seller_id: !HasPermission(permissions, 'Commissões completo') && !isManager ? (profile ? profile.id : 0) : undefined,
-            team_id: isManager ? (profile ? profile.teams[0].id : 0) : undefined
+            seller_id: !HasPermission(permissions, 'Comissões Completo') && !isManager ? (profile ? profile.id : 0) : undefined,
+            team_id: isManager ? (profile && profile.teams.length > 0 ? profile.teams[0].id : undefined) : undefined
         };
 
         return data;

@@ -15,6 +15,8 @@ export interface CommissionsContractFilterData{
     branch?: number;
     group_by?: string;
     is_chargeback?: string;
+    seller_id?: number;
+    team_id?: number;
 }
 
 export const getCommissionsContract = async (filter?: CommissionsContractFilterData, page: number = 0) => {
@@ -35,6 +37,8 @@ export const getCommissionsContract = async (filter?: CommissionsContractFilterD
                 branch: filter.branch,
                 group_by: filter.group_by,
                 is_chargeback: filter.is_chargeback,
+                seller_id: filter.seller_id,
+                team_id: filter.team_id,
             }
         });
 

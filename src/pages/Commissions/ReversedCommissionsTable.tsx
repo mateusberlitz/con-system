@@ -13,7 +13,7 @@ export default function ReversedCommissionsTable() {
           Comissões
         </Text>
         <HStack alignItems="center" justify="center" spacing="4">
-          <SimpleDonout />
+          {/* <SimpleDonout /> */}
         </HStack>
       </Stack>
     </Flex>

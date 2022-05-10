@@ -1,5 +1,5 @@
 import { Flex, HStack, Stack, Text, Th, Tr, Link, Table, Thead, Tbody, IconButton, TableContainer, Accordion, AccordionItem, AccordionButton, AccordionPanel, Divider, Td } from '@chakra-ui/react'
-import { useProfile } from '../../../hooks/useProfile'
+import { HasPermission, useProfile } from '../../../hooks/useProfile'
 
 
 import { ReactComponent as MinusIcon } from '../../../assets/icons/Minus.svg';
@@ -19,6 +19,13 @@ interface SellerCommissionProps{
 export default function LastComissionsTable({monthName, commissionsSeller}: SellerCommissionProps) {
     const { profile, permissions } = useProfile()
 
+    const isManager = HasPermission(permissions, 'Comercial Completo');
+
+    const totalCreditMonthAmount = commissionsSeller.reduce((sumAmount:number, sellerCommission:SellerCommission) => {
+        console.log(sumAmount, sellerCommission.quota.credit);
+        return sumAmount + sellerCommission.quota.credit;
+    }, 0);
+
     const totalMonthAmount = commissionsSeller.reduce((sumAmount:number, sellerCommission:SellerCommission) => {
         console.log(sumAmount, sellerCommission.value);
         return sumAmount + sellerCommission.value;
@@ -34,7 +41,7 @@ export default function LastComissionsTable({monthName, commissionsSeller}: Sell
 
                     <Text fontWeight="bold" px="6rem">{commissionsSeller.length} contratos</Text>
 
-                    <Text fontWeight="bold" px="6rem" color="#6E7191">Créditos: {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalMonthAmount)}</Text>
+                    <Text fontWeight="bold" px="6rem" color="#6E7191">Créditos: {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalCreditMonthAmount)}</Text>
                 </Stack>
                 <Stack direction={["column", "row"]} spacing={["3", "6"]} alignItems={["flex-end", "center"]}>
                     <Text float="right" textAlign="right" px="40px" color="red.400"><strong>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalMonthAmount)}</strong></Text>
@@ -83,6 +90,16 @@ export default function LastComissionsTable({monthName, commissionsSeller}: Sell
                                             </Stack>
                                         </HStack>
                                     </HStack>
+                                    {
+                                        isManager && (
+                                            <Stack direction={['column', 'row']} spacing={["1", "4"]}>
+                                                <Stack fontWeight="500" alignItems="center">
+                                                    <Text ml="2" color="#6E7191" fontSize="10px">Vendedor</Text>
+                                                    <Text ml="2" color="#4e4b66" fontSize="13px">{commissionsSeller.seller.name}</Text>
+                                                </Stack>
+                                            </Stack>
+                                        )
+                                    }
                                     <Stack direction={['column', 'row']} spacing={["1", "4"]}>
                                         <Stack fontWeight="500" alignItems="center">
                                             <Text ml="2" color="#6E7191" fontSize="10px">Critério</Text>

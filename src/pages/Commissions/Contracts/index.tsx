@@ -20,6 +20,7 @@ import getMonthName from "../../../utils/Date/getMonthName";
 import CommissionsContracts from "./CommissionsContracts";
 import { CommissionsContractFilterData, useCommissionsContract } from "../../../hooks/useCommissionsContract";
 import { NewSaleModal } from "../../Commercial/Sales/NewSaleModal";
+import { HasPermission, useProfile } from "../../../hooks/useProfile";
 
 
 const FilterCommissionsContractFormSchema = yup.object().shape({
@@ -37,6 +38,7 @@ const FilterCommissionsContractFormSchema = yup.object().shape({
 
 export default function CommissionsSalesman(){
     const history = useHistory();
+    const { profile, permissions } = useProfile();
     const workingCompany = useWorkingCompany();
     const workingBranch = useWorkingBranch();
 
@@ -44,12 +46,16 @@ export default function CommissionsSalesman(){
         resolver: yupResolver(FilterCommissionsContractFormSchema),
     });
 
+    const isManager = HasPermission(permissions, 'Comercial Completo');
+    console.log(isManager);
+
     const [filter, setFilter] = useState<CommissionsContractFilterData>(() => {
         const data: CommissionsContractFilterData = {
             search: '',
             company: workingCompany.company?.id,
             branch: workingBranch.branch?.id,
-            group_by: 'commission_date',
+            seller_id: !HasPermission(permissions, 'Comissões Completo') && !isManager ? (profile ? profile.id : 0) : undefined,
+            team_id: isManager ? (profile && profile.teams.length > 0 ? profile.teams[0].id : undefined) : undefined
         };
 
         return data;
