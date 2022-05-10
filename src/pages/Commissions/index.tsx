@@ -39,17 +39,18 @@ export default function Commissions() {
 
           <Stack spacing="8" w={['100%', '45%']}>
         
-            <CommissionsReceived/>
+          {
+            HasPermission(permissions, 'Comissões Completo') && (
+              <CommissionsReceived/>
+            )
+          }
     
-            {
-              isManager || HasPermission(permissions, 'Commissões completo') && (
-                <CommissionsPaid />
-              )
-            }
+            
+            <CommissionsPaid />
             <ReversedCommissions />
 
             {
-              HasPermission(permissions, 'Commissões completo') && (
+              HasPermission(permissions, 'Comissões Completo') && (
                 <RulesRanking />
               )
             }

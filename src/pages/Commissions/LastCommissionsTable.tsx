@@ -1,5 +1,5 @@
 import { Flex, HStack, Stack, Text, Th, Tr, Link, Table, Thead, Tbody, Tfoot, TableContainer, Spinner} from '@chakra-ui/react'
-import { useProfile } from '../../hooks/useProfile'
+import { HasPermission, useProfile } from '../../hooks/useProfile'
 import { ReactComponent as PercentIcon } from '../../assets/icons/percent.svg'
 import Badge from '../../components/Badge'
 import { useWorkingCompany } from '../../hooks/useWorkingCompany'
@@ -16,21 +16,20 @@ export default function LastComissionsTable() {
   const workingCompany = useWorkingCompany()
   const workingBranch = useWorkingBranch()
 
-  const commissionsSeller = useCommissionsSeller({
-    is_chargeback: true
-  }, 1);
+  const isManager = HasPermission(permissions, 'Comercial Completo') && !HasPermission(permissions, 'Comissões Completo');
 
   const [filter, setFilter] = useState<CommissionsSellerFilterData>(() => {
     const data: CommissionsSellerFilterData = {
       search: '',
       company: workingCompany.company?.id,
       branch: workingBranch.branch?.id,
-      group_by: 'commission_date',
+      seller_id: !HasPermission(permissions, 'Comissões Completo') && !isManager ? (profile ? profile.id : 0) : undefined,
+      team_id: isManager ? (profile && profile.teams.length > 0 ? profile.teams[0].id : undefined) : undefined
     };
     return data;
   });
 
-  // const commissionsSeller = useCommissionsSeller(filter, 1)
+  const commissionsSeller = useCommissionsSeller(filter, 1)
 
   const totalAmount = commissionsSeller.data?.data.data.reduce((sumAmount: number, useCommissionsSeller: SellerCommission) => {
     console.log("lastCommissions",sumAmount, useCommissionsSeller.value)
@@ -53,7 +52,7 @@ export default function LastComissionsTable() {
                     <Tr>
                       <Th></Th>
                       <Th></Th>
-                      <Th></Th>
+                      {/* <Th></Th> */}
                       <Th></Th>
                       <Th isNumeric color="#000" fontSize="13px" px={10}> {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalAmount)}</Th>
                     </Tr>
@@ -74,89 +73,39 @@ export default function LastComissionsTable() {
                         ) ) 
                     }
                 {
-                    commissionsSeller && commissionsSeller.data?.data.data.map((commissionsSeller: SellerCommission) => {
-                    return (
-                    <>
-                      <Tr color="gray.800" fontWeight="normal">
-                        <Th>
-                          <Text fontSize="10px">Grupo-Cota</Text>
-                          <Text fontSize="13px">{commissionsSeller.quota.group}</Text>
-                        </Th>
-                        <Th>
-                          <Text fontSize="10px">Parcela</Text>
-                          <Text fontSize="13px">{commissionsSeller.seller_commission_rule_parcel.parcel_number}</Text>
-                        </Th>
-                        <Th color="gray.800" fontWeight="normal" fontSize="13px">
-                          1%
-                        </Th>
-                        <Th>
-                        {
-                          !commissionsSeller.is_chargeback ? (
-                            <Badge colorScheme={commissionsSeller.confirmed ? "green" : "yellow"} width="110px" px="27px">{commissionsSeller.confirmed ? "Confirmada" : "Pendente"}</Badge>
-                          ) : (
-                          <Badge colorScheme="red" width="110px" px="27px">Estorno</Badge>
-                              )
-                          }
-                        </Th>
-                        <Th fontWeight="bold" fontSize="13px" textTransform="capitalize" color={commissionsSeller.is_chargeback ? "red.400" : commissionsSeller.confirmed ? "green.400" : "gray.800"}>
-                        {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalAmount)}
-                        </Th>
-                      </Tr>
-                
-                    <Tr>
-                      <Th color="gray.800" fontWeight="normal">
-                        <Text fontSize="10px">Grupo-Cota</Text>
-                        <Text fontSize="13px">{commissionsSeller.seller_commission_rule_parcel.parcel_number}</Text>
-                      </Th>
-                      <Th color="gray.800" fontWeight="normal">
-                        <Text fontSize="10px">Parcela</Text>
-                        <Text fontSize="13px">{commissionsSeller.seller_commission_rule_parcel.parcel_number}</Text>
-                      </Th>
-                      <Th color="gray.800" fontWeight="normal" fontSize="13px">
-                        1%
-                      </Th>
-                      <Th>
-                      {
-                          !commissionsSeller.is_chargeback ? (
-                            <Badge colorScheme={commissionsSeller.confirmed ? "green" : "yellow"} width="110px" px="27px">{commissionsSeller.confirmed ? "Confirmada" : "Pendente"}</Badge>
-                          ) : (
-                          <Badge colorScheme="red" width="110px" px="27px">Estorno</Badge>
-                              )
-                          }
-                      </Th>
-                      <Th fontWeight="bold" fontSize="13px" textTransform="capitalize" color={commissionsSeller.is_chargeback ? "red.400" : commissionsSeller.confirmed ? "green.400" : "gray.800"}>
-                        {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalAmount)}
-                      </Th>
-                    </Tr>
-                  <Tr>
-                      <Th color="gray.800" fontWeight="normal">
-                        <Text fontSize="10px">Grupo-Cota</Text>
-                        <Text fontSize="13px">{commissionsSeller.quota.group}</Text>
-                      </Th>
-                      <Th color="gray.800" fontWeight="normal">
-                        <Text fontSize="10px">Parcela</Text>
-                        <Text fontSize="13px">{commissionsSeller.seller_commission_rule_parcel.parcel_number}</Text>
-                      </Th>
-                      <Th color="gray.800" fontWeight="normal" fontSize="13px">
-                        1%
-                      </Th>
-                      <Th>
-                      {
-                          !commissionsSeller.is_chargeback ? (
-                            <Badge colorScheme={commissionsSeller.confirmed ? "green" : "yellow"} width="110px" px="27px">{commissionsSeller.confirmed ? "Confirmada" : "Pendente"}</Badge>
-                          ) : (
-                          <Badge colorScheme="red" width="110px" px="27px">Estorno</Badge>
-                              )
-                          }
-                      </Th>
-                      <Th fontWeight="bold" fontSize="13px" textTransform="capitalize" color={commissionsSeller.is_chargeback ? "red.400" : commissionsSeller.confirmed ? "green.400" : "gray.800"}>
-                        {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalAmount)}
-                      </Th>
-                    </Tr>
-                    </>
-                    )
-                  })
-                }
+                    (!commissionsSeller.isError && !commissionsSeller.isLoading) && commissionsSeller.data?.data.data.map((commissionsSeller: SellerCommission) => {
+                      console.log(commissionsSeller);
+                        return (
+                        <>
+                          <Tr>
+                            <Th color="gray.800" fontWeight="normal">
+                              <Text fontSize="10px">Grupo-Cota</Text>
+                              <Text fontSize="13px">{commissionsSeller.quota.group} - {commissionsSeller.quota.quota}</Text>
+                            </Th>
+                            {/* <Th color="gray.800" fontWeight="normal">
+                              <Text fontSize="10px">Parcela</Text>
+                              <Text fontSize="13px">{commissionsSeller.seller_commission_rule_parcel.parcel_number}</Text>
+                            </Th> */}
+                            <Th color="gray.800" fontWeight="normal" fontSize="13px">
+                              {commissionsSeller.seller_commission_rule_parcel.percentage_to_pay}%
+                            </Th>
+                            <Th>
+                            {
+                                !commissionsSeller.is_chargeback ? (
+                                  <Badge colorScheme={commissionsSeller.confirmed ? "green" : "yellow"} width="110px" px="27px">{commissionsSeller.confirmed ? "Confirmada" : "Pendente"}</Badge>
+                                ) : (
+                                <Badge colorScheme="red" width="110px" px="27px">Estorno</Badge>
+                                    )
+                                }
+                            </Th>
+                            <Th fontWeight="bold" fontSize="13px" textTransform="capitalize" color={commissionsSeller.is_chargeback ? "red.400" : commissionsSeller.confirmed ? "green.400" : "gray.800"}>
+                              {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(commissionsSeller.value)}
+                            </Th>
+                          </Tr>
+                        </>
+                        )
+                      })
+                    }
                   </Tbody>
                   {/* <Tfoot>
                   <Tr>

@@ -512,12 +512,12 @@ export default function Leads() {
       ) : (
         leads.data?.data.length === 0 && (
           <Flex justify="center">
-            <Text>Nenhuma lead encontrado.</Text>
+            <Text>Nenhum lead encontrado.</Text>
           </Flex>
         )
       )}
 
-      {filter && <LeadsReportByUser filter={filter} />}
+      {(filter && isManager) && <LeadsReportByUser filter={filter} />}
 
       {!leads.isLoading && !leads.error && (
         <Accordion

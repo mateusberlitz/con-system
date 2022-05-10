@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { SolidButton } from '../../components/Buttons/SolidButton'
 import { CompanySelectMaster } from '../../components/CompanySelect/companySelectMaster'
 import { MainBoard } from '../../components/MainBoard'
-import { useProfile } from '../../hooks/useProfile'
+import { HasPermission, useProfile } from '../../hooks/useProfile'
 import { TaskFilterData, useTasks } from '../../hooks/useTasks'
 import { useWorkingBranch } from '../../hooks/useWorkingBranch'
 import { useWorkingCompany } from '../../hooks/useWorkingCompany'
@@ -41,7 +41,9 @@ export default function Commercial() {
 
   const tasks = useTasks(tasksFilter, page);
 
-  const [isManager, setIsManager] = useState(true);
+  const canBeManager = HasPermission(permissions, 'Comercial Completo');
+
+  const [isManager, setIsManager] = useState(canBeManager);
 
   useEffect(() => {
     setTasksFilter({
@@ -81,14 +83,20 @@ export default function Commercial() {
             Adicionar Venda
           </SolidButton>
 
-          <Flex alignItems="center" h="45px" bg="gray.200" borderRadius="full" w="180px" pos="relative" cursor="pointer" onClick={() => setIsManager(!isManager)}>
-            <Box h="32px" w={isManager ? "77px" : "73px"} bg="orange.400" pos="absolute" transform={isManager ? "translateX(8px)" : "translateX(98px)"} transition={"all ease 0.3s"} borderRadius="full"/>
+          {
+            canBeManager && (
+              <Flex alignItems="center" h="45px" bg="gray.200" borderRadius="full" w="180px" pos="relative" cursor="pointer" onClick={() => setIsManager(!isManager)}>
+                <Box h="32px" w={isManager ? "77px" : "73px"} bg="orange.400" pos="absolute" transform={isManager ? "translateX(8px)" : "translateX(98px)"} transition={"all ease 0.3s"} borderRadius="full"/>
 
-            <HStack justifyContent="space-between" w="100%" px="5" pos="absolute">
-              <Text color={isManager ? "white" : "auto"} transition={"all ease 0.3s"}>Gerente</Text>
-              <Text color={!isManager ? "white" : "auto"} transition={"all ease 0.3s"}>Pessoal</Text>
-            </HStack>
-          </Flex>
+                <HStack justifyContent="space-between" w="100%" px="5" pos="absolute">
+                  <Text color={isManager ? "white" : "auto"} transition={"all ease 0.3s"}>Gerente</Text>
+                  <Text color={!isManager ? "white" : "auto"} transition={"all ease 0.3s"}>Pessoal</Text>
+                </HStack>
+              </Flex>
+            )
+          }
+
+          
         </HStack>
 
         <Stack
