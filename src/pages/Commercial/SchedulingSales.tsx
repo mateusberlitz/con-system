@@ -1,6 +1,6 @@
 import { Flex, Stack, Text } from '@chakra-ui/react'
-import ColumnsChartsSelect from '../../components/ColummnsChartsSelect.tsx';
 import { Select } from '../../components/Forms/Selects/Select';
+import ColumnsChartsSelect from '../../components/Grafics/ColummnsChartsSelect.tsx';
 import { useProfile } from '../../hooks/useProfile'
 
 export default function SchedulingSales() {

@@ -1,7 +1,5 @@
-import { Flex, HStack, Stack, Text, Th, Tr } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
+import { Flex, HStack, Stack, Text } from '@chakra-ui/react'
 import { useProfile } from '../../hooks/useProfile'
-import SimpleDonout from '../../components/SimpleDonout'
 
 export default function ReversedCommissionsTable() {
   const { profile, permissions } = useProfile()

@@ -1,5 +1,5 @@
-import { Flex, Stack, Text } from '@chakra-ui/react'
-import BarCharts from '../../components/BarCharts';
+import { Stack, Text } from '@chakra-ui/react'
+import BarCharts from '../../components/Grafics/BarCharts';
 import { useProfile } from '../../hooks/useProfile'
 
 export default function PurchasedSements() {
@@ -11,7 +11,7 @@ export default function PurchasedSements() {
         <Text color="#000" fontSize="xl" fontWeight="400">
           Segmentos mais comprados
         </Text>
-            <BarCharts />
+           <BarCharts />
       </Stack>
   )
 }

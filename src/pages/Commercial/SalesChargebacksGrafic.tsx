@@ -1,8 +1,7 @@
 import { Flex, Stack, Text } from '@chakra-ui/react'
+import ColumnsCharts from '../../components/Grafics/ColumnsCharts';
 import { useProfile } from '../../hooks/useProfile'
-import TasksChart from '../../components/LineArea';
-import { Select } from '../../components/Forms/Selects/Select';
-import ColumnsCharts from '../../components/ColumnsCharts';
+
 
 export default function SalesChargesGrafics() {
   const { profile, permissions } = useProfile();

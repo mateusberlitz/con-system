@@ -1,7 +1,8 @@
 import { Flex, Stack, Text } from '@chakra-ui/react'
 import { useProfile } from '../../hooks/useProfile'
-import TasksChart from '../../components/LineArea';
+
 import { Select } from '../../components/Forms/Selects/Select';
+import LineAreaHistory from '../../components/Grafics/LineArea';
 
 export default function SalesHistoryGrafic() {
   const { profile, permissions } = useProfile();
@@ -44,7 +45,7 @@ export default function SalesHistoryGrafic() {
             > 
             </Select>
         </Flex>
-            <TasksChart />
+            <LineAreaHistory />
       </Stack>
   )
 }

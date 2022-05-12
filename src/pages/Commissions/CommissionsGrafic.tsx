@@ -1,11 +1,11 @@
 import { Flex, HStack, Spinner, Stack, Text, Th, Tr } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { HasPermission, useProfile } from '../../hooks/useProfile'
-import SimpleDonout from '../../components/SimpleDonout'
 import { CommissionsSellerFilterData, useCommissionsSeller } from '../../hooks/useCommissionsSeller';
 import { useWorkingCompany } from '../../hooks/useWorkingCompany';
 import { useWorkingBranch } from '../../hooks/useWorkingBranch';
 import { SellerCommission } from '../../types';
+import SimpleDonout from '../../components/Grafics/SimpleDonout';
 
 export default function CommissionsGrafic() {
   const { profile, permissions } = useProfile();
