@@ -1,4 +1,4 @@
-import { Box, Flex, FormLabel, HStack, Stack, Switch, Text } from '@chakra-ui/react'
+import { Box, Flex, HStack, Stack, Text } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { SolidButton } from '../../components/Buttons/SolidButton'
 import { CompanySelectMaster } from '../../components/CompanySelect/companySelectMaster'
@@ -16,6 +16,10 @@ import { SchedulesSummary } from './SchedulesSummary'
 
 import { ReactComponent as PlusIcon } from '../../assets/icons/Plus.svg'
 import { NewSaleModal } from './Sales/NewSaleModal'
+import SalesHistoryGrafic from './SalesHistoryGrafic'
+import SalesChargesGrafics from './SalesChargebacksGrafic'
+import PurchasedSements from './PurchasedSegments'
+import SchedulingSales from './SchedulingSales'
 
 export default function Commercial() {
   const { profile, permissions } = useProfile()
@@ -144,6 +148,22 @@ export default function Commercial() {
 
         <LeadsReportByMonth />
       </Stack>
+      <Flex fontSize="13px" spacing="12">
+          <Stack spacing="8" w="100%">
+            <SalesHistoryGrafic />
+          </Stack>
+          <Stack spacing="8" w="100%">
+            <SalesChargesGrafics />
+          </Stack>
+      </Flex>  
+      <Flex fontSize="13px" spacing="12">
+          <Stack spacing="8" w="100%">
+            <PurchasedSements />
+          </Stack>
+          <Stack spacing="8" w="100%">
+            <SchedulingSales />
+          </Stack>
+      </Flex>
     </MainBoard>
   )
 }
