@@ -7,10 +7,19 @@ import LineAreaHistory from '../../components/Grafics/LineArea';
 export default function SalesHistoryGrafic() {
   const { profile, permissions } = useProfile();
       
+  // const options = {};
+
+  // const series = [
+  //       {
+  //           name: 'TEAM A',
+  //           type: 'area',
+  //           data: [44, 55, 31, 47, 31, 43, 26, 41, 31, 47, 33]
+  //           }
+  //   ]
 
   return (
-      <Stack width="98%" min-width="300px" spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8" mt={8}>
-        <Text color="#000" fontSize="xl" fontWeight="400">
+    <Stack width="100%"  min-width="300px" h="400" spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8" mt={4}>
+      <Text color="#000" fontSize="xl" fontWeight="400">
           Histórico de vendas
         </Text>
         <Flex justify="flex-end" align="center">
@@ -45,7 +54,7 @@ export default function SalesHistoryGrafic() {
             > 
             </Select>
         </Flex>
-            <LineAreaHistory />
+            <LineAreaHistory  />
       </Stack>
   )
 }

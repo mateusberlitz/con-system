@@ -1,16 +1,17 @@
 import { Flex, Stack, Text } from '@chakra-ui/react'
-import { Select } from '../../components/Forms/Selects/Select';
-import ColumnsChartsSelect from '../../components/Grafics/ColummnsChartsSelect.tsx';
 import { useProfile } from '../../hooks/useProfile'
 
-export default function SchedulingSales() {
+import { Select } from '../../components/Forms/Selects/Select';
+import LineAreaHistory from '../../components/Grafics/LineArea';
+
+export default function CommissionsReceivedGrafic() {
   const { profile, permissions } = useProfile();
       
 
   return (
-    <Stack width="100%"  h={410}  min-width="300px" spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8">
-      <Text color="#000" fontSize="xl" fontWeight="400">
-          Agendamentos x vendas
+      <Stack width="98%" min-width="300px" spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8" mt={8}>
+        <Text color="#000" fontSize="xl" fontWeight="400">
+          Commissões Recebidas
         </Text>
         <Flex justify="flex-end" align="center">
           <Select
@@ -44,7 +45,7 @@ export default function SchedulingSales() {
             > 
             </Select>
         </Flex>
-            <ColumnsChartsSelect />
+            <LineAreaHistory />
       </Stack>
   )
 }
