@@ -1,51 +1,11 @@
 import { Box, SimpleGrid } from "@chakra-ui/react";
+import { ApexOptions } from "apexcharts";
 import Chart from "react-apexcharts";
 
 interface BarChartProps {
-  options: {
-    colors: string[];
-    chart: {
-      stacked: boolean;
-      type: 'bar' | 'line' | 'area' | 'histogram' | 'pie' | 'radialBar',
-      height: number
-    },
-    fill: {
-      type: 'gradient' | 'solid' | 'pattern' | 'gradientPath',
-      gradient: {
-        shade: 'dark' | 'light',
-        type: 'horizontal' | 'vertical',
-        shadeIntensity: number,
-        inverseColors: boolean,
-        opacityFrom: number,
-        opacityTo: number,
-        stops: number[],
-        colorStops: {
-          offset: number,
-          color: string,
-          opacity: number
-        }[]
-      },
-    },
-    plotOptions: {
-      bar: {
-        borderRadius: number,
-        horizontal: boolean,
-      }
-    },
-    dataLabels: {
-      enabled: boolean,
-    },
-    xaxis: {
-      categories: string[]
-    }
-  };
+  options: ApexOptions,
   legend?: { show: boolean };
-  series: [
-    {
-      name: string;
-      data: number[];
-    }
-  ];
+  series: ApexOptions['series']
 }
 
 const BarCharts = ({ options, series }: BarChartProps) => {

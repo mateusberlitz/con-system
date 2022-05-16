@@ -27,12 +27,12 @@ export default function SalesChargesGrafics() {
               "Ago",
               "Set",
             ],
-            colors: ["rgba(195, 0, 82, 0.5)", "rgba(32, 151, 237, 0.5)"],
+            colors: ["rgba(195, 0, 82, 0.65)", "rgba(32, 151, 237, 0.65)"],
             chart: { toolbar: { show: false }, zoom: { enabled: false } },
-            tooltip: { enabled: false },
+            tooltip: { enabled: true },
             fill: {
-              opacity: 0.3,
-              type: "linear",
+              opacity: 1,
+              type: "gradient",
               gradient: {
                 type: "vertical",
                 shadeIntensity: 1,
@@ -40,21 +40,18 @@ export default function SalesChargesGrafics() {
                 opacityFrom: 1,
                 opacityTo: 1,
                 stops: [0, 100],
-                colorStops: [
-                  { 
-                    offset: 0,
-                    color: "",
-                    opacity: 0
-                  },
-                  {
-                    offset: 100,
-                    color: "",
-                    opacity: 1
-                  }
-                ]
-            }
+                gradientToColors: ["rgba(195, 0, 82, 0)", "rgba(32, 151, 237, 0)"]
+              }
             },
             grid: { show: false },
+            xaxis: {
+              axisBorder: {
+                show: true
+              },
+              axisTicks: {
+                show: false
+              }
+            },
             dataLabels: { enabled: false },
             plotOptions: {
               pie: {
@@ -68,7 +65,7 @@ export default function SalesChargesGrafics() {
                 },
               },
             },
-            legend: { show: false },
+            legend: { show: true },
           }}
           series={[
             {

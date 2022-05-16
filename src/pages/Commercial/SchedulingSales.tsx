@@ -33,32 +33,31 @@ export default function SchedulingSales() {
             "Ago",
             "Set",
           ],
-          colors: ["rgba(32, 151, 237, 0.5)", "rgba(0, 186, 136, 0.5)"],
+          colors: ["rgba(0, 186, 136, 0.65)", "rgba(32, 151, 237, 0.65)"],
           chart: { toolbar: { show: false }, zoom: { enabled: false } },
-          tooltip: { enabled: false },
+          tooltip: { enabled: true },
           fill: {
-            opacity: 0.5,
-            type: "linear",
+            opacity: 1,
+            type: "gradient",
             gradient: {
-              shade: 'dark',
-              type: 'vertical',
-              shadeIntensity: 0.5,
+              type: "vertical",
+              shadeIntensity: 1,
               inverseColors: false,
-              opacityFrom: 0.5,
-              opacityTo: 0.5,
+              opacityFrom: 1,
+              opacityTo: 1,
               stops: [0, 100],
-              colorStops: [{
-                offset: 0,
-                color: 'rgba(32, 151, 237, 0.5)',
-                opacity: 1
-              }, {
-                offset: 100,
-                color: 'rgba(242, 78, 30, 0)',
-                opacity: 0.2
-              }]
+              gradientToColors: ["rgba(0, 186, 136, 0)", "rgba(32, 151, 237, 0)"]
             }
           },
           grid: { show: false },
+          xaxis: {
+            axisBorder: {
+              show: true
+            },
+            axisTicks: {
+              show: false
+            }
+          },
           dataLabels: { enabled: false },
           plotOptions: {
             pie: {

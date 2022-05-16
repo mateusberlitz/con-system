@@ -1,56 +1,10 @@
 import { Box, SimpleGrid } from "@chakra-ui/react";
+import { ApexOptions } from "apexcharts";
 import Chart from "react-apexcharts";
 
 interface LineAreaProps {
-  options: {
-    labels: string[];
-    colors: string[];
-    chart: { toolbar: { show: boolean }; zoom: { enabled: boolean } };
-    tooltip: { enabled: boolean };
-    fill: {
-      opacity: number;
-      type: string;
-      gradient: {
-        type: string;
-        shadeIntensity: number;
-        inverseColors: boolean;
-        opacityFrom: number;
-        opacityTo: number;
-        stops: number[];
-        colorStops: [{
-          offset: number;
-          color: string;
-          opacity: number
-        }, {
-          offset: number;
-          color: string;
-          opacity: number
-        }]
-      }
-    };
-    grid: { show: boolean };
-    dataLabels: { enabled: boolean };
-    plotOptions: {
-      pie: {
-        donut: {
-          labels: {
-            show: boolean;
-            name: { show: boolean; fontSize: string; fontWeight: number };
-            value: { show: boolean; fontSize: string; fontWeight: number };
-            total: { show: boolean; fontSize: string; fontWeight: number };
-          };
-        };
-      };
-    };
-    legend: { show: boolean };
-  }
-  series: [
-    {
-      name: string;
-      type: string;
-      data: number[];
-    }
-  ];
+  options: ApexOptions
+  series: ApexOptions['series']
 }
 
 const LineAreaHistory = ({ options, series }: LineAreaProps) => {

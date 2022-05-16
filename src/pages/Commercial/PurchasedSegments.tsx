@@ -18,11 +18,12 @@ export default function PurchasedSements() {
             type: 'bar',
             height: 430
           },
+          grid: { show: false },
           fill: {
             type: 'gradient',
             gradient: {
               shade: 'dark',
-              type: 'vertical',
+              type: 'horizontal',
               shadeIntensity: 0.5,
               inverseColors: false,
               opacityFrom: 1,
@@ -30,25 +31,37 @@ export default function PurchasedSements() {
               stops: [0, 100],
               colorStops: [{
                 offset: 0,
+                color: 'rgba(242, 78, 30, 0)',
+                opacity: 1
+              },
+              {
+                offset: 100,
                 color: 'rgba(242, 78, 30, 0.5)',
                 opacity: 1
-              }, {
-                offset: 100,
-                color: 'rgba(242, 78, 30, 0)',
-                opacity: 0.2
               }]
             }
           },
           plotOptions: {
             bar: {
-              borderRadius: 4,
+              borderRadius: 1,
               horizontal: true,
             }
           },
           dataLabels: {
             enabled: false,
           },
+          yaxis: {
+            axisBorder: {
+              show: true
+            },
+          },
           xaxis: {
+            axisBorder: {
+              show: true
+            },
+            axisTicks: {
+              show: false
+            },
             categories: ["Investimento", "Imóvel", "Veículo"]
           }
         }}

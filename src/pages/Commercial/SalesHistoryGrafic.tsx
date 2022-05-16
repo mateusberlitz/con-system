@@ -61,11 +61,19 @@ export default function SalesHistoryGrafic() {
                 "Ago",
                 "Set",
               ],
-              colors: ["rgba(242, 78, 30, 0.5)"],
+              colors: ["rgba(242, 78, 30, 1)"],
               chart: { toolbar: { show: false }, zoom: { enabled: false } },
               tooltip: { enabled: false },
+              xaxis: {
+                axisBorder: {
+                  show: true
+                },
+                axisTicks: {
+                  show: false
+                }
+              },
               fill: {
-                opacity: 0.3,
+                opacity: 1,
                 type: "gradient",
                 gradient: {
                   type: "vertical",
