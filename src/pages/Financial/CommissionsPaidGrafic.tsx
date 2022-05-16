@@ -3,15 +3,15 @@ import { useProfile } from '../../hooks/useProfile'
 
 import { Select } from '../../components/Forms/Selects/Select';
 import LineAreaHistory from '../../components/Grafics/LineArea';
-import { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } from 'constants';
 
-export default function SalesHistoryGrafic() {
+export default function CommissionsPaidGrafic() {
   const { profile, permissions } = useProfile();
+      
 
   return (
-    <Stack width="100%"  min-width="300px" h="400" spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8" mt={4}>
-      <Text color="#000" fontSize="xl" fontWeight="400">
-          Histórico de vendas
+      <Stack width="100%" min-width="300px" spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8" mt={8}>
+        <Text color="#000" fontSize="xl" fontWeight="400">
+          Comissões Pagas
         </Text>
         <Flex justify="flex-end" align="center">
           <Select
@@ -45,8 +45,7 @@ export default function SalesHistoryGrafic() {
             > 
             </Select>
         </Flex>
-            <LineAreaHistory 
-              options={{
+            <LineAreaHistory options={{
                 labels: [
                 "Out",
                 "Nov",
@@ -61,7 +60,7 @@ export default function SalesHistoryGrafic() {
                 "Ago",
                 "Set",
               ],
-              colors: ["rgba(242, 78, 30, 0.5)"],
+              colors: [" rgba(197, 32, 101, 0.5)"],
               chart: { toolbar: { show: false }, zoom: { enabled: false } },
               tooltip: { enabled: false },
               fill: {
@@ -77,12 +76,12 @@ export default function SalesHistoryGrafic() {
                   colorStops: [
                     { 
                       offset: 0,
-                      color: "rgba(242, 78, 30, 0.5)",
+                      color: "rgba(197, 32, 101, 0.5)",
                       opacity: 0.5
                     },
                     {
                       offset: 100,
-                      color: "rgba(242, 78, 30, 0)",
+                      color: "rgba(197, 32, 101, 0)",
                       opacity: 0.7
                     }
                   ]
@@ -110,8 +109,7 @@ export default function SalesHistoryGrafic() {
                 type: "area",
                 data: [44, 55, 57, 56, 61, 58, 63, 60, 66],
               }
-            ]}
-            />
+            ]} />
       </Stack>
   )
 }

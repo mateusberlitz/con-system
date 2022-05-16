@@ -1,38 +1,54 @@
 import { Box, SimpleGrid } from "@chakra-ui/react";
 import Chart from "react-apexcharts";
 
-const BarCharts = () => {
-  const options = {
-    labels: ["Investimento", "Imóvel", "Veículo"],
-    colors: ["rgba(242, 78, 30, 0.5)", "rgba(242, 78, 30, 0.5)"],
-    fill: {
-      type: "linear",
-      opacity: 0.7,
+interface BarChartProps {
+  options: {
+    colors: string[];
+    chart: {
+      stacked: boolean;
+      type: 'bar' | 'line' | 'area' | 'histogram' | 'pie' | 'radialBar',
+      height: number
     },
-    dataLabels: { enabled: false },
-    plotOptions: {
-      bar: { borderRadius: 4, horizontal: true },
-      pie: {
-        donut: {
-          labels: {
-            show: true,
-            name: { show: true, fontSize: "14px", fontWeight: 600 },
-            value: { show: true, fontSize: "14px", fontWeight: 600 },
-            total: { show: true, fontSize: "14px", fontWeight: 600 },
-          },
-        },
+    fill: {
+      type: 'gradient' | 'solid' | 'pattern' | 'gradientPath',
+      gradient: {
+        shade: 'dark' | 'light',
+        type: 'horizontal' | 'vertical',
+        shadeIntensity: number,
+        inverseColors: boolean,
+        opacityFrom: number,
+        opacityTo: number,
+        stops: number[],
+        colorStops: {
+          offset: number,
+          color: string,
+          opacity: number
+        }[]
       },
     },
-    legend: { show: false },
-  };
-
-  const series = [
-    {
-      name: "",
-      data: [44, 55, 57],
+    plotOptions: {
+      bar: {
+        borderRadius: number,
+        horizontal: boolean,
+      }
     },
+    dataLabels: {
+      enabled: boolean,
+    },
+    xaxis: {
+      categories: string[]
+    }
+  };
+  legend?: { show: boolean };
+  series: [
+    {
+      name: string;
+      data: number[];
+    }
   ];
+}
 
+const BarCharts = ({ options, series }: BarChartProps) => {
   return (
     <Box>
       <SimpleGrid columns={[1, 1, 1, 1]} spacing={4}>

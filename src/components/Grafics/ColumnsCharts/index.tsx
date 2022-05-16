@@ -1,58 +1,62 @@
 import { Box, SimpleGrid } from "@chakra-ui/react";
 import Chart from "react-apexcharts";
 
-const ColumnsCharts = () => {
-  const options = {
-    labels: [
-      "Out",
-      "Nov",
-      "Dez",
-      "Jan",
-      "Fev",
-      "Mar",
-      "Abr",
-      "Mai",
-      "Jun",
-      "Jul",
-      "Ago",
-      "Set",
-    ],
-    colors: ["rgba(195, 0, 82, 0.5)", "rgba(32, 151, 237, 0.5)"],
-    chart: { toolbar: { show: false }, zoom: { enabled: false } },
-    tooltip: { enabled: false },
+interface ColummnsChartProps {
+  options: {
+    labels: string[];
+    colors: string[];
+    chart: { toolbar: { show: boolean }; zoom: { enabled: boolean } };
+    tooltip: { enabled: boolean };
     fill: {
-      opacity: 0.3,
-      type: "gradient",
-      gradient: {type: "vertical", opacityForm: 0.7, opacityTo: 0.3 },
-    },
-    grid: { show: false },
-    dataLabels: { enabled: false },
+      opacity: number;
+      type: string;
+      gradient: {
+        type: string;
+        shadeIntensity: number;
+        inverseColors: boolean;
+        opacityFrom: number;
+        opacityTo: number;
+        stops: number[];
+        colorStops: [{
+          offset: number;
+          color: string;
+          opacity: number
+        }, {
+          offset: number;
+          color: string;
+          opacity: number
+        }]
+      }
+    };
+    grid: { show: boolean };
+    dataLabels: { enabled: boolean };
     plotOptions: {
       pie: {
         donut: {
           labels: {
-            show: true,
-            name: { show: true, fontSize: "14px", fontWeight: 600 },
-            value: { show: true, fontSize: "14px", fontWeight: 600 },
-            total: { show: true, fontSize: "14px", fontWeight: 600 },
-          },
-        },
-      },
-    },
-    legend: { show: true },
+            show: boolean;
+            name: { show: boolean; fontSize: string; fontWeight: number };
+            value: { show: boolean; fontSize: string; fontWeight: number };
+            total: { show: boolean; fontSize: string; fontWeight: number };
+          };
+        };
+      };
+    };
+    legend: { show: boolean };
   };
-
-  const series = [
+  series: [
     {
-      name: "Net Profit",
-      data: [44, 55, 57, 56, 61, 58, 63, 60, 66],
+      name: string;
+      data: number[];
     },
     {
-      name: "Revenue",
-      data: [76, 85, 101, 98, 87, 105, 91, 114, 94],
-    },
+      name: string;
+      data: number[];
+    }
   ];
+}
 
+const ColumnsCharts = ({ options, series }: ColummnsChartProps) => {
   return (
     <Box>
       <SimpleGrid columns={[1, 1, 1, 1]} spacing={4}>
@@ -62,7 +66,7 @@ const ColumnsCharts = () => {
             series={series}
             type="bar"
             height="255"
-            width="400"
+            width={400}
           />
         </Box>
       </SimpleGrid>

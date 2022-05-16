@@ -9,9 +9,9 @@ export default function CommissionsReceivedGrafic() {
       
 
   return (
-      <Stack width="98%" min-width="300px" spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8" mt={8}>
+      <Stack width="100%" min-width="300px" spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8" mt={8}>
         <Text color="#000" fontSize="xl" fontWeight="400">
-          Commissões Recebidas
+          Comissões Recebidas
         </Text>
         <Flex justify="flex-end" align="center">
           <Select
@@ -45,7 +45,71 @@ export default function CommissionsReceivedGrafic() {
             > 
             </Select>
         </Flex>
-            <LineAreaHistory />
+            <LineAreaHistory options={{
+                labels: [
+                "Out",
+                "Nov",
+                "Dez",
+                "Jan",
+                "Fev",
+                "Mar",
+                "Abr",
+                "Mai",
+                "Jun",
+                "Jul",
+                "Ago",
+                "Set",
+              ],
+              colors: [" rgba(0, 186, 136, 0.5)"],
+              chart: { toolbar: { show: false }, zoom: { enabled: false } },
+              tooltip: { enabled: false },
+              fill: {
+                opacity: 0.3,
+                type: "gradient",
+                gradient: {
+                  type: "vertical",
+                  shadeIntensity: 1,
+                  inverseColors: false,
+                  opacityFrom: 1,
+                  opacityTo: 1,
+                  stops: [0, 100],
+                  colorStops: [
+                    { 
+                      offset: 0,
+                      color: " rgba(0, 186, 136, 0.5)",
+                      opacity: 0.5
+                    },
+                    {
+                      offset: 100,
+                      color: " rgba(0, 186, 136, 0)",
+                      opacity: 0.7
+                    }
+                  ]
+              }
+              },
+              grid: { show: false },
+              dataLabels: { enabled: false },
+              plotOptions: {
+                pie: {
+                  donut: {
+                    labels: {
+                      show: false,
+                      name: { show: false, fontSize: "16px", fontWeight: 400 },
+                      value: { show: false, fontSize: "16px", fontWeight: 400 },
+                      total: { show: false, fontSize: "16px", fontWeight: 400 },
+                    },
+                  },
+                },
+              },
+              legend: { show: false },
+            }}
+            series={[
+              {
+                name: "Net Profit",
+                type: "area",
+                data: [44, 55, 57, 56, 61, 58, 63, 60, 66],
+              }
+            ]} />
       </Stack>
   )
 }

@@ -1,4 +1,4 @@
-import { Stack, Flex } from '@chakra-ui/layout'
+import { Stack, HStack, Flex, Box } from '@chakra-ui/layout'
 import { useEffect, useState } from 'react'
 import { MainBoard } from '../../components/MainBoard'
 import { PaymentFilterData, usePayments } from '../../hooks/usePayments'
@@ -21,6 +21,7 @@ import { CompanySelectMaster } from '../../components/CompanySelect/companySelec
 import { useWorkingBranch } from '../../hooks/useWorkingBranch'
 import { CashFlowSummary } from './CashFlowSummary'
 import CommissionsReceivedGrafic from './CommissionsReceivedGrafic'
+import CommissionsPaidGrafic from './CommissionsPaidGrafic'
 
 export default function Financial() {
   const { profile, permissions } = useProfile()
@@ -259,15 +260,13 @@ export default function Financial() {
             )}
           </Stack>
         </Stack>
-        <Flex fontSize="13px" spacing="12">
-          <Stack spacing="8" w="100%">
-            <CommissionsReceivedGrafic />
-          </Stack>
-          <Stack spacing="8" w="100%">
-            <CommissionsReceivedGrafic />
-          </Stack>
-      </Flex>
       </Stack>
+          <HStack  spacing="8" w={['100%', '100%']} mt={6}>
+            <CommissionsReceivedGrafic  />
+            <HStack  spacing="8" w={['100%', '100%']} mt={6}>
+             <CommissionsPaidGrafic />
+            </HStack>
+          </HStack>
     </MainBoard>
   )
 }

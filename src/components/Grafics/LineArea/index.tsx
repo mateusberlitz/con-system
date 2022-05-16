@@ -1,55 +1,59 @@
 import { Box, SimpleGrid } from "@chakra-ui/react";
 import Chart from "react-apexcharts";
 
-const LineAreaHistory = () => {
-  const options = {
-    labels: [
-      "Out",
-      "Nov",
-      "Dez",
-      "Jan",
-      "Fev",
-      "Mar",
-      "Abr",
-      "Mai",
-      "Jun",
-      "Jul",
-      "Ago",
-      "Set",
-    ],
-    colors: ["rgba(242, 78, 30, 0.5)"],
-    chart: { toolbar: { show: false }, zoom: { enabled: false } },
-    tooltip: { enabled: false },
+interface LineAreaProps {
+  options: {
+    labels: string[];
+    colors: string[];
+    chart: { toolbar: { show: boolean }; zoom: { enabled: boolean } };
+    tooltip: { enabled: boolean };
     fill: {
-      opacity: 0.3,
-      type: "gradient",
-      gradient: { shade: "dark", opacityForm: 0.7, opacityTo: 0.3 },
-    },
-    grid: { show: false },
-    dataLabels: { enabled: false },
+      opacity: number;
+      type: string;
+      gradient: {
+        type: string;
+        shadeIntensity: number;
+        inverseColors: boolean;
+        opacityFrom: number;
+        opacityTo: number;
+        stops: number[];
+        colorStops: [{
+          offset: number;
+          color: string;
+          opacity: number
+        }, {
+          offset: number;
+          color: string;
+          opacity: number
+        }]
+      }
+    };
+    grid: { show: boolean };
+    dataLabels: { enabled: boolean };
     plotOptions: {
       pie: {
         donut: {
           labels: {
-            show: true,
-            name: { show: true, fontSize: "14px", fontWeight: 600 },
-            value: { show: true, fontSize: "14px", fontWeight: 600 },
-            total: { show: true, fontSize: "14px", fontWeight: 600 },
-          },
-        },
-      },
-    },
-    legend: { show: true },
-  };
-
-  const series = [
+            show: boolean;
+            name: { show: boolean; fontSize: string; fontWeight: number };
+            value: { show: boolean; fontSize: string; fontWeight: number };
+            total: { show: boolean; fontSize: string; fontWeight: number };
+          };
+        };
+      };
+    };
+    legend: { show: boolean };
+  }
+  series: [
     {
-      name: "TEAM A",
-      type: "area",
-      data: [44, 55, 31, 47, 31, 43, 26, 41, 31, 47, 33],
-    },
+      name: string;
+      type: string;
+      data: number[];
+    }
   ];
+}
 
+const LineAreaHistory = ({ options, series }: LineAreaProps) => {
   return (
     <Box>
       <SimpleGrid columns={[1, 1, 1, 1]} spacing={4}>
@@ -59,7 +63,7 @@ const LineAreaHistory = () => {
             series={series}
             type="area"
             height="200"
-            width="400"
+            width={400}
           />
         </Box>
       </SimpleGrid>
