@@ -654,6 +654,8 @@ export default function Payments(){
                         const tomorrow = getDay(formatYmdDate(new Date().toDateString())) + 1;
                         const paymentDay = getDay(day);
 
+                        console.log(day);
+
                         const hasPaymentsYoPay = payments.data?.data[day].filter((payment:Payment) => Number(payment.status) === 0).length;
 
                         return (

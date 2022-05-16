@@ -32,7 +32,7 @@ const FilterSalesmanCommissionsFormSchema = yup.object().shape({
     group: yup.string(),
     quote: yup.string(),
     confirmed: yup.string(),
-    contract_number: yup.string(),
+    number_contract: yup.string(),
     parcel_number: yup.string(),
 });
 
@@ -49,8 +49,6 @@ export default function CommissionsSalesman(){
 
     const isManager = HasPermission(permissions, 'Comercial Completo') && !HasPermission(permissions, 'Comissões Completo');
 
-    console.log(HasPermission(permissions, 'Comissões Completo'));
-
     const [filter, setFilter] = useState<CommissionsSellerFilterData>(() => {
         const data: CommissionsSellerFilterData = {
             search: '',
@@ -65,6 +63,7 @@ export default function CommissionsSalesman(){
     });
     
     const handleSearchCommissionsSeller = async (search : CommissionsSellerFilterData) => {
+        console.log(search);
         setPage(1);
         setFilter({...filter, ...search});
     }
@@ -93,38 +92,38 @@ export default function CommissionsSalesman(){
                 </SolidButton>
             </Stack>
 
-            <Stack flexDir={["column", "row"]} spacing="6" as="form" mb="20">
+            <Stack flexDir={["column", "row"]} spacing="6" as="form" mb="20" onSubmit={handleSubmit(handleSearchCommissionsSeller)}>
                 <Box w="100%">
                     <Stack spacing="6" w="100%">
                         <Stack direction={["column", "row"]} spacing="6">
-                            <Input register={register} name="search" type="text" error={formState.errors.search} placeholder="Procurar" variant="filled"/>
+                            <Input register={register} name="search" type="text" error={formState.errors.search} placeholder="Procurar" variant="filled" focusBorderColor="red.400"/>
 
-                            <Input register={register} name="start_date" type="date" error={formState.errors.start_date} placeholder="Data Inicial" variant="filled"/>
-                            <Input register={register} name="end_date" type="date" error={formState.errors.end_date} placeholder="Data Final" variant="filled"/>
+                            <Input register={register} name="start_date" type="date" error={formState.errors.start_date} placeholder="Data Inicial" variant="filled" focusBorderColor="red.400"/>
+                            <Input register={register} name="end_date" type="date" error={formState.errors.end_date} placeholder="Data Final" variant="filled" focusBorderColor="red.400"/>
 
-                            <Select register={register} h="45px" name="category" w="100%" maxW="200px" error={formState.errors.is_chargeback} fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full" placeholder="Estorno">
-                                <option value="">Status</option>
-                                <option value={0}>Pendente</option>
-                                <option value={1}>Confirmada</option>
+                            <Select register={register} h="45px" name="is_chargeback" w="100%" maxW="200px" error={formState.errors.is_chargeback} fontSize="sm" focusBorderColor="red.400" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
+                                <option value="">Estorno</option>
+                                <option value={0}>Sim</option>
+                                <option value={1}>Não</option>
                             </Select>
                         </Stack>
 
                         <Stack direction={["column", "row"]} spacing="6">
-                            <Input name="group" type="text" placeholder="Grupo" variant="filled"/>
+                            <Input name="group" register={register} type="text" error={formState.errors.group} placeholder="Grupo" variant="filled" focusBorderColor="red.400"/>
 
-                            <Input name="quote" type="text" placeholder="Cota" variant="filled"/>
+                            <Input name="quota" register={register} type="text" error={formState.errors.quota} placeholder="Cota" variant="filled" focusBorderColor="red.400"/>
 
-                            <Input name="contract" type="text" placeholder="Contrato" variant="filled"/>
+                            <Input name="number_contract" register={register} error={formState.errors.number_contract} type="text" placeholder="Contrato" variant="filled" focusBorderColor="red.400"/>
 
-                            <Input name="parcela" type="text" placeholder="Parcela" variant="filled"/>
+                            <Input name="parcel_number" register={register} error={formState.errors.parcel_number} type="text" placeholder="Parcela" variant="filled" focusBorderColor="red.400"/>
 
-                            <Select defaultValue={0} h="45px" name="pendency" w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
+                            <Select register={register} error={formState.errors.confirmed} h="45px" name="confirmed" w="100%" maxW="200px" fontSize="sm" focusBorderColor="red.400" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
                                 <option value="">Status</option>
-                                <option value={1}>Pendente</option>
-                                <option value={0}>Confirmada</option>
+                                <option value={0}>Pendente</option>
+                                <option value={1}>Confirmada</option>
                             </Select>
 
-                            <OutlineButton type="submit" mb="10" color="red.400" borderColor="red.400" colorScheme="blue">
+                            <OutlineButton type="submit" mb="10" color="red.400" borderColor="red.400" colorScheme="red">
                                 Filtrar
                             </OutlineButton>
                         </Stack>

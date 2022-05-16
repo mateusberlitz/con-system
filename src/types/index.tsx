@@ -36,6 +36,7 @@ export interface User{
     //seller_commission_rule?: SellerCommissionRule;
     teams: Team[];
     goals: Goal[];
+    quotas?: Quota[];
     goal_amount?: number;
     conversion_percent?: number;
 }
@@ -524,6 +525,7 @@ export interface Quota{
     consortium_type: ConsortiumType;
     contract: Contract;
     customer: Customer;
+    customer_id: number;
     credit: number;
     installments_paid: number;
     group: string;

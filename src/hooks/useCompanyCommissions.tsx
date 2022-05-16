@@ -11,7 +11,7 @@ export interface CompanyCommissionsFilterData{
     chargeback?: number;
     group?: number;
     quota?: number;
-    contract_number?: number;
+    number_contract?: number;
     confirmed?: boolean;
     group_by?: string
     is_chargeback?: boolean;
@@ -31,7 +31,7 @@ export const getCompanyCommissions = async (filter?: CompanyCommissionsFilterDat
               confirmed: filter.confirmed,
               group: filter.group,
               quota: filter.quota,
-              contract_number: filter.contract_number,
+              number_contract: filter.number_contract,
               is_chargeback: filter.is_chargeback,
               group_by: filter.group_by,
             }

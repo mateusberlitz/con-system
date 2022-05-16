@@ -31,7 +31,7 @@ const FilterCompanyCommissionsFormSchema = yup.object().shape({
     group: yup.string(),
     quote: yup.string(),
     confirmed: yup.string(),
-    contract_number: yup.string(),
+    number_contract: yup.string(),
     parcel_number: yup.string(),
 });
 
@@ -88,12 +88,12 @@ export default function Company(){
                 <Box w="100%">
                     <Stack spacing="6" w="100%">
                         <Stack direction={["column", "row"]} spacing="6">
-                            <Input register={register} name="search" type="text" error={formState.errors.search} placeholder="Procurar" variant="filled"/>
+                            <Input register={register} name="search" type="text" error={formState.errors.search} placeholder="Procurar" variant="filled" focusBorderColor="red.400"/>
 
-                            <Input register={register} name="start_date" type="date" error={formState.errors.start_date} placeholder="Data Inicial" variant="filled"/>
-                            <Input register={register} name="end_date" type="date" error={formState.errors.end_date} placeholder="Data Final" variant="filled"/>
+                            <Input register={register} name="start_date" type="date" error={formState.errors.start_date} placeholder="Data Inicial" variant="filled" focusBorderColor="red.400"/>
+                            <Input register={register} name="end_date" type="date" error={formState.errors.end_date} placeholder="Data Final" variant="filled" focusBorderColor="red.400"/>
 
-                            <Select register={register} h="45px" name="is_chargeback" w="100%" maxW="200px" error={formState.errors.is_chargeback} fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
+                            <Select register={register} h="45px" name="is_chargeback" w="100%" maxW="200px" error={formState.errors.is_chargeback} fontSize="sm" focusBorderColor="red.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
                                 <option value="">Estorno</option>
                                 <option value={1}>Sim</option>
                                 <option value={0}>Não</option>
@@ -101,15 +101,15 @@ export default function Company(){
                         </Stack>
 
                         <Stack direction={["column", "row"]} spacing="6">
-                            <Input register={register} name="group" type="text" placeholder="Grupo" variant="filled" error={formState.errors.group}/>
+                            <Input register={register} name="group" type="text" placeholder="Grupo" variant="filled" error={formState.errors.group} focusBorderColor="red.400"/>
 
-                            <Input register={register} name="quote" type="text" placeholder="Cota" variant="filled" error={formState.errors.quota}/>
+                            <Input register={register} name="quote" type="text" placeholder="Cota" variant="filled" error={formState.errors.quota} focusBorderColor="red.400"/>
 
-                            <Input register={register} name="contract_number" type="text" placeholder="Contrato" variant="filled" error={formState.errors.contract_number}/>
+                            <Input register={register} name="number_contract" type="text" placeholder="Contrato" variant="filled" error={formState.errors.number_contract} focusBorderColor="red.400"/>
 
-                            <Input register={register} name="parcel_number" type="text" placeholder="Parcela" variant="filled" error={formState.errors.parcel_number}/>
+                            <Input register={register} name="parcel_number" type="text" placeholder="Parcela" variant="filled" error={formState.errors.parcel_number} focusBorderColor="red.400"/>
 
-                            <Select defaultValue={0} h="45px" register={register} name="confirmed" error={formState.errors.confirmed}  w="100%" maxW="200px" fontSize="sm" focusBorderColor="blue.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
+                            <Select defaultValue={0} h="45px" register={register} name="confirmed" error={formState.errors.confirmed}  w="100%" maxW="200px" fontSize="sm" focusBorderColor="red.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
                                 <option value="">Status</option>
                                 <option value={0}>Pendente</option>
                                 <option value={1}>Confirmada</option>

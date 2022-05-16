@@ -4,7 +4,6 @@ import {
   HStack,
   Icon,
   IconButton,
-  Link,
   Spinner,
   Stack,
   Td,
@@ -29,7 +28,7 @@ import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { UserFilterData, useUsers } from '../../../hooks/useUsers'
 
-import { Goal, User } from '../../../types'
+import { Goal, Quota, User } from '../../../types'
 import { useEffect, useState } from 'react'
 import { useCompanies } from '../../../hooks/useCompanies'
 import { useRoles } from '../../../hooks/useRoles'
@@ -44,6 +43,13 @@ import {
 import { ListGoalsModal } from './ListGoalsModal'
 import { useWorkingCompany } from '../../../hooks/useWorkingCompany'
 import { useWorkingBranch } from '../../../hooks/useWorkingBranch'
+import { SolidButton } from '../../../components/Buttons/SolidButton'
+import { Link } from 'react-router-dom'
+import { useProfile } from '../../../hooks/useProfile'
+import { ConfirmUnicludeUserModal } from '../../configs/Branch/ConfirmUnicludeUserModal'
+import { ConfirmTeamUnicludeUserModal } from '../../configs/Teams/ConfirmTeamUnicludeUserModal'
+import IncludeUserModal, { IncludeUserData } from '../../configs/Users/IncludeUserModal'
+import Users from '../../configs/Users'
 
 const SearchUserFormSchema = yup.object().shape({
   search: yup.string().nullable(),
@@ -69,14 +75,17 @@ export default function Sellers() {
   const workingBranch = useWorkingBranch()
   const companies = useCompanies()
   const roles = useRoles()
+  const { profile } = useProfile();
 
   const [filter, setFilter] = useState<UserFilterData>(() => {
     const data: UserFilterData = {
       search: '',
       branch: workingBranch.branch?.id,
       company: workingCompany.company?.id,
-      role: 5,
-      goals: true
+      team: (profile && profile.teams.length > 0) ? profile.teams[0].id : undefined,
+      //role: 5,
+      goals: true,
+      quotas: true,
     }
 
     return data
@@ -226,9 +235,6 @@ export default function Sellers() {
   })
 
   const handleSearchUser = async (search: UserFilterData) => {
-    search.role = 5
-    search.goals = true
-
     setFilter({ ...filter, ...search })
   }
 
@@ -241,6 +247,43 @@ export default function Sellers() {
       branch: workingBranch.branch?.id
     })
   }, [workingCompany, workingBranch])
+
+  const [user, setUser] = useState<User>();
+  const [isConfirmUnicludeUserModalOpen, setIsConfirmUnicludeUserModalOpen] = useState(false)
+
+  function OpenConfirmUnicludeUserModal(user: User) {
+    setUser(user);
+    setIsConfirmUnicludeUserModalOpen(true)
+  }
+  function CloseConfirmUnicludeUserModal() {
+    setIsConfirmUnicludeUserModalOpen(false)
+  }
+
+
+  const [isIncludeUserModalOpen, setIsIncludeUserModalOpen] = useState(false)
+  const [includeUserData, setIncludeUserData] = useState<IncludeUserData>({
+    company: 0,
+    companyName: '',
+    branch: 0,
+    branchName: '',
+    team: 0,
+    teamName: ''
+  });
+
+  function OpenTeamIncludeUserModal(teamId: number, afterIncludeUser?:() => void) {
+    setIncludeUserData({
+      branch: workingBranch.branch ? workingBranch.branch.id : undefined,
+      company: workingBranch.branch ? workingBranch.branch.company.id : undefined,
+      team: teamId
+    });
+
+    setIsIncludeUserModalOpen(true);
+  }
+
+  function CloseIncludeUserModal() {
+    setIsIncludeUserModalOpen(false)
+  }
+
 
   return (
     <MainBoard sidebar="commercial" header={<CompanySelectMaster />}>
@@ -285,6 +328,40 @@ export default function Sellers() {
         openNewGoalModal={OpenNewGoalModal}
         openConfirmRemoveGoalModal={OpenConfirmRemoveGoalModal}
       />
+
+      <IncludeUserModal
+        afterEdit={refetch}
+        toIncludeUserProps={includeUserData}
+        isOpen={isIncludeUserModalOpen}
+        onRequestClose={CloseIncludeUserModal}
+      />
+
+      {
+        user && (
+          <ConfirmTeamUnicludeUserModal
+            afterRemove={refetch}
+            toRemoveUser={user}
+            toRemoveTeamId={(profile && profile.teams.length > 0) ? profile.teams[0].id : 0}
+            isOpen={isConfirmUnicludeUserModalOpen}
+            onRequestClose={CloseConfirmUnicludeUserModal}
+          />
+        )
+      }
+
+      {
+        (profile && profile.teams.length > 0) && (
+          <SolidButton
+            onClick={() => OpenTeamIncludeUserModal(profile.teams[0].id)}
+            mb="12"
+            color="white"
+            bg="orange.400"
+            icon={PlusIcon}
+            colorScheme="orange"
+          >
+            Adicionar Integrante
+          </SolidButton>
+        )
+      }
 
       <HStack
         as="form"
@@ -360,6 +437,9 @@ export default function Sellers() {
                 text: 'Meta atual'
               },
               {
+                text: 'Vendido'
+              },
+              {
                 text: 'Último acesso'
               },
               {
@@ -374,6 +454,10 @@ export default function Sellers() {
                 const goal = user.goals.find(goal => {
                   return goal.month == month
                 })
+
+                const salesAmount = user.quotas ?  user.quotas.reduce((sumAmount:number, quota:Quota) => {
+                    return sumAmount + quota.credit;
+                }, 0) : 0;
 
                 return (
                   <Tr key={user.id}>
@@ -509,11 +593,14 @@ export default function Sellers() {
                       )}
                     </Td>
                     <Td fontSize="sm" color="gray.800">
+                      {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(salesAmount)}
+                    </Td>
+                    <Td fontSize="sm" color="gray.800">
                       12/07/2021
                     </Td>
                     <Td>
                       <HStack spacing="4">
-                        <Link href={`/historico/${user.id}`}>
+                        <Link to={`/historico/${user.id}`}>
                           <HStack>
                             <Icon
                               as={PasteIcon}
@@ -532,12 +619,7 @@ export default function Sellers() {
                     </Td>
                     <Td>
                       <RemoveButton
-                        onClick={() =>
-                          OpenConfirmUserRemoveModal({
-                            id: user.id,
-                            name: user.name
-                          })
-                        }
+                        onClick={() => OpenConfirmUnicludeUserModal(user)}
                       />
                     </Td>
                   </Tr>

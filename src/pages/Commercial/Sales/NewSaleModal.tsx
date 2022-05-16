@@ -155,7 +155,9 @@ export function NewSaleModal({
         saleData.lead = toAddLeadData.id
       }
 
-      saleData.date_sale = formatInputDate(saleData.date_sale)
+      console.log(saleData.date_sale);
+
+      saleData.date_sale = saleData.date_sale;
       saleData.credit = moneyToBackend(saleData.credit)
 
       const newSaleData = {

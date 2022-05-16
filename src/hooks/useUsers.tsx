@@ -8,6 +8,7 @@ export interface UserFilterData{
     team?: number;
     role?: number;
     goals?: boolean;
+    quotas?: boolean;
 }
 
 export const getUsers = async (filter?: UserFilterData) => {
@@ -19,6 +20,7 @@ export const getUsers = async (filter?: UserFilterData) => {
               company: filter.company,
               branch: filter.branch,
               goals: filter.goals,
+              quotas: filter.quotas,
               team: filter.team,
             }
         });

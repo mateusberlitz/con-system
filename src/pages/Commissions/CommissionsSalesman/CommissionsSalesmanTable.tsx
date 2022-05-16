@@ -22,12 +22,10 @@ export default function LastComissionsTable({monthName, commissionsSeller}: Sell
     const isManager = HasPermission(permissions, 'Comercial Completo');
 
     const totalCreditMonthAmount = commissionsSeller.reduce((sumAmount:number, sellerCommission:SellerCommission) => {
-        console.log(sumAmount, sellerCommission.quota.credit);
         return sumAmount + sellerCommission.quota.credit;
     }, 0);
 
     const totalMonthAmount = commissionsSeller.reduce((sumAmount:number, sellerCommission:SellerCommission) => {
-        console.log(sumAmount, sellerCommission.value);
         return sumAmount + sellerCommission.value;
     }, 0);
 

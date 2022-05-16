@@ -391,11 +391,17 @@ const Routes = (): JSX.Element => {
           exact
           component={Customers}
         />
-        <PrivateRoute
-          path={`/teams`}
+        {/* <PrivateRoute
+          path={`/team`}
           neededPermission="Comercial Completo"
           exact
           component={Teams}
+        /> */}
+        <PrivateRoute
+          path={`/team`}
+          neededPermission="Comercial Completo"
+          exact
+          component={Sellers}
         />
 
         <PrivateRoute path={`/comissões`} neededPermission="Comissões Vendedor" exact component={Commissions} />
