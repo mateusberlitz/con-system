@@ -37,9 +37,9 @@ export default function LastComissionsTable() {
   }, 0)
 
       return (
-          <Stack px={["5", "8"]} spacing="6" min-width="300px" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" py="8">
+          <Stack min-width="300px" spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" py="8">
             <HStack align="center" justify="space-between" spacing="4">
-              <Text color="#000" fontSize="xl" fontWeight="400">
+              <Text color="#000" ml={2} fontSize="xl" fontWeight="400">
                 Ultimas Comissões
               </Text>
             </HStack>spacing="8" justify="space-between" alignItems="left" bg="white"
@@ -107,36 +107,15 @@ export default function LastComissionsTable() {
                       })
                     }
                   </Tbody>
-                  {/* <Tfoot>
-                  <Tr>
-                  <Th color="gray.800" fontWeight="normal">
-                  <Text fontSize="10px">Grupo-Cota</Text>
-                  <Text fontSize="13px">{com.quota.group}</Text>
-                  </Th>
-                  <Th color="gray.800" fontWeight="normal">
-                  <Text fontSize="10px">Parcela</Text>
-                  <Text fontSize="13px">1</Text>
-                  </Th>
-                  <Th color="gray.800" fontWeight="normal" fontSize="13px">
-                  1%
-                  </Th>
-                  <Th>
-                  <Badge colorScheme='green'>Pendente</Badge>
-                  </Th>
-                  <Th color="#00BA88" fontWeight="bold" fontSize="13px" textTransform="capitalize">
-                  R$ 1.250,00
-                  </Th>
-                  </Tr>
-                </Tfoot> */}
                 </Table>
               </TableContainer>
             </Flex>
         
     
-            <HStack align="right" justify="right" spacing="4">
-              <Link href="/" display="flex" alignItems="center" fontSize="md" color="gray.700" mt={5}>
+            <HStack align="right" justify="right" spacing="4" ml={4}>
+              <Link href="/" display="flex" alignItems="center" fontSize="md" ml={4} color="gray.700" mt={5}>
                 <PercentIcon width="20px" stroke="#6e7191" fill="none" />{' '}
-                <Text ml="2">Ver relatório</Text>
+                <Text ml={4}>Ver relatório</Text>
               </Link>
             </HStack>
           </Stack>
