@@ -120,28 +120,13 @@ export function SalesSummary() {
       />
 
       <Stack spacing="8" width="100%">
-        <Stack
-          spacing="5"
-          w="100%"
-          minWidth="300px"
-          justify="space-between"
-          alignItems="left"
-          bg="white"
-          borderRadius="16px"
-          shadow="xl"
-          px="8"
-          py="8"
-        >
+        <Stack spacing="5" w="100%" minWidth="300px" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8">
           <Text fontSize="xl" w="100%">
             Seu Mês
           </Text>
 
           <HStack>
-            <Text
-              fontSize="2xl"
-              w="100%"
-              fontWeight="bold"
-              color={
+            <Text fontSize="2xl" w="100%" fontWeight="bold" color={
                 percentOfGoal !== 100
                   ? percentOfGoal > 60
                     ? 'yellow.400'
@@ -156,33 +141,16 @@ export function SalesSummary() {
                 currency: 'BRL'
               }).format(monthAmount)}
             </Text>
-            <Text
-              display="flex"
-              alignItems="center"
-              fontSize="sm"
-              color="gray.600"
-            >
+            <Text display="flex" alignItems="center" fontSize="sm" color="gray.600">
               {percentOfGoal}%
             </Text>
           </HStack>
 
           <Stack spacing="1">
-            <Text
-              href="/caixa"
-              display="flex"
-              alignItems="center"
-              fontSize="sm"
-              color="gray.600"
-            >
+            <Text href="/caixa" display="flex" alignItems="center" fontSize="sm" color="gray.600">
               Pendência de venda
             </Text>
-            <Text
-              href="/caixa"
-              display="flex"
-              alignItems="center"
-              fontSize="md"
-              color="gray.700"
-            >
+            <Text href="/caixa" display="flex" alignItems="center" fontSize="md" color="gray.700">
               {Intl.NumberFormat('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
@@ -191,29 +159,12 @@ export function SalesSummary() {
           </Stack>
         </Stack>
 
-        <Stack
-          spacing="5"
-          w="100%"
-          minWidth="300px"
-          justify="space-between"
-          alignItems="left"
-          bg="white"
-          borderRadius="16px"
-          shadow="xl"
-          px="8"
-          py="8"
-        >
+        <Stack spacing="5" w="100%" minWidth="300px" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8">
           <HStack>
             <Text fontSize="xl" w="100%">
               Meta do mês
             </Text>
-            <Text
-              href="/caixa"
-              display="flex"
-              alignItems="center"
-              fontSize="sm"
-              color="gray.600"
-            >
+            <Text href="/caixa" display="flex" alignItems="center" fontSize="sm" color="gray.600">
               {monthGoal ? '' : 'Indefinida'}
             </Text>
           </HStack>
@@ -228,84 +179,37 @@ export function SalesSummary() {
           </HStack>
 
           <Stack spacing="1">
-            <Text
-              href="/caixa"
-              display="flex"
-              alignItems="center"
-              fontSize="sm"
-              color="gray.600"
-            >
+            <Text href="/caixa" display="flex" alignItems="center" fontSize="sm" color="gray.600">
               Visitas
             </Text>
-            <Text
-              href="/caixa"
-              display="flex"
-              alignItems="center"
-              fontSize="md"
-              color="gray.700"
-            >
+            <Text href="/caixa" display="flex" alignItems="center" fontSize="md" color="gray.700">
               {monthGoal?.visits}
             </Text>
           </Stack>
 
           <Stack spacing="1">
-            <Text
-              href="/caixa"
-              display="flex"
-              alignItems="center"
-              fontSize="sm"
-              color="gray.600"
-            >
+            <Text href="/caixa" display="flex" alignItems="center" fontSize="sm" color="gray.600">
               Fechamentos
             </Text>
-            <Text
-              href="/caixa"
-              display="flex"
-              alignItems="center"
-              fontSize="md"
-              color="gray.700"
-            >
+            <Text href="/caixa" display="flex" alignItems="center" fontSize="md" color="gray.700">
               {monthGoal?.sales}
             </Text>
           </Stack>
         </Stack>
 
-        <Stack
-          spacing="5"
-          w="100%"
-          minWidth="300px"
-          justify="space-between"
-          alignItems="left"
-          bg="white"
-          borderRadius="16px"
-          shadow="xl"
-          px="8"
-          py="8"
-        >
+        <Stack spacing="5" w="100%" minWidth="300px" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8">
           <Text fontSize="xl" w="100%">
             Total de vendas
           </Text>
 
-          <Text
-            fontSize="2xl"
-            w="100%"
-            fontWeight="bold"
-            color={amount > 0 ? 'green.400' : 'red.400'}
-          >
+          <Text fontSize="2xl" w="100%" fontWeight="bold" color={amount > 0 ? 'green.400' : 'red.400'}>
             {Intl.NumberFormat('pt-BR', {
               style: 'currency',
               currency: 'BRL'
             }).format(amount)}
           </Text>
 
-          <Text
-            onClick={() => OpenListUserSalesModal()}
-            cursor="pointer"
-            display="flex"
-            alignItems="center"
-            fontSize="md"
-            color="gray.700"
-          >
+          <Text onClick={() => OpenListUserSalesModal()} cursor="pointer" display="flex" alignItems="center" fontSize="md" color="gray.700">
             <ScrollIcon width="20px" stroke="#6e7191" fill="#6e7191" />{' '}
             <Text ml="2">Ver histórico de vendas</Text>
           </Text>

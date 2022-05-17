@@ -64,9 +64,9 @@ export default function SchedulingSales() {
               donut: {
                 labels: {
                   show: true,
-                  name: { show: true, fontSize: "14px", fontWeight: 600 },
-                  value: { show: true, fontSize: "14px", fontWeight: 600 },
-                  total: { show: true, fontSize: "14px", fontWeight: 600 },
+                  name: { show: false, fontSize: "16px", color: "#6E7191", fontWeight: 600 },
+                  value: { show: false, fontSize: "16px", color: "#6E7191", fontWeight: 600 },
+                  total: { show: false, fontSize: "16px", color: "#6E7191", fontWeight: 600 },
                 },
               },
             },
@@ -77,11 +77,11 @@ export default function SchedulingSales() {
           [
             {
               name: "Net Profit",
-              data: [44, 55, 57, 56, 61, 58, 63, 60, 66],
+              data: [0, 100, 200, 300, 400, 500, 600],
             },
             {
               name: "Revenue",
-              data: [76, 85, 101, 98, 87, 105, 91, 114, 94],
+              data: [0, 100, 200, 300, 400, 500, 600],
             },
           ]
         }

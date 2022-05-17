@@ -14,35 +14,9 @@ export default function CommissionsPaidGrafic() {
           Comissões Pagas
         </Text>
         <Flex justify="flex-end" align="center">
-          <Select
-                h="45px"
-                name="chargeback_type_id"
-                value="0"
-                w="90%"
-                fontSize="sm"
-                focusBorderColor="purple.300"
-                bg="gray.400"
-                variant="outline"
-                _hover={{ bgColor: 'gray.500' }}
-                size="lg"
-                borderRadius="full"
-                placeholder="Equipe"
-              > 
+          <Select h="45px" name="chargeback_type_id" value="0" w="90%" fontSize="sm" focusBorderColor="purple.300" bg="gray.400" variant="outline" _hover={{ bgColor: 'gray.500' }} size="lg" borderRadius="full" placeholder="Equipe"> 
             </Select>
-            <Select
-              h="45px"
-              name="chargeback_type_id"
-              value="0"
-              w="90%"
-              fontSize="sm"
-              focusBorderColor="purple.300"
-              bg="gray.400"
-              variant="outline"
-              _hover={{ bgColor: 'gray.500' }}
-              size="lg"
-              borderRadius="full"
-              placeholder="Ultimo ano"
-            > 
+            <Select h="45px" name="chargeback_type_id" value="0" w="90%" fontSize="sm" focusBorderColor="purple.300" bg="gray.400" variant="outline" _hover={{ bgColor: 'gray.500' }} size="lg" borderRadius="full" placeholder="Ultimo ano"> 
             </Select>
         </Flex>
             <LineAreaHistory options={{
@@ -94,9 +68,9 @@ export default function CommissionsPaidGrafic() {
                   donut: {
                     labels: {
                       show: false,
-                      name: { show: false, fontSize: "16px", fontWeight: 400 },
-                      value: { show: false, fontSize: "16px", fontWeight: 400 },
-                      total: { show: false, fontSize: "16px", fontWeight: 400 },
+                      name: { show: false, fontSize: "16px", color: "#6E7191", fontWeight: 600 },
+                      value: { show: false, fontSize: "16px", color: "#6E7191", fontWeight: 600 },
+                      total: { show: false, fontSize: "16px", color: "#6E7191", fontWeight: 600 },
                     },
                   },
                 },
@@ -107,7 +81,7 @@ export default function CommissionsPaidGrafic() {
               {
                 name: "Net Profit",
                 type: "area",
-                data: [44, 55, 57, 56, 61, 58, 63, 60, 66],
+                data: [0, 100, 200, 300, 400, 500, 600]
               }
             ]} />
       </Stack>

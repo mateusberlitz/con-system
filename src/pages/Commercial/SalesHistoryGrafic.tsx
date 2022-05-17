@@ -9,7 +9,7 @@ export default function SalesHistoryGrafic() {
   const { profile, permissions } = useProfile();
 
   return (
-    <Stack width="100%"  min-width="300px" h="400" spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8" mt={4}>
+    <Stack width="100%"  min-width="300px" h={400} spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8" mt={-0}>
       <Text color="#000" fontSize="xl" fontWeight="400">
           Histórico de vendas
         </Text>
@@ -103,9 +103,9 @@ export default function SalesHistoryGrafic() {
                   donut: {
                     labels: {
                       show: false,
-                      name: { show: false, fontSize: "16px", fontWeight: 400 },
-                      value: { show: false, fontSize: "16px", fontWeight: 400 },
-                      total: { show: false, fontSize: "16px", fontWeight: 400 },
+                      name: { show: false, fontSize: "16px", color: "#6E7191", fontWeight: 600 },
+                      value: { show: false, fontSize: "16px", color: "#6E7191", fontWeight: 600 },
+                      total: { show: false, fontSize: "16px", color: "#6E7191", fontWeight: 600 },
                     },
                   },
                 },
@@ -116,7 +116,7 @@ export default function SalesHistoryGrafic() {
               {
                 name: "Net Profit",
                 type: "area",
-                data: [44, 55, 57, 56, 61, 58, 63, 60, 66],
+                data: [0, 100, 200, 300, 400, 500, 600],
               }
             ]}
             />

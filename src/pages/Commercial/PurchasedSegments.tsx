@@ -6,7 +6,7 @@ export default function PurchasedSements() {
   const { profile, permissions } = useProfile();
 
   return (
-    <Stack width="100%" h={400} min-width="300px" spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8" mt={8}>
+    <Stack width="100%" h={400} min-width="300px" spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8" mt={-0}>
       <Text color="#000" fontSize="xl" fontWeight="400">
         Segmentos mais comprados
       </Text>
@@ -45,7 +45,17 @@ export default function PurchasedSements() {
             bar: {
               borderRadius: 1,
               horizontal: true,
-            }
+            },
+            pie: {
+              donut: {
+                labels: {
+                  show: false,
+                  name: { show: false, fontSize: "16px", color: "#6E7191", fontWeight: 600 },
+                  value: { show: false, fontSize: "16px", color: "#6E7191", fontWeight: 600 },
+                  total: { show: false, fontSize: "16px", color: "#6E7191", fontWeight: 600 },
+                },
+              },
+            },
           },
           dataLabels: {
             enabled: false,
@@ -68,7 +78,7 @@ export default function PurchasedSements() {
         series={[
           {
             name: "",
-            data: [44, 55, 57],
+            data: [0, 200, 500],
           },
         ]}
       />

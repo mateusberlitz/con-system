@@ -11,7 +11,6 @@ import { TasksSummary } from "../Financial/TasksSummary";
 import { LeadsReport } from "./LeadsReport";
 import { LeadsReportByMonth } from "./LeadsReportByMonth";
 import { LeadsSummary } from "./LeadsSummary";
-import { SalesSummary } from "./SalesSummary";
 import { SchedulesSummary } from "./SchedulesSummary";
 
 import { ReactComponent as PlusIcon } from "../../assets/icons/Plus.svg";
@@ -20,6 +19,10 @@ import SalesHistoryGrafic from "./SalesHistoryGrafic";
 import SalesChargesGrafics from "./SalesChargebacksGrafic";
 import PurchasedSements from "./PurchasedSegments";
 import SchedulingSales from "./SchedulingSales";
+import { CurrentGoal } from "./CurrentGoal";
+import TeamRankingTable from "./TeamRanking";
+import { SalesSummary } from "./SalesSummary";
+import TeamsRankingsTable from "./TeamsRankings";
 
 export default function Commercial() {
   const { profile, permissions } = useProfile();
@@ -69,107 +72,70 @@ export default function Commercial() {
 
   return (
     <MainBoard sidebar="commercial" header={<CompanySelectMaster />}>
-      <NewSaleModal
-        isOpen={isNewSaleModalOpen}
-        onRequestClose={CloseNewSaleModal}
-      />
+      <NewSaleModal isOpen={isNewSaleModalOpen} onRequestClose={CloseNewSaleModal}/>
 
       <Stack fontSize="13px" spacing="12">
         <HStack justifyContent="space-between" alignItems="center">
-          <SolidButton
-            color="white"
-            bg="orange.400"
-            icon={PlusIcon}
-            colorScheme="orange"
-            onClick={OpenNewSaleModal}
-          >
+          <SolidButton color="white" bg="orange.400" icon={PlusIcon} colorScheme="orange" onClick={OpenNewSaleModal}>
             Adicionar Venda
           </SolidButton>
 
           {canBeManager && (
-            <Flex
-              alignItems="center"
-              h="45px"
-              bg="gray.200"
-              borderRadius="full"
-              w="180px"
-              pos="relative"
-              cursor="pointer"
-              onClick={() => setIsManager(!isManager)}
-            >
-              <Box
-                h="32px"
-                w={isManager ? "77px" : "73px"}
-                bg="orange.400"
-                pos="absolute"
-                transform={isManager ? "translateX(8px)" : "translateX(98px)"}
-                transition={"all ease 0.3s"}
-                borderRadius="full"
-              />
+            <Flex alignItems="center" h="45px" bg="gray.200" borderRadius="full" w="180px" pos="relative" cursor="pointer" onClick={() => setIsManager(!isManager)}>
+              <Box h="32px" w={isManager ? "77px" : "73px"} bg="orange.400" pos="absolute" transform={isManager ? "translateX(8px)" : "translateX(98px)"} transition={"all ease 0.3s"} borderRadius="full" />
 
-              <HStack
-                justifyContent="space-between"
-                w="100%"
-                px="5"
-                pos="absolute"
-              >
-                <Text
-                  color={isManager ? "white" : "auto"}
-                  transition={"all ease 0.3s"}
-                >
+              <HStack justifyContent="space-between" w="100%" px="5" pos="absolute">
+                <Text color={isManager ? "white" : "auto"} transition={"all ease 0.3s"}>
                   Gerente
                 </Text>
-                <Text
-                  color={!isManager ? "white" : "auto"}
-                  transition={"all ease 0.3s"}
-                >
+                <Text color={!isManager ? "white" : "auto"} transition={"all ease 0.3s"}>
                   Pessoal
                 </Text>
               </HStack>
             </Flex>
           )}
         </HStack>
-
-        <Stack
-          direction={["column", "column", "row"]}
-          spacing="8"
-          alignItems="flex-start"
-        >
-          {/* PAGAMENTOS */}
-          <Stack spacing="8" w={["100%", "100%", "55%"]}>
-            <LeadsSummary />
-          </Stack>
-
-          {/* TAREFAS */}
-          <Stack spacing="8" w={["100%", "100%", "45%"]}>
-            <TasksSummary
-              tasks={tasks}
-              page={page}
-              setPage={handleChangePage}
-            />
-          </Stack>
+        <Stack>
+          <CurrentGoal />
         </Stack>
 
+        <Stack direction={["column", "column", "row"]} spacing="8" alignItems="flex-start">
+          {/* PAGAMENTOS */}
+          <HStack spacing="8" w={["100%", "100%", "100%"]}>
+            <LeadsSummary />
+
+            <SchedulesSummary />
+          </HStack>
+
+          {/* TAREFAS */}
+        </Stack>
+    
         <Stack
           direction={["column", "column", "row"]}
           spacing="8"
           alignItems="flex-start"
         >
-          {/* PAGAMENTOS */}
-          <Stack spacing="8" w={["100%", "100%", "65%"]}>
-            <SchedulesSummary />
+          <Stack spacing="8" w={["100%", "100%", "100%"]}>
+            <TasksSummary tasks={tasks} page={page} setPage={handleChangePage}/>
           </Stack>
+          {/* PAGAMENTOS */}
+          {/* <Stack spacing="8" w={["100%", "100%", "65%"]}>
+          </Stack> */}
 
           {/* TAREFAS */}
-          <Stack spacing="8" w={["100%", "100%", "35%"]}>
-            <SalesSummary />
-          </Stack>
         </Stack>
 
         <HStack spacing="8" alignItems="flex-start">
+          <Stack spacing="8" w={["50%", "50%", "35%"]}>
+            <SalesSummary />
+          </Stack>
           {/* PAGAMENTOS */}
           <Stack spacing="8" w="100%">
             <LeadsReport />
+
+            <TeamRankingTable />
+
+            <TeamsRankingsTable />
           </Stack>
         </HStack>
 
@@ -177,16 +143,18 @@ export default function Commercial() {
             
       </Stack>
       <Stack fontSize="13px">
-        <HStack spacing="8" w="100%" mt="8" mb="4">
+        <HStack spacing="8" w="100%" mt={6} mb={2}>
           <SalesHistoryGrafic />
 
           <SalesChargesGrafics />
         </HStack>
-        <HStack spacing="8" w="100%">
-          <PurchasedSements />
-
-          <SchedulingSales />
-        </HStack>
+        <Stack spacing="8" w="100%">
+          <HStack spacing="8" w="100%" mt={4} mb={2}>
+            <PurchasedSements />
+            
+            <SchedulingSales />
+          </HStack>
+        </Stack>
       </Stack>
     </MainBoard>
   );
