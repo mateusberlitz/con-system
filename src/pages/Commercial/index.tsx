@@ -119,9 +119,6 @@ export default function Commercial() {
           <Stack spacing="8" w={["100%", "100%", "100%"]}>
             <TasksSummary tasks={tasks} page={page} setPage={handleChangePage}/>
           </Stack>
-          {/* PAGAMENTOS */}
-          {/* <Stack spacing="8" w={["100%", "100%", "65%"]}>
-          </Stack> */}
 
           {/* TAREFAS */}
         </Stack>

@@ -22,6 +22,7 @@ import { useWorkingBranch } from '../../hooks/useWorkingBranch'
 import { CashFlowSummary } from './CashFlowSummary'
 import CommissionsReceivedGrafic from './CommissionsReceivedGrafic'
 import CommissionsPaidGrafic from './CommissionsPaidGrafic'
+import AffiliateCommissions from './AffiliateCommissions'
 
 export default function Financial() {
   const { profile, permissions } = useProfile()
@@ -260,13 +261,16 @@ export default function Financial() {
             )}
           </Stack>
         </Stack>
-      </Stack>
-          <HStack  spacing="8" w={['100%', '100%']} mt={6}>
+          <Stack spacing="4" mt={10}>
+            <AffiliateCommissions />
+          </Stack>
+          <HStack  spacing="8" w={['100%', '100%']}>
             <CommissionsReceivedGrafic  />
-            <HStack  spacing="8" w={['100%', '100%']} mt={6}>
+            <HStack  spacing="8" w={['100%', '100%']}>
              <CommissionsPaidGrafic />
             </HStack>
           </HStack>
+      </Stack>
     </MainBoard>
   )
 }
