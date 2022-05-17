@@ -95,9 +95,9 @@ export default function Commercial() {
             </Flex>
           )}
         </HStack>
-        <Stack>
-          <CurrentGoal />
-        </Stack>
+            <Stack>
+              <CurrentGoal />
+            </Stack>
 
         <Stack direction={["column", "column", "row"]} spacing="8" alignItems="flex-start">
           {/* PAGAMENTOS */}
@@ -115,6 +115,7 @@ export default function Commercial() {
           spacing="8"
           alignItems="flex-start"
         >
+          <SalesSummary />
           <Stack spacing="8" w={["100%", "100%", "100%"]}>
             <TasksSummary tasks={tasks} page={page} setPage={handleChangePage}/>
           </Stack>
@@ -124,11 +125,7 @@ export default function Commercial() {
 
           {/* TAREFAS */}
         </Stack>
-
         <HStack spacing="8" alignItems="flex-start">
-          <Stack spacing="8" w={["50%", "50%", "35%"]}>
-            <SalesSummary />
-          </Stack>
           {/* PAGAMENTOS */}
           <Stack spacing="8" w="100%">
             <LeadsReport />
