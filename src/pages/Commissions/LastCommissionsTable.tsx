@@ -37,15 +37,15 @@ export default function LastComissionsTable() {
   }, 0)
 
       return (
-          <Stack min-width="300px" spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" py="8">
+          <Stack min-width="300px" spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" py="4" px="4">
             <HStack align="center" justify="space-between" spacing="4">
               <Text color="#000" ml={2} fontSize="xl" fontWeight="400">
                 Ultimas Comissões
               </Text>
-            </HStack>spacing="8" justify="space-between" alignItems="left" bg="white"
+            </HStack>
 
-            <Flex align="center" justify="center" width="100%">
-              <TableContainer border="2px solid #D6D8E7" borderRadius={26} width="100%">
+           
+              <TableContainer border="2px solid #D6D8E7" borderRadius={26} w="100%">
                 <Table variant='simple' size="md">
                   <Thead backgroundColor="#EFF0F7" maxWidth="100%" whiteSpace="nowrap" height={62}>
     
@@ -109,11 +109,10 @@ export default function LastComissionsTable() {
                   </Tbody>
                 </Table>
               </TableContainer>
-            </Flex>
         
     
             <HStack align="right" justify="right" spacing="4" ml={4}>
-              <Link href="/" display="flex" alignItems="center" fontSize="md" ml={4} color="gray.700" mt={5}>
+              <Link href="/" display="flex" alignItems="center" fontSize="md" ml={4} color="gray.700" mt={2}>
                 <PercentIcon width="20px" stroke="#6e7191" fill="none" />{' '}
                 <Text ml={4}>Ver relatório</Text>
               </Link>
