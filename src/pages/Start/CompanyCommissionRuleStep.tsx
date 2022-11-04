@@ -156,7 +156,7 @@ export function CompanyCommissionRuleStep({companyCommissionRule, setCompanyComm
                             !companyCommissionRule ? (
                                 <Text p="8">Adicione a regra principal</Text>
                             ): (
-                                <Accordion w="100%" overflow="hidden" spacing="0" allowMultiple>
+                                <Accordion w="100%" overflow="hidden" allowMultiple>
                                     <HStack spacing="8" justify="space-between" paddingX={["4", "8"]} paddingY="3" color="gray.700" fontSize="sm">
                                         <Box w="30px"/>
 
@@ -172,7 +172,7 @@ export function CompanyCommissionRuleStep({companyCommissionRule, setCompanyComm
                                             <>
                                                 <Stack spacing={["5", ""]} direction={['column', 'row']} justify="space-between" mb="3" alignItems={["", "center"]}>
                                                     <AccordionButton p="0" height="50" w="auto">
-                                                        <Flex alignItems="center" justifyContent="center" h={["20px", "24px"]} w={["24px", "30px"]} p="0" borderRadius="full" border="2px" borderColor="purple.300" variant="outline">
+                                                        <Flex alignItems="center" justifyContent="center" h={["20px", "24px"]} w={["24px", "30px"]} p="0" borderRadius="full" border="2px" borderColor="purple.300">
                                                         { 
                                                                 !isExpanded ? <StrongPlusIcon stroke="#5f2eea" fill="none" width="12px"/> :
                                                                 <MinusIcon stroke="#5f2eea" fill="none" width="12px"/>

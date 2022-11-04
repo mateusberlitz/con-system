@@ -30,7 +30,6 @@ export default function RulesRanking() {
             color="#000"
             fontSize="xl"
             fontWeight="400"
-            justify="right"
             alignItems="right"
           >
             1. Regra Geral
@@ -67,7 +66,6 @@ export default function RulesRanking() {
             color="#000"
             fontSize="xl"
             fontWeight="normal"
-            justify="right"
             alignItems="right"
           >
             2. Regra 1m
@@ -100,7 +98,7 @@ export default function RulesRanking() {
         </Grid>
         <Divider />
         <HStack spacing="8" align="center">
-          <Text color="#000" fontSize="xl" fontWeight="normal" justify="right" alignItems="right">
+          <Text color="#000" fontSize="xl" fontWeight="normal" alignItems="right">
             3. Regra 2m
           </Text>
         </HStack>

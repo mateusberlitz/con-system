@@ -147,10 +147,10 @@ export function SalesSummary() {
           </HStack>
 
           <Stack spacing="1">
-            <Text href="/caixa" display="flex" alignItems="center" fontSize="sm" color="gray.600">
+            <Text display="flex" alignItems="center" fontSize="sm" color="gray.600">
               Pendência de venda
             </Text>
-            <Text href="/caixa" display="flex" alignItems="center" fontSize="md" color="gray.700">
+            <Text display="flex" alignItems="center" fontSize="md" color="gray.700">
               {Intl.NumberFormat('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
@@ -164,7 +164,7 @@ export function SalesSummary() {
             <Text fontSize="xl" w="100%">
               Meta do mês
             </Text>
-            <Text href="/caixa" display="flex" alignItems="center" fontSize="sm" color="gray.600">
+            <Text display="flex" alignItems="center" fontSize="sm" color="gray.600">
               {monthGoal ? '' : 'Indefinida'}
             </Text>
           </HStack>
@@ -179,19 +179,19 @@ export function SalesSummary() {
           </HStack>
 
           <Stack spacing="1">
-            <Text href="/caixa" display="flex" alignItems="center" fontSize="sm" color="gray.600">
+            <Text display="flex" alignItems="center" fontSize="sm" color="gray.600">
               Visitas
             </Text>
-            <Text href="/caixa" display="flex" alignItems="center" fontSize="md" color="gray.700">
+            <Text display="flex" alignItems="center" fontSize="md" color="gray.700">
               {monthGoal?.visits}
             </Text>
           </Stack>
 
           <Stack spacing="1">
-            <Text href="/caixa" display="flex" alignItems="center" fontSize="sm" color="gray.600">
+            <Text display="flex" alignItems="center" fontSize="sm" color="gray.600">
               Fechamentos
             </Text>
-            <Text href="/caixa" display="flex" alignItems="center" fontSize="md" color="gray.700">
+            <Text display="flex" alignItems="center" fontSize="md" color="gray.700">
               {monthGoal?.sales}
             </Text>
           </Stack>

@@ -227,7 +227,6 @@ import { EditCustomerModal } from './EditCustomerModal'
             borderColor="gray.500"
             borderRadius="26"
             overflow="hidden"
-            spacing="0"
             allowMultiple
           >
             <HStack
@@ -270,7 +269,6 @@ import { EditCustomerModal } from './EditCustomerModal'
                             borderRadius="full"
                             border="2px"
                             borderColor="orange.400"
-                            variant="outline"
                           >
                             {!isExpanded ? (
                               <StrongPlusIcon

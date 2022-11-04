@@ -526,7 +526,6 @@ export default function Leads() {
           borderColor="gray.500"
           borderRadius="26"
           overflow="hidden"
-          spacing="0"
           allowMultiple
         >
           <HStack
@@ -612,7 +611,6 @@ export default function Leads() {
                           borderRadius="full"
                           border="2px"
                           borderColor="orange.400"
-                          variant="outline"
                         >
                           {!isExpanded ? (
                             <StrongPlusIcon
@@ -634,7 +632,6 @@ export default function Leads() {
                       {isManager && !lead.user && (
                         <>
                           <Checkbox
-                            label=""
                             name="delegate"
                             checked={delegateList.includes(lead.id)}
                             value={lead.id}

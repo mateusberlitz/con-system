@@ -64,7 +64,7 @@ export default function CommissionsReceivedReport() {
                 <HStack as="form" spacing="12" w="100%" mb="6" justifyContent="left">
                     <Text fontWeight="bold" w="100%" fontSize="13px">RELATÓRIO DE COMISSÕES RECEBIDAS</Text>
 
-                    <FormControl display="flex" justifyContent="flex-end" align="flex-end" minW="150px">
+                    <FormControl display="flex" justifyContent="flex-end" minW="150px">
                         <ChakraSelect onChange={handleChangeYear} defaultValue={selectedYear} h="45px" name="selected_company" maxW="200px" fontSize="sm" focusBorderColor="purple.600" bg="gray.400" variant="filled" _hover={{ bgColor: 'gray.500' }} size="lg" borderRadius="full">
                             <option key={"2021"} value={"2021"}>2021</option>
                             {

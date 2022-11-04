@@ -95,7 +95,7 @@ export function EditCashFlowModal( { isOpen, onRequestClose, afterEdit, toEditCa
 
             afterEdit();
             onRequestClose();
-        }catch(error) {
+        }catch(error: any) {
             showErrors(error, toast);
 
             if(error.response.data.access){

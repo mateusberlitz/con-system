@@ -28,7 +28,7 @@ import { RemoveButton } from "../../../components/Buttons/RemoveButton";
 import { ChangeEvent, useEffect, useState } from "react";
 import { NewPaymentModal } from "./NewPaymentModal";
 import { ConfirmPaymentRemoveModal } from "./ConfirmPaymentRemoveModal";
-import { useHistory } from "react-router";
+import { useHistory } from "react-router-dom";
 import { api } from "../../../services/api";
 import { UserFilterData, useUsers } from "../../../hooks/useUsers";
 import { useProviders } from "../../../hooks/useProviders";
@@ -659,7 +659,7 @@ export default function Payments(){
                         const hasPaymentsYoPay = payments.data?.data[day].filter((payment:Payment) => Number(payment.status) === 0).length;
 
                         return (
-                            <Accordion key={day} w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" spacing="0" allowMultiple>
+                            <Accordion key={day} w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" allowMultiple>
                                 <HStack spacing="8" justify="space-between" paddingX={["4", "8"]} paddingY="3" bg="gray.200">
                                     <Stack direction={["column", "row"]} spacing={["4", "6"]} alignItems="baseline" mt={["1", "0"]}>
                                         <Text fontWeight="bold">{(todayFormatedDate === dayPaymentsFormated) ? 'Hoje' : (tomorrow === paymentDay) ? "Amanhã" : ""} {formatBRDate(day)}</Text>
@@ -723,7 +723,7 @@ export default function Payments(){
                                                                         </Flex>
                                                                     </AccordionButton>
 
-                                                                    <Checkbox label="" name="remove" checked={removeList.includes(payment.id)} value={payment.id} onChange={handleSelect}/>
+                                                                    <Checkbox name="remove" checked={removeList.includes(payment.id)} value={payment.id} onChange={handleSelect}/>
                                                                 </HStack>
                                                                 
                                                                 <Stack direction={['column', 'row']} spacing={["1", "4"]}>

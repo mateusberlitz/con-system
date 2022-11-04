@@ -37,7 +37,7 @@ export default function LastComissionsTable() {
   }, 0)
 
       return (
-          <Stack min-width="300px" spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" py="8">
+          <Stack min-width="300px" spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" py="8" px="8">
             <HStack align="center" justify="space-between" spacing="4">
               <Text color="#000" ml={2} fontSize="xl" fontWeight="400">
                 Ultimas Comissões
@@ -77,7 +77,7 @@ export default function LastComissionsTable() {
                       console.log(commissionsSeller);
                         return (
                         <>
-                          <Tr>
+                          <Tr key={commissionsSeller.id}>
                             <Th color="gray.800" fontWeight="normal">
                               <Text fontSize="10px">Grupo-Cota</Text>
                               <Text fontSize="13px">{commissionsSeller.quota.group} - {commissionsSeller.quota.quota}</Text>
@@ -92,7 +92,8 @@ export default function LastComissionsTable() {
                             <Th>
                             {
                                 !commissionsSeller.is_chargeback ? (
-                                  <Badge colorScheme={commissionsSeller.confirmed ? "green" : "yellow"} width="110px" px="27px">{commissionsSeller.confirmed ? "Confirmada" : "Pendente"}</Badge>
+                                //   <Badge colorScheme={commissionsSeller.confirmed ? "green" : "yellow"} width="110px" px="27px">{commissionsSeller.confirmed ? "Confirmada" : "Pendente"}</Badge>
+                                    <></>
                                 ) : (
                                 <Badge colorScheme="red" width="110px" px="27px">Estorno</Badge>
                                     )

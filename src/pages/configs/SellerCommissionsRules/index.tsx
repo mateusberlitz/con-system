@@ -1,7 +1,7 @@
 import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Box, Flex, HStack, Spinner, Stack, Td, Text, Tr } from "@chakra-ui/react";
 import { Board } from "../../../components/Board";
 import { SolidButton } from "../../../components/Buttons/SolidButton";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { ReactComponent as PlusIcon } from '../../../assets/icons/Plus.svg';
 import { ReactComponent as MinusIcon } from '../../../assets/icons/Minus.svg';
@@ -11,10 +11,8 @@ import { OutlineButton } from "../../../components/Buttons/OutlineButton";
 import { EditButton } from "../../../components/Buttons/EditButton";
 import { Table } from "../../../components/Table";
 import { RemoveButton } from "../../../components/Buttons/RemoveButton";
-import { CompanyCommissionRule, CompanyCommissionRuleParcel, SellerCommissionRule, SellerCommissionRuleParcel } from "../../../types";
-import { api } from "../../../services/api";
+import { SellerCommissionRule, SellerCommissionRuleParcel } from "../../../types";
 import { NewSellerRuleModal } from "./NewSellerRuleModal";
-import { useParams } from "react-router-dom";
 import { EditSellerRuleModal, EditNewSellerRuleFormData } from "./EditSellerRuleModal";
 import { NewSellerRuleParcelModal } from "./NewSellerRuleParcelModal";
 import { EditSellerRuleParcelModal, EditNewSellerRuleParcelFormData } from "./EditSellerRuleParcelModal";
@@ -168,7 +166,7 @@ export function SellerCommissionRules({companyId, branchId}: SellerCommissionRul
             {
                 (!sellerRules.isLoading && !sellerRules.error) && sellerRules.data?.data.map((rule: SellerCommissionRule) => {
                     return(
-                        <Accordion key={rule.id} w="100%" overflow="hidden" spacing="0" allowMultiple>
+                        <Accordion key={rule.id} w="100%" overflow="hidden" allowMultiple>
                             <HStack spacing="8" justify="space-between" paddingX={["4", "8"]} paddingY="3" color="gray.700" fontSize="sm">
                                 <Box w="30px"/>
 
@@ -184,7 +182,7 @@ export function SellerCommissionRules({companyId, branchId}: SellerCommissionRul
                                     <>
                                         <Stack spacing={["5", ""]} direction={['column', 'row']} justify="space-between" mb="3" alignItems={["", "center"]}>
                                             <AccordionButton p="0" height="50" w="auto">
-                                                <Flex alignItems="center" justifyContent="center" h={["20px", "24px"]} w={["24px", "30px"]} p="0" borderRadius="full" border="2px" borderColor="purple.300" variant="outline">
+                                                <Flex alignItems="center" justifyContent="center" h={["20px", "24px"]} w={["24px", "30px"]} p="0" borderRadius="full" border="2px" borderColor="purple.300">
                                                 { 
                                                         !isExpanded ? <StrongPlusIcon stroke="#5f2eea" fill="none" width="12px"/> :
                                                         <MinusIcon stroke="#5f2eea" fill="none" width="12px"/>

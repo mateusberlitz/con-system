@@ -392,7 +392,6 @@ export function NewLeadModal({
                           borderRadius="full"
                           border="2px"
                           borderColor="orange.400"
-                          variant="outline"
                         >
                           {!isExpanded ? (
                             <StrongPlusIcon

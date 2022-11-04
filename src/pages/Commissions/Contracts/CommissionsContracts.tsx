@@ -23,7 +23,7 @@ export default function CommissionsContracts({commissionsContract}: CommissionsC
     }, 0);
 
     return (
-        <Accordion w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" spacing="0" allowMultiple>
+        <Accordion w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" allowMultiple>
             <HStack spacing="8" justify="space-between" paddingX={["4", "8"]} paddingY="3" bg="gray.200">
                 <Stack direction={["column", "row"]} spacing={["4", "6"]} alignItems="baseline" mt={["1", "0"]}>
                     <Text fontWeight="bold" fontSize="11px">Data inicial e final</Text>
@@ -48,7 +48,7 @@ export default function CommissionsContracts({commissionsContract}: CommissionsC
                             <HStack spacing={["5", "5"]} justifyContent="space-between">
                                 <HStack spacing={["3", "4"]}>
                                     <AccordionButton p="0" height="fit-content" w="auto">
-                                        <Flex alignItems="center" justifyContent="center" h={["20px", "24px"]} w={["24px", "30px"]} p="0" borderRadius="full" border="2px" borderColor="red.400" variant="outline">
+                                        <Flex alignItems="center" justifyContent="center" h={["20px", "24px"]} w={["24px", "30px"]} p="0" borderRadius="full" border="2px" borderColor="red.400">
                                             {
                                                 !isExpanded ? <StrongPlusIcon stroke="#C30052" fill="none" width="12px" /> :
                                                     <MinusIcon stroke="#C30052" fill="none" width="12px" />

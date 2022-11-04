@@ -637,7 +637,6 @@ export default function Bills() {
                 borderColor="gray.500"
                 borderRadius="26"
                 overflow="hidden"
-                spacing="0"
                 allowMultiple
               >
                 <HStack
@@ -758,7 +757,6 @@ export default function Bills() {
                                   borderRadius="full"
                                   border="2px"
                                   borderColor="blue.400"
-                                  variant="outline"
                                 >
                                   {!isExpanded ? (
                                     <StrongPlusIcon

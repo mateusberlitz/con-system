@@ -32,7 +32,7 @@ export default function Commissions() {
 
             <LastComissionsTable />
              
-            <ChargeBacks />
+            {/* <ChargeBacks /> */}
           </Stack>
 
           {/* Comissões */}

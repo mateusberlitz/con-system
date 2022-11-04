@@ -244,7 +244,6 @@ export function LeadsSummary() {
             borderRadius="26"
             overflow="hidden"
             spacing="0"
-            allowMultiple
           >
             <HStack
               spacing="8"

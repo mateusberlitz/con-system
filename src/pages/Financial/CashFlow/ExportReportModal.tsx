@@ -91,7 +91,7 @@ export function ExportReportModal({
 
       onRequestClose()
       //reset();
-    } catch (error) {
+    } catch (error: any) {
       showErrors(error, toast)
 
       if (error.response.data.access) {

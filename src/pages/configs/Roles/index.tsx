@@ -132,7 +132,7 @@ export default function Roles() {
         duration: 12000,
         isClosable: true
       })
-    } catch (error) {
+    } catch (error : any) {
       showErrors(error, toast)
 
       if (error.response.data.access) {

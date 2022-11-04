@@ -32,7 +32,7 @@ export default function LastComissionsTable({monthName, commissionsSeller}: Sell
     //console.log(totalMonthAmount);
 
     return (
-        <Accordion w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" spacing="0" allowMultiple>
+        <Accordion w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" allowMultiple>
             <HStack spacing="8" justify="space-between" paddingX={["4", "8"]} paddingY="3" bg="gray.200">
                 <Stack direction={["column", "row"]} spacing={["4", "6"]} alignItems="baseline" mt={["1", "0"]}>
                     <Text fontWeight="bold">{monthName}</Text>
@@ -47,6 +47,7 @@ export default function LastComissionsTable({monthName, commissionsSeller}: Sell
             </HStack>
             {
                     commissionsSeller.map((commissionsSeller:SellerCommission) => {
+                        console.log(commissionsSeller)
                 return (
              <>
              <AccordionItem display="flex" flexDir="column" paddingX={["4", "8"]} paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
@@ -56,7 +57,7 @@ export default function LastComissionsTable({monthName, commissionsSeller}: Sell
                                     <HStack spacing={["5", "5"]} justifyContent="space-between">
                                         <HStack spacing={["3", "4"]}>
                                             <AccordionButton p="0" height="fit-content" w="auto">
-                                                <Flex alignItems="center" justifyContent="center" h={["20px", "24px"]} w={["24px", "30px"]} p="0" borderRadius="full" border="2px" borderColor="red.400" variant="outline">
+                                                <Flex alignItems="center" justifyContent="center" h={["20px", "24px"]} w={["24px", "30px"]} p="0" borderRadius="full" border="2px" borderColor="red.400">
                                                     {!isExpanded ? <StrongPlusIcon stroke="#C30052" fill="none" width="12px" /> :
                                                         <MinusIcon stroke="#C30052" fill="none" width="12px" />}
                                                 </Flex>
@@ -108,7 +109,8 @@ export default function LastComissionsTable({monthName, commissionsSeller}: Sell
                                     <Stack fontWeight="500" alignItems="center">
                                         {
                                             !commissionsSeller.is_chargeback ? (
-                                                <Badge colorScheme={commissionsSeller.confirmed ? "green" : "yellow"} width="110px" px="27px">{commissionsSeller.confirmed ? "Confirmada" : "Pendente"}</Badge>
+                                                // <Badge colorScheme={commissionsSeller.confirmed ? "green" : "yellow"} width="110px" px="27px">{commissionsSeller.confirmed ? "Confirmada" : "Pendente"}</Badge>
+                                                <></>
                                             ) : (
                                                 <Badge colorScheme="red" width="110px" px="27px">Estorno</Badge>
                                             )

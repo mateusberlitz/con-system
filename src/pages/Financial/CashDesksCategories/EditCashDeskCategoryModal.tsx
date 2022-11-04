@@ -82,7 +82,7 @@ export function EditCashDeskCategoryModal( { isOpen, toEditCashDeskCategoryData,
 
             afterEdit();
             onRequestClose();
-        }catch(error) {
+        }catch(error: any) {
             console.log(error);
             showErrors(error, toast);
 

@@ -150,7 +150,6 @@ export function CurrentGoal() {
           <Stack spacing="1">
            <HStack>
            <Text
-              href="/"
               display="flex"
               flex={1}
               alignItems="center"
@@ -160,7 +159,6 @@ export function CurrentGoal() {
               Vendido:
             </Text>
             <Text
-              href="/"
               display="flex"
               flex={1}
               fontSize="md"
@@ -203,7 +201,6 @@ export function CurrentGoal() {
           <Stack spacing="1">
            <HStack>
            <Text
-              href="/"
               display="flex"
               flex="1"
               alignItems="center"
@@ -213,7 +210,6 @@ export function CurrentGoal() {
               Vendido:
             </Text>
             <Text
-              href="/"
               display="flex"
               flex="1"
               fontSize="md"

@@ -172,7 +172,7 @@ export function SalesList({quotaSales, refetchQuotaSales}: QuotasListProps){
 
             <ReceiveBillModal afterReceive={refetchQuotaSales} toReceiveBillData={toReceiveBillData} isOpen={isReceiveBillModalOpen} onRequestClose={CloseReceiveBillModal}/>
 
-            <Accordion w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" spacing="0" allowMultiple>
+            <Accordion w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" allowMultiple>
                 <HStack spacing="8" justify="space-between" paddingX="8" paddingY="3" bg="gray.200">
                     <Text fontWeight="extrabold">{totalQuotasCount} COTAS</Text>
                     
@@ -188,7 +188,7 @@ export function SalesList({quotaSales, refetchQuotaSales}: QuotasListProps){
                                     <>
                                         <HStack justify="space-between" mb="3" opacity={quotaSale.cancelled ? 0.5 : 1}>
                                             <AccordionButton p="0" height="fit-content" w="auto">
-                                                <Flex alignItems="center" justifyContent="center" h="24px" w="30px" p="0" borderRadius="full" border="2px" borderColor="blue.800" variant="outline">
+                                                <Flex alignItems="center" justifyContent="center" h="24px" w="30px" p="0" borderRadius="full" border="2px" borderColor="blue.800">
                                                 { 
                                                         !isExpanded ? <StrongPlusIcon stroke="#2a4365" fill="none" width="12px"/> :
                                                         <MinusIcon stroke="#2a4365" fill="none" width="12px"/>

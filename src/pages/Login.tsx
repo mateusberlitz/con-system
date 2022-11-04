@@ -150,7 +150,7 @@ export default function Login(){
                     
             </Stack>
 
-            <Link align="center" mt="30" color="gray.700">Esqueci minha senha</Link>
+            <Link m="0 auto" mt="30" color="gray.700" textAlign={"center"}>Esqueci minha senha</Link>
         </Flex>
     )
 }

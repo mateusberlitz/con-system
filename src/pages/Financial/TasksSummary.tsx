@@ -153,7 +153,7 @@ export function TasksSummary({tasks, page, setPage}: TasksSummaryProps){
                                     return (
                                         <HStack justifyContent="space-between" key={task.id}>
                                             <Flex>
-                                                <Tag mr="3" colorScheme="green" bg={statusColor} minW="50px" variant="solid" height="28px" alignItems="center" justify="center" justifyContent="center" padding="2" width="50px" textAlign="center" fontSize="12px" borderRadius="full" display="inline-block">
+                                                <Tag mr="3" colorScheme="green" bg={statusColor} minW="50px" variant="solid" height="28px" alignItems="center" justifyContent="center" padding="2" width="50px" textAlign="center" fontSize="12px" borderRadius="full" display="inline-block">
                                                     {getHour(task.time)}
                                                 </Tag>
 

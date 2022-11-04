@@ -75,7 +75,7 @@ export default function Companys(){
                     Adicionar Empresa
                 </SolidButton>
 
-                <SimpleGrid flex="1" gap="12" minChildWidth="100%" align="flex-start">
+                <SimpleGrid flex="1" gap="12" minChildWidth="100%">
                     {/* !isLoading && isFetching && <Spinner size="sm" color="gray.500" ml="4"/> */}
 
                     { isLoading ? (

@@ -48,12 +48,12 @@ export function ControlledCheckbox({
       name={name}
       control={control}
       defaultValue={isIndividualChecked}
+      //error={error}
       render={({ field: { ref, onChange, ...field } }) => (
         <Checkbox
           ref={ref}
           {...field}
           name={name}
-          error={error}
           onChange={event => {
             handleChangeIsIndividualChecked()
             onChange(event)

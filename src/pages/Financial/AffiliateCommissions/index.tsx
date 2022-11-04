@@ -22,7 +22,7 @@ export default function AffiliateCommissions() {
                 <HStack as="form" spacing="12" w="100%" mb="6" justifyContent="left">
                     <Text fontWeight="500" w="100%" fontSize="xl">Comissões de filiais</Text>
 
-                    <FormControl display="flex" justifyContent="flex-end" align="flex-end" minW="150px">
+                    <FormControl display="flex" justifyContent="flex-end" minW="150px">
                         <ChakraSelect defaultValue={workingCompany.company?.id} h="45px" mr={4} name="selected_company" maxW="200px" fontSize="sm" focusBorderColor="purple.600" bg="gray.400" variant="filled" _hover={{ bgColor: 'gray.500' }} size="lg" borderRadius="full">
                             {/* {
                                 years.map((year: Number) => {

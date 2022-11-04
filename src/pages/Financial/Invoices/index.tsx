@@ -242,7 +242,6 @@ export default function Invoices() {
                 borderColor="gray.500"
                 borderRadius="26"
                 overflow="hidden"
-                spacing="0"
                 allowMultiple
               >
                 <HStack

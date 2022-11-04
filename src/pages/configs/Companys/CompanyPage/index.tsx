@@ -328,7 +328,7 @@ export default function CompanyPage() {
                 )}
             </Board>
 
-            <CompanyRules/>
+            {/* <CompanyRules/> */}
 
             <SellerCommissionRules companyId={parseInt(id)}/>
 
