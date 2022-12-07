@@ -31,13 +31,17 @@ interface SellerCommissionStepProps{
     setFirstSellerCommissionRule: (sellerCommissionRule: SellerCommissionRule) => void;
     firstCompany: Company | undefined;
     firstBranch: Branch  | undefined;
+    loading: boolean
+    //setLoading: (loading: boolean) => void;
 }
 
-export function SellerCommissionRuleStep({firstSellerCommissionRule, setFirstSellerCommissionRule, firstCompany, firstBranch} : SellerCommissionStepProps){
+export function SellerCommissionRuleStep({firstSellerCommissionRule, setFirstSellerCommissionRule, firstCompany, firstBranch, loading} : SellerCommissionStepProps){
 
     const fetchSellerCommissionRule = async () => {
         api.get('/seller-commission-rules').then(response => {
             setFirstSellerCommissionRule(response.data.data[0]);
+            console.log('carregou');
+            //setLoading(false);
         });
     }
 
@@ -146,8 +150,11 @@ export function SellerCommissionRuleStep({firstSellerCommissionRule, setFirstSel
             <ConfirmSellerRuleParcelRemoveModal toRemoveSellerRuleParcelData={editCompanyRuleParcelData} afterRemove={fetchSellerCommissionRule} isOpen={isConfirmSellerRuleParcelRemoveModalOpen} onRequestClose={CloseConfirmSellerRuleParcelRemoveModal}/>
         
             {
-                firstSellerCommissionRule ? (
-                    <Board p="0" pb="8" overflow="hidden">
+                loading ? (
+                    <Spinner/>
+                )
+                : (firstSellerCommissionRule ? (
+                    <Board p="0" pb="8" overflow="hidden" w="100%">
                         <HStack justifyContent="space-between" p={[4, 4, 9]}>
                             <HStack spacing="4">
                                 <ForwardArrow stroke="#C30052" fill="none" width="20px"/>
@@ -276,7 +283,7 @@ export function SellerCommissionRuleStep({firstSellerCommissionRule, setFirstSel
                                                                 {
                                                                     firstSellerCommissionRule.seller_commission_rule_parcels.map((sellerCommissionRuleParcel: SellerCommissionRuleParcel) => {
                                                                         return(
-                                                                            <Tr borderTop="1px" borderColor="gray.200">
+                                                                            <Tr key={sellerCommissionRuleParcel.id} borderTop="1px" borderColor="gray.200">
                                                                                 <Td>{sellerCommissionRuleParcel.parcel_number}</Td>
                                                                                 <Td>{sellerCommissionRuleParcel.percentage_to_pay}%</Td>
                                                                                 <Td>{sellerCommissionRuleParcel.chargeback_percentage}%</Td>
@@ -308,7 +315,7 @@ export function SellerCommissionRuleStep({firstSellerCommissionRule, setFirstSel
                             Adicionar regra
                         </SolidButton>
                     </Stack>
-                )
+                ))
             }
         </>
     )

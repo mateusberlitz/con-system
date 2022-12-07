@@ -1,4 +1,4 @@
-import { Heading, HStack, Icon, Stack, Text } from "@chakra-ui/react";
+import { Heading, HStack, Icon, Spinner, Stack, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Board } from "../../components/Board";
 import { EditButton } from "../../components/Buttons/EditButton";
@@ -17,9 +17,10 @@ import { EditCompanyModal } from "../configs/Companys/EditCompanyModal";
 interface CompanyStepProps{
     firstCompany?:Company | undefined;
     setFirstCompany: (company: Company) => void;
+    loading: boolean;
 }
 
-export function CompanyStep({firstCompany, setFirstCompany} : CompanyStepProps){
+export function CompanyStep({firstCompany, setFirstCompany, loading} : CompanyStepProps){
 
     const fetchCompany = async () => {
         api.get('/companies').then(response => {
@@ -81,7 +82,10 @@ export function CompanyStep({firstCompany, setFirstCompany} : CompanyStepProps){
             <EditCompanyModal afterEdit={fetchCompany} isOpen={isEditCompanyModalOpen} toEditCompanyData={editCompanyData} onRequestClose={CloseEditCompanyModal}/>
         
             {
-                firstCompany ? (
+                loading ? (
+                    <Spinner/>
+                )
+                : (firstCompany ? (
                     <Board key={firstCompany.id}>
                         <HStack mb="12" spacing="6">
                             <Heading fontSize="2xl" fontWeight="500">{firstCompany.name}</Heading>
@@ -108,7 +112,7 @@ export function CompanyStep({firstCompany, setFirstCompany} : CompanyStepProps){
                             Adicionar Empresa
                         </SolidButton>
                     </Stack>
-                )
+                ))
             }
         </>
     )

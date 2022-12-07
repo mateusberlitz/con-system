@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, HStack, Icon, Stack, Text } from '@chakra-ui/react'
+import { Box, Flex, Heading, HStack, Icon, Spinner, Stack, Text } from '@chakra-ui/react'
 
 import { ReactComponent as SettingsIcon } from '../../assets/icons/Settings.svg'
 import { ReactComponent as ChartBarIcon } from '../../assets/icons/Chart-bar.svg'
@@ -32,6 +32,7 @@ export default function Start() {
   const { prefix } = useTenant();
 
   const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(true);
 
   const [firstBranch, setFirstBranch] = useState<Branch>();
   const [firstCompany, setFirstCompany] = useState<Company>();
@@ -40,15 +41,18 @@ export default function Start() {
   const [firstSellerCommissionRule, setFirstSellerCommissionRule] = useState<SellerCommissionRule>();
 
   useEffect(() => {
-    if(companyCommissionRule && firstSellerCommissionRule){
-      setStep(3);
+    if(firstSellerCommissionRule){//companyCommissionRule
+      //setStep(3);
+      setLoading(false);
+      //handleSaveInitiatedComplete();
       return;
     }
 
     if(firstBranch && firstCompany){
       setStep(2);
+      setLoading(true);
     }
-  }, [firstBranch, firstCompany])
+  }, [firstBranch, firstCompany, firstSellerCommissionRule])
 
   const handleSaveInitiatedComplete = async () => {
     api.put('/configs/1', {initiated: true}).then(() => {
@@ -57,6 +61,8 @@ export default function Start() {
       window.location.reload();
     });
   }
+
+  console.log(firstSellerCommissionRule, loading);
   
   return (
     <Flex direction="column" h="100vh">
@@ -70,7 +76,7 @@ export default function Start() {
 
         <Stack mb="20">
           <Text fontWeight="700" fontSize="3xl">Seja Bem-vindo!</Text>
-          <Text fontSize="md" color="gray.800">Conclua seus primeiros</Text>
+          <Text fontSize="md" color="gray.800">Conclua seus primeiros passos</Text>
         </Stack>
 
         <Stack spacing="10" alignItems={"right"}>
@@ -78,9 +84,9 @@ export default function Start() {
             (step === 1) && (
               <>
                 <Stack direction={["column", "column", "row"]} justifyContent="space-between" spacing="8">
-                  <CompanyStep firstCompany={firstCompany} setFirstCompany={setFirstCompany}/>
+                  <CompanyStep loading={loading}  firstCompany={firstCompany} setFirstCompany={setFirstCompany}/>
 
-                  <BranchStep firstBranch={firstBranch} setFirstBranch={setFirstBranch}/>
+                  <BranchStep loading={loading} firstBranch={firstBranch} setFirstBranch={setFirstBranch}/>
                 </Stack>
                 {
                   (firstBranch && firstCompany ) && (
@@ -99,9 +105,9 @@ export default function Start() {
             (step === 2) && (
               <>
                 <Stack direction={["column", "column", "row"]} justifyContent="space-between" spacing="8">
-                  <CompanyCommissionRuleStep companyCommissionRule={companyCommissionRule} setCompanyCommissionRule={setCompanyCommissionRule}/>
+                  {/* <CompanyCommissionRuleStep companyCommissionRule={companyCommissionRule} setCompanyCommissionRule={setCompanyCommissionRule}/> */}
 
-                  <SellerCommissionRuleStep firstSellerCommissionRule={firstSellerCommissionRule} firstBranch={firstBranch} firstCompany={firstCompany} setFirstSellerCommissionRule={setFirstSellerCommissionRule}/>
+                  <SellerCommissionRuleStep loading={loading} firstSellerCommissionRule={firstSellerCommissionRule} firstBranch={firstBranch} firstCompany={firstCompany} setFirstSellerCommissionRule={setFirstSellerCommissionRule}/>
                 </Stack>
                 {
                   (firstBranch && firstCompany ) && (

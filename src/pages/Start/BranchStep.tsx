@@ -1,4 +1,4 @@
-import { Heading, HStack, Icon, Stack, Text } from "@chakra-ui/react";
+import { Heading, HStack, Icon, Spinner, Stack, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Board } from "../../components/Board";
 import { EditButton } from "../../components/Buttons/EditButton";
@@ -19,9 +19,10 @@ import { EditBranchFormData, EditBranchModal } from "../configs/Companys/Company
 interface BranchStepProps{
     firstBranch: Branch | undefined;
     setFirstBranch: (branch: Branch) => void;
+    loading: boolean;
 }
 
-export function BranchStep({firstBranch, setFirstBranch}: BranchStepProps){
+export function BranchStep({firstBranch, setFirstBranch, loading}: BranchStepProps){
     //const [firstBranch, setFirstBranch] = useState<Branch>()
 
     const fetchBranch = async () => {
@@ -96,8 +97,10 @@ export function BranchStep({firstBranch, setFirstBranch}: BranchStepProps){
             <ConfirmBranchRemoveModal afterRemove={fetchBranch} isOpen={isConfirmBranchRemoveModalOpen} toRemoveBranchData={removeBranch} onRequestClose={CloseConfirmBranchRemoveModal}/>
             <EditBranchModal afterEdit={fetchBranch} isOpen={isEditBranchModalOpen} toEditBranchData={editBranchData} onRequestClose={CloseEditBranchModal}/>
         
-            {
-                firstBranch ? (
+            {   loading ? (
+                    <Spinner/>
+                )
+                : (firstBranch ? (
                     <Board key={firstBranch.id}>
                         <HStack mb="12" spacing="6">
                             <Heading fontSize="2xl" fontWeight="500">{firstBranch.name}</Heading>
@@ -124,7 +127,7 @@ export function BranchStep({firstBranch, setFirstBranch}: BranchStepProps){
                             Adicionar Filial
                         </SolidButton>
                     </Stack>
-                )
+                ))
             }
         </>
     )
