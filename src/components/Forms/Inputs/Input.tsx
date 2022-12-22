@@ -36,6 +36,7 @@ export function Input({
   placeholder,
   register = undefined,
   onChange,
+  isRequired,
   inputRef,
   control,
   error,
@@ -71,7 +72,7 @@ export function Input({
   }
 
   useEffect(() => {
-    setControlledValue(value)
+    setControlledValue(handleReturnMaskedInputValue(value));
 
     if (onChange) {
       onChange(value)
@@ -120,6 +121,7 @@ export function Input({
         _focus={{ top: '4px', fontSize: '9px' }}
       >
         {placeholder}
+        {isRequired && '*'}
       </FormLabel>
 
       <InputGroup>
@@ -185,6 +187,7 @@ export function Input({
         _focus={{ top: '4px', fontSize: '9px' }}
       >
         {placeholder}
+        {isRequired && '*'}
       </FormLabel>
 
       <ChakraInput

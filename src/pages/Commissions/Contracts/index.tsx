@@ -47,7 +47,6 @@ export default function CommissionsSalesman(){
     });
 
     const isManager = HasPermission(permissions, 'Comercial Completo');
-    console.log(isManager);
 
     const [filter, setFilter] = useState<CommissionsContractFilterData>(() => {
         const data: CommissionsContractFilterData = {

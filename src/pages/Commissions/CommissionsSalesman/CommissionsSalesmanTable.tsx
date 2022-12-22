@@ -47,7 +47,7 @@ export default function LastComissionsTable({monthName, commissionsSeller}: Sell
             </HStack>
             {
                     commissionsSeller.map((commissionsSeller:SellerCommission) => {
-                        console.log(commissionsSeller)
+                        //console.log(commissionsSeller)
                 return (
              <>
              <AccordionItem display="flex" flexDir="column" paddingX={["4", "8"]} paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
@@ -109,8 +109,7 @@ export default function LastComissionsTable({monthName, commissionsSeller}: Sell
                                     <Stack fontWeight="500" alignItems="center">
                                         {
                                             !commissionsSeller.is_chargeback ? (
-                                                // <Badge colorScheme={commissionsSeller.confirmed ? "green" : "yellow"} width="110px" px="27px">{commissionsSeller.confirmed ? "Confirmada" : "Pendente"}</Badge>
-                                                <></>
+                                                <Badge colorScheme={commissionsSeller.confirmed ? "green" : "yellow"} width="110px" px="27px">{commissionsSeller.confirmed ? "Confirmada" : "Pendente"}</Badge>
                                             ) : (
                                                 <Badge colorScheme="red" width="110px" px="27px">Estorno</Badge>
                                             )

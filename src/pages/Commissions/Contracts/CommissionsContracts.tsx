@@ -32,10 +32,10 @@ export default function CommissionsContracts({commissionsContract}: CommissionsC
 
                     <Text fontWeight="bold" px="2rem" color="#6E7191">Créditos: {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalMonthAmount)}</Text>
                 </Stack>
-                <Stack direction={["column", "row"]} spacing={["3", "6"]} alignItems={["flex-end", "center"]}>
+                {/* <Stack direction={["column", "row"]} spacing={["3", "6"]} alignItems={["flex-end", "center"]}>
 
                     <Text float="right" textAlign="right" px="40px" color="red.400"><strong>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalMonthAmount)}</strong></Text>
-                </Stack>
+                </Stack> */}
             </HStack>
             {
                     commissionsContract.map((commissionsContract:Contract) => {
@@ -87,6 +87,16 @@ export default function CommissionsContracts({commissionsContract}: CommissionsC
                                     <Text ml="2" color="#4e4b66" fontSize="13px">{commissionsContract.quota.group}</Text>
                                 </Stack>
                             </Stack>
+                            <HStack spacing={["5", "5"]} justifyContent="space-between" fontSize={["11px", "13px"]}>
+                                <HStack>
+                                    <Stack direction={['column', 'row']} spacing={["1", "4"]}>
+                                        <Stack fontWeight="500" alignItems="center">
+                                            <Text ml="2" color="#6E7191" fontSize="10px">Vendedor</Text>
+                                            <Text ml="2" color="#4e4b66" fontSize="13px">{commissionsContract.quota.seller && `${commissionsContract.quota.seller.name} ${commissionsContract.quota.seller?.last_name}`}</Text>
+                                        </Stack>
+                                    </Stack>
+                                </HStack>
+                            </HStack>
                             <Stack direction={['column', 'row']} spacing={["1", "4"]}>
                                 <Stack fontWeight="500" alignItems="center">
                                 {

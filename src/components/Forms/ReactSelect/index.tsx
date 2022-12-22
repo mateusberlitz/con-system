@@ -29,6 +29,7 @@ interface ReactSelectProps extends ChakraProps {
   marginBottom?: string
   maxWidth?: string
   label?: string
+  isRequired?: boolean
 }
 
 export function ReactSelect({
@@ -39,6 +40,7 @@ export function ReactSelect({
   variant = 'outline',
   color = '#f24e1e',
   label,
+  isRequired = false,
   error,
   options,
   width,
@@ -88,6 +90,10 @@ export function ReactSelect({
       paddingLeft: '15px',
       fontSize: '14px'
     }),
+    menu: (styles: any, state: any) => ({
+        ...styles,
+        zIndex: 5
+      }),
     singleValue: (provided: any, state: any) => {
       const opacity = state.isDisabled ? 0.5 : 1
       const transition = 'opacity 300ms'
@@ -127,7 +133,7 @@ export function ReactSelect({
             {...select}
             ref={ref}
             options={options}
-            placeholder="Selecione"
+            placeholder={`Selecione o vendedor ${isRequired ? '*' : ''}`}
             styles={customStyles}
             value={options.find(c => c.value === controlledValue)}
             onChange={val => {

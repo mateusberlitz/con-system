@@ -525,6 +525,7 @@ export interface Quota{
     consortium_type: ConsortiumType;
     contract: Contract;
     customer: Customer;
+    seller: User;
     customer_id: number;
     credit: number;
     installments_paid: number;

@@ -41,10 +41,11 @@ import { isAuthenticated } from '../../../services/auth'
 import { redirectMessages } from '../../../utils/redirectMessages'
 import { ReactSelect, SelectOption } from '../../../components/Forms/ReactSelect'
 import { LeadsFilterData, useLeads } from '../../../hooks/useLeads'
-import { City, Customer, Lead, State } from '../../../types'
+import { City, Customer, Lead, State, User } from '../../../types'
 import { useStates } from '../../../hooks/useStates'
 import { useCities } from '../../../hooks/useCities'
 import { useWorkingBranch } from '../../../hooks/useWorkingBranch'
+import { useUsers } from '../../../hooks/useUsers'
 
 interface NewSaleModalProps {
   isOpen: boolean
@@ -108,6 +109,7 @@ const CreateNewSaleFormSchema = yup.object().shape({
   number: yup.string().required('Informe o número'),
   group: yup.string().required('Informe o grupo'),
   quota: yup.string().required('Informe a cota'),
+  seller_id: yup.string().required('Informe o vendedor'),
   number_contract: yup.string().required('Informe o número do contrato'),
 })
 
@@ -155,15 +157,13 @@ export function NewSaleModal({
         saleData.lead = toAddLeadData.id
       }
 
-      console.log(saleData.date_sale);
-
       saleData.date_sale = saleData.date_sale;
       saleData.credit = moneyToBackend(saleData.credit)
 
       const newSaleData = {
         company_id: workingCompany.company.id,
         branch_id: workingBranch.branch && workingBranch.branch.id,
-        seller_id: profile.id,
+        seller_id: saleData.seller_id ? saleData.seller_id : profile.id,
         contract: {
           number_contract: saleData.number_contract
         },
@@ -242,7 +242,15 @@ export function NewSaleModal({
     }
   ]);
 
+  const [usersOptions, setUsersOptions] = useState<Array<SelectOption>>([
+    {
+      value: '',
+      label: 'Selecionar Vendedor'
+    }
+  ]);
+
   const states = useStates();
+  const users = useUsers({});
 
   const selectedState = watch('state_id');
   const cities = useCities({state_id: selectedState ? selectedState : 1});
@@ -264,10 +272,26 @@ export function NewSaleModal({
         newLeadsOptions.push({ value: lead.id.toString(), label: lead.name });
       })
     }
+
+    //
   }, [leads]);
+
+  useEffect(() => {
+    const newUsersOptions = usersOptions;
+    
+    if(users.data){
+      users.data?.map((user: User) => {
+        newUsersOptions.push({ value: user.id.toString(), label: `${user.name} ${user.last_name}` });
+      })
+    }
+
+    setUsersOptions(newUsersOptions);
+  }, [users]);
 
   const [otherValue, setOtherValue] = useState(false);
   const [isPF, setIsPF] = useState(true);
+
+  console.log(users);
 
   return (
     <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
@@ -302,6 +326,52 @@ export function NewSaleModal({
                             <Input register={register} name="quota" type="text" placeholder="Cota" focusBorderColor="orange.400" variant="outline" mask="" error={formState.errors.quota}/>
                         </HStack> */}
 
+            {/* <HStack spacing="4" alignItems="flex-start">
+                <Select
+                    register={register}
+                    h="45px"
+                    name="seller_id"
+                    value="0"
+                    w="100%"
+                    fontSize="sm"
+                    focusBorderColor="purple.300"
+                    bg="gray.400"
+                    variant="outline"
+                    _hover={{ bgColor: 'gray.500' }}
+                    size="lg"
+                    borderRadius="full"
+                    placeholder="Vendedor"
+                    error={formState.errors.state_id}
+                >
+                    {!states.isLoading &&
+                    !states.error &&
+                    states.data.map((state: State) => {
+                        return (
+                        <option key={state.id} value={state.id}>
+                            {state.name}
+                        </option>
+                        )
+                    })}
+                </Select>
+            </HStack> */}
+
+            <HStack spacing="4" alignItems="flex-start">
+              {users && users.data?.length !== 0 && (
+                  <ReactSelect
+                    options={usersOptions}
+                    control={control}
+                    label="Vendedor"
+                    name="seller_id"
+                    bg="gray.400"
+                    variant="outline"
+                    _hover={{ bgColor: 'gray.500' }}
+                    borderRadius="full"
+                    isRequired={true}
+                    error={formState.errors.seller_id}
+                  />
+                )}
+            </HStack>
+
             <HStack spacing="4" alignItems="flex-start">
               <Input
                 register={register}
@@ -311,6 +381,7 @@ export function NewSaleModal({
                 focusBorderColor="orange.400"
                 variant="outline"
                 mask=""
+                isRequired={true}
                 error={formState.errors.date_sale}
               />
               <Select
@@ -325,6 +396,7 @@ export function NewSaleModal({
                 _hover={{ bgColor: 'gray.500' }}
                 size="lg"
                 borderRadius="full"
+                isRequired={true}
                 error={formState.errors.consortium_type_id}
               >
                 <option value={1} selected>
