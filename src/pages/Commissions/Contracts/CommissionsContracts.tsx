@@ -39,6 +39,7 @@ export default function CommissionsContracts({commissionsContract}: CommissionsC
             </HStack>
             {
                     commissionsContract.map((commissionsContract:Contract) => {
+                        console.log(commissionsContract);
                 return (
              <>
             <AccordionItem display="flex" flexDir="column" paddingX={["4", "8"]} paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
@@ -98,14 +99,14 @@ export default function CommissionsContracts({commissionsContract}: CommissionsC
                                 </HStack>
                             </HStack>
                             <Stack direction={['column', 'row']} spacing={["1", "4"]}>
-                                <Stack fontWeight="500" alignItems="center">
+                                <Stack fontWeight="500" alignItems="center" justifyContent={"center"}>
                                 {
-                                                        !commissionsContract.is_chargeback ? (
-                                                            <Badge colorScheme={commissionsContract.confirmed ? "green" : "yellow"} width="110px" px="27px">{commissionsContract.confirmed ? "Confirmada" : "Pendente"}</Badge>
-                                                        ) : (
-                                                            <Badge colorScheme="red" width="110px" px="27px">Estorno</Badge>
-                                                        )
-                                                    }
+                                    !commissionsContract.quota.is_chargeback ? (
+                                        <Badge colorScheme={commissionsContract.quota.active ? "green" : "yellow"} width="110px" px="20px">{commissionsContract.quota.active ? "Confirmado" : "Pendente"}</Badge>
+                                    ) : (
+                                        <Badge colorScheme="red" width="110px" px="27px">Estorno</Badge>
+                                    )
+                                }
                                 </Stack>
                                 <Stack fontWeight="500" alignItems="center">
                                     <Text float="right" px="2rem">Crédito</Text>

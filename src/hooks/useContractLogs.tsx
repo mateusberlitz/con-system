@@ -1,7 +1,7 @@
 import { useQuery } from "react-query";
 import { api } from "../services/api";
 
-export interface CommissionsContractFilterData{
+export interface ContractLogsFilterData{
     search?: string;
     start_date?: string;
     end_date?: string;
@@ -18,9 +18,9 @@ export interface CommissionsContractFilterData{
     team_id?: number;
 }
 
-export const getCommissionsContract = async (filter?: CommissionsContractFilterData, page: number = 0) => {
+export const getContractLogs = async (filter?: ContractLogsFilterData, page: number = 0) => {
     if(filter){
-        const { data, headers } = await api.get("/contracts", {
+        const { data, headers } = await api.get("/contract_logs", {
             params: {
                 page: page,
                 search: filter.search,
@@ -48,8 +48,8 @@ export const getCommissionsContract = async (filter?: CommissionsContractFilterD
     return { data, total: Number(headers['x-total-count'])};
 };
 
-export function useCommissionsContract(filter: CommissionsContractFilterData, page?: number){
-    return useQuery(['commissions-contract', [filter, page]], () => getCommissionsContract(filter, page), {
+export function useContractLogs(filter: ContractLogsFilterData, page?: number){
+    return useQuery(['contract-logs', [filter, page]], () => getContractLogs(filter, page), {
         staleTime: 1000 * 5 * 60, //fresh
     });
 }

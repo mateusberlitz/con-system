@@ -73,7 +73,7 @@ export function CompanySelect({ filters, ...rest }: CompanySelectProps) {
       <Text>Nenhuma empresa disponível</Text>
     </Flex>
   ) : (
-    <HStack as="form" spacing="10" w="100%" mb="10" {...rest}>
+    <HStack as="form" spacing="10" w="100%" {...rest}>
       <FormControl pos="relative">
         <ChakraSelect
           onChange={handleChangeCompany}

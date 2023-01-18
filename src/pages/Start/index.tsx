@@ -55,7 +55,18 @@ export default function Start() {
   }, [firstBranch, firstCompany, firstSellerCommissionRule])
 
   const handleSaveInitiatedComplete = async () => {
-    api.put('/configs/1', {initiated: true}).then(() => {
+    const id = await api.get('/configs').then(response => response.data.data.id)
+
+    //console.log(id);
+    if(!id){
+        api.post('/config', {initiated: true});
+
+        localStorage.setItem('@lance/firstSteps', JSON.stringify(1));
+
+        window.location.reload();
+    }
+
+    api.put(`/configs/${id}`, {initiated: true}).then(() => {
       localStorage.setItem('@lance/firstSteps', JSON.stringify(1));
 
       window.location.reload();
@@ -69,7 +80,7 @@ export default function Start() {
       <Alert />
 
       <Flex w="100%" my="14" maxWidth={1280} mx="auto" px="6" direction="column">
-        <Flex w="100%" mb="16">
+        <Flex w="100%" mb="16" justifyContent={"space-between"}>
           <Logo/>
           <Profile />
         </Flex>

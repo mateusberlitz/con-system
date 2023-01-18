@@ -16,7 +16,15 @@ interface CommissionsCompanyProps{
 export default function CommissionsCompany({monthName, companyCommissions}: CommissionsCompanyProps) {
     const { profile, permissions } = useProfile()
 
+    const totalCreditMonthAmount = companyCommissions.reduce((sumAmount:number, companyCommission:CompanyCommission) => {
+        return sumAmount + companyCommission.quota.credit;
+    }, 0);
+
     const totalMonthAmount = companyCommissions.reduce((sumAmount:number, companyCommission:CompanyCommission) => {
+        if(companyCommission.is_chargeback){
+            return sumAmount - companyCommission.value;
+        }
+
         return sumAmount + companyCommission.value;
     }, 0);
 
@@ -28,10 +36,10 @@ export default function CommissionsCompany({monthName, companyCommissions}: Comm
 
                     <Text fontWeight="bold" px="6rem">{companyCommissions.length} contratos</Text>
 
-                    <Text fontWeight="bold" px="6rem" color="#6E7191">Créditos: {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalMonthAmount)}</Text>
+                    <Text fontWeight="bold" px="6rem" color="#6E7191">Créditos: {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalCreditMonthAmount)}</Text>
                 </Stack>
                 <Stack direction={["column", "row"]} spacing={["3", "6"]} alignItems={["flex-end", "center"]}>
-                    <Text float="right" textAlign="right" px="40px" color="red.400"><strong>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalMonthAmount)}</strong></Text>
+                    <Text float="right" textAlign="right" px="40px" color={totalMonthAmount < 0 ? "red.400" : "green.400"}><strong>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalMonthAmount)}</strong></Text>
                 </Stack>
             </HStack>
                 {
@@ -65,7 +73,7 @@ export default function CommissionsCompany({monthName, companyCommissions}: Comm
                                                 <HStack spacing={["3", "4"]}>
                                                     <Stack fontWeight="500" alignItems="center">
                                                         <Text ml="2" color="#6E7191" fontSize="10px">Parcela</Text>
-                                                        <Text ml="2" color="#4e4b66" fontSize="13px">{companyCommission.company_commission_rule_parcel.parcel_number}</Text>
+                                                        <Text ml="2" color="#4e4b66" fontSize="13px">{companyCommission.parcel_number}</Text>
                                                     </Stack>
                                                 </HStack>
                                             </HStack>
@@ -98,7 +106,7 @@ export default function CommissionsCompany({monthName, companyCommissions}: Comm
                                                 </Stack>
                                                 <Stack fontWeight="500" alignItems="center" justifyContent="center" color={companyCommission.is_chargeback ? "red.400" : "green.400"}> 
                                                 {/* companyCommission.confirmed ? "green.400" : "gray.800"}> */}
-                                                    <Text float="right" px="2rem">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(companyCommission.value)}</Text>
+                                                    <Text float="right" px="2rem">{companyCommission.is_chargeback ? "-" : ''}{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(companyCommission.value)}</Text>
                                                 </Stack>
                                             </Stack>
                                         </Stack>
@@ -108,15 +116,15 @@ export default function CommissionsCompany({monthName, companyCommissions}: Comm
                                                 <HStack spacing="2">
                                                     <strong color="#4e4b66">Percentual:</strong>
                                                     <Text>
-                                                        {companyCommission.company_commission_rule_parcel.percentage_to_pay.toFixed(2)}%
+                                                        {companyCommission.percentage.toFixed(2)}%
                                                     </Text>
                                                 </HStack>
-                                                <HStack spacing="4">
+                                                {/* <HStack spacing="4">
                                                     <strong color="#4e4b66">Meia parcela:</strong>
                                                     <Text>
                                                         {companyCommission.company_commission_rule_parcel.id}
                                                     </Text>
-                                                </HStack>
+                                                </HStack> */}
                                                 <HStack spacing="4">
                                                     <strong color="#4e4b66">Vendedor:</strong>
                                                     <Text>

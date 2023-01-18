@@ -18,8 +18,8 @@ export default function CommissionsGrafic() {
   const [filter, setFilter] = useState<CommissionsSellerFilterData>(() => {
       const data: CommissionsSellerFilterData = {
           search: '',
-          company: workingCompany.company?.id,
-          branch: workingBranch.branch?.id,
+          company_id: workingCompany.company?.id,
+          branch_id: workingBranch.branch?.id,
           seller_id: !HasPermission(permissions, 'Commissões completo') && !isManager ? (profile ? profile.id : 0) : undefined
       };
       

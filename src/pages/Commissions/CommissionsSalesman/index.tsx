@@ -18,7 +18,7 @@ import { useWorkingBranch } from "../../../hooks/useWorkingBranch";
 import { CommissionsSellerFilterData, useCommissionsSeller } from "../../../hooks/useCommissionsSeller";
 import { HasPermission, useProfile } from "../../../hooks/useProfile";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import getMonthName from "../../../utils/Date/getMonthName";
 import { NewSaleModal } from "../../Commercial/Sales/NewSaleModal";
 
@@ -52,8 +52,8 @@ export default function CommissionsSalesman(){
     const [filter, setFilter] = useState<CommissionsSellerFilterData>(() => {
         const data: CommissionsSellerFilterData = {
             search: '',
-            company: workingCompany.company?.id,
-            branch: workingBranch.branch?.id,
+            company_id: workingCompany.company?.id,
+            branch_id: workingBranch.branch?.id,
             group_by: 'commission_date',
             seller_id: !HasPermission(permissions, 'Comissões Completo') && !isManager ? (profile ? profile.id : 0) : undefined,
             team_id: isManager ? (profile && profile.teams.length > 0 ? profile.teams[0].id : undefined) : undefined
@@ -80,6 +80,10 @@ export default function CommissionsSalesman(){
     function CloseNewSaleModal() {
         setIsNewSaleModalOpen(false)
     }
+
+    useEffect(() => {
+        setFilter({...filter, company_id: workingCompany.company?.id, branch_id: workingBranch.branch?.id});
+    }, [workingCompany, workingBranch]);
 
     return(
         <MainBoard sidebar="commissions" header={ <CompanySelectMaster/>}>

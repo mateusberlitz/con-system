@@ -19,7 +19,7 @@ export function Profile() {
   }
 
   return (
-    <Flex ml="auto" title="Ver informações ou sair" cursor="pointer">
+    <Flex title="Ver informações ou sair" cursor="pointer">
       {profile && (
         <Link to="/eu">
           <Stack

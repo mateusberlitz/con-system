@@ -221,11 +221,11 @@ export function SideBarNav({ desk }: SideBarNavProps) {
         Dashboard
       </NavLink>
       <NavLink href={`/comissões-vendedores`} icon={PercentIcon} color="red.400">
-        Comissões
+        Comissões de vendedor
       </NavLink>
       {HasPermission(permissions, 'Comissões Completo') && (
         <NavLink href={`/comissões-empresa`} icon={HomeIcon} color="red.400">
-          Empresa
+          Comissões da empresa
         </NavLink>
       )}
       <NavLink href={`/contratos`} icon={FolderIcon} color="red.400">

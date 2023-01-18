@@ -28,7 +28,7 @@ export default function ConfigHome() {
         px="6"
         direction="column"
       >
-        <Flex w="100%" mb="16">
+        <Flex w="100%" mb="16" justifyContent={"space-between"}>
           <Logo/>
 
           <Profile />

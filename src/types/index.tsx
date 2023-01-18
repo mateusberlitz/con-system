@@ -353,6 +353,12 @@ export interface Log{
     updated_at: string;
 }
 
+export interface ContractLog{
+    number_contract: number;
+    created_at: string;
+    updated_at: string;
+}
+
 export interface State{
     id: number;
     name: string;
@@ -516,13 +522,13 @@ export interface Contract{
     number_contract: number;
     quota: Quota;
     quotas: Quota[];
-    confirmed: boolean;
-    is_chargeback?: boolean;
+    //confirmed: boolean;
 }
 
 export interface Quota{
     id:number;
     consortium_type: ConsortiumType;
+    is_chargeback?: boolean;
     contract: Contract;
     customer: Customer;
     seller: User;
@@ -541,7 +547,7 @@ export interface Quota{
 
 export interface CompanyCommission{
     id:number;
-    company_commission_rule_parcel: CompanyCommissionRuleParcel;
+    company_commission_rule_parcel?: CompanyCommissionRuleParcel;
     company: Company;
     branch?: Branch;
     quota: Quota;
@@ -550,6 +556,7 @@ export interface CompanyCommission{
     comission_date: string;
     base_value: number;
     percentage: number;
+    parcel_number: number;
     half_installment: boolean;
     period: string;
     confirmed: boolean;

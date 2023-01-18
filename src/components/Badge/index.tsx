@@ -18,7 +18,7 @@ export default function Badge({children, colorScheme, onClick, ...rest}: BadgePr
                 )))));
 
     return (
-        <ChakraBadge onClick={onClick} fontSize="11px" textTransform="capitalize" fontWeight="semibold" colorScheme="purple" color="white" bg={color} display="flex" borderRadius="full" px="5" py="0" h="29px" alignItems="center" {...rest}>
+        <ChakraBadge justifyContent={"center"} textAlign="center" onClick={onClick} fontSize="11px" textTransform="capitalize" fontWeight="semibold" colorScheme="purple" color="white" bg={color} display="flex" borderRadius="full" px="5" py="0" h="29px" alignItems="center" {...rest}>
             {children}
         </ChakraBadge>
     )

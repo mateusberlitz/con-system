@@ -13,7 +13,7 @@ import CommissionsCompany from "./CommissionsCompany";
 import { CompanyCommissionsFilterData, useCompanyCommissions } from "../../../hooks/useCompanyCommissions";
 import { useWorkingCompany } from "../../../hooks/useWorkingCompany";
 import { useWorkingBranch } from "../../../hooks/useWorkingBranch";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import getMonthName from "../../../utils/Date/getMonthName";
 import { useForm } from "react-hook-form";
 
@@ -47,8 +47,8 @@ export default function Company(){
     const [filter, setFilter] = useState<CompanyCommissionsFilterData>(() => {
         const data: CompanyCommissionsFilterData = {
             search: '',
-            company: workingCompany.company?.id,
-            branch: workingBranch.branch?.id,
+            company_id: workingCompany.company?.id,
+            branch_id: workingBranch.branch?.id,
             group_by: 'commission_date',
         };
         
@@ -72,6 +72,10 @@ export default function Company(){
     function CloseNewSaleModal() {
         setIsNewSaleModalOpen(false)
     }
+
+    useEffect(() => {
+        setFilter({...filter, company_id: workingCompany.company?.id, branch_id: workingBranch.branch?.id});
+    }, [workingCompany, workingBranch]);
 
     return(
         <MainBoard sidebar="commissions" header={<CompanySelectMaster/>}>

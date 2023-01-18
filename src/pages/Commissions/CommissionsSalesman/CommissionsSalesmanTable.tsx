@@ -29,7 +29,7 @@ export default function LastComissionsTable({monthName, commissionsSeller}: Sell
         return sumAmount + sellerCommission.value;
     }, 0);
 
-    //console.log(totalMonthAmount);
+    console.log(commissionsSeller);
 
     return (
         <Accordion w="100%" border="2px" borderColor="gray.500" borderRadius="26" overflow="hidden" allowMultiple>
@@ -42,12 +42,17 @@ export default function LastComissionsTable({monthName, commissionsSeller}: Sell
                     <Text fontWeight="bold" px="6rem" color="#6E7191">Créditos: {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalCreditMonthAmount)}</Text>
                 </Stack>
                 <Stack direction={["column", "row"]} spacing={["3", "6"]} alignItems={["flex-end", "center"]}>
-                    <Text float="right" textAlign="right" px="40px" color="red.400"><strong>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalMonthAmount)}</strong></Text>
+                    <Text float="right" textAlign="right" px="40px" color={totalMonthAmount < 0 ? "red.400" : "green.400"}><strong>{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalMonthAmount)}</strong></Text>
                 </Stack>
             </HStack>
             {
-                    commissionsSeller.map((commissionsSeller:SellerCommission) => {
-                        //console.log(commissionsSeller)
+                    commissionsSeller.map((commissionSeller:SellerCommission) => {
+                        if(commissionSeller.is_chargeback){
+                            commissionSeller.value = 0 - commissionSeller.value;
+                        }
+
+                        console.log(commissionSeller.value);
+
                 return (
              <>
              <AccordionItem display="flex" flexDir="column" paddingX={["4", "8"]} paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
@@ -67,7 +72,7 @@ export default function LastComissionsTable({monthName, commissionsSeller}: Sell
                                         <Stack direction={['column', 'row']} spacing={["1", "4"]}>
                                             <Stack fontWeight="500" alignItems="center">
                                                 <Text ml="2" color="#6E7191" fontSize="10px">Data da venda</Text>
-                                                <Text ml="2" color="#4e4b66" fontSize="13px">{formatBRDate(commissionsSeller.quota.date_sale)}</Text>
+                                                <Text ml="2" color="#4e4b66" fontSize="13px">{formatBRDate(commissionSeller.quota.date_sale)}</Text>
                                             </Stack>
                                         </Stack>
                                     </HStack>
@@ -75,7 +80,7 @@ export default function LastComissionsTable({monthName, commissionsSeller}: Sell
                                         <HStack spacing={["3", "4"]}>
                                             <Stack fontWeight="500" alignItems="center">
                                                 <Text ml="2" color="#6E7191" fontSize="10px">Parcela</Text>
-                                                <Text ml="2" color="#4e4b66" fontSize="13px">{commissionsSeller.seller_commission_rule_parcel.parcel_number}</Text>
+                                                <Text ml="2" color="#4e4b66" fontSize="13px">{commissionSeller.seller_commission_rule_parcel.parcel_number}</Text>
                                             </Stack>
                                         </HStack>
                                     </HStack>
@@ -84,7 +89,7 @@ export default function LastComissionsTable({monthName, commissionsSeller}: Sell
                                             <Stack direction={['column', 'row']} spacing={["1", "4"]}>
                                                 <Stack fontWeight="500" alignItems="center">
                                                     <Text ml="2" color="#6E7191" fontSize="10px">Crédito</Text>
-                                                    <Text ml="2" color="#4e4b66" fontSize="13px">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(commissionsSeller.quota.credit)}</Text>
+                                                    <Text ml="2" color="#4e4b66" fontSize="13px">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(commissionSeller.quota.credit)}</Text>
                                                 </Stack>
                                             </Stack>
                                         </HStack>
@@ -94,7 +99,7 @@ export default function LastComissionsTable({monthName, commissionsSeller}: Sell
                                             <Stack direction={['column', 'row']} spacing={["1", "4"]}>
                                                 <Stack fontWeight="500" alignItems="center">
                                                     <Text ml="2" color="#6E7191" fontSize="10px">Vendedor</Text>
-                                                    <Text ml="2" color="#4e4b66" fontSize="13px">{commissionsSeller.seller.name}</Text>
+                                                    <Text ml="2" color="#4e4b66" fontSize="13px">{commissionSeller.seller.name}</Text>
                                                 </Stack>
                                             </Stack>
                                         )
@@ -102,22 +107,22 @@ export default function LastComissionsTable({monthName, commissionsSeller}: Sell
                                     <Stack direction={['column', 'row']} spacing={["1", "4"]}>
                                         <Stack fontWeight="500" alignItems="center">
                                             <Text ml="2" color="#6E7191" fontSize="10px">Critério</Text>
-                                            <Text ml="2" color="#4e4b66" fontSize="13px">{commissionsSeller.seller_commission_rule_parcel.seller_commission_rule.name}</Text>
+                                            <Text ml="2" color="#4e4b66" fontSize="13px">{commissionSeller.seller_commission_rule_parcel.seller_commission_rule.name}</Text>
                                         </Stack>
                                     </Stack>
                                     <Stack direction={['column', 'row']} spacing={["1", "4"]}>
                                     <Stack fontWeight="500" alignItems="center">
                                         {
-                                            !commissionsSeller.is_chargeback ? (
-                                                <Badge colorScheme={commissionsSeller.confirmed ? "green" : "yellow"} width="110px" px="27px">{commissionsSeller.confirmed ? "Confirmada" : "Pendente"}</Badge>
+                                            !commissionSeller.is_chargeback ? (
+                                                <Badge colorScheme={commissionSeller.confirmed ? "green" : "yellow"} width="110px" px="27px">{commissionSeller.confirmed ? "Confirmada" : "Pendente"}</Badge>
                                             ) : (
                                                 <Badge colorScheme="red" width="110px" px="27px">Estorno</Badge>
                                             )
                                         }
                                     </Stack>
-                                    <Stack fontWeight="500" alignItems="center" color={commissionsSeller.is_chargeback ? "red.400" : commissionsSeller.confirmed ? "green.400" : "gray.800"}>
-                                        <Text float="right" px="2rem">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(commissionsSeller.value)}</Text>
-                                    </Stack>
+                                        <Stack fontWeight="500" alignItems="center" color={commissionSeller.is_chargeback ? "red.400" : commissionSeller.confirmed ? "green.400" : "gray.800"}>
+                                            <Text float="right" px="2rem">{commissionSeller.is_chargeback ? "-" : ''}{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(commissionSeller.value)}</Text>
+                                        </Stack>
                                     </Stack>
                                 </Stack>
 
@@ -126,26 +131,26 @@ export default function LastComissionsTable({monthName, commissionsSeller}: Sell
                                         <HStack spacing="2">
                                             <strong color="#4e4b66">Percentual:</strong>
                                             <Text>
-                                            {commissionsSeller.seller_commission_rule_parcel.percentage_to_pay}%
+                                            {commissionSeller.seller_commission_rule_parcel.percentage_to_pay}%
                                             </Text>
                                         </HStack>
                                         <HStack spacing="4">
                                             <strong color="#4e4b66">Parcelas:</strong>
                                             <Text>
-                                            {commissionsSeller.seller_commission_rule_parcel.parcel_number}
+                                            {commissionSeller.seller_commission_rule_parcel.parcel_number}
                                             </Text>
                                         </HStack>
                                         <HStack spacing="4">
                                             <strong color="#4e4b66">Parcela:</strong>
                                             <Text>
-                                            {commissionsSeller.seller_commission_rule_parcel.parcel_number}
+                                            {commissionSeller.seller_commission_rule_parcel.parcel_number}
                                             </Text>
                                         </HStack>
 
                                         <HStack spacing="2" px="1rem">
                                             <strong color="#4e4b66">Restante:</strong>
                                             <Text>
-                                                {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(commissionsSeller.quota.credit - commissionsSeller.value)}
+                                                {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(commissionSeller.quota.credit - commissionSeller.value)}
                                             </Text>
                                         </HStack>
                                     </Stack>
@@ -156,19 +161,19 @@ export default function LastComissionsTable({monthName, commissionsSeller}: Sell
                                         <HStack spacing="2">
                                             <strong color="#4e4b66">Contrato:</strong>
                                             <Text>
-                                            {commissionsSeller.quota.contract.number_contract}
+                                            {commissionSeller.quota.contract.number_contract}
                                             </Text>
                                         </HStack>
                                         <HStack spacing="4">
                                             <strong color="#4e4b66">Grupo:</strong>
                                             <Text>
-                                            {commissionsSeller.quota.group}
+                                            {commissionSeller.quota.group}
                                             </Text>
                                         </HStack>
                                         <HStack spacing="4">
                                             <strong color="#4e4b66">Cota:</strong>
                                             <Text>
-                                            {commissionsSeller.quota.quota}
+                                            {commissionSeller.quota.quota}
                                             </Text>
                                         </HStack>
 

@@ -1,9 +1,10 @@
-import { Box, Flex } from '@chakra-ui/react'
+import { Box, Flex, HStack } from '@chakra-ui/react'
 import { useBreakpointValue } from '@chakra-ui/media-query'
 import { ReactNode } from 'react'
 import { SideBar } from './SideBar'
 import { OpenButton } from './SideBar/OpenButton'
 import { Profile } from './Profile'
+import { SyncButton } from './SyncButton'
 
 interface MainBoardProps{
     sidebar: "configs" | "financial" | "commercial" | "quotas" | "commissions";
@@ -40,10 +41,17 @@ export function MainBoard({
           maxWidth={isWideVersion ? 'calc(1280px - 254px)' : '1280px'}
           mx="auto"
         >
-          <Flex as="header" w="100%" mb={[6, 6, 20]}>
+          <Flex as="header" w="100%" mb={[6, 6, 24]} justifyContent="space-between">
             <Flex mt={[20, 20, 0]}>{header}</Flex>
 
-            <Profile />
+            <HStack spacing="8">
+                {
+                    sidebar === 'commissions' && (
+                        <SyncButton/>
+                    )
+                }
+                <Profile />
+            </HStack>
           </Flex>
 
           {children}

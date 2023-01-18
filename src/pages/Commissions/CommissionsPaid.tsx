@@ -21,8 +21,8 @@ export default function CommissionsPaid() {
 
   const commissionsSeller = useCommissionsSeller({
     is_chargeback: false,
-    company: workingCompany.company?.id,
-    branch: workingBranch.branch?.id,
+    company_id: workingCompany.company?.id,
+    branch_id: workingBranch.branch?.id,
     seller_id: !HasPermission(permissions, 'Comissões Completo') && !isManager ? (profile ? profile.id : 0) : undefined,
     team_id: isManager ? (profile && profile.teams.length > 0 ? profile.teams[0].id : undefined) : undefined
   }, 1);

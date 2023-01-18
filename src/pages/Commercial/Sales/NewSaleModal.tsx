@@ -277,7 +277,7 @@ export function NewSaleModal({
   }, [leads]);
 
   useEffect(() => {
-    const newUsersOptions = usersOptions;
+    const newUsersOptions:Array<SelectOption> = [];
     
     if(users.data){
       users.data?.map((user: User) => {
@@ -286,7 +286,7 @@ export function NewSaleModal({
     }
 
     setUsersOptions(newUsersOptions);
-  }, [users]);
+  }, [users.data]);
 
   const [otherValue, setOtherValue] = useState(false);
   const [isPF, setIsPF] = useState(true);
