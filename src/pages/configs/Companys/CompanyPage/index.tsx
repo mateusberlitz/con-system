@@ -5,6 +5,14 @@ import {
   Heading,
   HStack,
   Icon,
+  IconButton,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTrigger,
   Spinner,
   Stack,
   Td,
@@ -36,6 +44,9 @@ import { OutlineButton } from '../../../../components/Buttons/OutlineButton'
 import { useUsers } from '../../../../hooks/useUsers'
 import { CompanyRules } from './CompanyRules'
 import { SellerCommissionRules } from '../../SellerCommissionsRules'
+import { EditButton } from '../../../../components/Buttons/EditButton'
+import { RemoveButton } from '../../../../components/Buttons/RemoveButton'
+import { MoreVertical } from 'react-feather'
 
 interface CompanyParams {
   id: string
@@ -317,8 +328,23 @@ export default function CompanyPage() {
                                 >
                                   Gerenciar
                                 </OutlineButton>
-                                {/* <EditButton onClick={() => OpenEditBranchModal({id: branch.id, name: branch.name, phone: branch.phone, email: branch.email, company: branch.company.id, manager: branch.manager.id, city: branch.city.name, state: branch.state.id, address: branch.address }) }/>
-                                                            <RemoveButton onClick={() => OpenConfirmBranchRemoveModal({ id: branch.id, name: branch.name }) }/> */}
+
+                                <Popover>
+                                    <PopoverTrigger>
+                                        <IconButton aria-label='Opções'><Icon as={MoreVertical} /></IconButton>
+                                    </PopoverTrigger>
+                                    <PopoverContent w="fit-content" py="2" pr="6">
+                                        <PopoverArrow />
+                                        <PopoverCloseButton />
+                                        {/* <PopoverHeader>Confirmation!</PopoverHeader> */}
+                                        <PopoverBody w="fit-content">
+                                            <Stack spacing="4" alignItems={"center"}>
+                                                <EditButton w="fit-content" onClick={() => OpenEditBranchModal({id: branch.id, name: branch.name, phone: branch.phone, email: branch.email, company: branch.company.id, manager: branch.manager.id, city: branch.city.name, state: branch.state.id, address: branch.address }) }/>
+                                                <RemoveButton w="fit-content" onClick={() => OpenConfirmBranchRemoveModal({ id: branch.id, name: branch.name }) }/>
+                                            </Stack>
+                                        </PopoverBody>
+                                    </PopoverContent>
+                                </Popover>
                               </HStack>
                             </Td>
                           </Tr>

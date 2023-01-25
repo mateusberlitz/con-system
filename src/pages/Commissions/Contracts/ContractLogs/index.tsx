@@ -1,4 +1,5 @@
 import {
+    Box,
   Divider,
   Flex,
   HStack,
@@ -7,6 +8,7 @@ import {
   Stack,
   Text,
   Th,
+  Thead,
   Tr
 } from '@chakra-ui/react'
 import { useParams } from 'react-router'
@@ -137,27 +139,34 @@ export function ContractLogs() {
           )}
 
           {!logs.isLoading && !logs.error && (
-            <Table header={[{ text: 'Data' }, { text: 'Contrato' }]}>
-              {logs.data?.data.data.map((log: ContractLog) => {
-                return (
-                  <Tr>
-                    <Th color="gray.800" fontWeight="normal">
-                      <Text fontSize="10px">
-                        {formatBRDate(log.created_at)}
-                      </Text>
-                      <Text fontSize="sm">{getHour(log.created_at)}</Text>
-                    </Th>
-                    <Th
-                      color="gray.700"
-                      fontWeight="normal"
-                      textTransform="capitalize"
-                    >
-                      {log.number_contract}
-                    </Th>
-                  </Tr>
-                )
-              })}
-            </Table>
+            <Stack spacing="4">
+                <HStack>
+                    <Box></Box>
+                    <Text>{logs.data?.data.data.length} contratos</Text>
+                </HStack>
+                <Divider></Divider>
+                <Table header={[{ text: 'Data' }, { text: 'Contrato' }]}>
+                {logs.data?.data.data.map((log: ContractLog) => {
+                    return (
+                    <Tr>
+                        <Th color="gray.800" fontWeight="normal">
+                        <Text fontSize="10px">
+                            {formatBRDate(log.created_at)}
+                        </Text>
+                        <Text fontSize="sm">{getHour(log.created_at)}</Text>
+                        </Th>
+                        <Th
+                        color="gray.700"
+                        fontWeight="normal"
+                        textTransform="capitalize"
+                        >
+                        {log.number_contract}
+                        </Th>
+                    </Tr>
+                    )
+                })}
+                </Table>
+            </Stack>
           )}
         </Board>
       </Stack>

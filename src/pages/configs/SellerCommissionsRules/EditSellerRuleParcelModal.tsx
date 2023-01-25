@@ -95,7 +95,7 @@ export function EditSellerRuleParcelModal( { isOpen, toEditSellerRuleParcelData,
                         <ControlledInput control={control} name="parcel_number" type="number" max={180} placeholder="Número da parcela" variant="outline" value={toEditSellerRuleParcelData.parcel_number.toString()} error={formState.errors.parcel_number} focusBorderColor="purple.600"/>
                         
                         <HStack>
-                            <ControlledInput control={control} name="percentage_to_pay" type="number" max={100} placeholder="Percentual a receber" variant="outline" value={toEditSellerRuleParcelData.percentage_to_pay.toString()} error={formState.errors.percentage_to_pay} focusBorderColor="purple.600"/>
+                            <ControlledInput control={control} name="percentage_to_pay" type="number" max={100} placeholder="Percentual a pagar" variant="outline" value={toEditSellerRuleParcelData.percentage_to_pay.toString()} error={formState.errors.percentage_to_pay} focusBorderColor="purple.600"/>
                             <ControlledInput control={control} name="chargeback_percentage" type="number" max={100} placeholder="Percentual de estorno" variant="outline" value={toEditSellerRuleParcelData.chargeback_percentage.toString()} error={formState.errors.chargeback_percentage} focusBorderColor="purple.600"/>
                         </HStack>
                     </Stack>

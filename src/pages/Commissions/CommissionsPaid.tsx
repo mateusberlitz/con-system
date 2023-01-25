@@ -8,29 +8,50 @@ import { ReactComponent as PlusIcon } from '../../assets/icons/Plus.svg'
 
 import { Link } from 'react-router-dom'
 import { SellerCommission } from '../../types'
-import { useCommissionsSeller } from '../../hooks/useCommissionsSeller'
+import { CommissionsSellerFilterData, useCommissionsSeller } from '../../hooks/useCommissionsSeller'
 import { useWorkingCompany } from '../../hooks/useWorkingCompany'
 import { useWorkingBranch } from '../../hooks/useWorkingBranch'
 
-export default function CommissionsPaid() {
-  const { profile, permissions } = useProfile()
-  const workingCompany = useWorkingCompany();
-  const workingBranch = useWorkingBranch();
+interface CommissionsPaidProps{
+    startDate?: string;
+    endDate?: string;
+}
 
-  const isManager = HasPermission(permissions, 'Comercial Completo') && !HasPermission(permissions, 'Comissões Completo');
+export default function CommissionsPaid({startDate, endDate}: CommissionsPaidProps) {
+    const { profile, permissions } = useProfile()
+    const workingCompany = useWorkingCompany();
+    const workingBranch = useWorkingBranch();
 
-  const commissionsSeller = useCommissionsSeller({
-    is_chargeback: false,
-    company_id: workingCompany.company?.id,
-    branch_id: workingBranch.branch?.id,
-    seller_id: !HasPermission(permissions, 'Comissões Completo') && !isManager ? (profile ? profile.id : 0) : undefined,
-    team_id: isManager ? (profile && profile.teams.length > 0 ? profile.teams[0].id : undefined) : undefined
-  }, 1);
+    const isManager = HasPermission(permissions, 'Comercial Completo') && !HasPermission(permissions, 'Comissões Completo');
 
-  const totalAmount = commissionsSeller.data?.data.data.reduce((sumAmount: number, useCommissionsSeller: SellerCommission) => {
-    console.log(sumAmount, useCommissionsSeller.value)
-    return sumAmount + useCommissionsSeller.value;
-  }, 0)
+    const [filter, setFilter] = useState<CommissionsSellerFilterData>(() => {
+        const data: CommissionsSellerFilterData = {
+            company_id: workingCompany.company?.id,
+            branch_id: workingBranch.branch?.id,
+            start_date: startDate,
+            end_date: endDate,
+            is_chargeback: false,
+            seller_id: !HasPermission(permissions, 'Comissões Completo') && !isManager ? (profile ? profile.id : 0) : undefined,
+            team_id: isManager ? (profile && profile.teams.length > 0 ? profile.teams[0].id : undefined) : undefined
+        };
+
+        return data;
+    })
+
+    const commissionsSeller = useCommissionsSeller(filter, 1);
+
+    const totalAmount = commissionsSeller.data?.data.data.reduce((sumAmount: number, useCommissionsSeller: SellerCommission) => {
+        //console.log(sumAmount, useCommissionsSeller.value)
+        return sumAmount + useCommissionsSeller.value;
+    }, 0)
+
+    useEffect(() => {
+        setFilter({...filter, start_date: startDate, end_date: endDate});
+    }, [startDate, endDate]);
+
+    useEffect(() => {
+        setFilter({...filter, company_id: workingCompany.company?.id, branch_id: workingBranch.branch?.id});
+    }, [workingCompany, workingBranch]);
 
   return (
     <Flex align="left" justify="left">

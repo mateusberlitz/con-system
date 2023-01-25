@@ -32,12 +32,12 @@ export function BranchSelect({filters, ...rest}: BranchSelectProps){
         company: companyId
     });
 
-    console.log(branches, workingCompany);
+    //console.log(branches, workingCompany);
 
     const {profile} = useProfile();
 
     function handleChangeBranch(event:any){
-        console.log(event.target.value);
+        //console.log(event.target.value);
 
         if(event.target.value === ''){
             workingBranch.changeBranch(event.target.value);

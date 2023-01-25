@@ -7,7 +7,12 @@ import { useWorkingBranch } from '../../hooks/useWorkingBranch';
 import { SellerCommission } from '../../types';
 import SimpleDonout from '../../components/Grafics/SimpleDonout';
 
-export default function CommissionsGrafic() {
+interface CommissionsGraficProps{
+    startDate?: string;
+    endDate?: string;
+}
+
+export default function CommissionsGrafic({startDate, endDate}: CommissionsGraficProps) {
   const { profile, permissions } = useProfile();
 
   const isManager = HasPermission(permissions, 'Comercial Completo');
@@ -20,6 +25,8 @@ export default function CommissionsGrafic() {
           search: '',
           company_id: workingCompany.company?.id,
           branch_id: workingBranch.branch?.id,
+          start_date: startDate,
+          end_date: endDate,
           seller_id: !HasPermission(permissions, 'Commissões completo') && !isManager ? (profile ? profile.id : 0) : undefined
       };
       
@@ -34,12 +41,18 @@ export default function CommissionsGrafic() {
 
   useEffect(() => {
     if(!commissions.isLoading && !commissions.error){
-      console.log(commissions.data?.data.data);
+      //console.log(commissions.data?.data.data);
       setChargeBackCommissionsAmount(commissions.data?.data.data.filter((commission:SellerCommission) => {return commission.is_chargeback}).length);
       setConfirmedCommissionsAmount(commissions.data?.data.data.filter((commission:SellerCommission) => {return commission.confirmed}).length);
       setPendingCommissionsAmount(commissions.data?.data.data.filter((commission:SellerCommission) => {return !commission.confirmed}).length);
     }
   }, [commissions]);
+
+    useEffect(() => {
+        setFilter({...filter, start_date: startDate, end_date: endDate});
+    }, [startDate, endDate]);
+
+  //console.log(endDate);
 
   return (
     <Flex align="center" justify="center" width="100%">

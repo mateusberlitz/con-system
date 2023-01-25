@@ -20,6 +20,7 @@ export interface CommissionsSellerFilterData{
 }
 
 export const getCommissionsSeller = async (filter?: CommissionsSellerFilterData, page: number = 0) => {
+    //console.log(filter);
     if(filter){
         const { data, headers } = await api.get("/seller-commissions", {
             params: {

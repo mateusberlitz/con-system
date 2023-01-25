@@ -8,19 +8,46 @@ import { ReactComponent as ChartBarIcon } from '../../assets/icons/Chart-bar.svg
 import { Link } from 'react-router-dom'
 import { useCommissionsSeller } from '../../hooks/useCommissionsSeller'
 import { CompanyCommission, SellerCommission } from '../../types'
-import { useCompanyCommissions } from '../../hooks/useCompanyCommissions'
+import { CompanyCommissionsFilterData, useCompanyCommissions } from '../../hooks/useCompanyCommissions'
+import { useWorkingCompany } from '../../hooks/useWorkingCompany'
+import { useWorkingBranch } from '../../hooks/useWorkingBranch'
 
-export default function ReversedCommissions() {
-  const { profile, permissions } = useProfile()
+interface ReversedCommissionsProps{
+    startDate?: string;
+    endDate?: string;
+}
 
-  const commissionsCompany = useCompanyCommissions({
-    is_chargeback: true,
-    }, 1);
+export default function ReversedCommissions({startDate, endDate}: ReversedCommissionsProps) {
+    const { profile, permissions } = useProfile()
+    const workingCompany = useWorkingCompany();
+    const workingBranch = useWorkingBranch();
 
-  const totalAmount = commissionsCompany.data?.data.data.reduce((sumAmount: number, useCompanyCommissions: CompanyCommission) => {
-    console.log(sumAmount, useCompanyCommissions.value)
-    return sumAmount + useCompanyCommissions.value;
-  }, 0)
+    const [filter, setFilter] = useState<CompanyCommissionsFilterData>(() => {
+        const data: CompanyCommissionsFilterData = {
+            company_id: workingCompany.company?.id,
+            branch_id: workingBranch.branch?.id,
+            start_date: startDate,
+            end_date: endDate,
+            is_chargeback: true,
+        };
+
+        return data;
+    })
+
+    const commissionsCompany = useCompanyCommissions(filter, 1);
+
+    const totalAmount = commissionsCompany.data?.data.data.reduce((sumAmount: number, useCompanyCommissions: CompanyCommission) => {
+        //console.log(sumAmount, useCompanyCommissions.value)
+        return sumAmount + useCompanyCommissions.value;
+    }, 0)
+
+    useEffect(() => {
+        setFilter({...filter, start_date: startDate, end_date: endDate});
+    }, [startDate, endDate]);
+
+    useEffect(() => {
+        setFilter({...filter, company_id: workingCompany.company?.id, branch_id: workingBranch.branch?.id});
+    }, [workingCompany, workingBranch]);
 
   return (
     <Flex align="left" justify="left">

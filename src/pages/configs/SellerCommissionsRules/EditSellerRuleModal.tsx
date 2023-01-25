@@ -9,7 +9,7 @@ import { ControlledInput } from "../../../components/Forms/Inputs/ControlledInpu
 import { SolidButton } from "../../../components/Buttons/SolidButton";
 import { isAuthenticated } from "../../../services/auth";
 import { redirectMessages } from "../../../utils/redirectMessages";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { useErrors } from "../../../hooks/useErrors";
 import { api } from "../../../services/api";
 import { ControlledSelect } from "../../../components/Forms/Selects/ControlledSelect";
@@ -35,6 +35,10 @@ export interface EditNewSellerRuleFormData{
     pay_in_contemplation?: boolean;
 }
 
+interface CompanyParams {
+    id: string
+}
+
 const EditNewSellerRuleFormSchema = yup.object().shape({
     name: yup.string().required('Nome da regra é obrigatório'),
     chargeback_type_id: yup.number().required('Tipo de estorno obrigatório'),
@@ -50,6 +54,8 @@ export function EditSellerRuleModal( { isOpen, toEditSellerRuleData, afterEdit, 
     const toast = useToast();
     const { showErrors } = useErrors();
 
+    const { id } = useParams<CompanyParams>();
+
     const { handleSubmit, formState, control} = useForm<EditNewSellerRuleFormData>({
         resolver: yupResolver(EditNewSellerRuleFormSchema),
     });
@@ -57,6 +63,8 @@ export function EditSellerRuleModal( { isOpen, toEditSellerRuleData, afterEdit, 
     const handleEditSellerRule = async (sellerData : EditNewSellerRuleFormData) => {
         try{
             //sellerData.company_id = toEditSellerRuleData.company_id;
+            sellerData.company_id = parseInt(id);
+
             await api.put(`/seller-commission-rules/${toEditSellerRuleData.id}`, sellerData);
 
             toast({

@@ -254,7 +254,7 @@ export function SellerCommissionRules({companyId, branchId}: SellerCommissionRul
                                                         text: 'Número'
                                                     },
                                                     {
-                                                        text: 'Percentual a receber'
+                                                        text: 'Percentual a pagar'
                                                     },
                                                     {
                                                         text: 'Percentual de estorno'

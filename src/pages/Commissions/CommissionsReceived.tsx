@@ -6,21 +6,48 @@ import { ReactComponent as ChartBarIcon } from '../../assets/icons/Chart-bar.svg
 
 import { Link } from 'react-router-dom'
 import { CompanyCommission } from '../../types'
-import { useCompanyCommissions } from '../../hooks/useCompanyCommissions'
+import { CompanyCommissionsFilterData, useCompanyCommissions } from '../../hooks/useCompanyCommissions'
+import { useEffect, useState } from 'react'
+import { useWorkingCompany } from '../../hooks/useWorkingCompany'
+import { useWorkingBranch } from '../../hooks/useWorkingBranch'
 
+interface CommissionsReceivedProps{
+    startDate?: string;
+    endDate?: string;
+}
 
-export default function CommissionsReceived() {
+export default function CommissionsReceived({startDate, endDate}: CommissionsReceivedProps) {
   const { profile, permissions } = useProfile()
 
-  const commissionsSeller = useCompanyCommissions({
-    is_chargeback: false
-  }, 1);
+  const workingCompany = useWorkingCompany()
+  const workingBranch = useWorkingBranch()
+
+    const [filter, setFilter] = useState<CompanyCommissionsFilterData>(() => {
+        const data: CompanyCommissionsFilterData = {
+            company_id: workingCompany.company?.id,
+            branch_id: workingBranch.branch?.id,
+            start_date: startDate,
+            end_date: endDate,
+            is_chargeback: false
+        };
+    
+        return data;
+    })
+
+  const commissionsSeller = useCompanyCommissions(filter, 1);
 
   const totalAmount = commissionsSeller.data?.data.data.reduce((sumAmount: number, commissionsReceived: CompanyCommission) => {
-    console.log(sumAmount, commissionsReceived.value)
+    //console.log(sumAmount, commissionsReceived.value)
     return sumAmount + commissionsReceived.value;
   }, 0)
 
+    useEffect(() => {
+        setFilter({...filter, start_date: startDate, end_date: endDate});
+    }, [startDate, endDate]);
+
+    useEffect(() => {
+        setFilter({...filter, company_id: workingCompany.company?.id, branch_id: workingBranch.branch?.id});
+    }, [workingCompany, workingBranch]);
 
   return (
     <Flex align="left" justify="left">

@@ -33,10 +33,10 @@ export function CompanySelect({ filters, ...rest }: CompanySelectProps) {
   const companies = useCompanies()
   const { profile } = useProfile()
 
-  console.log(workingCompany.company?.id)
+  //console.log(workingCompany.company?.id)
 
   function handleChangeCompany(event: any) {
-    console.log(event.target.value)
+    //console.log(event.target.value)
 
     if (event.target.value === '') {
       workingCompany.changeCompany(event.target.value)
