@@ -21,6 +21,10 @@ import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import getMonthName from "../../../utils/Date/getMonthName";
 import { NewSaleModal } from "../../Commercial/Sales/NewSaleModal";
+import { ReactSelect, SelectOption } from "../../../components/Forms/ReactSelect";
+import { User } from "../../../types";
+import { UserFilterData, useUsers } from "../../../hooks/useUsers";
+import { getReactSelectStyles } from "../../../styles/solidReactSelectStyles";
 
 
 const FilterSalesmanCommissionsFormSchema = yup.object().shape({
@@ -34,6 +38,7 @@ const FilterSalesmanCommissionsFormSchema = yup.object().shape({
     confirmed: yup.string(),
     number_contract: yup.string(),
     parcel_number: yup.string(),
+    seller_id: yup.number(),
 });
 
 export default function CommissionsSalesman(){
@@ -43,7 +48,7 @@ export default function CommissionsSalesman(){
     const { profile, permissions } = useProfile();
     const isWideVersion = useBreakpointValue({base: false, lg: true});
 
-    const { register, handleSubmit, formState} = useForm<CommissionsSellerFilterData>({
+    const { register, handleSubmit, formState, control} = useForm<CommissionsSellerFilterData>({
         resolver: yupResolver(FilterSalesmanCommissionsFormSchema),
     });
 
@@ -56,7 +61,8 @@ export default function CommissionsSalesman(){
             branch_id: workingBranch.branch?.id,
             group_by: 'commission_date',
             seller_id: !HasPermission(permissions, 'Comissões Completo') && !isManager ? (profile ? profile.id : 0) : undefined,
-            team_id: isManager ? (profile && profile.teams.length > 0 ? profile.teams[0].id : undefined) : undefined
+            team_id: isManager ? (profile && profile.teams.length > 0 ? profile.teams[0].id : undefined) : undefined,
+            confirmed: true
         };
 
         return data;
@@ -85,6 +91,32 @@ export default function CommissionsSalesman(){
         setFilter({...filter, company_id: workingCompany.company?.id, branch_id: workingBranch.branch?.id});
     }, [workingCompany, workingBranch]);
 
+    const [usersFilter, setUsersFilter] = useState<UserFilterData>(() => {
+        const data: UserFilterData = {
+          search: '',
+          company: workingCompany.company?.id,
+          //role: 5
+        }
+    
+        return data
+      })
+    
+      const usersQuery = useUsers(usersFilter)
+    
+      const sellerOptions: SelectOption[] = [
+        {
+          value: '',
+          label: 'Selecionar Vendedor'
+        }
+      ]
+
+    usersQuery.data &&
+    usersQuery.data.map((user: User) => {
+        sellerOptions.push({ value: user.id.toString(), label: `${user.name} ${user.last_name}` })
+    })
+
+    const solidReactSelectStyles = getReactSelectStyles({primaryColor: "#c30052"});
+
     return(
         <MainBoard sidebar="commissions" header={ <CompanySelectMaster/>}>
 
@@ -100,7 +132,12 @@ export default function CommissionsSalesman(){
                 <Box w="100%">
                     <Stack spacing="6" w="100%">
                         <Stack direction={["column", "row"]} spacing="6">
-                            <Input register={register} name="search" type="text" error={formState.errors.search} placeholder="Procurar" variant="filled" focusBorderColor="red.400"/>
+                            {
+                                (profile && profile.role.id === 1) && (
+                                    <ReactSelect control={control} options={sellerOptions} styles={solidReactSelectStyles} placeholder={"Selecionar Vendedor"} name="seller_id" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } borderRadius="full"/>
+                                )
+                            }
+                            {/* <Input register={register} name="search" type="text" error={formState.errors.search} placeholder="Procurar" variant="filled" focusBorderColor="red.400"/> */}
 
                             <Input register={register} name="start_date" type="date" error={formState.errors.start_date} placeholder="Data Inicial" variant="filled" focusBorderColor="red.400"/>
                             <Input register={register} name="end_date" type="date" error={formState.errors.end_date} placeholder="Data Final" variant="filled" focusBorderColor="red.400"/>
@@ -121,7 +158,7 @@ export default function CommissionsSalesman(){
 
                             <Input name="parcel_number" register={register} error={formState.errors.parcel_number} type="text" placeholder="Parcela" variant="filled" focusBorderColor="red.400"/>
 
-                            <Select register={register} error={formState.errors.confirmed} h="45px" name="confirmed" w="100%" maxW="200px" fontSize="sm" focusBorderColor="red.400" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
+                            <Select register={register} defaultValue={1} error={formState.errors.confirmed} h="45px" name="confirmed" w="100%" maxW="200px" fontSize="sm" focusBorderColor="red.400" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
                                 <option value="">Status</option>
                                 <option value={0}>Pendente</option>
                                 <option value={1}>Confirmada</option>

@@ -35,7 +35,7 @@ import { useWorkingCompany } from '../../hooks/useWorkingCompany'
 import { EditButton } from '../../components/Buttons/EditButton'
 import { RemoveButton } from '../../components/Buttons/RemoveButton'
 
-interface BillsSummaryProps {
+interface SchedulesSummaryProps {
   bills?: UseQueryResult<
     {
       data: any
@@ -44,10 +44,12 @@ interface BillsSummaryProps {
     unknown
   >
   filter?: BillFilterData
-  handleChangeFilter?: (newFilterValue: BillFilterData) => void
+  handleChangeFilter?: (newFilterValue: BillFilterData) => void;
+    startDate?: string;
+    endDate?: string;
 }
 
-export function SchedulesSummary() {
+export function SchedulesSummary({startDate, endDate}: SchedulesSummaryProps) {
   const { profile } = useProfile()
   const workingCompany = useWorkingCompany()
 

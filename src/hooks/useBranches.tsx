@@ -6,6 +6,9 @@ export interface BranchesFilterData{
     name?: string;
     company?: number;
     manager?: number;
+    start_date?: string;
+    end_date?: string;
+    commissions?: string;
 }
 
 export const getBranches = async (filter?: BranchesFilterData, page: number = 0) => {
@@ -16,6 +19,9 @@ export const getBranches = async (filter?: BranchesFilterData, page: number = 0)
               search: filter.search,
               manager: filter.manager,
               name: filter.name,
+              start_date: filter.start_date,
+              end_date: filter.end_date,
+              commissions: filter.commissions,
             }
         });
 

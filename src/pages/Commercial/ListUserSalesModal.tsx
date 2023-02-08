@@ -11,7 +11,9 @@ import {
   Stack,
   useToast,
   Text,
-  IconButton
+  IconButton,
+  Flex,
+  Spinner
 } from '@chakra-ui/react'
 
 import { useHistory } from 'react-router'
@@ -19,13 +21,14 @@ import { useErrors } from '../../hooks/useErrors'
 
 import { useWorkingCompany } from '../../hooks/useWorkingCompany'
 import { useProfile } from '../../hooks/useProfile'
+import { QuotaFilterData } from '../../hooks/useQuotas'
 import { useEffect, useState } from 'react'
 import { isAuthenticated } from '../../services/auth'
 import { redirectMessages } from '../../utils/redirectMessages'
 
-import { SalesFilterData, useSales } from '../../hooks/useSales'
-import { Sales } from '../../types'
 import { formatBRDate } from '../../utils/Date/formatBRDate'
+import { useQuotas } from '../../hooks/useQuotas'
+import { Quota } from '../../types'
 
 interface ListUserSalesModalProps {
   isOpen: boolean
@@ -54,16 +57,16 @@ export function ListUserSalesModal({
     setPage(page)
   }
 
-  const [filter, setFilter] = useState<SalesFilterData>(() => {
-    const data: SalesFilterData = {
+  const [filter, setFilter] = useState<QuotaFilterData>(() => {
+    const data: QuotaFilterData = {
       company: workingCompany.company?.id,
-      user: profile ? profile.id : 0
+      seller_id: profile ? profile.id : 0
     }
 
     return data
   })
 
-  const sales = useSales(filter, page)
+  const quotas = useQuotas(filter, page)
 
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -90,11 +93,25 @@ export function ListUserSalesModal({
 
         <ModalBody pl="10" pr="10">
           <Stack spacing="6">
-            {sales.data &&
-              sales.data.data.map((sale: Sales) => {
+            {   quotas.isLoading ? (
+                    <Flex justify="left">
+                        <Spinner/>
+                    </Flex>
+                ) : ( quotas.isError ? (
+                    <Flex justify="left" mt="4" mb="4">
+                        <Text>Erro listar as cotas vendidas</Text>
+                    </Flex>
+                ) : (quotas.data?.data.data.length === 0) && (
+                    <Flex justify="left">
+                        <Text>Nenhuma cota vendida encontrada.</Text>
+                    </Flex>
+                ) ) 
+            }
+            {quotas.data &&
+              quotas.data.data?.data.map((quota: Quota) => {
                 return (
                   <HStack>
-                    <Text>{formatBRDate(sale.date)}: </Text>
+                    <Text>{formatBRDate(quota.date_sale)}: </Text>
                     <Text
                       cursor="pointer"
                       fontWeight="bold"
@@ -103,7 +120,7 @@ export function ListUserSalesModal({
                       {Intl.NumberFormat('pt-BR', {
                         style: 'currency',
                         currency: 'BRL'
-                      }).format(sale.value)}
+                      }).format(quota.credit)}
                     </Text>
                   </HStack>
                 )

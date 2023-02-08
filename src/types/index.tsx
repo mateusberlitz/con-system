@@ -374,6 +374,7 @@ export interface City{
 export interface Schedule{
     id: number;
     status: boolean;
+    sold: boolean;
     datetime: string;
     city: string;
     user: User;
@@ -409,6 +410,8 @@ export interface Branch{
     email?: string
     phone?: string
     users: User[];
+    received_commissions: CompanyCommission[];
+    quotas: Quota[];
 }
 
 export interface Desk{

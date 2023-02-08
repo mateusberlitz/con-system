@@ -28,18 +28,23 @@ interface BillsSummaryProps {
     unknown
   >
   filter?: BillFilterData
-  handleChangeFilter?: (newFilterValue: BillFilterData) => void
+  handleChangeFilter?: (newFilterValue: BillFilterData) => void;
+  startDate?: string;
+    endDate?: string;
+    isManager?: boolean;
 }
 
-export function LeadsReport() {
+export function LeadsReport({startDate, endDate, isManager}: BillsSummaryProps) {
   const { profile } = useProfile()
   const workingCompany = useWorkingCompany()
 
   const [filter, setFilter] = useState<LeadsFilterData>(() => {
     const data: LeadsFilterData = {
-      user: profile?.id,
+      user: !isManager ? profile?.id : undefined,
       group_by: 'origin',
-      company: workingCompany.company?.id
+      company: workingCompany.company?.id,
+      start_date: startDate,
+      end_date: endDate,
     }
 
     return data

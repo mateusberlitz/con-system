@@ -29,7 +29,7 @@ export function CurrentGoal() {
       company: workingCompany.company?.id
     }
 
-    const { data } = await api.get('/sales_amount', {
+    const { data } = await api.get('/quotas_amount', {
       params: {
         company:
           workingCompany.company && workingCompany.company.id
@@ -89,11 +89,45 @@ export function CurrentGoal() {
     }
   }
 
+  const [teamMonthGoal, setTeamMonthGoal] = useState<Goal>()
+
+  const loadTeamGoal = async () => {
+    const { data } = await api.get('/goals', {
+      params: {
+        team_id: profile ? profile.teams[0].id : 0,
+        month: today.getMonth() + 1
+      }
+    })
+
+    if (data.length > 0) {
+      setMonthGoal(data[0])
+    }
+  }
+
+  const [teamMonthAmount, setTeamMonthAmount] = useState(0)
+
+  const loadTeamMonthAmount = async () => {
+    const { data } = await api.get('/month_sales_amount', {
+      params: {
+        company:
+          workingCompany.company && workingCompany.company.id
+            ? workingCompany.company?.id.toString()
+            : '0',
+        team_id: profile ? profile.teams[0].id : 0,
+        month: today.getMonth() + 1
+      }
+    })
+
+    setTeamMonthAmount(data.total);
+  }
+
   useEffect(() => {
     loadAmount()
     loadMonthAmount()
     loadPendingSales()
     loadMonthGoal()
+    loadTeamGoal();
+    loadTeamMonthAmount();
   }, [workingCompany])
 
   const [isListUserSalesModalOpen, setIsListUserSalesModalOpen] =
@@ -108,6 +142,7 @@ export function CurrentGoal() {
   }
 
   const percentOfGoal = monthGoal ? (monthAmount * 100) / monthGoal.value : 0
+  const teamPercentOfGoal = teamMonthGoal ? (teamMonthAmount * 100) / teamMonthGoal.value : 0
 
   return (
     <>
@@ -119,7 +154,7 @@ export function CurrentGoal() {
       <HStack spacing="8" width="100%">
         <Stack
           spacing="5"
-          minWidth="300px"
+          w="100%"
           justify="space-between"
           alignItems="left"
           bg="white"
@@ -132,48 +167,54 @@ export function CurrentGoal() {
             Meta Atual
           </Text>
 
-          <HStack>
-            <Text
-              fontSize="2xl"
-              w="100%"
-              fontWeight="500"
-              color="black"
-              >
-                  R$200.000,00
-            </Text>
-          </HStack>
+          {
+            monthGoal ? (
+                <>
+                    <HStack>
+                        <Text
+                        fontSize="2xl"
+                        w="100%"
+                        fontWeight="500"
+                        color="black"
+                        >
+                            {Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL'}).format(monthGoal ? monthGoal.value : 0)}
+                        </Text>
+                    </HStack>
 
-          <Stack spacing="1">
-          <Progress value={20} size='xs' colorScheme='blue' />
-          </Stack>
+                    <Stack spacing="1">
+                        <Progress value={percentOfGoal} size='xs' colorScheme='blue' />
+                    </Stack>
 
-          <Stack spacing="1">
-           <HStack>
-           <Text
-              display="flex"
-              flex={1}
-              alignItems="center"
-              fontSize="sm"
-              color="gray.600"
-            >
-              Vendido:
-            </Text>
-            <Text
-              display="flex"
-              flex={1}
-              fontSize="md"
-              color="gray.700"
-            >
-              R$188.000,00
-            </Text>
-           </HStack>
-          </Stack>
+                    <Stack spacing="1">
+                    <HStack justifyContent={"space-between"}>
+                    <Text
+                        display="flex"
+                        flex={1}
+                        alignItems="center"
+                        fontSize="sm"
+                        color="gray.600"
+                        >
+                        Vendido:
+                        </Text>
+                        <Text
+                        display="flex"
+                        fontSize="md"
+                        color="gray.700"
+                        >
+                        {Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL'}).format(monthAmount)}({percentOfGoal})
+                        </Text>
+                    </HStack>
+                    </Stack>
+                </>
+            ) : (
+                <Text>Meta não encontrada.</Text>
+            )
+          }
         </Stack>
 
         <Stack
           spacing="5"
           w="100%"
-          minWidth="300px"
           justify="space-between"
           alignItems="left"
           bg="white"
@@ -188,40 +229,47 @@ export function CurrentGoal() {
             </Text>
           </HStack>
 
-          <HStack>
-            <Text w="100%"  fontSize="2xl" fontWeight="500" color="black">
-                 R$5.000.000,00
-            </Text>
-          </HStack>
+          {
+            teamMonthGoal ? (
+                <>
+                    <HStack>
+                        <Text w="100%"  fontSize="2xl" fontWeight="500" color="black">
+                            {Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL'}).format(teamMonthGoal ? teamMonthGoal.value : 0)}
+                        </Text>
+                    </HStack>
 
-          <Stack spacing="1">
-            <Progress value={20} size='xs' colorScheme='red' />
-          </Stack>
+                    <Stack spacing="1">
+                        <Progress value={teamPercentOfGoal} size='xs' colorScheme='red' />
+                    </Stack>
 
-          <Stack spacing="1">
-           <HStack>
-           <Text
-              display="flex"
-              flex="1"
-              alignItems="center"
-              fontSize="sm"
-              color="gray.600"
-            >
-              Vendido:
-            </Text>
-            <Text
-              display="flex"
-              flex="1"
-              fontSize="md"
-              color="gray.700"
-            >
-              R$800.000,00
-            </Text>
-           </HStack>
-          </Stack>
+                    <Stack spacing="1">
+                    <HStack justifyContent={"space-between"}>
+                    <Text
+                        display="flex"
+                        alignItems="center"
+                        fontSize="sm"
+                        color="gray.600"
+                        >
+                        Vendido:
+                        </Text>
+                        <Text
+                        display="flex"
+                        flex="1"
+                        fontSize="md"
+                        color="gray.700"
+                        >
+                        {Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL'}).format(teamPercentOfGoal)}
+                        </Text>
+                    </HStack>
+                    </Stack>
+                </>
+            ) : (
+                <Text>Meta não encontrada.</Text>
+            )
+          }
         </Stack>
 
-        <Stack
+        {/* <Stack
           spacing="5"
           w="100%"
           minWidth="300px"
@@ -258,7 +306,7 @@ export function CurrentGoal() {
           >
             <Text ml="2">Acima da média</Text>
           </Text>
-        </Stack>
+        </Stack> */}
       </HStack>
     </>
   )

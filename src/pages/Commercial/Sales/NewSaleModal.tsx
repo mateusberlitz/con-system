@@ -291,7 +291,7 @@ export function NewSaleModal({
   const [otherValue, setOtherValue] = useState(false);
   const [isPF, setIsPF] = useState(true);
 
-  console.log(users);
+  //console.log(users);
 
   return (
     <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">

@@ -9,7 +9,6 @@ import { api } from '../../../services/api'
 import { ReactComponent as CalendarIcon } from '../../../assets/icons/Calandar.svg'
 import { useSchedules } from '../../../hooks/useSchedules'
 import { useWorkingCompany } from '../../../hooks/useWorkingCompany'
-import { useSales } from '../../../hooks/useSales'
 import { useWorkingBranch } from '../../../hooks/useWorkingBranch'
 
 interface LeadsReportByUserProps {
@@ -83,6 +82,7 @@ export function LeadsReportByUser({ filter }: LeadsReportByUserProps) {
     },
     1
   )
+
   const completedSchedules = schedules.data?.data.filter(
     (schedule: Schedule) => schedule.status == true
   ).length
@@ -90,17 +90,8 @@ export function LeadsReportByUser({ filter }: LeadsReportByUserProps) {
     (schedule: Schedule) => schedule.status == false
   ).length
 
-  const sales = useSales(
-    {
-      user: filter.user,
-      start_date: filter.start_date,
-      end_date: filter.end_date
-    },
-    1
-  )
-
-  const saledSchedules = sales.data?.data.filter(
-    (sale: Sales) => sale.schedule !== undefined
+  const saledSchedules = schedules.data?.data.filter(
+    (schedule: Schedule) => schedule.sold == true
   ).length
 
   return (

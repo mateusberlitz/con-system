@@ -7,6 +7,7 @@ export interface CompanyCommissionsFilterData{
     end_date?: string;
     parcel_number?: number;
     company_id?: number;
+    seller_id?: number;
     branch_id?: number;
     chargeback?: number;
     group?: number;
@@ -25,6 +26,7 @@ export const getCompanyCommissions = async (filter?: CompanyCommissionsFilterDat
               page: page,
               search: filter.search,
               company_id: filter.company_id,
+              seller_id: filter.seller_id,
               branch_id: filter.branch_id,
               start_date: filter.start_date,
               end_date: filter.end_date,

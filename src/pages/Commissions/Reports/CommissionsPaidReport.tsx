@@ -31,8 +31,6 @@ export default function CommissionsPaidReport() {
         loadYears();
     }, [])
 
-    const companies = useCompanies();
-
     const [filterSellerCommissionsReport, setFilterSellerCommissionsReport] = useState<SellerCommissionsReportFilterData>(() => {
         const data: SellerCommissionsReportFilterData = {
             company: workingCompany.company?.id,

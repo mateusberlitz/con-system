@@ -78,7 +78,6 @@ export function LeadsReportByMonth() {
 
   useEffect(() => {
     loadReport()
-    console.log(filter)
   }, [filter])
 
   const [usersFilter, setUsersFilter] = useState<UserFilterData>(() => {

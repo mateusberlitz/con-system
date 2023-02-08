@@ -22,19 +22,22 @@ import { getHour } from '../../utils/Date/getHour'
 import { NewLeadModal } from './Leads/NewLeadModal'
 import { useWorkingCompany } from '../../hooks/useWorkingCompany'
 
+
 interface BillsSummaryProps {
-  bills?: UseQueryResult<
-    {
-      data: any
-      total: number
-    },
-    unknown
-  >
-  filter?: BillFilterData
-  handleChangeFilter?: (newFilterValue: BillFilterData) => void
+    bills?: UseQueryResult<
+        {
+        data: any
+        total: number
+        },
+        unknown
+    >
+    filter?: BillFilterData
+    handleChangeFilter?: (newFilterValue: BillFilterData) => void
+    startDate?: string;
+    endDate?: string;
 }
 
-export function LeadsSummary() {
+export function LeadsSummary({startDate, endDate}: BillsSummaryProps) {
   const { profile } = useProfile()
   const workingCompany = useWorkingCompany()
 
@@ -76,12 +79,14 @@ export function LeadsSummary() {
   const [filter, setFilter] = useState<LeadsFilterData>(() => {
     const data: LeadsFilterData = {
       search: '',
-      start_date: formatYmdDate(new Date().toString()),
-      end_date: formatYmdDate(new Date().toString()),
+      //start_date: formatYmdDate(new Date().toString()),
+      //end_date: formatYmdDate(new Date().toString()),
       status: 0,
       user: profile?.id,
       group_by: '',
-      company: workingCompany.company?.id
+      company: workingCompany.company?.id,
+      start_date: startDate,
+      end_date: endDate,
     }
 
     return data

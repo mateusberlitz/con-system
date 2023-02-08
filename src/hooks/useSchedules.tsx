@@ -9,7 +9,9 @@ export interface SchedulesFilterData{
     branch?: number;
     user?: number;
     group_by?: string;
+    year?: string;
     status?: number;
+    team_id?: number;
 }
 
 export const getSchedules = async (filter?: SchedulesFilterData, page: number = 0) => {
@@ -24,6 +26,7 @@ export const getSchedules = async (filter?: SchedulesFilterData, page: number = 
               start_date: filter.start_date,
               end_date: filter.end_date,
               group_by: filter.group_by,
+              year: filter.year,
               status: filter.status,
             }
         });

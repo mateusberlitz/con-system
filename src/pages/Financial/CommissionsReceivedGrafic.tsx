@@ -8,6 +8,7 @@ import { useWorkingCompany } from '../../hooks/useWorkingCompany';
 import { useEffect, useState } from 'react';
 import { useWorkingBranch } from '../../hooks/useWorkingBranch';
 import { api } from '../../services/api';
+import { CompanyCommission } from '../../types';
 
 export default function CommissionsReceivedGrafic() {
   const { profile, permissions } = useProfile();
@@ -22,8 +23,7 @@ export default function CommissionsReceivedGrafic() {
             company_id: workingCompany.company?.id,
             branch_id: workingBranch.branch?.id,
             is_chargeback: false,
-            year: dateObject.getFullYear().toString(),
-            group_by: 'month'
+            group_by: 'month_number'
         };
     
         return data;
@@ -32,10 +32,12 @@ export default function CommissionsReceivedGrafic() {
     const commissionsSeller = useCompanyCommissions(filter, 1);
 
     const [years, setYears] = useState<Number[]>([]);
-    const [selectedYear, setSelectedYear] = useState<string>(dateObject.getFullYear().toString());
+    const [selectedYear, setSelectedYear] = useState<string>();
 
     const loadYears = async () => {
         const { data } = await api.get('/company-commissions-years');
+
+        setSelectedYear(data[data.length - 1].toString());
 
         setYears(data);
     }
@@ -54,10 +56,32 @@ export default function CommissionsReceivedGrafic() {
         setFilter({...filter, year: selectedYear});
     }, [selectedYear])
 
-    console.log(filter);
+    const [receivedCommissionsMonthAmount, setReceivedCommissionsMonthAmount] = useState([0,0,0,0,0,0,0,0,0,0,0,0]);
+
+    const calculateReceivedCommissionsMonthAmount = () => {
+        const commissionsReceivedByMonth = commissionsSeller.data?.data;
+        const newReceived = receivedCommissionsMonthAmount;
+
+        //console.log(commissionsReceivedByMonth);
+
+        Object.keys(commissionsReceivedByMonth).map((month:string) => {
+            const amount = commissionsReceivedByMonth[month].reduce((sumAmount:number, commission:CompanyCommission) => {
+                return sumAmount + commission.value;
+            }, 0);
+            newReceived[parseInt(month) - 1] = amount;
+        })
+
+        setReceivedCommissionsMonthAmount(newReceived);
+    }
+
+    useEffect(() => {
+        if(commissionsSeller.data?.data){
+            calculateReceivedCommissionsMonthAmount();
+        }
+    }, [commissionsSeller]);
 
   return (
-      <Stack width="100%" min-width="300px" spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8" mt={8}>
+      <Stack width="100%" min-width="300px" spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8">
         <Text color="#000" fontSize="xl" fontWeight="400">
           Comissões Recebidas
         </Text>
@@ -76,9 +100,6 @@ export default function CommissionsReceivedGrafic() {
         </Flex>
             <LineAreaHistory options={{
                 labels: [
-                "Out",
-                "Nov",
-                "Dez",
                 "Jan",
                 "Fev",
                 "Mar",
@@ -88,9 +109,12 @@ export default function CommissionsReceivedGrafic() {
                 "Jul",
                 "Ago",
                 "Set",
+                "Out",
+                "Nov",
+                "Dez",
               ],
               colors: [" rgba(0, 186, 136, 0.5)"],
-              chart: { toolbar: { show: false }, zoom: { enabled: false } },
+              chart: { id: 'receivedCommissionsChart', toolbar: { show: false }, zoom: { enabled: false } },
               tooltip: { enabled: true },
               fill: {
                 opacity: 0.3,
@@ -131,12 +155,19 @@ export default function CommissionsReceivedGrafic() {
                 },
               },
               legend: { show: false },
+              yaxis: {
+                labels: {
+                  formatter: function (value) {
+                    return "R$" + value;
+                  }
+                },
+              },
             }}
             series={[
               {
-                name: "Net Profit",
+                name: "Recebido",
                 type: "area",
-                data: [0, 100, 200, 300, 400, 500, 600]
+                data: receivedCommissionsMonthAmount
               }
             ]} />
       </Stack>

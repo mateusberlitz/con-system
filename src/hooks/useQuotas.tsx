@@ -8,12 +8,15 @@ export interface QuotaFilterData{
     segment?: string;
     company?: number;
     branch?: number;
+    team_id?: number;
+    seller_id?: number;
     contemplated_type?: string;
     group?: string;
     quote?: string;
     group_by?: string;
     status?: number;
     sold?: string;
+    year?: string;
 }
 
 export const getQuotas = async (filter?: QuotaFilterData, page: number = 0) => {
@@ -24,6 +27,7 @@ export const getQuotas = async (filter?: QuotaFilterData, page: number = 0) => {
               search: filter.search,
               segment: filter.segment,
               company: filter.company,
+              seller_id: filter.seller_id,
               branch: filter.branch,
               start_date: filter.start_date,
               end_date: filter.end_date,
@@ -33,6 +37,7 @@ export const getQuotas = async (filter?: QuotaFilterData, page: number = 0) => {
               status: filter.status,
               group_by: filter.group_by,
               sold: filter.sold,
+              year: filter.year,
             }
         });
 

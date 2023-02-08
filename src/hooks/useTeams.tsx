@@ -6,6 +6,9 @@ export interface TeamsFilterData{
     company?: number;
     branch?: number;
     manager?: number;
+    start_date?: string;
+    end_date?: string;
+    sales?: string;
 }
 
 export const getTeams = async (filter?: TeamsFilterData, page: number = 0) => {

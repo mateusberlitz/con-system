@@ -1,5 +1,6 @@
 import { Box, SimpleGrid } from "@chakra-ui/react";
-import { ApexOptions } from "apexcharts";
+import apexchart, { ApexOptions } from "apexcharts";
+import { useEffect, useState } from "react";
 import Chart from "react-apexcharts";
 
 interface LineAreaProps {
@@ -8,20 +9,35 @@ interface LineAreaProps {
 }
 
 const LineAreaHistory = ({ options, series }: LineAreaProps) => {
-  return (
-    <Box>
-      <SimpleGrid columns={[1, 1, 1, 1]} spacing={4}>
+    const [componentSeries, setComponentSeries] = useState<ApexOptions['series']>(series);
+
+    useEffect(() => {
+        setComponentSeries(series);
+        if(options.chart && options.chart.id){
+            apexchart.exec(options.chart.id, 'updateSeries', series);
+        }
+    }, [series]);
+
+    //console.log(componentSeries);
+
+    return (
         <Box>
-          <Chart
-            options={options}
-            series={series}
-            type="area"
-            height="200"
-            width={400}
-          />
+            <SimpleGrid columns={[1, 1, 1, 1]} spacing={4}>
+                <Box>
+                    {
+                        componentSeries && (
+                            <Chart
+                                options={options}
+                                series={componentSeries}
+                                type="area"
+                                height="200"
+                                width={400}
+                            />
+                        )
+                    }
+                </Box>
+            </SimpleGrid>
         </Box>
-      </SimpleGrid>
-    </Box>
-  );
+    );
 };
 export default LineAreaHistory;

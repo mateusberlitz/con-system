@@ -40,8 +40,8 @@ export const getSales = async (filter?: SalesFilterData, page: number = 0) => {
     return {data, total: Number(headers['x-total-count'])};
 }
 
-export function useSales(filter: SalesFilterData, page?: number){
-    return useQuery(['sales', [filter, page]], () => getSales(filter, page), {
-        staleTime: 1000 * 5 * 60, //fresh
-    });
-}
+// export function useSales(filter: SalesFilterData, page?: number){
+//     return useQuery(['sales', [filter, page]], () => getSales(filter, page), {
+//         staleTime: 1000 * 5 * 60, //fresh
+//     });
+// }

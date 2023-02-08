@@ -18,7 +18,12 @@ interface CashSummaryFilter {
   company: number | undefined
 }
 
-export function SalesSummary() {
+interface SalesSummaryProps{
+    startDate?: string;
+    endDate?: string;
+}
+
+export function SalesSummary({startDate, endDate}: SalesSummaryProps) {
   const workingCompany = useWorkingCompany()
   const { profile } = useProfile()
   const { prefix } = useTenant()
@@ -32,12 +37,12 @@ export function SalesSummary() {
       company: workingCompany.company?.id
     }
 
-    const { data } = await api.get('/sales_amount', {
+    const { data } = await api.get('/quotas_amount', {
       params: {
         company:
           workingCompany.company && workingCompany.company.id
             ? workingCompany.company?.id.toString()
-            : '0',
+            : '',
         user: profile ? profile.id : 0,
         month: today.getMonth() + 1
       }
@@ -70,7 +75,7 @@ export function SalesSummary() {
       params: {
         user: profile ? profile.id : 0,
         month: today.getMonth() + 1,
-        year: today.getFullYear()
+        year: today.getFullYear(),
       }
     })
 
@@ -83,7 +88,7 @@ export function SalesSummary() {
     const { data } = await api.get('/goals', {
       params: {
         user: profile ? profile.id : 0,
-        month: today.getMonth() + 1
+        month: today.getMonth() + 1,
       }
     })
 

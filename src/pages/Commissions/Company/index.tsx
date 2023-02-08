@@ -21,6 +21,10 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Pagination } from "../../../components/Pagination";
 import { NewSaleModal } from "../../Commercial/Sales/NewSaleModal";
+import { ReactSelect, SelectOption } from "../../../components/Forms/ReactSelect";
+import { UserFilterData, useUsers } from "../../../hooks/useUsers";
+import { User } from "../../../types";
+import { getReactSelectStyles } from "../../../styles/solidReactSelectStyles";
 
 const FilterCompanyCommissionsFormSchema = yup.object().shape({
     search: yup.string(),
@@ -33,6 +37,7 @@ const FilterCompanyCommissionsFormSchema = yup.object().shape({
     confirmed: yup.string(),
     number_contract: yup.string(),
     parcel_number: yup.string(),
+    seller_id: yup.string(),
 });
 
 export default function Company(){
@@ -40,7 +45,7 @@ export default function Company(){
     const workingCompany = useWorkingCompany();
     const workingBranch = useWorkingBranch();
 
-    const { register, handleSubmit, formState} = useForm<CompanyCommissionsFilterData>({
+    const { register, handleSubmit, formState, control} = useForm<CompanyCommissionsFilterData>({
         resolver: yupResolver(FilterCompanyCommissionsFormSchema),
     });
 
@@ -50,12 +55,14 @@ export default function Company(){
             company_id: workingCompany.company?.id,
             branch_id: workingBranch.branch?.id,
             group_by: 'commission_date',
+            confirmed: true
         };
         
         return data;
     })
 
     const handleSearchCompanyCommissions = async (search : CompanyCommissionsFilterData) => {
+        console.log(search);
         setPage(1);
         setFilter({...filter, ...search});
     }
@@ -77,6 +84,32 @@ export default function Company(){
         setFilter({...filter, company_id: workingCompany.company?.id, branch_id: workingBranch.branch?.id});
     }, [workingCompany, workingBranch]);
 
+    const [usersFilter, setUsersFilter] = useState<UserFilterData>(() => {
+        const data: UserFilterData = {
+          search: '',
+          company: workingCompany.company?.id,
+          //role: 5
+        }
+    
+        return data
+      })
+    
+      const usersQuery = useUsers(usersFilter)
+    
+      const sellerOptions: SelectOption[] = [
+        {
+          value: '',
+          label: 'Selecionar Vendedor'
+        }
+      ]
+
+    usersQuery.data &&
+    usersQuery.data.map((user: User) => {
+        sellerOptions.push({ value: user.id.toString(), label: `${user.name} ${user.last_name}` })
+    })
+
+    const solidReactSelectStyles = getReactSelectStyles({primaryColor: "#c30052"});
+
     return(
         <MainBoard sidebar="commissions" header={<CompanySelectMaster/>}>
 
@@ -92,15 +125,16 @@ export default function Company(){
                 <Box w="100%">
                     <Stack spacing="6" w="100%">
                         <Stack direction={["column", "row"]} spacing="6">
-                            <Input register={register} name="search" type="text" error={formState.errors.search} placeholder="Procurar" variant="filled" focusBorderColor="red.400"/>
+                            {/* <Input register={register} name="search" type="text" error={formState.errors.search} placeholder="Procurar" variant="filled" focusBorderColor="red.400"/> */}
+                            <ReactSelect control={control} options={sellerOptions} styles={solidReactSelectStyles} placeholder={"Selecionar Vendedor"} name="seller_id" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } borderRadius="full"/>
 
                             <Input register={register} name="start_date" type="date" error={formState.errors.start_date} placeholder="Data Inicial" variant="filled" focusBorderColor="red.400"/>
                             <Input register={register} name="end_date" type="date" error={formState.errors.end_date} placeholder="Data Final" variant="filled" focusBorderColor="red.400"/>
 
                             <Select register={register} h="45px" name="is_chargeback" w="100%" maxW="200px" error={formState.errors.is_chargeback} fontSize="sm" focusBorderColor="red.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
-                                <option value="">Estorno</option>
-                                <option value={1}>Sim</option>
-                                <option value={0}>Não</option>
+                                <option value="">Selecionar estorno</option>
+                                <option value={1}>É estorno</option>
+                                <option value={0}>Não é estorno</option>
                             </Select>
                         </Stack>
 
@@ -113,7 +147,7 @@ export default function Company(){
 
                             <Input register={register} name="parcel_number" type="text" placeholder="Parcela" variant="filled" error={formState.errors.parcel_number} focusBorderColor="red.400"/>
 
-                            <Select defaultValue={0} h="45px" register={register} name="confirmed" error={formState.errors.confirmed}  w="100%" maxW="200px" fontSize="sm" focusBorderColor="red.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
+                            <Select defaultValue={1} h="45px" register={register} name="confirmed" error={formState.errors.confirmed}  w="100%" maxW="200px" fontSize="sm" focusBorderColor="red.600" bg="gray.400" variant="filled" _hover={ {bgColor: 'gray.500'} } size="lg" borderRadius="full">
                                 <option value="">Status</option>
                                 <option value={0}>Pendente</option>
                                 <option value={1}>Confirmada</option>

@@ -6,7 +6,7 @@ import {
 } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 import { Controller, FieldError, UseFormRegister } from 'react-hook-form'
-import Select from 'react-select'
+import Select, { StylesConfig } from 'react-select'
 
 export interface SelectOption {
   value: string | number
@@ -29,7 +29,9 @@ interface ReactSelectProps extends ChakraProps {
   marginBottom?: string
   maxWidth?: string
   label?: string
-  isRequired?: boolean
+  isRequired?: boolean;
+  placeholder?: string;
+  styles?: StylesConfig;
 }
 
 export function ReactSelect({
@@ -46,9 +48,12 @@ export function ReactSelect({
   width,
   marginBottom,
   maxWidth,
+  placeholder,
+  styles,
   ...rest
 }: ReactSelectProps) {
-  const customStyles = {
+
+  const customStyles = styles ? styles : {
     container: (styles: any) => ({
       ...styles,
       width: width,
@@ -136,7 +141,7 @@ export function ReactSelect({
             placeholder={`Selecione o vendedor ${isRequired ? '*' : ''}`}
             styles={customStyles}
             value={options.find(c => c.value === controlledValue)}
-            onChange={val => {
+            onChange={(val:any) => {
               onChange(val ? val.value : '')
               setControlledValue(val ? val.value : '')
             }}
@@ -156,7 +161,7 @@ export function ReactSelect({
         </Text>
       )}
 
-      <Select options={options} styles={customStyles} {...rest} />
+      <Select options={options} styles={customStyles} placeholder={`${placeholder} ${isRequired ? '*' : ''}`} {...rest} />
 
       {!!error && <FormErrorMessage>{error.message}</FormErrorMessage>}
     </FormControl>

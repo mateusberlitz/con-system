@@ -1,4 +1,4 @@
-import { HStack, Stack } from '@chakra-ui/react'
+import { Divider, HStack, Stack } from '@chakra-ui/react'
 import { MainBoard } from '../../components/MainBoard'
 import { HasPermission, useProfile } from '../../hooks/useProfile'
 import { CompanySelectMaster } from '../../components/CompanySelect/companySelectMaster'
@@ -102,17 +102,23 @@ export default function Commissions() {
           </Stack>
         </Stack>
 
-        <HStack  spacing="8" w={['100%', '100%']}>
+        <Stack spacing="4" mt={10}>
+            {
+                (profile && profile.role.id === 1) && (
+                    <AffiliateCommissions />
+                )
+            }
+        </Stack>
+
+        <Divider />
+
+        <HStack spacing="8" w={['100%', '100%']}>
             <CommissionsReceivedGrafic />
 
             <HStack  spacing="8" w={['100%', '100%']}>
                 <CommissionsPaidGrafic />
             </HStack>
         </HStack>
-
-        <Stack spacing="4" mt={10}>
-            <AffiliateCommissions />
-        </Stack>
       </Stack>
     </MainBoard>
   )
