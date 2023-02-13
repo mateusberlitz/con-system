@@ -18,13 +18,15 @@ interface CompanyStepProps{
     firstCompany?:Company | undefined;
     setFirstCompany: (company: Company) => void;
     loading: boolean;
+    setLoading: (loading: boolean) => void;
 }
 
-export function CompanyStep({firstCompany, setFirstCompany, loading} : CompanyStepProps){
+export function CompanyStep({firstCompany, setFirstCompany, loading, setLoading} : CompanyStepProps){
 
     const fetchCompany = async () => {
         api.get('/companies').then(response => {
             setFirstCompany(response.data[0]);
+            setLoading(false);
         });
     }
 

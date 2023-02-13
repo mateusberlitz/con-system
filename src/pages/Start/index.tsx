@@ -52,7 +52,7 @@ export default function Start() {
       setStep(2);
       setLoading(true);
     }
-  }, [firstBranch, firstCompany, firstSellerCommissionRule])
+  }, [firstBranch, firstCompany, firstSellerCommissionRule]);
 
   const handleSaveInitiatedComplete = async () => {
     const id = await api.get('/configs').then(response => response.data.data.id)
@@ -73,7 +73,7 @@ export default function Start() {
     });
   }
 
-  console.log(firstSellerCommissionRule, loading);
+  console.log(firstSellerCommissionRule, firstBranch, firstCompany, loading);
   
   return (
     <Flex direction="column" h="100vh">
@@ -95,7 +95,7 @@ export default function Start() {
             (step === 1) && (
               <>
                 <Stack direction={["column", "column", "row"]} justifyContent="space-between" spacing="8">
-                  <CompanyStep loading={loading}  firstCompany={firstCompany} setFirstCompany={setFirstCompany}/>
+                  <CompanyStep loading={loading} firstCompany={firstCompany} setFirstCompany={setFirstCompany} setLoading={setLoading}/>
 
                   <BranchStep loading={loading} firstBranch={firstBranch} setFirstBranch={setFirstBranch}/>
                 </Stack>
@@ -118,10 +118,10 @@ export default function Start() {
                 <Stack direction={["column", "column", "row"]} justifyContent="space-between" spacing="8">
                   {/* <CompanyCommissionRuleStep companyCommissionRule={companyCommissionRule} setCompanyCommissionRule={setCompanyCommissionRule}/> */}
 
-                  <SellerCommissionRuleStep loading={loading} firstSellerCommissionRule={firstSellerCommissionRule} firstBranch={firstBranch} firstCompany={firstCompany} setFirstSellerCommissionRule={setFirstSellerCommissionRule}/>
+                  <SellerCommissionRuleStep loading={loading} firstSellerCommissionRule={firstSellerCommissionRule} firstBranch={firstBranch} firstCompany={firstCompany} setFirstSellerCommissionRule={setFirstSellerCommissionRule} setLoading={setLoading}/>
                 </Stack>
                 {
-                  (firstBranch && firstCompany ) && (
+                  (firstSellerCommissionRule) && (
                     <Box w="100%">
                       <SolidButton float="right" mb="12" color="white" bg="purple.300" colorScheme="purple" onClick={() => handleSaveInitiatedComplete()}>
                         Concluir

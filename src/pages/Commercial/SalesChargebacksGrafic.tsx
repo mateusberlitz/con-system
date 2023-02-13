@@ -152,7 +152,7 @@ export default function SalesChargesGrafics({isManager}: SalesChargesGraficsProp
                                     (profile && profile.role.id === 1) && (<option value="">Todas equipes</option>)
                                 }
                                 {
-                                    teams.map((team: Team) => {
+                                    teams && teams.map((team: Team) => {
                                         return (
                                             <option key={team.id} value={team.id}>{team.name}</option>
                                         )

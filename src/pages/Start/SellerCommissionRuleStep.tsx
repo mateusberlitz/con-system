@@ -32,16 +32,16 @@ interface SellerCommissionStepProps{
     firstCompany: Company | undefined;
     firstBranch: Branch  | undefined;
     loading: boolean
-    //setLoading: (loading: boolean) => void;
+    setLoading: (loading: boolean) => void;
 }
 
-export function SellerCommissionRuleStep({firstSellerCommissionRule, setFirstSellerCommissionRule, firstCompany, firstBranch, loading} : SellerCommissionStepProps){
+export function SellerCommissionRuleStep({firstSellerCommissionRule, setFirstSellerCommissionRule, firstCompany, firstBranch, loading, setLoading} : SellerCommissionStepProps){
 
     const fetchSellerCommissionRule = async () => {
         api.get('/seller-commission-rules').then(response => {
             setFirstSellerCommissionRule(response.data.data[0]);
-            console.log('carregou');
-            //setLoading(false);
+            //console.log('carregou');
+            setLoading(false);
         });
     }
 
