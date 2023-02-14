@@ -33,6 +33,15 @@ export function SideBarNav({ desk }: SideBarNavProps) {
   const { permissions } = useProfile()
   const { prefix } = useTenant()
 
+  const canGoToHome = (HasPermission(permissions, 'Usuários') ||
+  HasPermission(permissions, 'Configurações') ||
+  HasPermission(permissions, 'Contempladas')||
+  HasPermission(permissions, 'Comissões Vendedor')||
+  HasPermission(permissions, 'Comissões Completo')||
+  HasPermission(permissions, 'Comissões Gerente'));
+
+  console.log(canGoToHome);
+
   return desk === 'configs' ? (
     <Stack
       spacing="2"
@@ -113,9 +122,7 @@ export function SideBarNav({ desk }: SideBarNavProps) {
         </>
       )}
 
-      {(HasPermission(permissions, 'Usuários') ||
-        HasPermission(permissions, 'Configurações') ||
-        HasPermission(permissions, 'Contempladas')) && (
+      {canGoToHome && (
         <Link to={`/home`}>
           <Box
             mt="24"
@@ -176,12 +183,7 @@ export function SideBarNav({ desk }: SideBarNavProps) {
         </NavLink>
       )}
 
-      {(HasPermission(permissions, 'Usuários') ||
-        HasPermission(permissions, 'Configurações') ||
-        HasPermission(permissions, 'Contempladas')||
-        HasPermission(permissions, 'Comissões Vendedor')||
-        HasPermission(permissions, 'Comissões Completo')||
-        HasPermission(permissions, 'Comissões Gerente')) && (
+      {canGoToHome && (
         <Link to={`/home`}>
           <Box
             mt="24"
@@ -245,12 +247,7 @@ export function SideBarNav({ desk }: SideBarNavProps) {
         </NavLink>
       )}
 
-      {(HasPermission(permissions, 'Usuários') ||
-        HasPermission(permissions, 'Configurações') ||
-        HasPermission(permissions, 'Contempladas') ||
-        HasPermission(permissions, 'Comissões Vendedor')||
-        HasPermission(permissions, 'Comissões Completo')||
-        HasPermission(permissions, 'Comissões Gerente')) && (
+      {canGoToHome && (
         <Link to={`/home`}>
           <Box
             mt="24"
@@ -312,12 +309,7 @@ export function SideBarNav({ desk }: SideBarNavProps) {
       >
         Relatório
       </NavLink>
-      {(HasPermission(permissions, 'Usuários') ||
-        HasPermission(permissions, 'Configurações') ||
-        HasPermission(permissions, 'Contempladas')||
-        HasPermission(permissions, 'Comissões Vendedor')||
-        HasPermission(permissions, 'Comissões Completo')||
-        HasPermission(permissions, 'Comissões Gerente')) && (
+      {canGoToHome && (
         <Link to={`/home`}>
           <Box
             mt="24"
