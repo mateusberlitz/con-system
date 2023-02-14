@@ -59,7 +59,7 @@ export default function Start() {
 
     //console.log(id);
     if(!id){
-        api.post('/config', {initiated: true});
+        api.post('/configs', {initiated: true});
 
         localStorage.setItem('@lance/firstSteps', JSON.stringify(1));
 
