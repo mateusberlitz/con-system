@@ -55,6 +55,7 @@ import Customers from './pages/Commercial/Customers'
 import Start from './pages/Start'
 import { api } from './services/api'
 import { ContractLogs } from './pages/Commissions/Contracts/ContractLogs'
+import { isAuthenticated } from './services/auth'
 
 interface PrivateRouteProps extends RouteProps {
   component: any
@@ -66,46 +67,44 @@ const PrivateRoute = ({
   neededPermission = '',
   ...rest
 }: PrivateRouteProps) => {
-  const history = useHistory();
-  const { isAuthenticated, permissions } = useProfile();
-  const [isFirstSteps, setIsFirstSteps] = useState<boolean>(localStorage.getItem('@lance/firstSteps') === '1' ? false : true);
+    const history = useHistory();
+    const { permissions } = useProfile();
+    const [isFirstSteps, setIsFirstSteps] = useState<boolean>(localStorage.getItem('@lance/firstSteps') === '1' ? false : true);
 
-  const initialPage = getInitialPage(permissions);
+    const initialPage = getInitialPage(permissions);
 
-  const checkFirstSteps = async () => {
-    //console.log(localStorage.getItem('@lance/firstSteps'), localStorage.getItem('@lance/firstSteps') !== '1');
+    const checkFirstSteps = async () => {
 
-    api.get('/configs').then(response => {
+        api.get('/configs').then(response => {
+            if(response.data.data.initiated){
+                localStorage.setItem('@lance/firstSteps', JSON.stringify(1));
+                setIsFirstSteps(false);
 
-      if(response.data.data.initiated){
-        localStorage.setItem('@lance/firstSteps', JSON.stringify(1));
-        setIsFirstSteps(false);
+                if(rest.path === "/primeiros-passos"){
+                history.push(initialPage);
+                }
+            }else{
+                setIsFirstSteps(true);
 
-        if(rest.path === "/primeiros-passos"){
-          history.push(initialPage);
-        }
-      }else{
-        setIsFirstSteps(true);
+                if(rest.path !== "/primeiros-passos"){
+                history.push('/primeiros-passos');
+                }
+            }
+        });
 
-        if(rest.path !== "/primeiros-passos"){
-          history.push('/primeiros-passos');
-        }
-      }
-    });
+        //console.log(response);
 
-    //console.log(response);
+        //localStorage.setItem('@lance/firstSteps', JSON.stringify(1));
+        //localStorage.getItem('@lance/firstSteps');
 
-    //localStorage.setItem('@lance/firstSteps', JSON.stringify(1));
-    //localStorage.getItem('@lance/firstSteps');
-
-    // if(isFirstSteps && rest.path !== "/primeiros-passos"){
-    //   console.log('redirecionar para start');
-    //   //history.push('/primeiros-passos');
-    // }else if(!isFirstSteps && rest.path === "/primeiros-passos"){
-    //   console.log('redirecionar para pagina');
-    //   //history.push(initialPage);
-    // }
-  }
+        // if(isFirstSteps && rest.path !== "/primeiros-passos"){
+        //   console.log('redirecionar para start');
+        //   //history.push('/primeiros-passos');
+        // }else if(!isFirstSteps && rest.path === "/primeiros-passos"){
+        //   console.log('redirecionar para pagina');
+        //   //history.push(initialPage);
+        // }
+    }
 
   //console.log(localStorage.getItem('@lance/firstSteps') === null);  
 
@@ -116,39 +115,53 @@ const PrivateRoute = ({
   //   //history.push(initialPage);
   // }
 
-  useEffect(() => {}, [isAuthenticated]);
-  useEffect(() => {
-    if(localStorage.getItem('@lance/firstSteps') === null){
-      checkFirstSteps();
-    }else{
-      if(rest.path === "/primeiros-passos"){
-        history.push(initialPage);
-      }
-    }
-  }, [isFirstSteps]);
+    useEffect(() => {}, [permissions]);
 
-  return (
-    <Route
-      {...rest}
-      render={props =>
-        !isAuthenticated ? (
-          <Redirect
-            to={{ pathname: `/`, state: 'Por favor, acesse sua conta.' }}
-          />
-        ) : neededPermission !== '' &&
-          !HasPermission(permissions, neededPermission) ? (
-          <Redirect
-            to={{
-              pathname: `${initialPage}`,
-              state: 'Você não tem permissão para essa página'
-            }}
-          />
-        ) : (
-          <Component {...props} />
+    useEffect(() => {
+        if(localStorage.getItem('@lance/firstSteps') === null){
+            checkFirstSteps();
+        }else{
+            if(rest.path === "/primeiros-passos"){
+                history.push(initialPage);
+            }
+        }
+    }, [isFirstSteps]);
+
+    if(!isAuthenticated()){
+        return ( 
+            <Route {...rest} render={props => 
+                <Redirect
+                    to={{ pathname: `/`, state: 'Sessão expirada.' }}
+                />
+            }/>
         )
-      }
-    />
-  )
+    }
+
+    if(permissions){
+        return (
+            <Route
+                {...rest}
+                render={props =>
+                    neededPermission !== '' && !HasPermission(permissions, neededPermission) ? (
+                        <Redirect
+                            to={{
+                            pathname: `${initialPage}`,
+                            state: 'Você não tem permissão para essa página'
+                            }}
+                        />
+                    ) : (
+                        <Component {...props} />
+                    )
+                }
+            />
+        )
+    }
+
+    return <Route {...rest} render={props => 
+        <Flex w="100%" h="100vh" alignItems={"center"} justifyContent="center">
+            <Spinner />
+        </Flex>
+    }/>
 }
 
 const TenantRoutes = (): JSX.Element => {
