@@ -19,7 +19,11 @@ export default function CommissionsContracts({commissionsContract}: CommissionsC
     console.log(commissionsContract);
 
     const totalMonthAmount = commissionsContract.reduce((sumAmount:number, commissionsContract:Contract) => {
-        return sumAmount + commissionsContract.quota.credit;
+        if(commissionsContract.quota){
+            return sumAmount + commissionsContract.quota.credit;
+        }
+
+        return 0;
     }, 0);
 
     return (
@@ -40,7 +44,7 @@ export default function CommissionsContracts({commissionsContract}: CommissionsC
             {
                     commissionsContract.map((commissionsContract:Contract) => {
                         console.log(commissionsContract);
-                return (
+             return commissionsContract.quota && (
              <>
             <AccordionItem display="flex" flexDir="column" paddingX={["4", "8"]} paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
                 {({ isExpanded }) => (

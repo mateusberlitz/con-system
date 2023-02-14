@@ -28,17 +28,17 @@ import { getReactSelectStyles } from "../../../styles/solidReactSelectStyles";
 
 
 const FilterSalesmanCommissionsFormSchema = yup.object().shape({
-    search: yup.string(),
-    start_date: yup.string(),
-    end_date: yup.string(),
-    is_chargeback: yup.string(),
-    contract: yup.string(),
-    group: yup.string(),
-    quote: yup.string(),
-    confirmed: yup.string(),
-    number_contract: yup.string(),
-    parcel_number: yup.string(),
-    seller_id: yup.number(),
+    search: yup.string().nullable(),
+    start_date: yup.string().nullable(),
+    end_date: yup.string().nullable(),
+    is_chargeback: yup.string().nullable(),
+    contract: yup.string().nullable(),
+    group: yup.string().nullable(),
+    quote: yup.string().nullable(),
+    confirmed: yup.string().nullable(),
+    number_contract: yup.string().nullable(),
+    parcel_number: yup.string().nullable(),
+    seller_id: yup.number().transform((v, o) => (o === '' ? null : v)).nullable(),
 });
 
 export default function CommissionsSalesman(){
@@ -83,6 +83,7 @@ export default function CommissionsSalesman(){
     function OpenNewSaleModal() {
         setIsNewSaleModalOpen(true)
     }
+
     function CloseNewSaleModal() {
         setIsNewSaleModalOpen(false)
     }
@@ -134,7 +135,7 @@ export default function CommissionsSalesman(){
                         <Stack direction={["column", "row"]} spacing="6">
                             {
                                 (profile && profile.role.id === 1) && (
-                                    <ReactSelect control={control} options={sellerOptions} styles={solidReactSelectStyles} placeholder={"Selecionar Vendedor"} name="seller_id" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } borderRadius="full"/>
+                                    <ReactSelect isRequired={false} control={control} options={sellerOptions} styles={solidReactSelectStyles} placeholder={"Selecionar Vendedor"} name="seller_id" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } borderRadius="full"/>
                                 )
                             }
                             {/* <Input register={register} name="search" type="text" error={formState.errors.search} placeholder="Procurar" variant="filled" focusBorderColor="red.400"/> */}

@@ -47,10 +47,7 @@ interface CreateNewTeamFormData {
 const CreateNewTeamFormSchema = yup.object().shape({
   name: yup.string().required('Nome da filial obrigatório'),
   company: yup.number().required('A qual essa filial pertence?'),
-  branch: yup
-    .number()
-    .transform((v, o) => (o === '' ? null : v))
-    .nullable(),
+  branch: yup.number().transform((v, o) => (o === '' ? null : v)).nullable(),
   manager: yup.number().nullable(),
   desk: yup.number().required('Informe o setor desta equipe')
 })
