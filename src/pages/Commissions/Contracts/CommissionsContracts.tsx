@@ -16,8 +16,6 @@ interface CommissionsContractProps{
 export default function CommissionsContracts({commissionsContract}: CommissionsContractProps) {
     const { profile, permissions } = useProfile()
 
-    console.log(commissionsContract);
-
     const totalMonthAmount = commissionsContract.reduce((sumAmount:number, commissionsContract:Contract) => {
         if(commissionsContract.quota){
             return sumAmount + commissionsContract.quota.credit;
@@ -43,10 +41,9 @@ export default function CommissionsContracts({commissionsContract}: CommissionsC
             </HStack>
             {
                     commissionsContract.map((commissionsContract:Contract) => {
-                        console.log(commissionsContract);
              return commissionsContract.quota && (
              <>
-            <AccordionItem display="flex" flexDir="column" paddingX={["4", "8"]} paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
+            <AccordionItem key={commissionsContract.id} display="flex" flexDir="column" paddingX={["4", "8"]} paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
                 {({ isExpanded }) => (
                     <>
                         <Stack spacing={["5", ""]} direction={['column', 'row']} justify="space-between" mb="3" alignItems={["", "center"]}>
@@ -145,9 +142,9 @@ export default function CommissionsContracts({commissionsContract}: CommissionsC
                             </Stack>
 
                             {
-                                commissionsContract.quotas.map(() => {
+                                commissionsContract.quotas.map((quota) => {
                                     return(
-                                        <>
+                                        <Stack key={quota.id}>
                                             <Divider mb="3" />
 
                                             <Stack color="gray.500" direction={['column', 'row']} spacing={["5", "4"]} justifyContent="space-between" mb="4">
@@ -177,7 +174,7 @@ export default function CommissionsContracts({commissionsContract}: CommissionsC
                                                     </Text>
                                                 </HStack>
                                             </Stack>
-                                        </>
+                                        </Stack>
                                     )
                                 })
                             }

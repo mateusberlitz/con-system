@@ -48,7 +48,7 @@ export function ReactSelect({
   width,
   marginBottom,
   maxWidth,
-  placeholder,
+  placeholder = '',
   styles,
   ...rest
 }: ReactSelectProps) {
@@ -138,7 +138,7 @@ export function ReactSelect({
             {...select}
             ref={ref}
             options={options}
-            placeholder={`Selecione o vendedor ${isRequired ? '*' : ''}`}
+            placeholder={`${placeholder} ${isRequired ? '*' : ''}`}
             styles={customStyles}
             value={options.find(c => c.value === controlledValue)}
             onChange={(val:any) => {

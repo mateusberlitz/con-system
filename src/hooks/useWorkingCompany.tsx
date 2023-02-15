@@ -24,7 +24,7 @@ export function WorkingCompanyProvider({ children } : WorkingCompanyProviderProp
             if(profile){
                 if(Object.keys(profile).length > 0){
                     if((profile?.role.id !== 1) && (profile?.companies.length > 0)){
-                        localStorage.setItem('@lance/company', JSON.stringify(profile.companies[0]));
+                        //localStorage.setItem('@lance/company', JSON.stringify(profile.companies[0]));
                         return profile.companies[0];
                     }
                 }
@@ -57,11 +57,23 @@ export function WorkingCompanyProvider({ children } : WorkingCompanyProviderProp
     }, [company, profileCompanyValue]);
 
 
+    useEffect(() => {
+        if(profile){
+            if(Object.keys(profile).length > 0){
+                if((profile?.role.id !== 1) && (profile?.companies.length > 0)){
+                    //localStorage.setItem('@lance/company', JSON.stringify(profile.companies[0]));
+                    setCompany(profile.companies[0]);
+                }
+            }
+        }
+    }, [profile]);
+
+    console.log(company);
 
     //LOADERS
     const changeCompany = async (company: Company) => {
         setCompany(company);
-        localStorage.setItem('@lance/company', JSON.stringify(company));
+        //localStorage.setItem('@lance/company', JSON.stringify(company));
     }
 
     return(

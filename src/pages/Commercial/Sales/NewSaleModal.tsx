@@ -46,6 +46,7 @@ import { useStates } from '../../../hooks/useStates'
 import { useCities } from '../../../hooks/useCities'
 import { useWorkingBranch } from '../../../hooks/useWorkingBranch'
 import { useUsers } from '../../../hooks/useUsers'
+import { useCustomers } from '../../../hooks/useCustomers'
 
 interface NewSaleModalProps {
   isOpen: boolean
@@ -64,6 +65,7 @@ export interface CreateNewSaleFormData {
   company_id: number;
   branch_id?: number;
   seller_id: number;
+  customer_id?: number;
 
   number_contract: string; //contract
   credit: string;
@@ -93,20 +95,21 @@ export interface CreateNewSaleFormData {
 
 const CreateNewSaleFormSchema = yup.object().shape({
   credit: yup.string().required('Qual o valor da venda?'),
-  name: yup.string().required('Nome do cliente obrigatório'),
-  email: yup.string().required('E-mail do cliente obrigatório'),
-  phone: yup.string().required('Telefone do cliente obrigatório'),
-  cpf_cnpj: yup.string().required('Informe um CPF ou CNPJ'),
+  name: yup.string().when("customer_id", {is: (val:string) => val === "", then: yup.string().required('Informe o nome do cliente'), otherwise: yup.string().notRequired()}),
+  email: yup.string().when("customer_id", {is: (val:string) => val === "", then: yup.string().required('Informe o email'), otherwise: yup.string().notRequired()}),
+  phone: yup.string().when("customer_id", {is: (val:string) => val === "", then: yup.string().required('Informe o telefone'), otherwise: yup.string().notRequired()}),
+  cpf_cnpj: yup.string().when("customer_id", {is: (val:string) => val === "", then: yup.string().required('Informe o cpf ou cnpj'), otherwise: yup.string().notRequired()}),
   consortium_type_id: yup.number().required('Qual o segmento da carta vendida?'),
   date_sale: yup.string().required('Quando foi feita a venda?'),
   birth_date: yup.string().nullable(),
-  civil_status: yup.string().required('Informe o estado civil'),
-  state_id: yup.number().required('Informe o estado'),
-  city_id: yup.string().required('Informe a cidade'),
-  cep: yup.string().required('Informe o CEP'),
-  address: yup.string().required('Informe o endereço'),
-  neighborhood: yup.string().required('Informe o bairro'),
-  number: yup.string().required('Informe o número'),
+  civil_status: yup.string().when("customer_id", {is: (val:string) => val === "", then: yup.string().required('Informe o estado civil'), otherwise: yup.string().notRequired()}),
+  state_id: yup.string().when("customer_id", {is: (val:string) => val === "", then: yup.string().required('Informe o estado'), otherwise: yup.string().notRequired()}),
+  city_id: yup.string().when("customer_id", {is: (val:string) => val === "", then: yup.string().required('Informe a cidade'), otherwise: yup.string().notRequired()}),
+  customer_id: yup.string().nullable(),
+  cep: yup.string().when("customer_id", {is: (val:string) => val === "", then: yup.string().required('Informe o cep'), otherwise: yup.string().notRequired()}),
+  address: yup.string().when("customer_id", {is: (val:string) => val === "", then: yup.string().required('Informe o endereço'), otherwise: yup.string().notRequired()}),
+  neighborhood: yup.string().when("customer_id", {is: (val:string) => val === "", then: yup.string().required('Informe o bairro'), otherwise: yup.string().notRequired()}),
+  number: yup.string().when("customer_id", {is: (val:string) => val === "", then: yup.string().required('Informe o número do endereço'), otherwise: yup.string().notRequired()}),
   group: yup.string().required('Informe o grupo'),
   quota: yup.string().required('Informe a cota'),
   seller_id: yup.string().required('Informe o vendedor'),
@@ -160,6 +163,13 @@ export function NewSaleModal({
       saleData.date_sale = saleData.date_sale;
       saleData.credit = moneyToBackend(saleData.credit)
 
+    //   let selectedCustomer = undefined;
+
+    //   if(saleData.customer_id){
+        let selectedCustomer:Customer|undefined = customers.data?.data.data.find((customer:Customer) => saleData.customer_id == customer.id);
+
+      console.log(customers.data?.data.data);
+
       const newSaleData = {
         company_id: workingCompany.company.id,
         branch_id: workingBranch.branch && workingBranch.branch.id,
@@ -174,20 +184,34 @@ export function NewSaleModal({
           quota: saleData.quota,
           date_sale: saleData.date_sale,
         },
-        customer: {
-          cpf_cnpj: saleData.cpf_cnpj,
-          type_customer: isPF ? 'PF' : 'PJ',
-          name: saleData.name,
-          email: saleData.email,
-          phone: saleData.phone,
-          birth_date: saleData.birth_date,
-          civil_status: saleData.civil_status,
-          city_id: saleData.city_id,
-          state_id: saleData.state_id,
-          cep: saleData.cep,
-          address: saleData.address,
-          neighborhood: saleData.neighborhood,
-          number: saleData.number,
+        customer: selectedCustomer ? {
+          cpf_cnpj: selectedCustomer.cpf_cnpj,
+          type_customer: selectedCustomer.type_customer,
+          name: selectedCustomer.name,
+          email: selectedCustomer.email,
+          phone: selectedCustomer.phone,
+          birth_date: selectedCustomer.birth_date,
+          civil_status: selectedCustomer.civil_status,
+          city_id: selectedCustomer.city_id,
+          state_id: selectedCustomer.state_id,
+          cep: selectedCustomer.cep,
+          address: selectedCustomer.address,
+          neighborhood: selectedCustomer.neighborhood,
+          number: selectedCustomer.number,
+        } : {
+            cpf_cnpj: saleData.cpf_cnpj,
+            type_customer: isPF ? 'PF' : 'PJ',
+            name: saleData.name,
+            email: saleData.email,
+            phone: saleData.phone,
+            birth_date: saleData.birth_date,
+            civil_status: saleData.civil_status,
+            city_id: saleData.city_id,
+            state_id: saleData.state_id,
+            cep: saleData.cep,
+            address: saleData.address,
+            neighborhood: saleData.neighborhood,
+            number: saleData.number,
         }
       };
 
@@ -213,6 +237,7 @@ export function NewSaleModal({
       }
       reset()
     } catch (error: any) {
+        console.log(error);
       showErrors(error, toast)
 
       if (error.response.data.access) {
@@ -242,6 +267,13 @@ export function NewSaleModal({
     }
   ]);
 
+  const [customerOptions, setCustomerOptions] = useState<Array<SelectOption>>([
+    {
+      value: '',
+      label: 'Selecionar Cliente'
+    }
+  ]);
+
   const [usersOptions, setUsersOptions] = useState<Array<SelectOption>>([
     {
       value: '',
@@ -251,6 +283,7 @@ export function NewSaleModal({
 
   const states = useStates();
   const users = useUsers({});
+  const customers = useCustomers({});
 
   const selectedState = watch('state_id');
   const cities = useCities({state_id: selectedState ? selectedState : 1});
@@ -273,11 +306,15 @@ export function NewSaleModal({
       })
     }
 
-    //
   }, [leads]);
 
   useEffect(() => {
-    const newUsersOptions:Array<SelectOption> = [];
+    const newUsersOptions:Array<SelectOption> = [
+        {
+          value: '',
+          label: 'Selecionar Vendedor'
+        }
+    ];
     
     if(users.data){
       users.data?.map((user: User) => {
@@ -288,10 +325,35 @@ export function NewSaleModal({
     setUsersOptions(newUsersOptions);
   }, [users.data]);
 
+  useEffect(() => {
+    const newCustomerOptions:Array<SelectOption> = [
+        {
+          value: '',
+          label: 'Selecionar Cliente'
+        }
+    ];
+    
+    if(customers.data){
+        customers.data?.data.data.map((customer: Customer) => {
+        newCustomerOptions.push({ value: customer.id.toString(), label: `${customer.name}` });
+      })
+    }
+
+    setCustomerOptions(newCustomerOptions);
+  }, [customers.data]);
+
   const [otherValue, setOtherValue] = useState(false);
   const [isPF, setIsPF] = useState(true);
 
-  //console.log(users);
+  const [needCustomerInfo, setNeedCustomerInfo] = useState(true);
+
+  useEffect(() => {
+    if(watch('customer_id')){
+        setNeedCustomerInfo(false);
+    }else{
+        setNeedCustomerInfo(true);
+    }
+  }, [watch('customer_id')]);
 
   return (
     <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
@@ -360,7 +422,7 @@ export function NewSaleModal({
                   <ReactSelect
                     options={usersOptions}
                     control={control}
-                    label="Vendedor"
+                    placeholder="Selecionar Vendedor"
                     name="seller_id"
                     bg="gray.400"
                     variant="outline"
@@ -371,6 +433,27 @@ export function NewSaleModal({
                   />
                 )}
             </HStack>
+
+            {customers && customers.data?.data.length !== 0 && (
+                <HStack spacing="4" alignItems="flex-start">
+                    <ReactSelect
+                        options={customerOptions}
+                        control={control}
+                        placeholder="Selecionar Cliente"
+                        name="customer_id"
+                        bg="gray.400"
+                        variant="outline"
+                        _hover={{ bgColor: 'gray.500' }}
+                        borderRadius="full"
+                        error={formState.errors.customer_id}
+                    />
+                </HStack>
+            )}
+
+            <Stack>
+                <Text color="gray.700" mt="5">Dados do plano</Text>
+                <Divider></Divider>
+            </Stack>
 
             <HStack spacing="4" alignItems="flex-start">
               <Input
@@ -406,7 +489,7 @@ export function NewSaleModal({
               </Select>
             </HStack>
 
-            <HStack spacing="4" alignItems="flex-start">
+            {/* <HStack spacing="4" alignItems="flex-start">
               {leads && leads.data?.data.length !== 0 && (
                   <ReactSelect
                     options={leadsOptions}
@@ -420,7 +503,7 @@ export function NewSaleModal({
                     error={formState.errors.lead}
                   />
                 )}
-            </HStack>
+            </HStack> */}
 
             <HStack spacing="4" alignItems="flex-start">
               <Stack width="100%">
@@ -518,9 +601,16 @@ export function NewSaleModal({
               />
             </HStack>
 
+            
+
             {
-              !toAddCustomerData && (
+              (!toAddCustomerData && needCustomerInfo) && (
                 <>
+                    <Stack>
+                        <Text color="gray.700" mt="5">Dados do cliente</Text>
+                        <Divider></Divider>
+                    </Stack>
+
                   <HStack spacing="4" alignItems="flex-start">
                     <Checkbox isChecked={isPF} onChange={() => setIsPF(true)}>Pessoa física</Checkbox>
                     <Checkbox isChecked={!isPF} onChange={() => setIsPF(false)}>Pessoa jurídica</Checkbox>

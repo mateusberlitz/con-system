@@ -40,8 +40,6 @@ export function SideBarNav({ desk }: SideBarNavProps) {
   HasPermission(permissions, 'Comissões Completo')||
   HasPermission(permissions, 'Comissões Gerente'));
 
-  console.log(canGoToHome);
-
   return desk === 'configs' ? (
     <Stack
       spacing="2"
