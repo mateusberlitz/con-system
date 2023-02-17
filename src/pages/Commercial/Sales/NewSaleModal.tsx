@@ -469,7 +469,7 @@ export function NewSaleModal({
               {users && users.data?.length !== 0 && (
                   <ReactSelect
                     options={usersOptions}
-                    value={getSavedData().seller_id}
+                    value={(getSavedData() && getSavedData().seller_id) && getSavedData().seller_id}
                     control={control}
                     placeholder="Selecionar Vendedor"
                     name="seller_id"
@@ -488,7 +488,7 @@ export function NewSaleModal({
                     <ReactSelect
                         options={customerOptions}
                         control={control}
-                        value={getSavedData().customer_id}
+                        value={(getSavedData() && getSavedData().customer_id) && getSavedData().customer_id}
                         placeholder="Selecionar Cliente"
                         name="customer_id"
                         bg="gray.400"
@@ -508,7 +508,7 @@ export function NewSaleModal({
             <HStack spacing="4" alignItems="flex-start">
               <ControlledInput
                 control={control}
-                value={getSavedData().date_sale}
+                value={(getSavedData() && getSavedData().date_sale) && getSavedData().date_sale}
                 name="date_sale"
                 type="date"
                 placeholder="Data da venda"
@@ -596,8 +596,9 @@ export function NewSaleModal({
                 ) : (
                   <ControlledInput
                     control={control}
-                    value={getSavedData().credit}
+                    value={(getSavedData() && getSavedData().credit) && getSavedData().credit}
                     name="credit"
+                    mask="money"
                     type="text"
                     placeholder="Valor do crédito"
                     focusBorderColor="orange.400"
@@ -620,7 +621,7 @@ export function NewSaleModal({
 
               <ControlledInput
                 control={control}
-                value={getSavedData().number_credit}
+                value={(getSavedData() && getSavedData().number_credit) && getSavedData().number_credit}
                 name="number_contract"
                 type="text"
                 placeholder="Número do contrato"
@@ -634,7 +635,7 @@ export function NewSaleModal({
             <HStack spacing="4" alignItems="flex-start">
               <ControlledInput
                   control={control}
-                  value={getSavedData().group}
+                  value={(getSavedData() && getSavedData().group) && getSavedData().group}
                   name="group"
                   type="text"
                   placeholder="Grupo"
@@ -645,7 +646,7 @@ export function NewSaleModal({
                 />
               <ControlledInput
                 control={control}
-                value={getSavedData().quota}
+                value={(getSavedData() && getSavedData().quota) && getSavedData().quota}
                 name="quota"
                 type="text"
                 placeholder="Cota"
@@ -674,7 +675,7 @@ export function NewSaleModal({
                   <ControlledInput
                       control={control}
                       name="cpf_cnpj"
-                      value={getSavedData().cpf_cnpj}
+                      value={(getSavedData() && getSavedData().cpf_cnpj) && getSavedData().cpf_cnpj}
                       type="text"
                       placeholder={isPF ? "CPF" : "CNPJ"}
                       focusBorderColor="orange.400"
@@ -685,7 +686,7 @@ export function NewSaleModal({
 
                   <ControlledInput
                       control={control}
-                      value={getSavedData().name}
+                      value={(getSavedData() && getSavedData().name) && getSavedData().name}
                       name="name"
                       type="text"
                       placeholder="Nome completo"
@@ -698,7 +699,7 @@ export function NewSaleModal({
                   <HStack spacing="4" alignItems="flex-start">
                     <ControlledInput
                       control={control}
-                      value={getSavedData().email}
+                      value={(getSavedData() && getSavedData().email) && getSavedData().email}
                       name="email"
                       type="text"
                       placeholder="E-mail"
@@ -710,7 +711,7 @@ export function NewSaleModal({
 
                     <ControlledInput
                       control={control}
-                      value={getSavedData().phone}
+                      value={(getSavedData() && getSavedData().phone) && getSavedData().phone}
                       name="phone"
                       type="text"
                       placeholder="Telefone"
@@ -795,7 +796,7 @@ export function NewSaleModal({
                   <HStack spacing="4" alignItems="flex-start">
                     <ControlledInput
                       control={control}
-                      value={getSavedData().birth_date}
+                      value={(getSavedData() && getSavedData().birth_date) && getSavedData().birth_date}
                       name="birth_date"
                       type="date"
                       placeholder="Data de nascimento"
@@ -806,7 +807,7 @@ export function NewSaleModal({
                     />
                     <ControlledInput
                       control={control}
-                      value={getSavedData().civil_status}
+                      value={(getSavedData() && getSavedData().civil_status) && getSavedData().civil_status}
                       name="civil_status"
                       type="text"
                       placeholder="Estado Civil"
@@ -820,7 +821,7 @@ export function NewSaleModal({
                   <HStack spacing="4" alignItems="flex-start">
                     <ControlledInput
                       control={control}
-                      value={getSavedData().cep}
+                      value={(getSavedData() && getSavedData().cep) && getSavedData().cep}
                       name="cep"
                       type="text"
                       placeholder="CEP"
@@ -831,7 +832,7 @@ export function NewSaleModal({
                     />
                     <ControlledInput
                       control={control}
-                      value={getSavedData().address}
+                      value={(getSavedData() && getSavedData().address) && getSavedData().address}
                       name="address"
                       type="text"
                       placeholder="Rua"
@@ -845,7 +846,7 @@ export function NewSaleModal({
                   <HStack spacing="4" alignItems="flex-start">
                     <ControlledInput
                       control={control}
-                      value={getSavedData().neighborhood}
+                      value={(getSavedData() && getSavedData().neighborhood) && getSavedData().neighborhood}
                       name="neighborhood"
                       type="text"
                       placeholder="Bairro"
@@ -856,7 +857,7 @@ export function NewSaleModal({
                     />
                     <ControlledInput
                       control={control}
-                      value={getSavedData().number}
+                      value={(getSavedData() && getSavedData().number) && getSavedData().number}
                       name="number"
                       type="text"
                       placeholder="Número"

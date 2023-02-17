@@ -64,7 +64,7 @@ export function LeadsSummary({startDate, endDate}: BillsSummaryProps) {
   useEffect(() => {
     loadOrigins()
     loadStatuses()
-    checkPendingLeads()
+    //checkPendingLeads()
   }, [])
 
   const [isNewLeadModalOpen, setIsNewLeadModalOpen] = useState(false)

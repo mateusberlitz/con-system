@@ -117,7 +117,7 @@ export function LeadsReport({startDate, endDate, isManager}: BillsSummaryProps) 
             {Object.keys(leads.data?.data).map(
               (origin: string, index: number) => {
                 return (
-                  <Tr>
+                  <Tr key={origin}>
                     {Object.keys(leads.data?.data[origin]).map(
                       (column: string, index: number) => {
                         // if(index === 1 || index === 2){

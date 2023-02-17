@@ -1,4 +1,4 @@
-import { Text, Stack, HStack } from '@chakra-ui/react'
+import { Text, Stack, HStack, Link } from '@chakra-ui/react'
 
 import { useWorkingCompany } from '../../hooks/useWorkingCompany'
 import { useEffect, useState } from 'react'
@@ -214,10 +214,10 @@ export function SalesSummary({startDate, endDate}: SalesSummaryProps) {
             }).format(amount)}
           </Text>
 
-          <Text onClick={() => OpenListUserSalesModal()} cursor="pointer" display="flex" alignItems="center" fontSize="md" color="gray.700">
+          <Link onClick={() => OpenListUserSalesModal()} cursor="pointer" display="flex" alignItems="center" fontSize="md" color="gray.700">
             <ScrollIcon width="20px" stroke="#6e7191" fill="#6e7191" />{' '}
             <Text ml="2">Ver histórico de vendas</Text>
-          </Text>
+          </Link>
         </Stack>
       </Stack>
     </>

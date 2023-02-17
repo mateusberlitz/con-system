@@ -94,7 +94,7 @@ export function CurrentGoal() {
   const loadTeamGoal = async () => {
     const { data } = await api.get('/goals', {
       params: {
-        team_id: profile ? profile.teams[0].id : 0,
+        team_id: (profile && profile.teams.length > 0) ? profile.teams[0].id : 0,
         month: today.getMonth() + 1
       }
     })
@@ -113,7 +113,7 @@ export function CurrentGoal() {
           workingCompany.company && workingCompany.company.id
             ? workingCompany.company?.id.toString()
             : '0',
-        team_id: profile ? profile.teams[0].id : 0,
+        team_id: (profile && profile.teams.length > 0) ? profile.teams[0].id : 0,
         month: today.getMonth() + 1
       }
     })
@@ -187,21 +187,21 @@ export function CurrentGoal() {
 
                     <Stack spacing="1">
                     <HStack justifyContent={"space-between"}>
-                    <Text
-                        display="flex"
-                        flex={1}
-                        alignItems="center"
-                        fontSize="sm"
-                        color="gray.600"
-                        >
-                        Vendido:
+                        <Text
+                            display="flex"
+                            flex={1}
+                            alignItems="center"
+                            fontSize="sm"
+                            color="gray.600"
+                            >
+                            Vendido:
                         </Text>
                         <Text
-                        display="flex"
-                        fontSize="md"
-                        color="gray.700"
+                            display="flex"
+                            fontSize="md"
+                            color="gray.700"
                         >
-                        {Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL'}).format(monthAmount)}({percentOfGoal})
+                            {Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL'}).format(monthAmount)}({percentOfGoal})
                         </Text>
                     </HStack>
                     </Stack>
