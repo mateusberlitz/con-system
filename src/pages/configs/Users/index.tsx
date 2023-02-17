@@ -38,6 +38,7 @@ const SearchUserFormSchema = yup.object().shape({
 
 interface EditUserFormData {
   name: string
+  last_name: string
   id: number
   phone: string
   email: string
@@ -66,6 +67,7 @@ export default function Users() {
   const [editUserData, setEditUserData] = useState<EditUserFormData>(() => {
     const data: EditUserFormData = {
       name: '',
+      last_name: '',
       id: 0,
       email: '',
       phone: '',
@@ -389,6 +391,7 @@ export default function Users() {
                           OpenEditModal({
                             id: user.id,
                             name: user.name,
+                            last_name: user.last_name,
                             phone: user.phone,
                             email: user.email,
                             role: user.role.id,

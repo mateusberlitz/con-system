@@ -54,6 +54,7 @@ interface BranchParams {
 
 interface EditUserFormData {
   name: string
+  last_name: string
   id: number
   phone: string
   email: string
@@ -96,6 +97,7 @@ export default function Branch() {
   const [editUserData, setEditUserData] = useState<EditUserFormData>(() => {
     const data: EditUserFormData = {
       name: '',
+      last_name: '',
       id: 0,
       email: '',
       phone: '',
@@ -629,6 +631,7 @@ export default function Branch() {
                             onClick={() =>
                               OpenEditModal({
                                 id: user.id,
+                                last_name: user.last_name,
                                 name: user.name,
                                 phone: user.phone,
                                 email: user.email,

@@ -21,6 +21,8 @@ import CommissionsContracts from "./CommissionsContracts";
 import { CommissionsContractFilterData, useCommissionsContract } from "../../../hooks/useCommissionsContract";
 import { NewSaleModal } from "../../Commercial/Sales/NewSaleModal";
 import { HasPermission, useProfile } from "../../../hooks/useProfile";
+import { EditSaleModal } from "../../Commercial/Sales/EditSaleModal";
+import { EditQuotaFormData, EditQuotaModal } from "./EditQuotaModal";
 
 
 const FilterCommissionsContractFormSchema = yup.object().shape({
@@ -80,6 +82,30 @@ export default function CommissionsSalesman(){
         setIsNewSaleModalOpen(false)
     }
 
+    const [isEditQuotaModalOpen, setIsEditQuotaModalOpen] = useState(false);
+    const [editQuotaFormData, setEditQuotaFormData] = useState<EditQuotaFormData>(
+        () => {
+          const data: EditQuotaFormData = {
+            id: 0,
+            credit: '',
+            group: '',
+            quota: '',
+            //contract: '',
+            consortium_type_id: ''
+          }
+    
+          return data
+        }
+      )
+
+    function OpenEditQuotaModal(quotaFormData:EditQuotaFormData) {
+        setIsEditQuotaModalOpen(true)
+        setEditQuotaFormData(quotaFormData)
+    }
+    function CloseEditQuotaModal() {
+        setIsEditQuotaModalOpen(false)
+    }
+
     useEffect(() => {
         setFilter({...filter, company_id: workingCompany.company?.id, branch_id: workingBranch.branch?.id});
     }, [workingCompany, workingBranch]);
@@ -88,6 +114,7 @@ export default function CommissionsSalesman(){
         <MainBoard sidebar="commissions" header={ <CompanySelectMaster/>}>
 
             <NewSaleModal isOpen={isNewSaleModalOpen} onRequestClose={CloseNewSaleModal} />
+            <EditQuotaModal toEditQuotaData={editQuotaFormData} afterEdit={commissionsContract.refetch} isOpen={isEditQuotaModalOpen} onRequestClose={CloseEditQuotaModal} />
 
             <Stack flexDirection={["column", "row"]} spacing={["4", "0"]} justify="space-between" mb="10">
                 <SolidButton color="white" bg="red.400" icon={PlusIcon} colorScheme="red" onClick={() => OpenNewSaleModal()}>
@@ -143,7 +170,7 @@ export default function CommissionsSalesman(){
             <Stack fontSize="13px" spacing="12">
             {
                     (!commissionsContract.isLoading && !commissionsContract.error) && (
-                        <CommissionsContracts commissionsContract={commissionsContract.data?.data.data}/>
+                        <CommissionsContracts commissionsContract={commissionsContract.data?.data.data} OpenEditQuotaModal={OpenEditQuotaModal}/>
                     )
                 }
             </Stack>

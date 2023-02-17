@@ -41,7 +41,7 @@ interface NewUserModalProps {
 
 interface CreateNewUserFormData {
   name: string
-  lastname?: string
+  last_name?: string
   phone: string
   cpf: string
   email: string
@@ -53,7 +53,7 @@ interface CreateNewUserFormData {
 
 const CreateNewUserFormSchema = yup.object().shape({
   name: yup.string().required('Nome do Usuário Obrigatório'),
-  lastname: yup.string(),
+  last_name: yup.string(),
   phone: yup.string().min(9, 'Existe Telefone com menos de 9 dígitos?'), //51991090700
   cpf: yup.string().min(10, 'Não parece ser um CPF correto'), //02.999.999/0001-00
   email: yup
@@ -149,11 +149,11 @@ export function NewUserModal({
               />
               <Input
                 register={register}
-                name="lastname"
+                name="last_name"
                 type="text"
                 placeholder="Sobrenome"
                 variant="outline"
-                error={formState.errors.lastname}
+                error={formState.errors.last_name}
                 focusBorderColor="purple.600"
               />
             </HStack>

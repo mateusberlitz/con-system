@@ -36,7 +36,7 @@ import { useWorkingCompany } from '../../../hooks/useWorkingCompany'
 import { formatInputDate } from '../../../utils/Date/formatInputDate'
 import moneyToBackend from '../../../utils/moneyToBackend'
 import { HasPermission, useProfile } from '../../../hooks/useProfile'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { isAuthenticated } from '../../../services/auth'
 import { redirectMessages } from '../../../utils/redirectMessages'
 import { ReactSelect, SelectOption } from '../../../components/Forms/ReactSelect'
@@ -47,6 +47,8 @@ import { useCities } from '../../../hooks/useCities'
 import { useWorkingBranch } from '../../../hooks/useWorkingBranch'
 import { useUsers } from '../../../hooks/useUsers'
 import { useCustomers } from '../../../hooks/useCustomers'
+import { usePersistForm } from '../../../hooks/usePersistForm'
+import { ControlledInput } from '../../../components/Forms/Inputs/ControlledInput'
 
 interface NewSaleModalProps {
   isOpen: boolean
@@ -131,9 +133,38 @@ export function NewSaleModal({
   const toast = useToast()
   const { showErrors } = useErrors()
 
-  const { register, handleSubmit, control, reset, watch, formState } =
+  const localStorageKey = "@con_system/sale_form";
+
+    const getSavedData = useCallback(() => {
+        const storagedSaleForm = localStorage.getItem(localStorageKey);
+
+        if (storagedSaleForm) {
+            try {
+                return JSON.parse(storagedSaleForm);
+            } catch (err) {
+                console.log(err);
+            }
+
+            return undefined;
+        }
+
+        return undefined;
+    }, []);
+
+    // const [previousFormState, setPreviousFormState] = useState<CreateNewSaleFormData>(() => {
+    //     const storagedSaleForm = localStorage.getItem('@con_system/sale_form');
+
+    //     if(storagedSaleForm){
+    //         return JSON.parse(storagedSaleForm);
+    //     }
+
+    //     return undefined;
+    // });
+
+  const { register, handleSubmit, control, reset, watch, getValues, formState } =
     useForm<CreateNewSaleFormData>({
-      resolver: yupResolver(CreateNewSaleFormSchema)
+      resolver: yupResolver(CreateNewSaleFormSchema),
+      defaultValues: getSavedData()
     })
 
   const handleCreateNewPayment = async (saleData: CreateNewSaleFormData) => {
@@ -168,7 +199,7 @@ export function NewSaleModal({
     //   if(saleData.customer_id){
         let selectedCustomer:Customer|undefined = customers.data?.data.data.find((customer:Customer) => saleData.customer_id == customer.id);
 
-      console.log(customers.data?.data.data);
+      //console.log(customers.data?.data.data);
 
       const newSaleData = {
         company_id: workingCompany.company.id,
@@ -235,7 +266,8 @@ export function NewSaleModal({
       if(afterCreate){
         afterCreate();
       }
-      reset()
+      reset();
+        localStorage.removeItem(localStorageKey);
     } catch (error: any) {
         console.log(error);
       showErrors(error, toast)
@@ -294,6 +326,12 @@ export function NewSaleModal({
         pathname: '/',
         state: redirectMessages.auth
       })
+    }
+
+    const storagedSaleForm = localStorage.getItem('@con_system/sale_form');
+
+    if(storagedSaleForm){
+        console.log(JSON.parse(storagedSaleForm));
     }
   }, [isOpen]);
 
@@ -354,6 +392,16 @@ export function NewSaleModal({
         setNeedCustomerInfo(true);
     }
   }, [watch('customer_id')]);
+
+//   useEffect(() => {
+//     if(getValues() !== previousFormState){
+//         localStorage.setItem('@con_system/sale_form', JSON.stringify(getValues()));
+//         //setPreviousFormState(getValues());
+//         console.log(getValues(), previousFormState);
+//     }
+//   }, [watch(), setPreviousFormState, previousFormState]);
+
+    usePersistForm({ value: getValues(), localStorageKey: localStorageKey });
 
   return (
     <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
@@ -421,6 +469,7 @@ export function NewSaleModal({
               {users && users.data?.length !== 0 && (
                   <ReactSelect
                     options={usersOptions}
+                    value={getSavedData().seller_id}
                     control={control}
                     placeholder="Selecionar Vendedor"
                     name="seller_id"
@@ -439,6 +488,7 @@ export function NewSaleModal({
                     <ReactSelect
                         options={customerOptions}
                         control={control}
+                        value={getSavedData().customer_id}
                         placeholder="Selecionar Cliente"
                         name="customer_id"
                         bg="gray.400"
@@ -456,8 +506,9 @@ export function NewSaleModal({
             </Stack>
 
             <HStack spacing="4" alignItems="flex-start">
-              <Input
-                register={register}
+              <ControlledInput
+                control={control}
+                value={getSavedData().date_sale}
                 name="date_sale"
                 type="date"
                 placeholder="Data da venda"
@@ -543,8 +594,9 @@ export function NewSaleModal({
                     <option value="300000">R$300.000,00</option>
                   </Select>
                 ) : (
-                  <Input
-                    register={register}
+                  <ControlledInput
+                    control={control}
+                    value={getSavedData().credit}
                     name="credit"
                     type="text"
                     placeholder="Valor do crédito"
@@ -566,8 +618,9 @@ export function NewSaleModal({
                 </Link>
               </Stack>
 
-              <Input
-                register={register}
+              <ControlledInput
+                control={control}
+                value={getSavedData().number_credit}
                 name="number_contract"
                 type="text"
                 placeholder="Número do contrato"
@@ -579,8 +632,9 @@ export function NewSaleModal({
             </HStack>
 
             <HStack spacing="4" alignItems="flex-start">
-              <Input
-                  register={register}
+              <ControlledInput
+                  control={control}
+                  value={getSavedData().group}
                   name="group"
                   type="text"
                   placeholder="Grupo"
@@ -589,8 +643,9 @@ export function NewSaleModal({
                   mask=""
                   error={formState.errors.group}
                 />
-              <Input
-                register={register}
+              <ControlledInput
+                control={control}
+                value={getSavedData().quota}
                 name="quota"
                 type="text"
                 placeholder="Cota"
@@ -616,9 +671,10 @@ export function NewSaleModal({
                     <Checkbox isChecked={!isPF} onChange={() => setIsPF(false)}>Pessoa jurídica</Checkbox>
                   </HStack>
 
-                  <Input
-                      register={register}
+                  <ControlledInput
+                      control={control}
                       name="cpf_cnpj"
+                      value={getSavedData().cpf_cnpj}
                       type="text"
                       placeholder={isPF ? "CPF" : "CNPJ"}
                       focusBorderColor="orange.400"
@@ -627,8 +683,9 @@ export function NewSaleModal({
                       error={formState.errors.cpf_cnpj}
                     />
 
-                  <Input
-                      register={register}
+                  <ControlledInput
+                      control={control}
+                      value={getSavedData().name}
                       name="name"
                       type="text"
                       placeholder="Nome completo"
@@ -639,8 +696,9 @@ export function NewSaleModal({
                     />
 
                   <HStack spacing="4" alignItems="flex-start">
-                    <Input
-                      register={register}
+                    <ControlledInput
+                      control={control}
+                      value={getSavedData().email}
                       name="email"
                       type="text"
                       placeholder="E-mail"
@@ -650,8 +708,9 @@ export function NewSaleModal({
                       error={formState.errors.email}
                     />
 
-                    <Input
-                      register={register}
+                    <ControlledInput
+                      control={control}
+                      value={getSavedData().phone}
                       name="phone"
                       type="text"
                       placeholder="Telefone"
@@ -734,8 +793,9 @@ export function NewSaleModal({
                   </HStack>
 
                   <HStack spacing="4" alignItems="flex-start">
-                    <Input
-                      register={register}
+                    <ControlledInput
+                      control={control}
+                      value={getSavedData().birth_date}
                       name="birth_date"
                       type="date"
                       placeholder="Data de nascimento"
@@ -744,8 +804,9 @@ export function NewSaleModal({
                       mask=""
                       error={formState.errors.birth_date}
                     />
-                    <Input
-                      register={register}
+                    <ControlledInput
+                      control={control}
+                      value={getSavedData().civil_status}
                       name="civil_status"
                       type="text"
                       placeholder="Estado Civil"
@@ -757,8 +818,9 @@ export function NewSaleModal({
                   </HStack>
 
                   <HStack spacing="4" alignItems="flex-start">
-                    <Input
-                      register={register}
+                    <ControlledInput
+                      control={control}
+                      value={getSavedData().cep}
                       name="cep"
                       type="text"
                       placeholder="CEP"
@@ -767,8 +829,9 @@ export function NewSaleModal({
                       mask="cep"
                       error={formState.errors.cep}
                     />
-                    <Input
-                      register={register}
+                    <ControlledInput
+                      control={control}
+                      value={getSavedData().address}
                       name="address"
                       type="text"
                       placeholder="Rua"
@@ -780,8 +843,9 @@ export function NewSaleModal({
                   </HStack>
 
                   <HStack spacing="4" alignItems="flex-start">
-                    <Input
-                      register={register}
+                    <ControlledInput
+                      control={control}
+                      value={getSavedData().neighborhood}
                       name="neighborhood"
                       type="text"
                       placeholder="Bairro"
@@ -790,8 +854,9 @@ export function NewSaleModal({
                       mask=""
                       error={formState.errors.neighborhood}
                     />
-                    <Input
-                      register={register}
+                    <ControlledInput
+                      control={control}
+                      value={getSavedData().number}
                       name="number"
                       type="text"
                       placeholder="Número"

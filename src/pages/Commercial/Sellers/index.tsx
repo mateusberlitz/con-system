@@ -59,6 +59,7 @@ const SearchUserFormSchema = yup.object().shape({
 
 interface EditUserFormData {
   name: string
+  last_name: string
   id: number
   phone: string
   email: string
@@ -95,6 +96,7 @@ export default function Sellers() {
   const [editUserData, setEditUserData] = useState<EditUserFormData>(() => {
     const data: EditUserFormData = {
       name: '',
+      last_name: '',
       id: 0,
       email: '',
       phone: '',

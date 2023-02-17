@@ -49,6 +49,7 @@ interface EditUserFormData {
 interface EditUserData {
   id: number
   name: string
+  last_name: string
   phone: string
   email: string
   seller_commission_rule_id?: number
@@ -129,7 +130,7 @@ export function EditUserModal({
         onSubmit={handleSubmit(handleEditUser)}
       >
         <ModalHeader p="10" fontWeight="700" fontSize="2xl">
-          Editar usuário {toEditUserData.name}
+          Editar usuário - {toEditUserData.name} {toEditUserData.last_name}
         </ModalHeader>
 
         <ModalCloseButton top="10" right="5" />

@@ -391,7 +391,7 @@ export default function Leads() {
       company: workingCompany.company?.id,
       branch: workingBranch.branch?.id
     })
-  }, [workingCompany, workingBranch])
+  }, [workingCompany, workingBranch]);
 
   return (
     <MainBoard sidebar="commercial" header={<CompanySelectMaster />}>

@@ -7,13 +7,16 @@ import { ReactComponent as StrongPlusIcon } from '../../../assets/icons/StrongPl
 import Badge from '../../../components/Badge'
 import { formatBRDate } from '../../../utils/Date/formatBRDate';
 import {  Contract } from "../../../types";
+import { EditQuotaFormData } from './EditQuotaModal';
+import { EditButton } from '../../../components/Buttons/EditButton';
 
 interface CommissionsContractProps{
     commissionsContract: Contract[];
+    OpenEditQuotaModal: (quotaFormData:EditQuotaFormData) => void;
 }
 
 
-export default function CommissionsContracts({commissionsContract}: CommissionsContractProps) {
+export default function CommissionsContracts({commissionsContract, OpenEditQuotaModal}: CommissionsContractProps) {
     const { profile, permissions } = useProfile()
 
     const totalMonthAmount = commissionsContract.reduce((sumAmount:number, commissionsContract:Contract) => {
@@ -178,6 +181,9 @@ export default function CommissionsContracts({commissionsContract}: CommissionsC
                                     )
                                 })
                             }
+                            <HStack justifyContent={"end"}>
+                                <EditButton onClick={() => OpenEditQuotaModal({consortium_type_id: commissionsContract.quota.consortium_type.id.toString(), credit: commissionsContract.quota.credit.toFixed(2).replace(".", ","), group:commissionsContract.quota.group, quota:commissionsContract.quota.quota, id: commissionsContract.quota.id})} />
+                            </HStack>
                         </AccordionPanel>
                     </>
                 )}

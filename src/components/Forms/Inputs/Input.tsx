@@ -10,7 +10,7 @@ import {
 } from '@chakra-ui/react'
 import { Ref, useEffect, useState } from 'react'
 import { FieldError, UseFormRegister } from 'react-hook-form'
-import { mask as applyMask } from '../../../utils/ReMask'
+import { mask as applyMask, maskMoney as applyMoney, maskNumber } from '../../../utils/ReMask'
 
 interface FormInputProps extends InputProps {
   name: string
@@ -20,7 +20,7 @@ interface FormInputProps extends InputProps {
   icon?: React.FunctionComponent<React.SVGProps<SVGSVGElement>>
   register?: UseFormRegister<any>
   control?: any
-  mask?: 'phone' | 'cpf' | 'cnpj' | 'money' | 'cep' | '';
+  mask?: 'phone' | 'cpf' | 'cnpj' | 'money' | 'cep' | 'number' | '';
   error?: FieldError
   onChange?: (value: any) => void
   inputRef?: Ref<any>
@@ -47,10 +47,11 @@ export function Input({
 
   const handleReturnMaskedInputValue = (value: string = '') => {
     if (mask) {
-      if (mask === 'money') {
-        //console.log(value);
-        //value = applyMoney(value);
-      } else {
+        if (mask === 'money') {
+            value = applyMoney(value);
+        }else if (mask === 'number') {
+            value = maskNumber(value);
+        }  else {
         const maskPattern =
           mask === 'phone'
             ? '(99) 99999-9999'
