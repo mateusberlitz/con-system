@@ -9,14 +9,17 @@ import { formatBRDate } from '../../../utils/Date/formatBRDate';
 import {  Contract } from "../../../types";
 import { EditQuotaFormData } from './EditQuotaModal';
 import { EditButton } from '../../../components/Buttons/EditButton';
+import { RemoveButton } from '../../../components/Buttons/RemoveButton';
+import { RemoveSaleData } from './ConfirmContractRemoveModal';
 
 interface CommissionsContractProps{
     commissionsContract: Contract[];
     OpenEditQuotaModal: (quotaFormData:EditQuotaFormData) => void;
+    OpenRemoveQuotaModal: (quotaFormData:RemoveSaleData) => void;
 }
 
 
-export default function CommissionsContracts({commissionsContract, OpenEditQuotaModal}: CommissionsContractProps) {
+export default function CommissionsContracts({commissionsContract, OpenEditQuotaModal, OpenRemoveQuotaModal}: CommissionsContractProps) {
     const { profile, permissions } = useProfile()
 
     const totalMonthAmount = commissionsContract.reduce((sumAmount:number, commissionsContract:Contract) => {
@@ -183,6 +186,7 @@ export default function CommissionsContracts({commissionsContract, OpenEditQuota
                             }
                             <HStack justifyContent={"end"}>
                                 <EditButton onClick={() => OpenEditQuotaModal({consortium_type_id: commissionsContract.quota.consortium_type.id.toString(), credit: commissionsContract.quota.credit.toFixed(2).replace(".", ","), group:commissionsContract.quota.group, quota:commissionsContract.quota.quota, id: commissionsContract.quota.id})} />
+                                <RemoveButton onClick={() => OpenRemoveQuotaModal({ id: commissionsContract.id, quota: commissionsContract.quota.quota, group:commissionsContract.quota.group }) }/>
                             </HStack>
                         </AccordionPanel>
                     </>

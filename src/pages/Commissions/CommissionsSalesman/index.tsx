@@ -118,6 +118,8 @@ export default function CommissionsSalesman(){
 
     const solidReactSelectStyles = getReactSelectStyles({primaryColor: "#c30052"});
 
+    //console.log(commissionsSeller);
+
     return(
         <MainBoard sidebar="commissions" header={ <CompanySelectMaster/>}>
 

@@ -23,6 +23,11 @@ import { NewSaleModal } from "../../Commercial/Sales/NewSaleModal";
 import { HasPermission, useProfile } from "../../../hooks/useProfile";
 import { EditSaleModal } from "../../Commercial/Sales/EditSaleModal";
 import { EditQuotaFormData, EditQuotaModal } from "./EditQuotaModal";
+import { ConfirmSaleRemoveModal, RemoveSaleData } from "./ConfirmContractRemoveModal";
+import { UserFilterData, useUsers } from "../../../hooks/useUsers";
+import { ReactSelect, SelectOption } from "../../../components/Forms/ReactSelect";
+import { User } from "../../../types";
+import { getReactSelectStyles } from "../../../styles/solidReactSelectStyles";
 
 
 const FilterCommissionsContractFormSchema = yup.object().shape({
@@ -36,6 +41,7 @@ const FilterCommissionsContractFormSchema = yup.object().shape({
     active: yup.string(),
     number_contract: yup.string(),
     parcel_number: yup.string(),
+    seller_id: yup.number().transform((v, o) => (o === '' ? null : v)).nullable(),
 });
 
 export default function CommissionsSalesman(){
@@ -45,7 +51,7 @@ export default function CommissionsSalesman(){
     const workingBranch = useWorkingBranch();
     const isWideVersion = useBreakpointValue({base: false, lg: true});
 
-    const { register, handleSubmit, formState} = useForm<CommissionsContractFilterData>({
+    const { register, handleSubmit, formState, control} = useForm<CommissionsContractFilterData>({
         resolver: yupResolver(FilterCommissionsContractFormSchema),
     });
 
@@ -106,15 +112,64 @@ export default function CommissionsSalesman(){
         setIsEditQuotaModalOpen(false)
     }
 
+    const [isRemoveQuotaModalOpen, setIsRemoveQuotaModalOpen] = useState(false);
+    const [removeQuotaFormData, setRemoveQuotaFormData] = useState<RemoveSaleData>(
+        () => {
+          const data: RemoveSaleData = {
+            id: 0,
+            group: '',
+            quota: '',
+          }
+    
+          return data
+        }
+      )
+
+    function OpenRemoveQuotaModal(quotaFormData:RemoveSaleData) {
+        setIsRemoveQuotaModalOpen(true)
+        setRemoveQuotaFormData(quotaFormData)
+    }
+    function CloseRemoveQuotaModal() {
+        setIsRemoveQuotaModalOpen(false)
+    }
+
     useEffect(() => {
         setFilter({...filter, company_id: workingCompany.company?.id, branch_id: workingBranch.branch?.id});
     }, [workingCompany, workingBranch]);
+
+    const [usersFilter, setUsersFilter] = useState<UserFilterData>(() => {
+        const data: UserFilterData = {
+          search: '',
+          company: workingCompany.company?.id,
+          //role: 5
+        }
+    
+        return data
+      })
+    
+      const usersQuery = useUsers(usersFilter)
+    
+      const sellerOptions: SelectOption[] = [
+        {
+          value: '',
+          label: 'Selecionar Vendedor'
+        }
+      ]
+
+    usersQuery.data &&
+    usersQuery.data.map((user: User) => {
+        sellerOptions.push({ value: user.id.toString(), label: `${user.name} ${user.last_name}` })
+    })
+
+    const solidReactSelectStyles = getReactSelectStyles({primaryColor: "#c30052"});
+
 
     return(
         <MainBoard sidebar="commissions" header={ <CompanySelectMaster/>}>
 
             <NewSaleModal isOpen={isNewSaleModalOpen} onRequestClose={CloseNewSaleModal} />
             <EditQuotaModal toEditQuotaData={editQuotaFormData} afterEdit={commissionsContract.refetch} isOpen={isEditQuotaModalOpen} onRequestClose={CloseEditQuotaModal} />
+            <ConfirmSaleRemoveModal toRemoveSaleData={removeQuotaFormData} afterRemove={commissionsContract.refetch} isOpen={isRemoveQuotaModalOpen} onRequestClose={CloseRemoveQuotaModal} />
 
             <Stack flexDirection={["column", "row"]} spacing={["4", "0"]} justify="space-between" mb="10">
                 <SolidButton color="white" bg="red.400" icon={PlusIcon} colorScheme="red" onClick={() => OpenNewSaleModal()}>
@@ -133,6 +188,11 @@ export default function CommissionsSalesman(){
                 <Box w="100%">
                     <Stack spacing="6" w="100%">
                         <Stack direction={["column", "row"]} spacing="6">
+                            {
+                                //(profile && profile.role.id === 1) && (
+                                    <ReactSelect isRequired={false} control={control} options={sellerOptions} styles={solidReactSelectStyles} placeholder={"Selecionar Vendedor"} name="seller_id" bg="gray.400" variant="outline" _hover={ {bgColor: 'gray.500'} } borderRadius="full"/>
+                                //)
+                            }
                             {/* <Input register={register} name="search" type="text" error={formState.errors.search} placeholder="Procurar" variant="filled" focusBorderColor="red.400"/> */}
 
                             <Input register={register} name="start_date" type="date" error={formState.errors.start_date} placeholder="Data Inicial" variant="filled" focusBorderColor="red.400"/>
@@ -170,7 +230,7 @@ export default function CommissionsSalesman(){
             <Stack fontSize="13px" spacing="12">
             {
                     (!commissionsContract.isLoading && !commissionsContract.error) && (
-                        <CommissionsContracts commissionsContract={commissionsContract.data?.data.data} OpenEditQuotaModal={OpenEditQuotaModal}/>
+                        <CommissionsContracts commissionsContract={commissionsContract.data?.data.data} OpenEditQuotaModal={OpenEditQuotaModal} OpenRemoveQuotaModal={OpenRemoveQuotaModal}/>
                     )
                 }
             </Stack>

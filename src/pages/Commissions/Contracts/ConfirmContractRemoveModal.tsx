@@ -64,7 +64,7 @@ export function ConfirmSaleRemoveModal({
         return
       }
 
-      await api.delete(`/sales/destroy/${toRemoveSaleData.id}`)
+      await api.delete(`/contracts/${toRemoveSaleData.id}`)
 
       toast({
         title: 'Sucesso',

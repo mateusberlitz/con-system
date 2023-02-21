@@ -51,8 +51,6 @@ export default function LastComissionsTable({monthName, commissionsSeller}: Sell
                             commissionSeller.value = 0 - commissionSeller.value;
                         }
 
-                        console.log(commissionSeller.value);
-
                 return (
              <>
              <AccordionItem display="flex" flexDir="column" paddingX={["4", "8"]} paddingTop="3" bg="white" borderTop="2px" borderTopColor="gray.500" borderBottom="0">
