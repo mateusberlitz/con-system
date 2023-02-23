@@ -83,8 +83,8 @@ export default function CommissionsContracts({commissionsContract, OpenEditQuota
                                 <HStack>
                                     <Stack direction={['column', 'row']} spacing={["1", "4"]}>
                                         <Stack fontWeight="500" alignItems="center">
-                                            <Text ml="2" color="#6E7191" fontSize="10px">Cliente</Text>
-                                            <Text ml="2" color="#4e4b66" fontSize="13px">{commissionsContract.quota.customer.name}</Text>
+                                            <Text ml="2" color="#6E7191" fontSize="10px">Bem</Text>
+                                            <Text ml="2" color="#4e4b66" fontSize="13px">{commissionsContract.quota.consortium_type.description}</Text>
                                         </Stack>
                                     </Stack>
                                 </HStack>
@@ -92,7 +92,7 @@ export default function CommissionsContracts({commissionsContract, OpenEditQuota
                             <Stack direction={['column', 'row']} spacing={["1", "4"]}>
                                 <Stack fontWeight="500" alignItems="center">
                                     <Text ml="2" color="#6E7191" fontSize="10px">Grupo-Cota</Text>
-                                    <Text ml="2" color="#4e4b66" fontSize="13px">{commissionsContract.quota.group}</Text>
+                                    <Text ml="2" color="#4e4b66" fontSize="13px">{commissionsContract.quota.group}{commissionsContract.quota.quota}</Text>
                                 </Stack>
                             </Stack>
                             <HStack spacing={["5", "5"]} justifyContent="space-between" fontSize={["11px", "13px"]}>
@@ -124,25 +124,31 @@ export default function CommissionsContracts({commissionsContract, OpenEditQuota
 
                         <AccordionPanel flexDir="column" borderTop="2px" borderColor="gray.500" px="0" py="5" fontSize={["11px", "small"]}>
                             <Stack direction={['column', 'row']} spacing={["5", "4"]} justifyContent="space-between" mb="4">
-                                <HStack spacing="2">
-                                    <strong color="#4e4b66">Grupo-Cota:</strong>
-                                    <Text>
-                                    {commissionsContract.quota.group}
-                                    </Text>
-                                </HStack>
-                                <HStack spacing="2"></HStack>
-                                <HStack spacing="2"></HStack>
                                 <HStack spacing="4">
-                                    <strong color="#4e4b66">Bem:</strong>
+                                    <strong color="#4e4b66">Cliente:</strong>
                                     <Text>
-                                    {commissionsContract.quota.consortium_type.description}
+                                    {commissionsContract.quota.customer.name}
                                     </Text>
                                 </HStack>
 
                                 <HStack spacing="2" px="1rem">
-                                    <strong color="#4e4b66">Crédito:</strong>
+                                    <strong color="#4e4b66">Parcelas pagas:</strong>
                                     <Text>
-                                    {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(commissionsContract.quota.credit)}
+                                    {commissionsContract.quota.installments_paid}
+                                    </Text>
+                                </HStack>
+
+                                <HStack spacing="2" px="1rem">
+                                    <strong color="#4e4b66">Contemplação:</strong>
+                                    <Text>
+                                    {commissionsContract.quota.date_contemplation ? commissionsContract.quota.date_contemplation : '--'}
+                                    </Text>
+                                </HStack>
+
+                                <HStack spacing="2" px="1rem">
+                                    <strong color="#4e4b66">Versão:</strong>
+                                    <Text>
+                                    {commissionsContract.quota.version}
                                     </Text>
                                 </HStack>
                             </Stack>

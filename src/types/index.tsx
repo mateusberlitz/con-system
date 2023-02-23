@@ -543,6 +543,7 @@ export interface Quota{
     date_contemplation:string;
     date_sale: string;
     type_sale: string;
+    version: number;
     active: boolean;
     created_at: string;
     updated_at: string;
