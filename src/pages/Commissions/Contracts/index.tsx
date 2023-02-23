@@ -96,7 +96,7 @@ export default function CommissionsSalesman(){
             credit: '',
             group: '',
             quota: '',
-            //contract: '',
+            date_sale: '',
             consortium_type_id: ''
           }
     

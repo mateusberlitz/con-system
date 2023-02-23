@@ -39,6 +39,7 @@ import { redirectMessages } from '../../../utils/redirectMessages'
 import { ControlledInput } from '../../../components/Forms/Inputs/ControlledInput'
 import { Input } from '../../../components/Forms/Inputs/Input'
 import { Select } from '../../../components/Forms/Selects/Select'
+import { formatYmdDate } from '../../../utils/Date/formatYmdDate'
 
 interface EditQuotaModalProps {
   isOpen: boolean
@@ -51,7 +52,7 @@ export interface EditQuotaFormData {
   id: number;
   credit: string;
   consortium_type_id: string;
-  //contract: string
+  date_sale: string;
   group: string;
   quota: string;
 }
@@ -84,7 +85,7 @@ export function EditQuotaModal({
       defaultValues: {
         id: toEditQuotaData.id,
         credit: toEditQuotaData.credit,
-        //contract: toEditQuotaData.contract,
+        date_sale: toEditQuotaData.date_sale,
         group: toEditQuotaData.group,
         quota: toEditQuotaData.quota,
         consortium_type_id: toEditQuotaData.consortium_type_id,
@@ -151,7 +152,7 @@ export function EditQuotaModal({
 
   const [otherValue, setOtherValue] = useState(true);
 
-  console.log(toEditQuotaData.credit);
+  //console.log(new Date(toEditQuotaData.date_sale).toISOString().split('T')[0]);
 
   return (
     <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
@@ -162,13 +163,25 @@ export function EditQuotaModal({
         onSubmit={handleSubmit(handleCreateNewPayment)}
       >
         <ModalHeader p="10" fontWeight="700" fontSize="2xl">
-          Alterar Cota {toEditQuotaData.group} {toEditQuotaData.quota}
+          Alterar Cota {toEditQuotaData.group} - {toEditQuotaData.quota}
         </ModalHeader>
 
         <ModalCloseButton top="10" right="5" />
 
         <ModalBody pl="10" pr="10">
           <Stack spacing="6">
+            <ControlledInput
+                control={control}
+                value={toEditQuotaData.date_sale ? new Date(toEditQuotaData.date_sale).toISOString().split('T')[0] : ""}
+                name="date_sale"
+                type="date"
+                placeholder="Data da venda"
+                focusBorderColor="orange.400"
+                variant="outline"
+                mask=""
+                isRequired={true}
+                error={formState.errors.date_sale}
+            />
 
             <Stack>
                 <Text color="gray.700">Dados do plano</Text>
@@ -220,7 +233,7 @@ export function EditQuotaModal({
                 {!otherValue ? (
                   <ControlledSelect
                     control={control}
-                    value={toEditQuotaData.credit}
+                    value={formatYmdDate(toEditQuotaData.credit)}
                     h="45px"
                     name="credit"
                     w="100%"

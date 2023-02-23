@@ -191,7 +191,7 @@ export default function CommissionsContracts({commissionsContract, OpenEditQuota
                                 })
                             }
                             <HStack justifyContent={"end"}>
-                                <EditButton onClick={() => OpenEditQuotaModal({consortium_type_id: commissionsContract.quota.consortium_type.id.toString(), credit: commissionsContract.quota.credit.toFixed(2).replace(".", ","), group:commissionsContract.quota.group, quota:commissionsContract.quota.quota, id: commissionsContract.quota.id})} />
+                                <EditButton onClick={() => OpenEditQuotaModal({consortium_type_id: commissionsContract.quota.consortium_type.id.toString(), credit: commissionsContract.quota.credit.toFixed(2).replace(".", ","), group:commissionsContract.quota.group, quota:commissionsContract.quota.quota, id: commissionsContract.quota.id, date_sale: commissionsContract.quota.date_sale })} />
                                 <RemoveButton onClick={() => OpenRemoveQuotaModal({ id: commissionsContract.id, quota: commissionsContract.quota.quota, group:commissionsContract.quota.group }) }/>
                             </HStack>
                         </AccordionPanel>
