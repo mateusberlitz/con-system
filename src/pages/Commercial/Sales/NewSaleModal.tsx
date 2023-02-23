@@ -125,17 +125,17 @@ export function NewSaleModal({
   toAddLeadData,
   toAddCustomerData
 }: NewSaleModalProps) {
-  const workingCompany = useWorkingCompany();
-  const workingBranch = useWorkingBranch();
-  const { profile, permissions } = useProfile()
+    const workingCompany = useWorkingCompany();
+    const workingBranch = useWorkingBranch();
+    const { profile, permissions } = useProfile()
 
-  const history = useHistory()
-  const toast = useToast()
-  const { showErrors } = useErrors()
+    const history = useHistory()
+    const toast = useToast()
+    const { showErrors } = useErrors()
 
-  const localStorageKey = "@con_system/sale_form";
+    const localStorageKey = "@con_system/sale_form";
 
-    const getSavedData = useCallback(() => {
+    const getSavedData = () => {
         const storagedSaleForm = localStorage.getItem(localStorageKey);
 
         if (storagedSaleForm) {
@@ -149,7 +149,7 @@ export function NewSaleModal({
         }
 
         return undefined;
-    }, []);
+    };
 
     // const [previousFormState, setPreviousFormState] = useState<CreateNewSaleFormData>(() => {
     //     const storagedSaleForm = localStorage.getItem('@con_system/sale_form');
@@ -164,7 +164,7 @@ export function NewSaleModal({
   const { register, handleSubmit, control, reset, watch, getValues, formState } =
     useForm<CreateNewSaleFormData>({
       resolver: yupResolver(CreateNewSaleFormSchema),
-      defaultValues: getSavedData()
+      //defaultValues: getSavedData()
     })
 
   const handleCreateNewPayment = async (saleData: CreateNewSaleFormData) => {
@@ -262,11 +262,13 @@ export function NewSaleModal({
         action: `Cadastrou uma nova venda`
       })
 
-      onRequestClose()
-      if(afterCreate){
-        afterCreate();
-      }
-      reset();
+        onRequestClose();
+
+        if(afterCreate){
+            afterCreate();
+        }
+
+        reset();
         localStorage.removeItem(localStorageKey);
     } catch (error: any) {
         console.log(error);
@@ -326,12 +328,6 @@ export function NewSaleModal({
         pathname: '/',
         state: redirectMessages.auth
       })
-    }
-
-    const storagedSaleForm = localStorage.getItem('@con_system/sale_form');
-
-    if(storagedSaleForm){
-        console.log(JSON.parse(storagedSaleForm));
     }
   }, [isOpen]);
 
@@ -401,7 +397,11 @@ export function NewSaleModal({
 //     }
 //   }, [watch(), setPreviousFormState, previousFormState]);
 
-    usePersistForm({ value: getValues(), localStorageKey: localStorageKey });
+    //usePersistForm({ value: getValues(), localStorageKey: localStorageKey });
+    
+    useEffect(() => {
+        localStorage.setItem(localStorageKey, JSON.stringify(getValues()));
+    }, [isOpen]);
 
   return (
     <Modal isOpen={isOpen} onClose={onRequestClose} size="xl">
@@ -621,7 +621,7 @@ export function NewSaleModal({
 
               <ControlledInput
                 control={control}
-                value={(getSavedData() && getSavedData().number_credit) && getSavedData().number_credit}
+                value={(getSavedData() && getSavedData().number_contract) && getSavedData().number_contract}
                 name="number_contract"
                 type="text"
                 placeholder="Número do contrato"
