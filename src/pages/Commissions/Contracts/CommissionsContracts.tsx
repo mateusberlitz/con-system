@@ -92,7 +92,7 @@ export default function CommissionsContracts({commissionsContract, OpenEditQuota
                             <Stack direction={['column', 'row']} spacing={["1", "4"]}>
                                 <Stack fontWeight="500" alignItems="center">
                                     <Text ml="2" color="#6E7191" fontSize="10px">Grupo-Cota</Text>
-                                    <Text ml="2" color="#4e4b66" fontSize="13px">{commissionsContract.quota.group}{commissionsContract.quota.quota}</Text>
+                                    <Text ml="2" color="#4e4b66" fontSize="13px">{commissionsContract.quota.group} - {commissionsContract.quota.quota}</Text>
                                 </Stack>
                             </Stack>
                             <HStack spacing={["5", "5"]} justifyContent="space-between" fontSize={["11px", "13px"]}>
