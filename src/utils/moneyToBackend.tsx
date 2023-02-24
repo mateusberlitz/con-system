@@ -7,7 +7,7 @@ export default function moneyToBackend(money: string){
     }
 
     //parse string to double format
-    money = money.replace(' ', '').replace('.', '').replace(',', '.');
+    money = money.replace(' ', '').replaceAll('.', '').replace(',', '.');
 
     return money;
 }
