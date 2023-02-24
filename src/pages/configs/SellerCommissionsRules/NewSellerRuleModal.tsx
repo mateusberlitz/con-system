@@ -31,6 +31,7 @@ import { useUsers } from '../../../hooks/useUsers'
 import { ChargeBackType, Company, State, User } from '../../../types'
 import { useCompanies } from '../../../hooks/useCompanies'
 import { useChargeBackTypes } from '../../../hooks/useChargeBackTypes'
+import moneyToBackend from '../../../utils/moneyToBackend'
 
 interface NewSellerRuleModalProps {
   isOpen: boolean;
@@ -46,8 +47,8 @@ interface CreateNewSellerRuleFormData {
   branch_id?: number;
   chargeback_type_id: number;
   percentage_paid_in_contemplation: number;
-  initial_value?: number;
-  final_value?: number;
+  initial_value?: string;
+  final_value?: string;
   half_installment?: boolean;
   pay_in_contemplation?: boolean;
 }
@@ -59,8 +60,8 @@ const CreateNewSellerRuleFormSchema = yup.object().shape({
   half_installment: yup.boolean().nullable(),
   pay_in_contemplation: yup.boolean().nullable(),
   percentage_paid_in_contemplation: yup.number().required('Quanto será recebido na contemplação?'),
-  initial_value: yup.number().nullable(),
-  final_value: yup.number().nullable(),
+  initial_value: yup.string().nullable(),
+  final_value: yup.string().nullable(),
 })
 
 export function NewSellerRuleModal({
@@ -88,6 +89,9 @@ export function NewSellerRuleModal({
       if(branchId){
         sellerRuleData.branch_id = branchId;
       }
+
+      sellerRuleData.initial_value = sellerRuleData.initial_value ? moneyToBackend(sellerRuleData.initial_value) : undefined;
+      sellerRuleData.final_value = sellerRuleData.final_value ?  moneyToBackend(sellerRuleData.final_value) : undefined;
 
       await api.post('/seller-commission-rules', sellerRuleData)
 
@@ -147,6 +151,30 @@ export function NewSellerRuleModal({
               error={formState.errors.name}
               focusBorderColor="purple.300"
             />
+
+            <HStack spacing="4">
+                <Input
+                register={register}
+                name="initial_value"
+                type="text"
+                placeholder="Valor inicial"
+                variant="outline"
+                mask="money"
+                error={formState.errors.initial_value}
+                focusBorderColor="purple.300"
+                />
+
+                <Input
+                register={register}
+                name="final_value"
+                type="text"
+                placeholder="Valor final"
+                variant="outline"
+                mask="money"
+                error={formState.errors.final_value}
+                focusBorderColor="purple.300"
+                />
+            </HStack>
 
             <Select
               register={register}

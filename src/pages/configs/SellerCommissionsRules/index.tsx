@@ -230,6 +230,11 @@ export function SellerCommissionRules({companyId, branchId}: SellerCommissionRul
                                                     <Text color="gray.700">Percentual na contemplação</Text>
                                                     <Text>{rule.percentage_paid_in_contemplation}</Text>
                                                 </Stack>
+
+                                                <Stack fontSize="sm">
+                                                    <Text color="gray.700">Valor</Text>
+                                                    <Text>{rule.initial_value ? `de ${Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(rule.initial_value)}` : ''}  até {rule.final_value ? Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(rule.final_value) : '--'}</Text>
+                                                </Stack>
                                             </Stack>
 
                                             <Stack borderTop="2px" borderColor="gray.200" spacing={["5", "4"]} justifyContent="space-between" mb="4" pt="5">

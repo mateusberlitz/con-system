@@ -14,6 +14,7 @@ import { useErrors } from "../../../hooks/useErrors";
 import { api } from "../../../services/api";
 import { ControlledSelect } from "../../../components/Forms/Selects/ControlledSelect";
 import { useChargeBackTypes } from "../../../hooks/useChargeBackTypes";
+import moneyToBackend from "../../../utils/moneyToBackend";
 
 interface EditSellerRuleModalProps{
     isOpen: boolean;
@@ -35,6 +36,19 @@ export interface EditNewSellerRuleFormData{
     pay_in_contemplation?: boolean;
 }
 
+export interface toEditNewSellerRuleFormData{
+    id: number;
+    company_id?: number;
+    branch_id?: number;
+    name: string;
+    chargeback_type_id: number;
+    percentage_paid_in_contemplation: number;
+    initial_value?: string;
+    final_value?: string;
+    half_installment?: boolean;
+    pay_in_contemplation?: boolean;
+}
+
 interface CompanyParams {
     id: string
 }
@@ -45,8 +59,8 @@ const EditNewSellerRuleFormSchema = yup.object().shape({
     half_installment: yup.boolean().nullable(),
     pay_in_contemplation: yup.boolean().nullable(),
     percentage_paid_in_contemplation: yup.number().required('Quanto será recebido na contemplação?'),
-    initial_value: yup.number().nullable(),
-    final_value: yup.number().nullable(),
+    initial_value: yup.string().nullable(),
+    final_value: yup.string().nullable(),
 });
 
 export function EditSellerRuleModal( { isOpen, toEditSellerRuleData, afterEdit, onRequestClose } : EditSellerRuleModalProps){
@@ -56,16 +70,19 @@ export function EditSellerRuleModal( { isOpen, toEditSellerRuleData, afterEdit, 
 
     const { id } = useParams<CompanyParams>();
 
-    const { handleSubmit, formState, control} = useForm<EditNewSellerRuleFormData>({
+    const { handleSubmit, formState, control} = useForm<toEditNewSellerRuleFormData>({
         resolver: yupResolver(EditNewSellerRuleFormSchema),
     });
 
-    const handleEditSellerRule = async (sellerData : EditNewSellerRuleFormData) => {
+    const handleEditSellerRule = async (sellerRuleData : toEditNewSellerRuleFormData) => {
         try{
             //sellerData.company_id = toEditSellerRuleData.company_id;
-            sellerData.company_id = parseInt(id);
+            sellerRuleData.company_id = parseInt(id);
 
-            await api.put(`/seller-commission-rules/${toEditSellerRuleData.id}`, sellerData);
+            sellerRuleData.initial_value = sellerRuleData.initial_value ? moneyToBackend(sellerRuleData.initial_value) : undefined;
+            sellerRuleData.final_value = sellerRuleData.final_value ?  moneyToBackend(sellerRuleData.final_value) : undefined;
+
+            await api.put(`/seller-commission-rules/${toEditSellerRuleData.id}`, sellerRuleData);
 
             toast({
                 title: "Sucesso",
@@ -110,6 +127,11 @@ export function EditSellerRuleModal( { isOpen, toEditSellerRuleData, afterEdit, 
                         
                         <ControlledInput control={control} name="name" type="text" placeholder="Nome da Regra" variant="outline" value={toEditSellerRuleData.name} error={formState.errors.name} focusBorderColor="purple.600"/>
                         
+                        <HStack spacing="4">
+                            <ControlledInput control={control} name="initial_value" type="text" placeholder="Valor Inicial" variant="outline" mask="money" value={toEditSellerRuleData.initial_value?.toFixed(2).replace(".", ",")} error={formState.errors.initial_value} focusBorderColor="purple.600"/>
+                            <ControlledInput control={control} name="final_value" type="text" placeholder="Valor final" variant="outline" mask="money" value={toEditSellerRuleData.final_value?.toFixed(2).replace(".", ",")} error={formState.errors.final_value} focusBorderColor="purple.600"/>
+                        </HStack>
+
                         <ControlledSelect
                             control={control}
                             h="45px"
