@@ -40,6 +40,22 @@ export function CompanySelectMaster({
         <></>
       )}
     </HStack>
+  ) : 
+  (profile && profile.companies && profile.companies.length === 1 && workingCompany.company) ? (
+    <HStack spacing="6" alignItems="baseline">
+        <Text whiteSpace="nowrap">{workingCompany.company.name}</Text>
+        {(profile &&
+            profile.branches &&
+            //profile.branches.length > 1 &&
+            hasBranches) ||
+        (hasBranches && profile && profile.role.name === 'Diretor') ? (
+            <BranchSelect filters={filters} />
+        ) : workingBranch.branch ? (
+            <Text whiteSpace="nowrap">{workingBranch.branch.name}</Text>
+        ) : (
+            <></>
+        )}
+    </HStack>
   ) : (
     <></>
   )

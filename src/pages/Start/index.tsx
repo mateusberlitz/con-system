@@ -48,22 +48,22 @@ export default function Start() {
       return;
     }
 
-    if(firstBranch && firstCompany){
+    if(firstCompany){
       setStep(2);
       setLoading(true);
     }
-  }, [firstBranch, firstCompany, firstSellerCommissionRule]);
+  }, [firstCompany, firstSellerCommissionRule]);
 
   const handleSaveInitiatedComplete = async () => {
     const id = await api.get('/configs').then(response => response.data.data.id)
 
-    //console.log(id);
     if(!id){
-        api.post('/configs', {initiated: true});
+        api.post('/configs', {initiated: true}).then(() => {;
+            localStorage.setItem('@lance/firstSteps', JSON.stringify(1));
+            window.location.reload();
+        });
 
-        localStorage.setItem('@lance/firstSteps', JSON.stringify(1));
-
-        window.location.reload();
+        return;
     }
 
     api.put(`/configs/${id}`, {initiated: true}).then(() => {
@@ -73,7 +73,7 @@ export default function Start() {
     });
   }
 
-  console.log(firstSellerCommissionRule, firstBranch, firstCompany, loading);
+  //console.log(firstSellerCommissionRule, firstBranch, firstCompany, loading);
   
   return (
     <Flex direction="column" h="100vh">
@@ -97,10 +97,10 @@ export default function Start() {
                 <Stack direction={["column", "column", "row"]} justifyContent="space-between" spacing="8">
                   <CompanyStep loading={loading} firstCompany={firstCompany} setFirstCompany={setFirstCompany} setLoading={setLoading}/>
 
-                  <BranchStep loading={loading} firstBranch={firstBranch} setFirstBranch={setFirstBranch}/>
+                  {/* <BranchStep loading={loading} firstBranch={firstBranch} setFirstBranch={setFirstBranch}/> */}
                 </Stack>
                 {
-                  (firstBranch && firstCompany ) && (
+                  (firstCompany ) && (
                     <Box w="100%">
                       <SolidButton float="right" mb="12" color="white" bg="purple.300" colorScheme="purple" onClick={() => {setStep(2)}}>
                         Prosseguir

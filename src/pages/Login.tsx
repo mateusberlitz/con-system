@@ -16,7 +16,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useToast } from "@chakra-ui/react";
 import { Alert } from "../components/Alert";
 import { Logo } from "../components/Logo";
-import { useProfile } from "../hooks/useProfile";
+import { getInitialPage, useProfile } from "../hooks/useProfile";
 import { useEffect, } from "react";
 import { useTenant } from "../hooks/useTenant";
 import { api } from "../services/api";
@@ -45,15 +45,19 @@ export default function Login(){
     });
 
     function redirect(){
-        if(profile && permissions){
-            if(Object.keys(profile).length !== 0){
-                if(profile.role.desk_id === 1){
-                    history.push(`/home`);
-                }else{
-                    history.push(`/financeiro`);
-                }
-            }
-        }
+        const initialPage = getInitialPage(permissions);
+
+        history.push(initialPage);
+
+        // if(profile && permissions){
+        //     if(Object.keys(profile).length !== 0){
+        //         if(profile.role.desk_id === 1){
+        //             history.push(`/home`);
+        //         }else{
+        //             history.push(`/financeiro`);
+        //         }
+        //     }
+        // }
     }
 
     const handleSignIn = async (signInData : SignInFormData) => {
@@ -63,6 +67,8 @@ export default function Login(){
             login(response.data.access_token, response.data.expires_in);
 
             loadProfile();
+
+            redirect();
         }catch(error:any) {
             if(error.response){
                 toastError(error.response.data.error);
@@ -86,7 +92,8 @@ export default function Login(){
         if(isAuthenticated()){
             redirect();
         }
-    }, [permissions]);
+        console.log(isAuthenticated());
+    }, []);
 
     // useEffect(() => {
     //     if(isAuthenticated()){

@@ -76,6 +76,7 @@ const PrivateRoute = ({
     const checkFirstSteps = async () => {
 
         api.get('/configs').then(response => {
+            console.log(response)
             if(response.data.data.initiated){
                 localStorage.setItem('@lance/firstSteps', JSON.stringify(1));
                 setIsFirstSteps(false);
@@ -137,6 +138,8 @@ const PrivateRoute = ({
         )
     }
 
+    console.log(rest.path);
+
     if(permissions){
         return (
             <Route
@@ -149,6 +152,8 @@ const PrivateRoute = ({
                             state: 'Você não tem permissão para essa página'
                             }}
                         />
+                    ) : rest.path === '/' ? (
+                        <Redirect to={{ pathname: `${initialPage}`}}/>
                     ) : (
                         <Component {...props} />
                     )
@@ -211,7 +216,7 @@ const Routes = (): JSX.Element => {
           </Route> */}
         <Route path={`/`} exact component={Login} />
 
-        <Route path={`/eu`} exact component={Me} />
+        <PrivateRoute path={`/eu`} exact component={Me} />
 
         <PrivateRoute path={`/primeiros-passos`} exact component={Start} />
 
