@@ -194,7 +194,6 @@ export function NewSaleModal({
       saleData.date_sale = saleData.date_sale;
       console.log(saleData.credit);
       saleData.credit = moneyToBackend(saleData.credit)
-      console.log(saleData.credit);
 
 
     //   let selectedCustomer = undefined;
