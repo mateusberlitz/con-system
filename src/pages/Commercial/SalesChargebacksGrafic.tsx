@@ -40,6 +40,7 @@ export default function SalesChargesGrafics({isManager}: SalesChargesGraficsProp
             branch: workingBranch.branch?.id,
             year: dateObject.getFullYear().toString(),
             seller_id: !isManager ? profile?.id : undefined,
+            group_by: "month",
         };
         
         return data;
@@ -81,7 +82,7 @@ export default function SalesChargesGrafics({isManager}: SalesChargesGraficsProp
     const [reversalQuotasMonthAmount, setReversalQuotasMonthAmount] = useState([0,0,0,0,0,0,0,0,0,0,0,0]);
 
     const calculateSoldQuotasMonthAmount = () => {
-        const soldQuotas = quotas.data?.data;
+        const soldQuotas = quotas.data?.data.data;
         const newAmounth = soldQuotasMonthAmount;
 
         //console.log(soldQuotas);
@@ -97,7 +98,7 @@ export default function SalesChargesGrafics({isManager}: SalesChargesGraficsProp
     }
 
     const calculateReversalQuotasMonthAmount = () => {
-        const soldQuotas = quotas.data?.data;
+        const soldQuotas = quotas.data?.data.data;
         const newAmounth = reversalQuotasMonthAmount;
 
         //console.log(soldQuotas);
@@ -225,6 +226,13 @@ export default function SalesChargesGrafics({isManager}: SalesChargesGraficsProp
                   },
                 },
               },
+            },
+            yaxis: {
+                labels: {
+                  formatter: function (value) {
+                    return Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(value);
+                  }
+                },
             },
             legend: { show: true },
           }}

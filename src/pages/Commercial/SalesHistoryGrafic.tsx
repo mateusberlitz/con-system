@@ -41,6 +41,7 @@ export default function SalesHistoryGrafic({isManager}: SalesHistoryGraficProps)
             branch: workingBranch.branch?.id,
             year: dateObject.getFullYear().toString(),
             seller_id: !isManager ? profile?.id : undefined,
+            group_by: "month",
         };
         
         return data;
@@ -81,7 +82,7 @@ export default function SalesHistoryGrafic({isManager}: SalesHistoryGraficProps)
     const [soldQuotasMonthAmount, setSoldQuotasMonthAmount] = useState([0,0,0,0,0,0,0,0,0,0,0,0]);
 
     const calculateRoldQuotasMonthAmount = () => {
-        const commissionsReceivedByMonth = quotas.data?.data;
+        const commissionsReceivedByMonth = quotas.data?.data.data;
         const newAmounth = soldQuotasMonthAmount;
 
         //console.log(commissionsReceivedByMonth);
@@ -223,10 +224,17 @@ export default function SalesHistoryGrafic({isManager}: SalesHistoryGraficProps)
                 },
               },
               legend: { show: false },
+              yaxis: {
+                labels: {
+                  formatter: function (value) {
+                    return Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(value);
+                  }
+                },
+              },
             }}
             series={[
               {
-                name: "Net Profit",
+                name: "Vendas",
                 type: "area",
                 data: soldQuotasMonthAmount,
               }

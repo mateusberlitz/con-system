@@ -42,6 +42,7 @@ export default function SchedulingSales({isManager, ...rest}: SchedulingSalesPro
             branch: workingBranch.branch?.id,
             year: dateObject.getFullYear().toString(),
             seller_id: !isManager ? profile?.id : undefined,
+            group_by: "month",
         };
         
         return data;
@@ -53,6 +54,7 @@ export default function SchedulingSales({isManager, ...rest}: SchedulingSalesPro
             branch: workingBranch.branch?.id,
             year: dateObject.getFullYear().toString(),
             user: !isManager ? profile?.id : undefined,
+            group_by: "month",
         };
         
         return data;
@@ -97,10 +99,10 @@ export default function SchedulingSales({isManager, ...rest}: SchedulingSalesPro
     const [schedulesMonthAmount, setSchedulesMonthAmount] = useState([0,0,0,0,0,0,0,0,0,0,0,0]);
 
     const calculateSoldQuotasMonthAmount = () => {
-        const quotasCreditByMonth = quotas.data?.data;
+        const quotasCreditByMonth = quotas.data?.data.data;
         const newAmounth = soldQuotasMonthAmount;
 
-        //console.log(commissionsReceivedByMonth);
+        //console.log(quotasCreditByMonth);
 
         Object.keys(quotasCreditByMonth).map((month:string) => {
             const amount = quotasCreditByMonth[month].reduce((sumAmount:number, quota:Quota) => {
@@ -113,7 +115,7 @@ export default function SchedulingSales({isManager, ...rest}: SchedulingSalesPro
     }
 
     const calculateSchedulesMonthAmount = () => {
-        const schedulesByMonth = quotas.data?.data;
+        const schedulesByMonth = schedules.data?.data;
         const newAmounth = schedulesMonthAmount;
 
         //console.log(commissionsReceivedByMonth);
@@ -247,6 +249,13 @@ export default function SchedulingSales({isManager, ...rest}: SchedulingSalesPro
             },
           },
           legend: { show: true },
+          yaxis: {
+            labels: {
+              formatter: function (value) {
+                return Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(value);
+              }
+            },
+          },
         }}
         series={
           [
