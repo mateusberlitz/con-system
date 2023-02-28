@@ -7,8 +7,9 @@ export default function moneyToBackend(money: string){
     }
 
     //parse string to double format
-    console.log(money);
-    money = money.replace(' ', '').replaceAll('.', '').replace(',', '.');
+    
+    //money = money.replace(' ', '').replace('/../g', '').replace(',', '.');
+    money = String(money).replace(' ', '').replaceAll('.', '').replace(',', '.');
 
     return money;
 }
