@@ -68,8 +68,6 @@ export function WorkingCompanyProvider({ children } : WorkingCompanyProviderProp
         }
     }, [profile]);
 
-    console.log(company);
-
     //LOADERS
     const changeCompany = async (company: Company) => {
         setCompany(company);

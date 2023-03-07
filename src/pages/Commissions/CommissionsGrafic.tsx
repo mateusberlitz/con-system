@@ -31,7 +31,7 @@ export default function CommissionsGrafic({startDate, endDate}: CommissionsGrafi
       };
       
       return data;
-  })
+  });
 
   const commissions = useCommissionsSeller(filter, 1);
 
@@ -52,7 +52,9 @@ export default function CommissionsGrafic({startDate, endDate}: CommissionsGrafi
         setFilter({...filter, start_date: startDate, end_date: endDate});
     }, [startDate, endDate]);
 
-  //console.log(endDate);
+    useEffect(() => {
+        setFilter({...filter, company_id: workingCompany.company?.id, branch_id: workingBranch.branch?.id});
+    }, [workingCompany, workingBranch]);
 
   return (
     <Flex align="center" justify="center" width="100%">

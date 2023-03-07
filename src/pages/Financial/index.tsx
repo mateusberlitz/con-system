@@ -23,6 +23,8 @@ import { CashFlowSummary } from './CashFlowSummary'
 import CommissionsReceivedGrafic from './CommissionsReceivedGrafic'
 import CommissionsPaidGrafic from './CommissionsPaidGrafic'
 import AffiliateCommissions from './AffiliateCommissions'
+import { CloseSellerCommissions } from './CloseSellerCommissions'
+import { SolidButton } from '../../components/Buttons/SolidButton'
 
 export default function Financial() {
   const { profile, permissions } = useProfile()
@@ -191,11 +193,25 @@ export default function Financial() {
       company: workingCompany.company?.id,
       branch: workingBranch.branch?.id
     })
-  }, [workingCompany, workingBranch])
+  }, [workingCompany, workingBranch]);
+
+  const [isClosingSellerCommissions, setIsClosingSellerCommissions] = useState(false)
+
+  function OpenCloseSellerCommissions() {
+    setIsClosingSellerCommissions(true)
+  }
+  function CloseCloseSellerCommissions() {
+    setIsClosingSellerCommissions(false)
+  }
 
   return (
     <MainBoard sidebar="financial" header={<CompanySelectMaster />}>
       <Stack fontSize="13px" spacing="12">
+        <CloseSellerCommissions
+          afterClose={payments.refetch}
+          isOpen={isClosingSellerCommissions}
+          onRequestClose={CloseCloseSellerCommissions}
+        />
         <PayPaymentModal
           afterPay={payments.refetch}
           toPayPaymentData={toPayPaymentData}
@@ -209,13 +225,19 @@ export default function Financial() {
           onRequestClose={CloseReceiveBillModal}
         />
 
+        <SolidButton onClick={OpenCloseSellerCommissions} color="white" bg="blue.400" colorScheme="blue">
+            Fechar Comissões
+        </SolidButton>
+
         <Stack
           direction={['column', 'row']}
           spacing="8"
           alignItems="flex-start"
         >
+
           {/* PAGAMENTOS */}
           <Stack spacing="8" w={['100%', '55%']}>
+
             <PaymentsSummary
               payments={payments}
               openPayPayment={OpenPayPaymentModal}

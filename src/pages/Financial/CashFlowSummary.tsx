@@ -49,7 +49,7 @@ export function CashFlowSummary({cashFlows} : CashFlowSummaryProps){
 
                     {
                         (!cashFlows.isLoading && !cashFlows.error) && Object.keys(cashFlows.data?.data).map((day:string) => {
-                            const totalDayAmount = cashFlows.data?.data[day].reduce((sumAmount:number, payment:Payment) => {
+                            const totalDayAmount = cashFlows.data?.data[day].items.reduce((sumAmount:number, payment:Payment) => {
                                 return sumAmount + payment.value;
                             }, 0);
 

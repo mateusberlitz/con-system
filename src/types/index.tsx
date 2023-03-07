@@ -565,6 +565,8 @@ export interface CompanyCommission{
     period: string;
     confirmed: boolean;
     is_chargeback?: boolean;
+    created_at: string;
+    updated_at: string;
 }
 
 export interface SellerCommission{
@@ -576,4 +578,15 @@ export interface SellerCommission{
     comission_date: string;
     confirmed: boolean;
     is_chargeback?: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface Configuration{
+    id: number;
+    name: string;
+    value: string;
+    company_id: number;
+    created_at: string;
+    updated_at: string;
 }

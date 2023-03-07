@@ -47,6 +47,8 @@ import { SellerCommissionRules } from '../../SellerCommissionsRules'
 import { EditButton } from '../../../../components/Buttons/EditButton'
 import { RemoveButton } from '../../../../components/Buttons/RemoveButton'
 import { MoreVertical } from 'react-feather'
+import { ControlledInput } from '../../../../components/Forms/Inputs/ControlledInput'
+import { CloseSellerCommissionPeriod } from './CloseSellerCommissionPeriod'
 
 interface CompanyParams {
   id: string
@@ -67,8 +69,6 @@ export default function CompanyPage() {
   useEffect(() => {
     loadCompanyData()
   }, [])
-
-  console.log(id)
 
   const branches = useBranches({ company: parseInt(id) }, 1);
   const users = useUsers({ company: parseInt(id) });
@@ -355,6 +355,8 @@ export default function CompanyPage() {
             </Board>
 
             {/* <CompanyRules/> */}
+            
+            <CloseSellerCommissionPeriod companyId={parseInt(id)}/>
 
             <SellerCommissionRules companyId={parseInt(id)}/>
 

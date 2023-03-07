@@ -76,7 +76,6 @@ const PrivateRoute = ({
     const checkFirstSteps = async () => {
 
         api.get('/configs').then(response => {
-            console.log(response)
             if(response.data.data.initiated){
                 localStorage.setItem('@lance/firstSteps', JSON.stringify(1));
                 setIsFirstSteps(false);
@@ -137,8 +136,6 @@ const PrivateRoute = ({
             }/>
         )
     }
-
-    console.log(rest.path);
 
     if(permissions){
         return (
