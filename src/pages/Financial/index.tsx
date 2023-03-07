@@ -276,9 +276,9 @@ export default function Financial() {
                   branch={workingBranch.branch}
                 />
 
-                <CashFlowSummary
+                {/* <CashFlowSummary
                   cashFlows={cashflow}
-                />
+                /> */}
               </>
             )}
           </Stack>
