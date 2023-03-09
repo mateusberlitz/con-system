@@ -46,6 +46,8 @@ export default function LastComissionsTable({startDate, endDate}: LastComissions
     setFilter({...filter, company_id: workingCompany.company?.id, branch_id: workingBranch.branch?.id});
 }, [workingCompany, workingBranch]);
 
+console.log(commissionsSeller);
+
   useEffect(() => {
     setFilter({...filter, start_date: startDate, end_date: endDate});
 }, [startDate, endDate]);
