@@ -1,4 +1,4 @@
-import { Flex, HStack, Stack, Text, Th, Tr, Link, Table, Thead, Tbody, Tfoot, TableContainer, Spinner} from '@chakra-ui/react'
+import { Flex, HStack, Stack, Text, Th, Tr, Table, Thead, Tbody, Tfoot, TableContainer, Spinner} from '@chakra-ui/react'
 import { HasPermission, useProfile } from '../../hooks/useProfile'
 import { ReactComponent as PercentIcon } from '../../assets/icons/percent.svg'
 import Badge from '../../components/Badge'
@@ -7,6 +7,7 @@ import { useWorkingBranch } from '../../hooks/useWorkingBranch'
 import { useEffect, useState } from 'react'
 import { CommissionsSellerFilterData, useCommissionsSeller } from '../../hooks/useCommissionsSeller'
 import { SellerCommission } from '../../types'
+import { Link } from 'react-router-dom'
 
 interface LastComissionsTableProps{
     startDate?: string;
@@ -127,9 +128,11 @@ export default function LastComissionsTable({startDate, endDate}: LastComissions
         
     
             <HStack align="right" justify="right" spacing="4" ml={4}>
-              <Link href="/" display="flex" alignItems="center" fontSize="md" ml={4} color="gray.700" mt={5}>
-                <PercentIcon width="20px" stroke="#6e7191" fill="none" />{' '}
-                <Text ml={4}>Ver relatório</Text>
+              <Link to="/comissões-vendedores">
+                <HStack display="flex" alignItems="center" fontSize="md" ml={4} color="gray.700" mt={5}>
+                    <PercentIcon width="20px" stroke="#6e7191" fill="none" />{' '}
+                    <Text ml={4}>Ver tudo</Text>
+                </HStack>
               </Link>
             </HStack>
           </Stack>
