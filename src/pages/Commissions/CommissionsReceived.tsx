@@ -17,10 +17,10 @@ interface CommissionsReceivedProps{
 }
 
 export default function CommissionsReceived({startDate, endDate}: CommissionsReceivedProps) {
-  const { profile, permissions } = useProfile()
+    const { profile, permissions } = useProfile()
 
-  const workingCompany = useWorkingCompany()
-  const workingBranch = useWorkingBranch()
+    const workingCompany = useWorkingCompany()
+    const workingBranch = useWorkingBranch()
 
     const [filter, setFilter] = useState<CompanyCommissionsFilterData>(() => {
         const data: CompanyCommissionsFilterData = {
@@ -34,12 +34,13 @@ export default function CommissionsReceived({startDate, endDate}: CommissionsRec
         return data;
     })
 
-  const commissionsSeller = useCompanyCommissions(filter, 1);
+    const commissionsSeller = useCompanyCommissions(filter, 1);
 
-  const totalAmount = commissionsSeller.data?.data.data.reduce((sumAmount: number, commissionsReceived: CompanyCommission) => {
-    //console.log(sumAmount, commissionsReceived.value)
-    return sumAmount + commissionsReceived.value;
-  }, 0)
+    console.log(commissionsSeller);
+    const totalAmount = commissionsSeller.data?.data.reduce((sumAmount: number, commissionsReceived: CompanyCommission) => {
+        //console.log(sumAmount, commissionsReceived.value)
+        return sumAmount + commissionsReceived.value;
+    }, 0)
 
     useEffect(() => {
         setFilter({...filter, start_date: startDate, end_date: endDate});

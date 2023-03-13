@@ -164,15 +164,16 @@ export default function Company(){
 
             <Stack fontSize="13px" spacing="12">
                 {
-                    (!companyCommissions.isLoading && !companyCommissions.error) && Object.keys(companyCommissions.data?.data.data).map((monthYear:string) => {
+                    (!companyCommissions.isLoading && !companyCommissions.error) && Object.keys(companyCommissions.data?.data).map((monthYear:string) => {
                         const monthNumber = parseInt(monthYear.split('-')[0]);
                         return (
-                            <CommissionsCompany key={monthYear} monthName={getMonthName(monthNumber)} companyCommissions={companyCommissions.data?.data.data[monthYear]}/>
+                            <CommissionsCompany key={monthYear} monthName={getMonthName(monthNumber)} companyCommissions={companyCommissions.data?.data[monthYear]}/>
                         )
                     })
                 }
 
                 {/* <Pagination registerPerPage={50} currentPage={page} onPageChange={setPage}/> */}
+                <Pagination totalCountOfRegister={companyCommissions.data ? companyCommissions.data.total : 0} registerPerPage={50} currentPage={page} onPageChange={setPage} colorScheme="red" color="red.400"/>
             </Stack>
 
         </MainBoard>

@@ -36,7 +36,7 @@ export default function ReversedCommissions({startDate, endDate}: ReversedCommis
 
     const commissionsCompany = useCompanyCommissions(filter, 1);
 
-    const totalAmount = commissionsCompany.data?.data.data.reduce((sumAmount: number, useCompanyCommissions: CompanyCommission) => {
+    const totalAmount = commissionsCompany.data?.data.reduce((sumAmount: number, useCompanyCommissions: CompanyCommission) => {
         //console.log(sumAmount, useCompanyCommissions.value)
         return sumAmount + useCompanyCommissions.value;
     }, 0)

@@ -28,6 +28,7 @@ import { UserFilterData, useUsers } from "../../../hooks/useUsers";
 import { ReactSelect, SelectOption } from "../../../components/Forms/ReactSelect";
 import { User } from "../../../types";
 import { getReactSelectStyles } from "../../../styles/solidReactSelectStyles";
+import { Pagination } from "../../../components/Pagination";
 
 
 const FilterCommissionsContractFormSchema = yup.object().shape({
@@ -230,9 +231,11 @@ export default function CommissionsSalesman(){
             <Stack fontSize="13px" spacing="12">
             {
                     (!commissionsContract.isLoading && !commissionsContract.error) && (
-                        <CommissionsContracts commissionsContract={commissionsContract.data?.data.data} OpenEditQuotaModal={OpenEditQuotaModal} OpenRemoveQuotaModal={OpenRemoveQuotaModal}/>
+                        <CommissionsContracts commissionsContract={commissionsContract.data?.data} OpenEditQuotaModal={OpenEditQuotaModal} OpenRemoveQuotaModal={OpenRemoveQuotaModal}/>
                     )
                 }
+
+                <Pagination totalCountOfRegister={commissionsContract.data ? commissionsContract.data.total : 0} registerPerPage={50} currentPage={page} onPageChange={setPage} colorScheme="red" color="red.400"/>
             </Stack>
 
         </MainBoard>

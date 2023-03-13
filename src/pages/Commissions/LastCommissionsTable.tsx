@@ -20,6 +20,8 @@ export default function LastComissionsTable({startDate, endDate}: LastComissions
   const workingCompany = useWorkingCompany()
   const workingBranch = useWorkingBranch()
 
+  const [sellerCommissions, setSellerCommissions] = useState<SellerCommission[]>();
+
   const isManager = HasPermission(permissions, 'Comercial Completo') && !HasPermission(permissions, 'Comissões Completo');
 
   const [filter, setFilter] = useState<CommissionsSellerFilterData>(() => {
@@ -35,22 +37,31 @@ export default function LastComissionsTable({startDate, endDate}: LastComissions
     return data;
   });
 
-  const commissionsSeller = useCommissionsSeller(filter, 1)
+    const commissionsSellerQuery = useCommissionsSeller(filter, 1, 15)
 
-  const totalAmount = commissionsSeller.data?.data.data.reduce((sumAmount: number, useCommissionsSeller: SellerCommission) => {
-    //console.log("lastCommissions",sumAmount, useCommissionsSeller.value)
-    return sumAmount + useCommissionsSeller.value;
-  }, 0)
+    const [totalAmount, setTotalAmount] = useState(0);
 
-  useEffect(() => {
-    setFilter({...filter, company_id: workingCompany.company?.id, branch_id: workingBranch.branch?.id});
-}, [workingCompany, workingBranch]);
+    useEffect(() => {
+        setFilter({...filter, company_id: workingCompany.company?.id, branch_id: workingBranch.branch?.id});
+    }, [workingCompany, workingBranch]);
 
-console.log(commissionsSeller);
+    console.log(sellerCommissions);
 
-  useEffect(() => {
-    setFilter({...filter, start_date: startDate, end_date: endDate});
-}, [startDate, endDate]);
+    useEffect(() => {
+        setFilter({...filter, start_date: startDate, end_date: endDate});
+    }, [startDate, endDate]);
+
+    useEffect(() => {
+        if(commissionsSellerQuery.data?.data){
+            setSellerCommissions(commissionsSellerQuery.data?.data);
+
+            const newTotalAmount = commissionsSellerQuery.data?.data.reduce((sumAmount: number, useCommissionsSeller: SellerCommission) => {
+                return sumAmount + useCommissionsSeller.value;
+            }, 0)
+    
+            setTotalAmount(newTotalAmount);
+        }
+    }, [commissionsSellerQuery]);
 
       return (
           <Stack min-width="300px" spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" py="8" px="8">
@@ -74,22 +85,22 @@ console.log(commissionsSeller);
                     </Tr>
                   </Thead>
                   <Tbody>
-                  {   commissionsSeller.isLoading ? (
+                  {   commissionsSellerQuery.isLoading ? (
                             <Flex align="center" justify="center">
                                 <Spinner/>
                             </Flex>
-                        ) : ( commissionsSeller.isError ? (
+                        ) : ( commissionsSellerQuery.isError ? (
                             <Flex align="center" justify="center" mt="4" mb="4">
                                 <Text>Erro listar ultimas commissões</Text>
                             </Flex>
-                        ) : (commissionsSeller.data?.data.length === 0) && (
+                        ) : (sellerCommissions && sellerCommissions.length === 0) && (
                             <Flex align="center" justify="center">
                                 <Text>Nenhuma lista de commissões encontradas</Text>
                             </Flex>
                         ) ) 
                     }
                 {
-                    (!commissionsSeller.isError && !commissionsSeller.isLoading) && commissionsSeller.data?.data.data.map((commissionsSeller: SellerCommission) => {
+                    (!commissionsSellerQuery.isError && !commissionsSellerQuery.isLoading && sellerCommissions) && sellerCommissions.map((commissionsSeller: SellerCommission) => {
                       //console.log(commissionsSeller);
                         return (
                         <>

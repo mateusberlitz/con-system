@@ -35,16 +35,18 @@ export default function CommissionsGrafic({startDate, endDate}: CommissionsGrafi
 
   const commissions = useCommissionsSeller(filter, 1);
 
+  //console.log(commissions);
+
   const [chargeBackCommissionsAmount, setChargeBackCommissionsAmount] = useState(0);
   const [confirmedCommissionsAmount, setConfirmedCommissionsAmount] = useState(0);
   const [pendingCommissionsAmount, setPendingCommissionsAmount] = useState(0);
 
   useEffect(() => {
     if(!commissions.isLoading && !commissions.error){
-      //console.log(commissions.data?.data.data);
-      setChargeBackCommissionsAmount(commissions.data?.data.data.filter((commission:SellerCommission) => {return commission.is_chargeback}).length);
-      setConfirmedCommissionsAmount(commissions.data?.data.data.filter((commission:SellerCommission) => {return commission.confirmed}).length);
-      setPendingCommissionsAmount(commissions.data?.data.data.filter((commission:SellerCommission) => {return !commission.confirmed}).length);
+      console.log(commissions.data?.data);
+      setChargeBackCommissionsAmount(commissions.data?.data.filter((commission:SellerCommission) => {return commission.is_chargeback}).length);
+      setConfirmedCommissionsAmount(commissions.data?.data.filter((commission:SellerCommission) => {return commission.confirmed}).length);
+      setPendingCommissionsAmount(commissions.data?.data.filter((commission:SellerCommission) => {return !commission.confirmed}).length);
     }
   }, [commissions]);
 

@@ -37,7 +37,7 @@ export default function CommissionsReceivedGrafic() {
     const loadYears = async () => {
         const { data } = await api.get('/company-commissions-years');
 
-        setSelectedYear(data[data.length - 1].toString());
+        setSelectedYear(data.length > 0 ? data[data.length - 1].toString() : null);
 
         setYears(data);
     }

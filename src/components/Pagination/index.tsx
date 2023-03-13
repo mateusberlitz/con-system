@@ -5,6 +5,8 @@ interface PaginationProps {
   totalCountOfRegister: number
   registerPerPage?: number
   currentPage?: number
+  colorScheme?: string,
+  color?: string,
   onPageChange: (page: number) => void
 }
 
@@ -22,6 +24,8 @@ export function Pagination({
   totalCountOfRegister,
   registerPerPage = 10,
   currentPage = 1,
+  colorScheme = 'blue',
+  color = 'blue.400',
   onPageChange
 }: PaginationProps) {
   const lastPage = Math.ceil(totalCountOfRegister / registerPerPage)
@@ -65,7 +69,7 @@ export function Pagination({
       <Stack direction="row" spacing="2">
         {currentPage > 1 + siblingsCount && (
           <>
-            <PaginationItem onPageChange={onPageChange} pageNumber={1} />
+            <PaginationItem onPageChange={onPageChange} pageNumber={1} colorScheme={colorScheme} color={color}/>
             {currentPage > 2 + siblingsCount && (
               <Text color="gray.300" w="8" align="center">
                 ...
@@ -81,6 +85,8 @@ export function Pagination({
                 onPageChange={onPageChange}
                 key={page}
                 pageNumber={page}
+                colorScheme={colorScheme} 
+                color={color}
               />
             )
           })}
@@ -88,6 +94,8 @@ export function Pagination({
         <PaginationItem
           onPageChange={onPageChange}
           pageNumber={currentPage}
+          colorScheme={colorScheme} 
+          color={color}
           isCurrent
         />
 
@@ -98,6 +106,8 @@ export function Pagination({
                 onPageChange={onPageChange}
                 key={page}
                 pageNumber={page}
+                colorScheme={colorScheme} 
+                color={color}
               />
             )
           })}
@@ -109,7 +119,7 @@ export function Pagination({
                 ...
               </Text>
             )}
-            <PaginationItem onPageChange={onPageChange} pageNumber={lastPage} />
+            <PaginationItem onPageChange={onPageChange} pageNumber={lastPage} colorScheme={colorScheme} color={color}/>
           </>
         )}
       </Stack>

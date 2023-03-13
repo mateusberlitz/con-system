@@ -89,7 +89,7 @@ export default function AffiliateCommissions({startDate, endDate}: AffiliateComm
                                     const totalAmount = receivedCommissionsAmount - paidCommissionsAmount;
 
                                     return(
-                                        <Tr>
+                                        <Tr key={branch.id}>
                                             <Th color="black" fontSize="12px" position="sticky" left="0">{position + 1}. {branch.name}</Th>
                                             <Th color="gray.600">{quotasCount}</Th>
                                             <Th color="gray.600">{Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(receivedCommissionsAmount)}</Th>

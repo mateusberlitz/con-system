@@ -21,6 +21,8 @@ export default function CommissionsPaid({startDate, endDate}: CommissionsPaidPro
     const { profile, permissions } = useProfile()
     const workingCompany = useWorkingCompany();
     const workingBranch = useWorkingBranch();
+    const [sellerCommissions, setSellerCommissions] = useState<SellerCommission[]>();
+    const [totalAmount, setTotalAmount] = useState(0);
 
     const isManager = HasPermission(permissions, 'Comercial Completo') && !HasPermission(permissions, 'Comissões Completo');
 
@@ -38,12 +40,7 @@ export default function CommissionsPaid({startDate, endDate}: CommissionsPaidPro
         return data;
     })
 
-    const commissionsSeller = useCommissionsSeller(filter, 1);
-
-    const totalAmount = commissionsSeller.data?.data.data.reduce((sumAmount: number, useCommissionsSeller: SellerCommission) => {
-        //console.log(sumAmount, useCommissionsSeller.value)
-        return sumAmount + useCommissionsSeller.value;
-    }, 0)
+    const commissionsSellerQuery = useCommissionsSeller(filter, 1);
 
     useEffect(() => {
         setFilter({...filter, start_date: startDate, end_date: endDate});
@@ -53,6 +50,18 @@ export default function CommissionsPaid({startDate, endDate}: CommissionsPaidPro
         setFilter({...filter, company_id: workingCompany.company?.id, branch_id: workingBranch.branch?.id});
     }, [workingCompany, workingBranch]);
 
+    useEffect(() => {
+        if(commissionsSellerQuery.data?.data){
+            setSellerCommissions(commissionsSellerQuery.data?.data);
+
+            const newTotalAmount = commissionsSellerQuery.data?.data.reduce((sumAmount: number, useCommissionsSeller: SellerCommission) => {
+                return sumAmount + useCommissionsSeller.value;
+            }, 0)
+    
+            setTotalAmount(newTotalAmount);
+        }
+    }, [commissionsSellerQuery]);
+
   return (
     <Flex align="left" justify="left">
       <Stack w="100%" min-width="300px" spacing="6" justify="space-between" alignItems="left" bg="white" borderRadius="16px" shadow="xl" px="8" py="8" mt={8}>
@@ -60,7 +69,7 @@ export default function CommissionsPaid({startDate, endDate}: CommissionsPaidPro
           {HasPermission(permissions, 'Comissões Completo') ? "Comissões Pagas" : "Comissões Recebidas"}
         </Text>
         {
-          commissionsSeller.data ? (
+          sellerCommissions ? (
         <HStack alignItems="left" justify="left" spacing="4">
           {
             HasPermission(permissions, 'Comissões Completo') ? 

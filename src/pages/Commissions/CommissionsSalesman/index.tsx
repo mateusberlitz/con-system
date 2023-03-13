@@ -25,6 +25,7 @@ import { ReactSelect, SelectOption } from "../../../components/Forms/ReactSelect
 import { User } from "../../../types";
 import { UserFilterData, useUsers } from "../../../hooks/useUsers";
 import { getReactSelectStyles } from "../../../styles/solidReactSelectStyles";
+import { Pagination } from "../../../components/Pagination";
 
 
 const FilterSalesmanCommissionsFormSchema = yup.object().shape({
@@ -118,7 +119,7 @@ export default function CommissionsSalesman(){
 
     const solidReactSelectStyles = getReactSelectStyles({primaryColor: "#c30052"});
 
-    //console.log(commissionsSeller);
+    console.log(commissionsSeller);
 
     return(
         <MainBoard sidebar="commissions" header={ <CompanySelectMaster/>}>
@@ -178,13 +179,14 @@ export default function CommissionsSalesman(){
 
             <Stack fontSize="13px" spacing="12">
                 {
-                    (!commissionsSeller.isLoading && !commissionsSeller.error) && Object.keys(commissionsSeller.data?.data.data).map((monthYear:string) => {
+                    (!commissionsSeller.isLoading && !commissionsSeller.error) && Object.keys(commissionsSeller.data?.data).map((monthYear:string) => {
                         const monthNumber = parseInt(monthYear.split('-')[0]);
                         return (
-                            <CommissionsSalesmanTable key={monthYear} monthName={getMonthName(monthNumber)} commissionsSeller={commissionsSeller.data?.data.data[monthYear]}/>
+                            <CommissionsSalesmanTable key={monthYear} monthName={getMonthName(monthNumber)} commissionsSeller={commissionsSeller.data?.data[monthYear]}/>
                         )
                     })
                 }
+                <Pagination totalCountOfRegister={commissionsSeller.data ? commissionsSeller.data.total : 0} registerPerPage={50} currentPage={page} onPageChange={setPage} colorScheme="red" color="red.400"/>
             </Stack>
 
         </MainBoard>
