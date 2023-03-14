@@ -5,7 +5,7 @@ import { Button } from "@chakra-ui/button";
 import { Checkbox } from "@chakra-ui/checkbox";
 import { FormControl, FormErrorMessage, FormLabel } from "@chakra-ui/form-control";
 import { Input as ChakraInput, InputGroup, InputLeftElement } from "@chakra-ui/input";
-import { Flex, Heading, Link, Stack, HStack, Text } from "@chakra-ui/react";
+import { Flex, Heading, Stack, HStack, Text } from "@chakra-ui/react";
 
 import { ReactComponent as MailIcon } from '../assets/icons/Mail.svg';
 import { ReactComponent as LockIcon } from '../assets/icons/Lock.svg';
@@ -20,16 +20,15 @@ import { useProfile } from "../hooks/useProfile";
 import { useEffect, } from "react";
 import { useTenant } from "../hooks/useTenant";
 import { api } from "../services/api";
+import { Link } from "react-router-dom";
+import { showErrors } from "../hooks/useErrors";
 
 interface RecoverPasswordEmailFormData{
     email: string;
-    password: string;
-    remember?: string;
 }
 
 const recoverPasswordEmailFormSchema = yup.object().shape({
     email: yup.string().required('E-mail Obrigatório!').email('E-mail inválido!'),
-    remember: yup.string()
 });
 
 export default function RecoverPasswordEmail(){
@@ -37,7 +36,7 @@ export default function RecoverPasswordEmail(){
     const {prefix} = useTenant();
     const history = useHistory();
     const { loadProfile } = useProfile();
-    const toastRecoverPasswordEmail = useToast();
+    const toast = useToast()
 
     const { register, watch, handleSubmit, formState} = useForm<RecoverPasswordEmailFormData>({
         resolver: yupResolver(recoverPasswordEmailFormSchema),
@@ -55,24 +54,24 @@ export default function RecoverPasswordEmail(){
         }
     }
 
-    const handleSignIn = async (signInData : RecoverPasswordEmailFormData) => {
+    const handleSendMail = async (recoverData : RecoverPasswordEmailFormData) => {
         try{
-            const response = await api.post('/auth/login', signInData);
-
-            login(response.data.access_token, response.data.expires_in);
-
-            loadProfile();
+            const response = await api.post('auth/forgot-password', recoverData).then(() => {
+                toast({
+                    title: 'Sucesso',
+                    description: `Mensagem de recuperação foi enviada para o seu e-mail.`,
+                    status: 'success',
+                    duration: 12000,
+                    isClosable: true
+                })
+            });
         }catch(error:any) {
-            if(error.response){
-                toastError(error.response.data.error);
-            }else{
-                toastError(error.message);
-            }
+            showErrors(error, toast)
         }
     }
 
     const toastError = (error : string) => {
-        toastRecoverPasswordEmail({
+        toast({
             title: "Erro.",
             description: error,
             status: "error",
@@ -100,7 +99,7 @@ export default function RecoverPasswordEmail(){
 
             <Alert/>
 
-            <Stack mt="50" as="form" spacing="24px" w="100%" p="9" maxW={400} bg="white" borderRadius="24" boxShadow="lg" flexDir="column" onSubmit={handleSubmit(handleSignIn)}>
+            <Stack mt="50" as="form" spacing="24px" w="100%" p="9" maxW={400} bg="white" borderRadius="24" boxShadow="lg" flexDir="column" onSubmit={handleSubmit(handleSendMail)}>
                 <Heading>Recuperar Senha</Heading>
                 <Text fontSize={17}>Recuperar pelo e-mail</Text>
 
@@ -127,7 +126,11 @@ export default function RecoverPasswordEmail(){
                     
             </Stack>
 
-            <Link align="center" mt="30" color="gray.700">Voltar para a tela de login</Link>
+            <Stack>
+                <Link to="/">
+                    <Text align="center" mt="30" color="gray.700">Voltar para a tela de login</Text>
+                </Link>
+            </Stack>
         </Flex>
     )
 }

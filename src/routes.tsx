@@ -221,7 +221,7 @@ const Routes = (): JSX.Element => {
 
         <Route path={`/recuperar-senha-email`} exact component={RecoverPasswordEmail} />
 
-        <Route path={`/recuperar-senha`} exact component={RecoverPassword} />
+        <Route path={`/recuperar-senha/:email/:token`} exact component={RecoverPassword} />
 
         <PrivateRoute
           path={`/home`}

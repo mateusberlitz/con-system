@@ -20,6 +20,7 @@ import { getInitialPage, useProfile } from "../hooks/useProfile";
 import { useEffect, } from "react";
 import { useTenant } from "../hooks/useTenant";
 import { api } from "../services/api";
+import { showErrors } from "../hooks/useErrors";
 
 interface SignInFormData{
     email: string;
@@ -38,7 +39,7 @@ export default function Login(){
     const {prefix} = useTenant();
     const history = useHistory();
     const { loadProfile } = useProfile();
-    const toastSignin = useToast();
+    const toast = useToast();
 
     const { register, watch, handleSubmit, formState} = useForm<SignInFormData>({
         resolver: yupResolver(signInFormSchema),
@@ -70,29 +71,14 @@ export default function Login(){
 
             redirect();
         }catch(error:any) {
-            if(error.response){
-                toastError(error.response.data.error);
-            }else{
-                toastError(error.message);
-            }
+            showErrors(error, toast)
         }
-    }
-
-    const toastError = (error : string) => {
-        toastSignin({
-            title: "Erro.",
-            description: error,
-            status: "error",
-            duration: 9000,
-            isClosable: true,
-        });
     }
 
     useEffect(() => {
         if(isAuthenticated()){
             redirect();
         }
-        console.log(isAuthenticated());
     }, []);
 
     // useEffect(() => {
@@ -157,7 +143,9 @@ export default function Login(){
                     
             </Stack>
 
-            <Link m="0 auto" mt="30" color="gray.700" textAlign={"center"}>Esqueci minha senha</Link>
+            <Stack>
+                <Link href="recuperar-senha-email" m="0 auto" mt="30" color="gray.700" textAlign={"center"}>Esqueci minha senha</Link>
+            </Stack>
         </Flex>
     )
 }
