@@ -2,7 +2,6 @@ import {
   Divider,
   Flex,
   HStack,
-  Link,
   Spinner,
   Stack,
   Text,
@@ -27,6 +26,7 @@ import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { ReactComponent as BackArrow } from '../../../assets/icons/Back Arrow.svg'
+import { Link } from 'react-router-dom'
 
 interface LogParams {
   user: string
@@ -82,7 +82,7 @@ export function Logs() {
       <Stack spacing="10">
         <HStack justifyContent="space-between">
           <HStack spacing="3" height="50px">
-            <Link href="/vendedores">
+            <Link to="/vendedores">
               <Flex display="flex" flexDirection="row">
                 <BackArrow width="20px" stroke="#4e4b66" fill="none" />
               </Flex>

@@ -47,6 +47,7 @@ import IncludeUserModal, { IncludeUserData } from '../Users/IncludeUserModal'
 import { TeamUsersListModal } from './TeamUsersListModal'
 import { ConfirmUnicludeUserModal } from './ConfirmUnicludeUserModal'
 import { SellerCommissionRules } from '../SellerCommissionsRules'
+import Teams from '../Teams'
 
 interface BranchParams {
   id: string
@@ -307,24 +308,6 @@ export default function Branch() {
         onRequestClose={CloseConfirmUserRemoveModal}
       />
 
-      <NewTeamModal
-        afterCreate={teams.refetch}
-        isOpen={isNewTeamModalOpen}
-        onRequestClose={CloseNewTeamModal}
-      />
-      <EditTeamModal
-        afterEdit={teams.refetch}
-        toEditTeamData={editTeamData}
-        isOpen={isEditTeamModalOpen}
-        onRequestClose={CloseEditTeamModal}
-      />
-      <ConfirmTeamRemoveModal
-        afterRemove={teams.refetch}
-        toRemoveTeamData={removeTeamData}
-        isOpen={isConfirmTeamRemoveModalOpen}
-        onRequestClose={CloseConfirmTeamRemoveModal}
-      />
-
       <IncludeUserModal
         afterEdit={afterIncludeUser}
         toIncludeUserProps={includeUserData}
@@ -332,14 +315,14 @@ export default function Branch() {
         onRequestClose={CloseIncludeUserModal}
       />
 
-      <TeamUsersListModal
+      {/* <TeamUsersListModal
         afterEdit={refetch}
         handleUnicludeUser={OpenUnicludeUserModal}
         handleOpenIncludeUserModal={OpenTeamIncludeUserModal}
         isOpen={isTeamUsersListModalOpen}
         team={team}
         onRequestClose={CloseTeamUsersListModal}
-      />
+      /> */}
 
       {
         branch && user && (
@@ -369,166 +352,7 @@ export default function Branch() {
 
         <Divider />
 
-        <Board>
-          <HStack mb="4" justifyContent="space-between">
-            <Text fontSize="xl">Equipes</Text>
-
-            <SolidButton
-              onClick={() => OpenNewTeamModal()}
-              mb="12"
-              color="white"
-              bg="purple.300"
-              icon={PlusIcon}
-              colorScheme="purple"
-            >
-              Adicionar equipe
-            </SolidButton>
-          </HStack>
-
-          {teams.isLoading ? (
-            <Flex justify="left">
-              <Spinner />
-            </Flex>
-          ) : teams.error ? (
-            <Flex justify="left" mt="4" mb="4">
-              <Text>Erro listar as equipes</Text>
-            </Flex>
-          ) : (
-            teams.data?.data.length === 0 && (
-              <Flex justify="left">
-                <Text>Nenhuma equipe encontrada.</Text>
-              </Flex>
-            )
-          )}
-
-          {!teams.isLoading && !teams.error && teams.data?.data.length !== 0 && (
-            <Table
-              header={[
-                {
-                  text: 'Equipe'
-                },
-                {
-                  text: 'Setor'
-                },
-                {
-                  text: 'Participantes'
-                },
-                // {
-                //     text: 'E-mail',
-                // },
-                // {
-                //     text: 'Telefone',
-                // },
-                {
-                  text: 'Gerente',
-                  icon: ProfileIcon
-                },
-                {
-                  text: ''
-                }
-              ]}
-            >
-              {/* ITEMS */}
-              {!teams.isLoading &&
-                !teams.error &&
-                teams.data?.data.map((team: Team) => {
-                  return (
-                    <Tr key={team.id}>
-                      <Td alignItems="center" display="flex">
-                        <Text
-                          display="flex"
-                          fontSize="sm"
-                          color="gray.700"
-                          fontWeight="600"
-                          whiteSpace="nowrap"
-                        >
-                          {team.name}
-                        </Text>
-                      </Td>
-
-                      <Td fontSize="sm" color="gray.800" whiteSpace="nowrap">
-                        {team.desk.name}
-                      </Td>
-                      {/* <Td fontSize="sm" color="gray.800">{branch.email}</Td>
-                                        <Td fontSize="sm" color="gray.800">{branch.phone}</Td> */}
-
-                      <Td fontSize="sm" color="gray.800" whiteSpace="nowrap" cursor="pointer" onClick={() => OpenTeamUsersListModal(team)}>
-                        <HStack>
-                          <Text>{team.users.length > 0 ? team.users.length : 'Nenhum'}</Text>
-                          <IconButton h="24px" w="20px !important" p="0" float="right" aria-label="Incluir participantes" border="none" icon={ <EditIcon width="20px" stroke="#d69e2e" fill="none"/>} variant="outline"/>
-                        </HStack>
-                      </Td>
-
-                      <Td alignItems="center" display="flex">
-                        <Flex
-                          mr="4"
-                          borderRadius="full"
-                          h="fit-content"
-                          w="fit-content"
-                          bgGradient="linear(to-r, purple.600, blue.300)"
-                          p="2px"
-                          whiteSpace="nowrap"
-                        >
-                          <Avatar
-                            whiteSpace="nowrap"
-                            borderColor="gray.600"
-                            border="2px"
-                            size="sm"
-                            name={`${team.manager.name} ${team.manager.last_name}`}
-                            src={
-                              team.manager.image
-                                ? `${
-                                    process.env.NODE_ENV === 'production'
-                                      ? process.env.REACT_APP_API_STORAGE
-                                      : process.env.REACT_APP_API_LOCAL_STORAGE
-                                  }${team.manager.image}`
-                                : ''
-                            }
-                          />
-                        </Flex>
-                        <Text
-                          display="flex"
-                          fontSize="sm"
-                          color="gray.700"
-                          fontWeight="600"
-                          whiteSpace="nowrap"
-                        >
-                          {team.manager.name}{' '}
-                          {team.manager.last_name && team.manager.last_name}
-                        </Text>
-                      </Td>
-
-                      <Td>
-                        <HStack spacing="4">
-                          {/* <OutlineButton size="sm" colorScheme="purple" h="28px" px="5" onClick={() => history.push(`/filiais/${team.id}`)}>Gerenciar</OutlineButton> */}
-                          <EditButton
-                            onClick={() =>
-                              OpenEditTeamModal({
-                                id: team.id,
-                                name: team.name,
-                                company: team.company.id,
-                                branch: team.branch.id,
-                                manager: team.manager.id,
-                                desk: team.desk.id
-                              })
-                            }
-                          />
-                          <RemoveButton
-                            onClick={() =>
-                              OpenConfirmTeamRemoveModal({
-                                id: team.id,
-                                name: team.name
-                              })
-                            }
-                          />
-                        </HStack>
-                      </Td>
-                    </Tr>
-                  )
-                })}
-            </Table>
-          )}
-        </Board>
+        <Teams branchId={parseInt(id)}/>
 
         <Board mt="50px">
           <HStack mb="4" justifyContent="space-between">
@@ -543,15 +367,15 @@ export default function Branch() {
                 Incluir integrante
               </OutlineButton>
 
-              <SolidButton
-                onClick={() => OpenNewTeamModal()}
+              {/* <SolidButton
+                onClick={() => OpenNewUserModal()}
                 color="white"
                 bg="purple.300"
                 icon={PlusIcon}
                 colorScheme="purple"
               >
                 Adicionar integrante
-              </SolidButton>
+              </SolidButton> */}
             </HStack>
           </HStack>
 

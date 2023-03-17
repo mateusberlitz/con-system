@@ -53,6 +53,7 @@ import { EditPartialPaymentFormData, EditPartialPaymentModal } from "./EditParti
 import { CompanySelectMaster } from "../../../components/CompanySelect/companySelectMaster";
 import { ConfirmPaymentRemoveListModal } from "./ConfirmPaymentRemoveListModal";
 import { useWorkingBranch } from "../../../hooks/useWorkingBranch";
+import { AddBilletPaymentFormData, AddBilletPaymentModal } from "./AddBilletPaymentModal";
 
 interface RemovePaymentData{
     id: number;
@@ -349,6 +350,25 @@ export default function Payments(){
         setIsExportDocumentsModalOpen(false);
     }
 
+    const [isAddBilletPaymentModalOpen, setIsAddBilletPaymentModalOpen] = useState(false);
+    const [addBilletPaymentData, setAddBilletPaymentData] = useState<AddBilletPaymentFormData>(() => {
+
+        const data: AddBilletPaymentFormData = {
+            id: 0,
+            title: ''
+        };
+        
+        return data;
+    });
+
+    function OpenAddBilletPaymentModal(toAddInvoicePayment: AddBilletPaymentFormData){
+        setAddBilletPaymentData(toAddInvoicePayment);
+        setIsAddBilletPaymentModalOpen(true);
+    }
+    function CloseAddBilletPaymentModal(){
+        setIsAddBilletPaymentModalOpen(false);
+    }
+
 
     const toast = useToast();
 
@@ -513,7 +533,8 @@ export default function Payments(){
             <AddFilePaymentModal afterAttach={payments.refetch} toAddFilePaymentData={addFilePaymentData} isOpen={isAddFilePaymentModalOpen} onRequestClose={CloseAddFilePaymentModal}/>
             <AddProofPaymentModal afterAttach={payments.refetch} toAddProofPaymentData={addProofPaymentData} isOpen={isAddProofPaymentModalOpen} onRequestClose={CloseAddProofPaymentModal}/>
             <AddInvoicePaymentModal afterAttach={payments.refetch} toAddInvoiceData={addInvoicePaymentData} isOpen={isAddInvoicePaymentModalOpen} onRequestClose={CloseAddInvoicePaymentModal}/>
-            
+            <AddBilletPaymentModal afterAttach={payments.refetch} toAddBilletData={addBilletPaymentData} isOpen={isAddBilletPaymentModalOpen} onRequestClose={CloseAddBilletPaymentModal}/>
+
             <ExportDocumentsModal isOpen={isExportDocumentsModalOpen} onRequestClose={CloseExportDocumentsModal}/>
 
             <Stack flexDirection={["column", "row"]} spacing={["4", "0"]} justify="space-between" mb="10">
@@ -747,7 +768,7 @@ export default function Payments(){
                                                             </HStack>
 
                                                             <HStack spacing={["5", "5"]} justifyContent="space-between" fontSize={["11px", "13px"]}>
-                                                                {
+                                                                {/* {
                                                                     payment.file ? (
                                                                         <HStack>
                                                                             <Link target="_blank" href={`${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_API_STORAGE : process.env.REACT_APP_API_LOCAL_STORAGE}${payment.file}`} display="flex" fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
@@ -764,7 +785,19 @@ export default function Payments(){
                                                                         </Flex>
                                                                     )
                                                                 
-                                                                }
+                                                                } */}
+
+                                                                    <Flex onClick={() => OpenAddBilletPaymentModal({id: payment.id, title: payment.title})} fontWeight="medium" alignItems="center" color="gray.900" _hover={{textDecor:"underline", cursor: "pointer"}}>
+                                                                        <AttachIcon stroke="#4e4b66" fill="none" width="16px"/>
+                                                                        <Text ml="2">Boletos</Text>
+                                                                        {
+                                                                            (payment.billets_count && payment.billets_count > 0) ? (
+                                                                                <Text ml="2">: {payment.billets_count}</Text>
+                                                                            ) : (
+                                                                                <Text ml="2">-</Text>
+                                                                            )
+                                                                        }
+                                                                    </Flex>
 
                                                                 {
                                                                     payment.proof ? (

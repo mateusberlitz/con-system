@@ -114,6 +114,7 @@ export interface Payment{
     invoice_date?: string;
     invoice2_date?: string;
     invoices_count?: number;
+    billets_count?: number;
 }
 
 export interface dayPayments{

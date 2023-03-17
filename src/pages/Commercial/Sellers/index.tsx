@@ -78,6 +78,8 @@ export default function Sellers() {
   const roles = useRoles()
   const { profile } = useProfile();
 
+  const hasTeam = (profile && profile.teams.length > 0) ? true : false;
+
   const [filter, setFilter] = useState<UserFilterData>(() => {
     const data: UserFilterData = {
       search: '',
@@ -286,6 +288,7 @@ export default function Sellers() {
     setIsIncludeUserModalOpen(false)
   }
 
+  console.log(profile);
 
   return (
     <MainBoard sidebar="commercial" header={<CompanySelectMaster />}>
@@ -350,8 +353,42 @@ export default function Sellers() {
         )
       }
 
+    <Board mb="50px">
+        <Table
+            header={[
+                {
+                text: 'Mês/Ano'
+              },
+              {
+                text: 'Valor'
+              },
+              {
+                text: 'Visitas'
+              },
+              {
+                text: 'Fechamentos'
+              },
+            ]}
+        >
+            <Tr>
+                <Td fontSize="sm" color="gray.800">
+                    Teste
+                </Td>
+                <Td fontSize="sm" color="gray.800">
+                    Teste
+                </Td>
+                <Td fontSize="sm" color="gray.800">
+                    Teste
+                </Td>
+                <Td fontSize="sm" color="gray.800">
+                    Teste
+                </Td>
+            </Tr>
+        </Table>
+    </Board>
+
       {
-        (profile && profile.teams.length > 0) && (
+        (profile && hasTeam) && (
           <SolidButton
             onClick={() => OpenTeamIncludeUserModal(profile.teams[0].id)}
             mb="12"
@@ -410,6 +447,10 @@ export default function Sellers() {
           <Flex justify="center">
             <Spinner />
           </Flex>
+        ) : !hasTeam ? (
+            <Flex justify="center" mt="4" mb="4">
+                <Text>Você não está enquadrado em uma equipe</Text>
+            </Flex>
         ) : error ? (
           <Flex justify="center" mt="4" mb="4">
             <Text>Erro listar os vendedores</Text>
@@ -422,7 +463,7 @@ export default function Sellers() {
           )
         )}
 
-        {!isLoading && !error && data.length !== 0 && (
+        {(!isLoading && !error && data.length !== 0 && hasTeam) && (
           <Table
             header={[
               {

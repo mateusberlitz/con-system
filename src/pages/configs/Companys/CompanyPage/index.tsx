@@ -49,6 +49,7 @@ import { RemoveButton } from '../../../../components/Buttons/RemoveButton'
 import { MoreVertical } from 'react-feather'
 import { ControlledInput } from '../../../../components/Forms/Inputs/ControlledInput'
 import { CloseSellerCommissionPeriod } from './CloseSellerCommissionPeriod'
+import Teams from '../../Teams'
 
 interface CompanyParams {
   id: string
@@ -359,6 +360,8 @@ export default function CompanyPage() {
             <CloseSellerCommissionPeriod companyId={parseInt(id)}/>
 
             <SellerCommissionRules companyId={parseInt(id)}/>
+
+            <Teams companyId={parseInt(id)}/>
 
             {/* <SolidButton onClick={OpenNewBranchModal} mb="12" color="white" bg="purple.300" icon={PlusIcon} colorScheme="purple">
                                 Adicionar Filial
