@@ -138,7 +138,7 @@ export default function LastComissionsTable({monthName, commissionsSeller}: Sell
                                             {commissionSeller.seller_commission_rule_parcel.parcel_number}
                                             </Text>
                                         </HStack>
-                                        
+
                                         <HStack spacing="2" px="0rem">
                                             <strong color="#4e4b66">Data de comissão:</strong>
                                             <Text>
@@ -160,7 +160,7 @@ export default function LastComissionsTable({monthName, commissionsSeller}: Sell
                                         <HStack spacing="2">
                                             <strong color="#4e4b66">Contrato:</strong>
                                             <Text>
-                                            {commissionSeller.quota.contract.number_contract}
+                                                {commissionSeller.quota.contract.number_contract}
                                             </Text>
                                         </HStack>
                                         <HStack spacing="4">
