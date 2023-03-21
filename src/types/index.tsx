@@ -576,7 +576,7 @@ export interface SellerCommission{
     quota: Quota;
     seller: User;
     value: number;
-    comission_date: string;
+    commission_date: string;
     confirmed: boolean;
     is_chargeback?: boolean;
     created_at: string;

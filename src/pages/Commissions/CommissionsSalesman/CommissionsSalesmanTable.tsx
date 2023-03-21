@@ -133,24 +133,25 @@ export default function LastComissionsTable({monthName, commissionsSeller}: Sell
                                             </Text>
                                         </HStack>
                                         <HStack spacing="4">
-                                            <strong color="#4e4b66">Parcelas:</strong>
-                                            <Text>
-                                            {commissionSeller.seller_commission_rule_parcel.parcel_number}
-                                            </Text>
-                                        </HStack>
-                                        <HStack spacing="4">
                                             <strong color="#4e4b66">Parcela:</strong>
                                             <Text>
                                             {commissionSeller.seller_commission_rule_parcel.parcel_number}
                                             </Text>
                                         </HStack>
+                                        
+                                        <HStack spacing="2" px="0rem">
+                                            <strong color="#4e4b66">Data de comissão:</strong>
+                                            <Text>
+                                                {formatBRDate(commissionSeller.commission_date)}
+                                            </Text>
+                                        </HStack>
 
-                                        <HStack spacing="2" px="1rem">
+                                        {/* <HStack spacing="2" px="1rem">
                                             <strong color="#4e4b66">Restante:</strong>
                                             <Text>
                                                 {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(commissionSeller.quota.credit - commissionSeller.value)}
                                             </Text>
-                                        </HStack>
+                                        </HStack> */}
                                     </Stack>
 
                                     <Divider mb="3" />
@@ -178,13 +179,7 @@ export default function LastComissionsTable({monthName, commissionsSeller}: Sell
                                         <HStack spacing="2" px="1rem">
                                             <strong color="#4e4b66">Bem:</strong>
                                             <Text>
-                                                {/* {commissionsSeller.quota.consortium_type.description} */}
-                                            </Text>
-                                        </HStack>
-                                        <HStack spacing="2" px="0rem">
-                                            <strong color="#4e4b66">Cliente:</strong>
-                                            <Text>
-                                                João Beltrano
+                                                {commissionSeller.quota.consortium_type.description}
                                             </Text>
                                         </HStack>
                                     </Stack>
