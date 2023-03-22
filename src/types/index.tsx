@@ -424,7 +424,7 @@ export interface Team{
     id: number;
     branch: Branch;
     desk: Desk;
-    company: Company;
+    company: number;
     manager: User;
     name: string;
     users: User[];

@@ -27,6 +27,7 @@ import { useProfile } from '../../../hooks/useProfile'
 import { useEffect } from 'react'
 import { isAuthenticated } from '../../../services/auth'
 import { redirectMessages } from '../../../utils/redirectMessages'
+import moneyToBackend from '../../../utils/moneyToBackend'
 
 interface NewGoalModalProps {
   isOpen: boolean
@@ -41,15 +42,15 @@ export interface toAddGoalData {
 }
 
 interface CreateNewGoalFormData {
-  value: number
+  value: string
   user: number
   company: number
   month: number
 }
 
 const CreateNewGoalFormSchema = yup.object().shape({
-  value: yup.string().required('Qual o valor da venda?'),
-  month: yup.number().required('Quando foi feita a venda?')
+  value: yup.string().required('Qual o valor da meta?'),
+  month: yup.number().required('Selecione o mês e ano?')
 })
 
 export function NewGoalModal({
@@ -93,14 +94,14 @@ export function NewGoalModal({
       saleData.company = workingCompany.company.id
       saleData.user = toAddUserData.id
 
+      const valueNotFormatted = saleData.value;
+      saleData.value = moneyToBackend(saleData.value)
+
       const response = await api.post('/goals/store', saleData)
 
       toast({
         title: 'Sucesso',
-        description: `Meta de ${Intl.NumberFormat('pt-BR', {
-          style: 'currency',
-          currency: 'BRL'
-        }).format(saleData.value)} adicionada ao vendedor ${
+        description: `Meta de ${valueNotFormatted} adicionada ao vendedor ${
           toAddUserData.name
         }`,
         status: 'success',
@@ -161,6 +162,7 @@ export function NewGoalModal({
               placeholder="Valor da meta"
               focusBorderColor="orange.400"
               variant="outline"
+              mask="money"
               error={formState.errors.value}
             />
 

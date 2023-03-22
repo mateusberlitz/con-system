@@ -50,6 +50,7 @@ import { ConfirmUnicludeUserModal } from '../../configs/Branch/ConfirmUnicludeUs
 import { ConfirmTeamUnicludeUserModal } from '../../configs/Teams/ConfirmTeamUnicludeUserModal'
 import IncludeUserModal, { IncludeUserData } from '../../configs/Users/IncludeUserModal'
 import Users from '../../configs/Users'
+import { GoalsBoard } from './GoalsBoard'
 
 const SearchUserFormSchema = yup.object().shape({
   search: yup.string().nullable(),
@@ -187,8 +188,7 @@ export default function Sellers() {
     setIsEditGoalModalOpen(false)
   }
 
-  const [isConfirmGoalRemoveModalOpen, setIsConfirmGoalRemoveModalOpen] =
-    useState(false)
+  const [isConfirmGoalRemoveModalOpen, setIsConfirmGoalRemoveModalOpen] = useState(false)
   const [toRemoveGoalData, setToRemoveGoalData] = useState<RemoveGoalData>(
     () => {
       const data: RemoveGoalData = {
@@ -353,39 +353,7 @@ export default function Sellers() {
         )
       }
 
-    <Board mb="50px">
-        <Table
-            header={[
-                {
-                text: 'Mês/Ano'
-              },
-              {
-                text: 'Valor'
-              },
-              {
-                text: 'Visitas'
-              },
-              {
-                text: 'Fechamentos'
-              },
-            ]}
-        >
-            <Tr>
-                <Td fontSize="sm" color="gray.800">
-                    Teste
-                </Td>
-                <Td fontSize="sm" color="gray.800">
-                    Teste
-                </Td>
-                <Td fontSize="sm" color="gray.800">
-                    Teste
-                </Td>
-                <Td fontSize="sm" color="gray.800">
-                    Teste
-                </Td>
-            </Tr>
-        </Table>
-    </Board>
+      <GoalsBoard/>
 
       {
         (profile && hasTeam) && (

@@ -349,7 +349,7 @@ export default function Teams({branchId, companyId}: TeamsProps){
                                 OpenEditTeamModal({
                                     id: team.id,
                                     name: team.name,
-                                    company: team.company.id,
+                                    company: team.company,
                                     branch: team.branch.id,
                                     manager: team.manager.id,
                                     desk: team.desk.id

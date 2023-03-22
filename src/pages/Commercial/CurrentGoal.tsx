@@ -100,7 +100,7 @@ export function CurrentGoal() {
     })
 
     if (data.length > 0) {
-      setMonthGoal(data[0])
+        setTeamMonthGoal(data[0])
     }
   }
 
@@ -109,10 +109,10 @@ export function CurrentGoal() {
   const loadTeamMonthAmount = async () => {
     const { data } = await api.get('/month_sales_amount', {
       params: {
-        company:
-          workingCompany.company && workingCompany.company.id
-            ? workingCompany.company?.id.toString()
-            : '0',
+        // company:
+        //   workingCompany.company && workingCompany.company.id
+        //     ? workingCompany.company?.id.toString()
+        //     : '0',
         team_id: (profile && profile.teams.length > 0) ? profile.teams[0].id : 0,
         month: today.getMonth() + 1
       }
@@ -243,24 +243,24 @@ export function CurrentGoal() {
                     </Stack>
 
                     <Stack spacing="1">
-                    <HStack justifyContent={"space-between"}>
-                    <Text
-                        display="flex"
-                        alignItems="center"
-                        fontSize="sm"
-                        color="gray.600"
-                        >
-                        Vendido:
-                        </Text>
-                        <Text
-                        display="flex"
-                        flex="1"
-                        fontSize="md"
-                        color="gray.700"
-                        >
-                        {Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL'}).format(teamPercentOfGoal)}
-                        </Text>
-                    </HStack>
+                        <HStack justifyContent={"space-between"}>
+                            <Text
+                                display="flex"
+                                alignItems="center"
+                                fontSize="sm"
+                                color="gray.600"
+                                >
+                                Vendido:
+                                </Text>
+                                <Text
+                                display="flex"
+                                flex="1"
+                                fontSize="md"
+                                color="gray.700"
+                            >
+                            {Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL'}).format(teamPercentOfGoal)}%
+                            </Text>
+                        </HStack>
                     </Stack>
                 </>
             ) : (

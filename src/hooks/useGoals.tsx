@@ -1,0 +1,57 @@
+import { useQuery } from "react-query";
+import { api } from "../services/api";
+
+export interface GoalsFilterData{
+    search?: string;
+    start_date?: string;
+    end_date?: string;
+    segment?: string;
+    company?: number;
+    branch?: number;
+    team_id?: number;
+    seller_id?: number;
+    contemplated_type?: string;
+    group?: string;
+    quote?: string;
+    group_by?: string;
+    status?: number;
+    sold?: string;
+    year?: string;
+}
+
+export const getGoals = async (filter?: GoalsFilterData, page: number = 0) => {
+    if(filter){
+        const {data, headers} = await api.get('/goals', {
+            params: {
+              page: page,
+              search: filter.search,
+              segment: filter.segment,
+              company: filter.company,
+              seller_id: filter.seller_id,
+              team_id: filter.team_id,
+              branch: filter.branch,
+              start_date: filter.start_date,
+              end_date: filter.end_date,
+              contemplated_type: filter.contemplated_type,
+              group: filter.group,
+              quote: filter.quote,
+              status: filter.status,
+              group_by: filter.group_by,
+              sold: filter.sold,
+              year: filter.year,
+            }
+        });
+
+        return {data, total: Number(headers['x-total-count'])};
+    }
+
+    const { data, headers } = await api.get('/goals');
+
+    return {data, total: Number(headers['x-total-count'])};
+}
+
+export function useGoals(filter: GoalsFilterData, page?: number){
+    return useQuery(['goals', [filter, page]], () => getGoals(filter, page), {
+        staleTime: 1000 * 5 * 60, //fresh
+    });
+}

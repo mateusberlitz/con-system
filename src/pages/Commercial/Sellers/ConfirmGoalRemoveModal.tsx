@@ -23,7 +23,8 @@ import { useProfile } from '../../../hooks/useProfile'
 
 export interface RemoveGoalData {
   id: number
-  name: string
+  company_id?: number
+  name?: string
   month: number
 }
 
@@ -93,7 +94,7 @@ export function ConfirmGoalRemoveModal({
 
       await api.post('/logs/store', {
         user: profile.id,
-        company: workingCompany.company.id,
+        company: toRemoveGoalData.company_id ? toRemoveGoalData.company_id : workingCompany.company.id,
         action: `Removeu a meta do vendedor(a) ${toRemoveGoalData.name} do mês ${monthName}`
       })
 
@@ -118,7 +119,7 @@ export function ConfirmGoalRemoveModal({
       <ModalOverlay />
       <ModalContent borderRadius="24px">
         <ModalHeader p="10" fontWeight="700" fontSize="2xl">
-          Remover a meta do vendedor(a) {toRemoveGoalData.name}?
+          Remover a meta do mês {toRemoveGoalData.month} {toRemoveGoalData.name ? `do vendedor(a) ${toRemoveGoalData.name}` : ""}?
         </ModalHeader>
 
         <ModalCloseButton top="10" right="5" />

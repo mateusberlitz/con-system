@@ -166,13 +166,13 @@ export default function LastComissionsTable({monthName, commissionsSeller}: Sell
                                         <HStack spacing="4">
                                             <strong color="#4e4b66">Grupo:</strong>
                                             <Text>
-                                            {commissionSeller.quota.group}
+                                                {commissionSeller.quota.group}
                                             </Text>
                                         </HStack>
                                         <HStack spacing="4">
                                             <strong color="#4e4b66">Cota:</strong>
                                             <Text>
-                                            {commissionSeller.quota.quota}
+                                                {commissionSeller.quota.quota}
                                             </Text>
                                         </HStack>
 
