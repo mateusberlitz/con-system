@@ -200,7 +200,7 @@ export function NewSaleModal({
     //   let selectedCustomer = undefined;
 
     //   if(saleData.customer_id){
-        let selectedCustomer:Customer|undefined = customers.data?.data.data.find((customer:Customer) => saleData.customer_id == customer.id);
+        let selectedCustomer:Customer|undefined = customers.data?.data.find((customer:Customer) => saleData.customer_id == customer.id);
 
       //console.log(customers.data?.data.data);
 
@@ -371,7 +371,7 @@ export function NewSaleModal({
     ];
     
     if(customers.data){
-        customers.data?.data.data.map((customer: Customer) => {
+        customers.data?.data.map((customer: Customer) => {
         newCustomerOptions.push({ value: customer.id.toString(), label: `${customer.name}` });
       })
     }

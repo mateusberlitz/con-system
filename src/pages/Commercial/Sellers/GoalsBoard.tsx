@@ -16,7 +16,11 @@ import { Goal, Team, User } from "../../../types";
 import { NewTeamGoalModal, toAddTeamGoalData } from "./NewTeamGoalModal";
 import { ConfirmGoalRemoveModal, RemoveGoalData } from "./ConfirmGoalRemoveModal";
 
-export function GoalsBoard(){
+interface GoalsBoardInterface{
+    teamId?: number;
+}
+
+export function GoalsBoard({teamId}: GoalsBoardInterface){
     const workingCompany = useWorkingCompany()
     const workingBranch = useWorkingBranch()
     const { profile } = useProfile();
@@ -26,7 +30,8 @@ export function GoalsBoard(){
             search: '',
             //branch_id: workingBranch.branch?.id,
             //company_id: workingCompany.company?.id,
-            team_id: (profile && profile.teams.length > 0) ? profile.teams[0].id : undefined,
+            //team_id: (profile && profile.teams.length > 0) ? profile.teams[0].id : undefined,
+            team_id: teamId,
         }
     
         return data
@@ -36,7 +41,8 @@ export function GoalsBoard(){
 
     const { data, isLoading, refetch, error } = useGoals(filter);
 
-    const hasTeam = (profile && profile.teams.length > 0) ? true : false;
+    //const hasTeam = (profile && profile.teams.length > 0) ? true : false;
+    const hasTeam = teamId !== undefined;
 
     const [isNewGoalModalOpen, setIsNewGoalModalOpen] = useState(false)
     const [toAddGoalUserData, setToAddGoalUserData] = useState<toAddTeamGoalData>(
@@ -107,6 +113,12 @@ export function GoalsBoard(){
     function CloseConfirmRemoveGoalModal() {
         setIsConfirmGoalRemoveModalOpen(false)
     }
+
+    useEffect(() => {
+        setFilter({...filter, team_id: teamId});
+    }, [teamId])
+
+    console.log(teamId, filter);
 
     return(
         <Board mb="50px">

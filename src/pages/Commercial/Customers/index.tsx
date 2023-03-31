@@ -50,10 +50,12 @@ import {
 import { useCustomers } from '../../../hooks/useCustomers'
 import { SearchCustomers } from './SearchCustomers'
 import { EditCustomerModal } from './EditCustomerModal'
+import { Pagination } from '../../../components/Pagination'
   
   export default function Customers() {
     const workingCompany = useWorkingCompany()
     const workingBranch = useWorkingBranch()
+    const [page, setPage] = useState(1);
   
     const toast = useToast()
     const { permissions, profile } = useProfile()
@@ -115,7 +117,8 @@ import { EditCustomerModal } from './EditCustomerModal'
       setIsNewSaleModalOpen(false)
     }
 
-    const customers = useCustomers(filter, 1);
+    const customersQuery = useCustomers(filter, 1);
+    const customers:Customer[] = customersQuery.data?.data;
   
     const [isEditCustomerModalOpen, setIsEditCustomerModalOpen] = useState(false)
     const [editCustomerFormData, setEditCustomerFormData] = useState<Customer>()
@@ -153,7 +156,7 @@ import { EditCustomerModal } from './EditCustomerModal'
       })
     }, [workingCompany, workingBranch])
 
-    console.log(customers.data?.data.data);
+    console.log(customers);
   
     return (
       <MainBoard sidebar="commercial" header={<CompanySelectMaster />}>
@@ -165,7 +168,7 @@ import { EditCustomerModal } from './EditCustomerModal'
 
         <EditCustomerModal
           toEditCustomerData={editCustomerFormData}
-          afterEdit={customers.refetch}
+          afterEdit={customersQuery.refetch}
           isOpen={isEditCustomerModalOpen}
           onRequestClose={CloseEditCustomerModal}
         />
@@ -204,23 +207,23 @@ import { EditCustomerModal } from './EditCustomerModal'
           </>
         )}
   
-        {customers.isLoading ? (
+        {customersQuery.isLoading ? (
           <Flex justify="center">
             <Spinner />
           </Flex>
-        ) : customers.isError ? (
+        ) : customersQuery.isError ? (
           <Flex justify="center" mt="4" mb="4">
             <Text>Erro listar os clientes</Text>
           </Flex>
         ) : (
-            customers.data?.data.data.length === 0 && (
+            customers.length === 0 && (
             <Flex justify="center">
               <Text>Nenhuma cliente encontrado.</Text>
             </Flex>
           )
         )}
   
-        {!customers.isLoading && !customers.error && (
+        {!customersQuery.isLoading && !customersQuery.error && (
           <Accordion
             w="100%"
             border="2px"
@@ -237,11 +240,11 @@ import { EditCustomerModal } from './EditCustomerModal'
               bg="gray.200"
             >
               <HStack fontSize="sm" spacing="4">
-                <Text>{customers.data?.data.data.length} clientes</Text>
+                <Text>{customers.length} clientes</Text>
               </HStack>
             </HStack>
   
-            {customers.data?.data.data.map((customer: Customer) => {
+            {customers.map((customer: Customer) => {
                 console.log(customer);
   
               return (
@@ -616,6 +619,8 @@ import { EditCustomerModal } from './EditCustomerModal'
             })}
           </Accordion>
         )}
+
+        <Pagination totalCountOfRegister={customersQuery.data ? customersQuery.data.total : 0} registerPerPage={50} currentPage={page} onPageChange={setPage} colorScheme="orange" color="orange.400"/>
       </MainBoard>
     )
   }

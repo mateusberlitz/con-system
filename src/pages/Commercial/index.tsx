@@ -108,8 +108,6 @@ export default function Commercial() {
         setEndDate(getValues('end_date'));
     }, [watch('end_date')]);
 
-    console.log();
-
   return (
     <MainBoard sidebar="commercial" header={<CompanySelectMaster />}>
       <NewSaleModal isOpen={isNewSaleModalOpen} onRequestClose={CloseNewSaleModal}/>

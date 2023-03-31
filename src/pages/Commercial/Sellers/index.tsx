@@ -1,6 +1,7 @@
 import { CompanySelectMaster } from '../../../components/CompanySelect/companySelectMaster'
 import {
   Flex,
+  FormControl,
   HStack,
   Icon,
   IconButton,
@@ -8,7 +9,8 @@ import {
   Stack,
   Td,
   Text,
-  Tr
+  Tr,
+  Select as ChakraSelect
 } from '@chakra-ui/react'
 import { OutlineButton } from '../../../components/Buttons/OutlineButton'
 import { Board } from '../../../components/Board'
@@ -28,7 +30,7 @@ import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { UserFilterData, useUsers } from '../../../hooks/useUsers'
 
-import { Goal, Quota, User } from '../../../types'
+import { Goal, Quota, Team, User } from '../../../types'
 import { useEffect, useState } from 'react'
 import { useCompanies } from '../../../hooks/useCompanies'
 import { useRoles } from '../../../hooks/useRoles'
@@ -51,6 +53,8 @@ import { ConfirmTeamUnicludeUserModal } from '../../configs/Teams/ConfirmTeamUni
 import IncludeUserModal, { IncludeUserData } from '../../configs/Users/IncludeUserModal'
 import Users from '../../configs/Users'
 import { GoalsBoard } from './GoalsBoard'
+import { useTeams } from '../../../hooks/useTeams'
+import { api } from '../../../services/api'
 
 const SearchUserFormSchema = yup.object().shape({
   search: yup.string().nullable(),
@@ -79,6 +83,12 @@ export default function Sellers() {
   const roles = useRoles()
   const { profile } = useProfile();
 
+  const teamsQuery = useTeams({company: workingCompany.company?.id});
+    const teams:Team[] = profile?.role.id === 1 ? teamsQuery.data?.data : profile?.teams;
+
+    const [selectedTeamId, setSelectedTeamId] = useState<number>();
+    const [team, setTeam] = useState<Team>();
+
   const hasTeam = (profile && profile.teams.length > 0) ? true : false;
 
   const [filter, setFilter] = useState<UserFilterData>(() => {
@@ -86,7 +96,8 @@ export default function Sellers() {
       search: '',
       branch: workingBranch.branch?.id,
       company: workingCompany.company?.id,
-      team: (profile && profile.teams.length > 0) ? profile.teams[0].id : undefined,
+      //team: (profile && profile.teams.length > 0) ? profile.teams[0].id : undefined,
+      team: team ? team.id : undefined,
       //role: 5,
       goals: true,
       quotas: true,
@@ -95,7 +106,40 @@ export default function Sellers() {
     return data
   })
 
-  const { data, isLoading, refetch, error } = useUsers(filter)
+    const { data, isLoading, refetch, error } = useUsers(filter)
+
+    const loadTeam = async () => {
+        //await api.get(`/teams/${selectedTeamId}`).then(response => setTeam(response.data));
+        //console.log(teams.filter((team) => team.id === selectedTeamId)[0]);
+        const newTeam = teams.filter((team) => team.id === selectedTeamId)[0];
+
+        setTeam(newTeam);
+        setFilter({
+            ...filter,
+            team: newTeam.id
+        })
+    }
+
+    useEffect(() => {
+        loadTeam();
+    }, [selectedTeamId])
+
+    useEffect(() => {
+        if(!team && !selectedTeamId && teamsQuery.data?.data.length > 0){
+            setSelectedTeamId(teams[0].id);
+        }else{
+            if(profile && hasTeam){
+                setSelectedTeamId(profile.teams[0].id);
+            }
+        }
+    }, [teams]);
+
+    function handleChangeTeam(event:any){
+        const newTeam = event?.target.value ? parseInt(event?.target.value) : selectedTeamId;
+
+        setSelectedTeamId(newTeam);
+    }
+
   const [editUserData, setEditUserData] = useState<EditUserFormData>(() => {
     const data: EditUserFormData = {
       name: '',
@@ -236,7 +280,7 @@ export default function Sellers() {
 
   const { register, handleSubmit, formState } = useForm<UserFilterData>({
     resolver: yupResolver(SearchUserFormSchema)
-  })
+  });
 
   const handleSearchUser = async (search: UserFilterData) => {
     setFilter({ ...filter, ...search })
@@ -288,7 +332,7 @@ export default function Sellers() {
     setIsIncludeUserModalOpen(false)
   }
 
-  console.log(profile);
+  console.log(selectedTeamId);
 
   return (
     <MainBoard sidebar="commercial" header={<CompanySelectMaster />}>
@@ -353,12 +397,49 @@ export default function Sellers() {
         )
       }
 
-      <GoalsBoard/>
+        <HStack as="form" spacing="12" w="100%" mb="6">
+            <Text fontWeight="500" w="100%" fontSize="xl">Equipe:</Text>
+
+        {   teamsQuery.isLoading ? (
+                    <Flex justify="left">
+                        <Spinner/>
+                    </Flex>
+                ) : ( teamsQuery.isError ? (
+                    <Flex justify="left" mt="4" mb="4">
+                        <Text>Erro listar os times</Text>
+                    </Flex>
+                ) : (teamsQuery.data?.data.length === 0) && (
+                    <Flex justify="left">
+                        <Text>Nenhum time encontrado</Text>
+                    </Flex>
+                ) ) 
+            }
+
+            {
+                    (!teamsQuery.isLoading && !teamsQuery.error) && (
+                        <FormControl display="flex" justifyContent="flex-end" minW="150px">
+                            <ChakraSelect onChange={handleChangeTeam} defaultValue={selectedTeamId} h="45px" name="selected_company" maxW="200px" fontSize="sm" focusBorderColor="purple.600" bg="gray.400" variant="filled" _hover={{ bgColor: 'gray.500' }} size="lg" borderRadius="full">
+                                {/* <option value={''}>Selecionar time</option> */}
+                                {
+                                    teams.map((team: Team) => {
+                                        return (
+                                            <option key={team.id.toString()} value={team.id.toString()}>{team.name}</option>
+                                        )
+                                    })
+                                }
+                            </ChakraSelect>
+                        </FormControl>
+                    )
+            }
+
+        </HStack>
+
+      <GoalsBoard teamId={team?.id}/>
 
       {
-        (profile && hasTeam) && (
+        (team) && (
           <SolidButton
-            onClick={() => OpenTeamIncludeUserModal(profile.teams[0].id)}
+            onClick={() => OpenTeamIncludeUserModal(team.id)}
             mb="12"
             color="white"
             bg="orange.400"
@@ -431,7 +512,7 @@ export default function Sellers() {
           )
         )}
 
-        {(!isLoading && !error && data.length !== 0 && hasTeam) && (
+        {(!isLoading && !error && data.length !== 0 && team) && (
           <Table
             header={[
               {
