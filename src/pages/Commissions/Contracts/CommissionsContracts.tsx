@@ -16,10 +16,12 @@ interface CommissionsContractProps{
     commissionsContract: Contract[];
     OpenEditQuotaModal: (quotaFormData:EditQuotaFormData) => void;
     OpenRemoveQuotaModal: (quotaFormData:RemoveSaleData) => void;
+    totalCount: number;
+    totalCredit: number;
 }
 
 
-export default function CommissionsContracts({commissionsContract, OpenEditQuotaModal, OpenRemoveQuotaModal}: CommissionsContractProps) {
+export default function CommissionsContracts({commissionsContract, OpenEditQuotaModal, OpenRemoveQuotaModal, totalCount, totalCredit}: CommissionsContractProps) {
     const { profile, permissions } = useProfile()
 
     const totalMonthAmount = commissionsContract.reduce((sumAmount:number, commissionsContract:Contract) => {
@@ -36,9 +38,9 @@ export default function CommissionsContracts({commissionsContract, OpenEditQuota
                 <Stack direction={["column", "row"]} spacing={["4", "6"]} alignItems="baseline" mt={["1", "0"]}>
                     <Text fontWeight="bold" fontSize="11px">Data inicial e final</Text>
 
-                    <Text fontWeight="bold" px="6rem">{commissionsContract.length} contratos</Text>
+                    <Text fontWeight="bold" px="6rem">{totalCount} contratos</Text>
 
-                    <Text fontWeight="bold" px="2rem" color="#6E7191">Créditos: {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalMonthAmount)}</Text>
+                    <Text fontWeight="bold" px="2rem" color="#6E7191">Créditos: {Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL' }).format(totalCredit)}</Text>
                 </Stack>
                 {/* <Stack direction={["column", "row"]} spacing={["3", "6"]} alignItems={["flex-end", "center"]}>
 

@@ -231,7 +231,10 @@ export default function CommissionsSalesman(){
             <Stack fontSize="13px" spacing="12">
             {
                     (!commissionsContract.isLoading && !commissionsContract.error) && (
-                        <CommissionsContracts commissionsContract={commissionsContract.data?.data} OpenEditQuotaModal={OpenEditQuotaModal} OpenRemoveQuotaModal={OpenRemoveQuotaModal}/>
+                        <CommissionsContracts   commissionsContract={commissionsContract.data?.data} 
+                                                totalCount={commissionsContract.data ? commissionsContract.data.total : 0} 
+                                                totalCredit={commissionsContract.data ? commissionsContract.data.credit : 0} 
+                                                OpenEditQuotaModal={OpenEditQuotaModal} OpenRemoveQuotaModal={OpenRemoveQuotaModal}/>
                     )
                 }
 

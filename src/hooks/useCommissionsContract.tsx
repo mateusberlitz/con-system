@@ -40,12 +40,12 @@ export const getCommissionsContract = async (filter?: CommissionsContractFilterD
             }
         });
 
-        return { data, total: Number(headers['x-total-count'])};
+        return { data, total: Number(headers['x-total-count']), credit: Number(headers['x-total-credit'])};
     }
 
     const { data, headers } = await api.get("/contracts");
 
-    return { data, total: Number(headers['x-total-count'])};
+    return { data, total: Number(headers['x-total-count']), credit: Number(headers['x-total-credit'])};
 };
 
 export function useCommissionsContract(filter: CommissionsContractFilterData, page?: number){
