@@ -117,7 +117,7 @@ import { Pagination } from '../../../components/Pagination'
       setIsNewSaleModalOpen(false)
     }
 
-    const customersQuery = useCustomers(filter, 1);
+    const customersQuery = useCustomers(filter, page);
     const customers:Customer[] = customersQuery.data?.data;
   
     const [isEditCustomerModalOpen, setIsEditCustomerModalOpen] = useState(false)
