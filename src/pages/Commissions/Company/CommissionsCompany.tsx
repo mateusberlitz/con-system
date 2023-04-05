@@ -11,6 +11,9 @@ import { formatBRDate } from '../../../utils/Date/formatBRDate';
 interface CommissionsCompanyProps{
     monthName: string;
     companyCommissions: CompanyCommission[];
+    totalValue: number;
+    totalCredit: number;
+    totalCount: number;
 }
 
 export default function CommissionsCompany({monthName, companyCommissions}: CommissionsCompanyProps) {
@@ -21,9 +24,9 @@ export default function CommissionsCompany({monthName, companyCommissions}: Comm
     }, 0);
 
     const totalMonthAmount = companyCommissions.reduce((sumAmount:number, companyCommission:CompanyCommission) => {
-        if(companyCommission.is_chargeback){
-            return sumAmount - companyCommission.value;
-        }
+        // if(companyCommission.is_chargeback){
+        //     return sumAmount - companyCommission.value;
+        // }
 
         return sumAmount + companyCommission.value;
     }, 0);

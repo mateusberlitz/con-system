@@ -41,12 +41,12 @@ export const getCompanyCommissions = async (filter?: CompanyCommissionsFilterDat
             }
         });
 
-        return {data, total: Number(headers['x-total-count'])};
+        return {data, total: Number(headers['x-total-count']), credit: Number(headers['x-total-credit']), value: Number(headers['x-total-value'])};
     }
 
     const { data, headers } = await api.get('/company-commissions');
 
-    return {data, total: Number(headers['x-total-count'])};
+    return {data, total: Number(headers['x-total-count']), credit: Number(headers['x-total-credit']), value: Number(headers['x-total-value'])};
 }
 
 export function useCompanyCommissions(filter: CompanyCommissionsFilterData, page?: number){

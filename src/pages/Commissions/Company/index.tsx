@@ -167,7 +167,9 @@ export default function Company(){
                     (!companyCommissions.isLoading && !companyCommissions.error) && Object.keys(companyCommissions.data?.data).map((monthYear:string) => {
                         const monthNumber = parseInt(monthYear.split('-')[0]);
                         return (
-                            <CommissionsCompany key={monthYear} monthName={getMonthName(monthNumber)} companyCommissions={companyCommissions.data?.data[monthYear]}/>
+                            <CommissionsCompany 
+                                totalCount={companyCommissions.data?.total ? companyCommissions.data?.total : 0} totalCredit={companyCommissions.data?.credit ? companyCommissions.data?.credit : 0} totalValue={companyCommissions.data?.value ? companyCommissions.data?.value : 0}
+                                key={monthYear} monthName={getMonthName(monthNumber)} companyCommissions={companyCommissions.data?.data[monthYear]}/>
                         )
                     })
                 }
