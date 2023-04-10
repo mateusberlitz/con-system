@@ -51,6 +51,7 @@ import { useCustomers } from '../../../hooks/useCustomers'
 import { SearchCustomers } from './SearchCustomers'
 import { EditCustomerModal } from './EditCustomerModal'
 import { Pagination } from '../../../components/Pagination'
+import { CustomersFilterData } from '../../../hooks/useCustomers'
   
   export default function Customers() {
     const workingCompany = useWorkingCompany()
@@ -82,8 +83,8 @@ import { Pagination } from '../../../components/Pagination'
       loadOrigins()
     }, [])
   
-    const [filter, setFilter] = useState<LeadsFilterData>(() => {
-      const data: LeadsFilterData = {
+    const [filter, setFilter] = useState<CustomersFilterData>(() => {
+      const data: CustomersFilterData = {
         search: '',
         //start_date: formatYmdDate(new Date().toString()),
         //end_date: formatYmdDate(new Date().toString()),
@@ -91,7 +92,8 @@ import { Pagination } from '../../../components/Pagination'
         branch: workingBranch.branch?.id,
         status: 0,
         user: isManager ? undefined : profile?.id,
-        group_by: ''
+        group_by: '',
+        details: true
       }
   
       return data

@@ -10,6 +10,7 @@ export interface CustomersFilterData{
     branch?: number;
     contract?: number;
     cpf_cnpj?: string;
+    user?: number;
     group?: string;
     quote?: string;
     group_by?: string;
@@ -17,6 +18,7 @@ export interface CustomersFilterData{
     type_customer?: string;
     city_id?: number;
     state_id?: number;
+    details?: boolean;
 }
 
 export const getCustomers = async (filter?: CustomersFilterData, page: number = 0) => {
@@ -33,9 +35,11 @@ export const getCustomers = async (filter?: CustomersFilterData, page: number = 
               cpf_cnpj: filter.cpf_cnpj,
               group: filter.group,
               quote: filter.quote,
+              user: filter.user,
               city_id: filter.city_id,
               state_id: filter.state_id,
               group_by: filter.group_by,
+              details: filter.details,
               type_customer: filter.type_customer,
             }
         });
