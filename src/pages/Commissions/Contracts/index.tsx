@@ -238,7 +238,7 @@ export default function CommissionsSalesman(){
                     )
                 }
 
-                <Pagination totalCountOfRegister={commissionsContract.data ? commissionsContract.data.total : 0} registerPerPage={50} currentPage={page} onPageChange={setPage} colorScheme="red" color="red.400"/>
+                <Pagination totalCountOfRegister={commissionsContract.data ? commissionsContract.data.total : 0} registerPerPage={20} currentPage={page} onPageChange={setPage} colorScheme="red" color="red.400"/>
             </Stack>
 
         </MainBoard>

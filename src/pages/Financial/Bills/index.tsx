@@ -594,7 +594,7 @@ export default function Bills() {
         ) : (
           bills.data?.data.length === 0 && (
             <Flex justify="center">
-              <Text>Nenhuma conta a pagar encontrada.</Text>
+              <Text>Nenhuma conta a receber encontrada.</Text>
             </Flex>
           )
         )}
